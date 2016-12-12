@@ -12,7 +12,8 @@
         "barryvdh/laravel-ide-helper": "^2.2",
         "barryvdh/laravel-cors": "^0.8.2",
         "aws/aws-sdk-php": "^3.20",
-        "bugsnag/bugsnag-laravel": "^2.4"
+        "bugsnag/bugsnag-laravel": "^2.4",
+        "barryvdh/laravel-dompdf": "^0.7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
