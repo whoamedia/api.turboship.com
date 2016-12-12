@@ -184,6 +184,7 @@ return [
         Aws\Laravel\AwsServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
 
     ],
 
@@ -238,6 +239,7 @@ return [
          * Third-Party Aliases
          */
         'AWS'                   => Aws\Laravel\AwsFacade::class,
+        'Bugsnag'               => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
     ],
 
 ];
