@@ -182,6 +182,7 @@ return [
          * Third-Party Providers...
          */
         Aws\Laravel\AwsServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
     ],
 
