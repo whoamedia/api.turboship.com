@@ -178,6 +178,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Third-Party Providers...
+         */
+        Aws\Laravel\AwsServiceProvider::class,
+
     ],
 
     /*
@@ -226,6 +231,11 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+
+        /*
+         * Third-Party Aliases
+         */
+        'AWS'                   => Aws\Laravel\AwsFacade::class,
     ],
 
 ];
