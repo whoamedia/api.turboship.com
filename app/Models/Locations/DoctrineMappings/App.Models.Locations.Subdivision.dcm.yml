@@ -16,7 +16,6 @@ App\Models\Locations\Subdivision:
       targetEntity:   SubdivisionType
       nullable:       false
       fetch:          LAZY
-      inversedBy:     subdivisions
       joinColumn:
         name:         subdivisionTypeId
         referencedColumnName: id
