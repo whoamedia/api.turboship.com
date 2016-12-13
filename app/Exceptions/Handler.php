@@ -35,7 +35,9 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
         if ($exception->getCode() == 500 || ($this->isHttpException($exception) && $exception->getStatusCode() == 500))
-            Log::error($exception);
+        {
+            Log::critical($exception);
+        }
     }
 
     /**

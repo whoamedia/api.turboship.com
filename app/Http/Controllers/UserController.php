@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\CMS\User;
 use App\Requests\Users\GetUsersRequest;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -16,11 +15,6 @@ class UserController extends Controller
      * @var \App\Repositories\Doctrine\CMS\UserRepository
      */
     private $userRepo;
-
-    /**
-     * @var User
-     */
-    private $authUser;
 
     /**
      * UserController constructor.
