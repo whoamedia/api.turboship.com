@@ -186,6 +186,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
         LaravelDoctrine\ORM\DoctrineServiceProvider::class,
 
     ],

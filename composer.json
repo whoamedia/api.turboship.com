@@ -16,7 +16,8 @@
         "barryvdh/laravel-dompdf": "^0.7.0",
         "laravel-doctrine/orm": "^1.2",
         "jamesvweston/php-utilities": "dev-master",
-        "soapbox/laravel-formatter": "^2.0"
+        "soapbox/laravel-formatter": "^2.0",
+        "laravel/passport": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
