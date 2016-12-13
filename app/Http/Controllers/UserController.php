@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\CMS\User;
 use App\Requests\Users\GetUsersRequest;
 use Illuminate\Http\Request;
 use EntityManager;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -15,6 +17,10 @@ class UserController extends Controller
      */
     private $userRepo;
 
+    /**
+     * @var User
+     */
+    private $authUser;
 
     /**
      * UserController constructor.
@@ -39,9 +45,46 @@ class UserController extends Controller
 
         $query                          = $getUsersRequest->jsonSerialize();
 
-        $results                        = $this->userRepo->where($query);
+        $results                        = $this->userRepo->where($query, false);
         return response($results);
     }
 
+    public function me (Request $request)
+    {
+        $authUser                       = \Auth::getUser();
+
+        return response($authUser);
+    }
+
+    public function show (Request $request)
+    {
+        $authUser                       = \Auth::getUser();
+
+        $id                             = $request->route('id');
+        $query['ids']                   = $id;
+        $query['organizationIds']       = $authUser->getOrganization()->getId();
+
+        $results                        = $this->userRepo->where($query, true);
+        if (sizeof($results) != 1)
+            throw new NotFoundHttpException('User not found');
+
+        return response($results[0]);
+
+    }
+
+    public function update (Request $request)
+    {
+
+    }
+
+    public function store (Request $request)
+    {
+
+    }
+
+    public function updatePassword (Request $request)
+    {
+
+    }
 
 }

@@ -19,6 +19,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 {
 
     //  User Operations
-    Route::get('users', 'UserController@index');
+    Route::get('/users', 'UserController@index');
+    Route::get('/users/me', 'UserController@me');
+    Route::get('/users/{id}', 'UserController@show');
+    Route::put('/users/{id}', 'UserController@update');
+    Route::post('/users', 'UserController@store');
+    Route::put('/users/{id}/password', 'UserController@updatePassword');
 
 });
