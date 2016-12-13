@@ -95,6 +95,15 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
     }
 
     /**
+     * This is temporarily in place to support Bugsnag's error reporting
+     * @return array
+     */
+    public function toArray ()
+    {
+        return $this->jsonSerialize();
+    }
+
+    /**
      * @return int
      */
     public function getId()
