@@ -29,6 +29,7 @@ return [
                 'App'
             ],
             'paths'         => [
+                base_path('App/Models/CMS/DoctrineMappings'),
                 base_path('App/Models/Locations/DoctrineMappings'),
             ],
             'repository' => 'App\Repositories\Doctrine\BaseRepository',

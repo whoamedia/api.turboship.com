@@ -54,9 +54,3 @@ App\Models\CMS\User:
       options:
         comment:      "When the User was created"
         default:      CURRENT_datetime
-
-  entityListeners:
-      App\Listeners\User\UserPrePersistListener:
-          prePersist: [prePersistHandler]
-      App\Listeners\User\UserPostPersistListener:
-          postPersist: [postPersistHandler]

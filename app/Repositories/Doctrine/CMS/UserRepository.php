@@ -4,14 +4,14 @@ namespace App\Repositories\Doctrine\CMS;
 
 
 use App\Models\CMS\User;
-use App\Repositories\DoctrineBaseRepository;
+use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class UserRepository extends DoctrineBaseRepository
+class UserRepository extends BaseRepository
 {
 
     use Paginatable;
