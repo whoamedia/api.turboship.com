@@ -1,0 +1,62 @@
+App\Models\CMS\User:
+  type:               entity
+  table:              User
+  repositoryClass:    App\Repositories\Doctrine\CMS\UserRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+      comment:        'User id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  manyToOne:
+    organization:
+      targetEntity:   Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     accounts
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
+
+  fields:
+    firstName:
+      column:         firstName
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "First name of the User"
+    lastName:
+      column:         lastName
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Last name of the User"
+    email:
+      column:         email
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Email for the User"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the User was created"
+        default:      CURRENT_datetime
+
+  entityListeners:
+      App\Listeners\User\UserPrePersistListener:
+          prePersist: [prePersistHandler]
+      App\Listeners\User\UserPostPersistListener:
+          postPersist: [postPersistHandler]

@@ -7,7 +7,7 @@ App\Models\Locations\Address:
     subdivision:
       targetEntity:   Subdivision
       nullable:       true
-      fetch:          LAZY
+      fetch:          EAGER
       joinColumn:
         name:         subdivisionId
         referencedColumnName: id

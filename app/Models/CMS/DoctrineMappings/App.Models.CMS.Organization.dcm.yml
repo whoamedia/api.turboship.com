@@ -1,0 +1,38 @@
+App\Models\CMS\Organization:
+  type:               entity
+  table:              Organization
+  repositoryClass:    App\Repositories\Doctrine\CMS\OrganizationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Organization id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  oneToMany:
+    users:
+      targetEntity:   User
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Organization name"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Organization was created"
+        default:      CURRENT_datetime
