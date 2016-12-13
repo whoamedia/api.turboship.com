@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Log;
 
 class Handler extends ExceptionHandler
 {
@@ -36,7 +35,7 @@ class Handler extends ExceptionHandler
     {
         if ($exception->getCode() == 500 || ($this->isHttpException($exception) && $exception->getStatusCode() == 500))
         {
-            Log::critical($exception);
+            parent::report($exception);
         }
     }
 
