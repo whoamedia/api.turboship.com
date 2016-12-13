@@ -1,0 +1,32 @@
+App\Models\OAuth\OAuthClient:
+  type:               entity
+  table:              oauth_clients
+  repositoryClass:    App\Repositories\Doctrine\OAuth\OAuthClientRepository
+
+  id:
+    id:
+      column:         id
+      type:           string
+      length:         40
+      nullable:       false
+      id:             true
+      generator:
+        strategy:     NONE
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         255
+    secret:
+      column:         secret
+      type:           string
+      nullable:       false
+      length:         60
+    createdAt:
+      column:         created_at
+      type:           datetime
+      nullable:       false
+      options:
+        default:      CURRENT_datetime
