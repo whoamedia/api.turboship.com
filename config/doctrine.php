@@ -29,9 +29,9 @@ return [
                 'App'
             ],
             'paths'         => [
-                base_path('App/Models/CMS/DoctrineMappings'),
-                base_path('App/Models/Locations/DoctrineMappings'),
-                base_path('App/Models/OAuth/DoctrineMappings'),
+                base_path('app/Models/CMS/DoctrineMappings'),
+                base_path('app/Models/Locations/DoctrineMappings'),
+                base_path('app/Models/OAuth/DoctrineMappings'),
             ],
             'repository' => 'App\Repositories\Doctrine\BaseRepository',
             'proxies'       => [
