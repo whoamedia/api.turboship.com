@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Requests\Users\GetUsersRequest;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -30,15 +31,13 @@ class UserController extends Controller
      */
     public function index (Request $request)
     {
-        $query                          = [];
-
         $authUser                       = \Auth::getUser();
 
-        $query['organizationIds']       = $authUser->getOrganization()->getId();
-        $query['ids']                   = $request->input('ids');
-        $query['firstNames']            = $request->input('firstNames');
-        $query['lastNames']             = $request->input('lastNames');
-        $query['emails']                = $request->input('emails');
+        $getUsersRequest                = new GetUsersRequest($request->input());
+        $getUsersRequest->setOrganizationIds($authUser->getOrganization()->getId());
+        $getUsersRequest->validate();
+
+        $query                          = $getUsersRequest->jsonSerialize();
 
         $results                        = $this->userRepo->where($query);
         return response($results);
