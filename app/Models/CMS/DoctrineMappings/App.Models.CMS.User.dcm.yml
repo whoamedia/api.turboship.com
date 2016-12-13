@@ -15,16 +15,6 @@ App\Models\CMS\User:
       generator:
         strategy:     IDENTITY
 
-  manyToOne:
-    organization:
-      targetEntity:   Organization
-      nullable:       false
-      fetch:          EAGER
-      inversedBy:     accounts
-      joinColumn:
-        name:         organizationId
-        referencedColumnName: id
-
   fields:
     firstName:
       column:         firstName
@@ -47,6 +37,13 @@ App\Models\CMS\User:
       length:         100
       options:
         comment:      "Email for the User"
+    password:
+      column:         password
+      type:           string
+      nullable:       false
+      length:         500
+      options:
+        comment:      "Hashed password of the User"
     createdAt:
       column:         createdAt
       type:           datetime
@@ -54,3 +51,13 @@ App\Models\CMS\User:
       options:
         comment:      "When the User was created"
         default:      CURRENT_datetime
+
+  manyToOne:
+    organization:
+      targetEntity:   Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     users
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

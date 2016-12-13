@@ -31,6 +31,7 @@ return [
             'paths'         => [
                 base_path('App/Models/CMS/DoctrineMappings'),
                 base_path('App/Models/Locations/DoctrineMappings'),
+                base_path('App/Models/OAuth/DoctrineMappings'),
             ],
             'repository' => 'App\Repositories\Doctrine\BaseRepository',
             'proxies'       => [

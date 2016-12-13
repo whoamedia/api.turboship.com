@@ -5,11 +5,13 @@ namespace App\Models\CMS;
 
 use App\Models\BaseModel;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Hash;
 
 /**
  * @SWG\Definition()
  */
-class User extends BaseModel implements \JsonSerializable
+class User extends BaseModel implements Authenticatable, \JsonSerializable
 {
     
     /**
@@ -161,7 +163,7 @@ class User extends BaseModel implements \JsonSerializable
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password                 = Hash::make($password);
     }
 
     /**
@@ -186,6 +188,71 @@ class User extends BaseModel implements \JsonSerializable
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+
+
+
+
+    /**
+     * Auth junk
+     */
+
+
+    /**
+     * Set the token value for the "remember me" session.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setRememberToken($value)
+    {
+
+    }
+
+    /**
+     * Get the unique identifier for the User
+     * @return mixed
+     */
+    public function getAuthIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get the unique identifier name for the User
+     * @return mixed
+     */
+    public function getAuthIdentifierName()
+    {
+        return null;
+    }
+
+    /**
+     * Get the password for the User
+     * @return string
+     */
+    public function getAuthPassword()
+    {
+        return null;
+    }
+
+    /**
+     * Get the token value for the "remember me" session.
+     * @return string
+     */
+    public function getRememberToken()
+    {
+        return false;
+    }
+
+    /**
+     * Get the column name for the "remember me" token.
+     * @return string
+     */
+    public function getRememberTokenName()
+    {
+        return $this->id;
     }
 
 }

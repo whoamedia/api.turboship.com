@@ -42,7 +42,14 @@ class UserSeeder extends Seeder
         $user->setOrganization($organization);
         $this->organizationRepo->saveAndCommit($user);
 
-
+        //  James
+        $user                   = new User();
+        $user->setFirstName('James');
+        $user->setLastName('Weston');
+        $user->setEmail('james@turboship.com');
+        $user->setPassword('password');
+        $user->setOrganization($organization);
+        $this->organizationRepo->saveAndCommit($user);
 
 
     }

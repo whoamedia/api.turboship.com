@@ -34,5 +34,11 @@ class RebootApplicationCommand extends Command
             $this->info('migrate:refresh --seed threw the following Exception');
             $this->error($ex->getMessage());
         }
+
+        $this->call('turboship:client:create', [
+            'clientName'    =>  'james@turboship.com',
+            'clientId'      =>  'seloVYGtW6yFM1iz',
+            'clientSecret'  =>  'b175ZuxK0041VTYU1fLJoxVT72CrqG1v'
+        ]);
     }
 }

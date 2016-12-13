@@ -18,6 +18,7 @@ class CreateUserTable extends Migration
             $table->string('firstName', 100)->index();
             $table->string('lastName', 100)->index();
             $table->string('email', 100)->unique();
+            $table->string('password', 500);
             $table->integer('organizationId')->unsigned()->index();
             
 
