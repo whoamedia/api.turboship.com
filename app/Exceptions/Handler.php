@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\Debug\Exception\FatalErrorException;
+use Log;
 
 class Handler extends ExceptionHandler
 {
@@ -32,7 +34,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        parent::report($exception);
+        if ($exception instanceof FatalErrorException || $exception->getCode() == 500)
+            Log::critical($exception);
+        else if (!$this->isHttpException($exception) || ($this->isHttpException($exception) && $exception->getStatusCode() == 500))
+            Log::error($exception);
     }
 
     /**
