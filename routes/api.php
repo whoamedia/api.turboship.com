@@ -13,3 +13,12 @@
 
 Route::post('/oauth/access_token',
     ['uses' => 'OAuthController@issueAccessToken',]);
+
+
+Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
+{
+
+    //  User Operations
+    Route::get('users', 'UserController@index');
+
+});
