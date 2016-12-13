@@ -186,6 +186,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        LaravelDoctrine\ORM\DoctrineServiceProvider::class,
 
     ],
 
@@ -241,6 +242,7 @@ return [
          */
         'AWS'                   => Aws\Laravel\AwsFacade::class,
         'Bugsnag'               => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'EntityManager'         => LaravelDoctrine\ORM\Facades\EntityManager::class,
         'PDF'                   => Barryvdh\DomPDF\Facade::class,
     ],
 
