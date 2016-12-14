@@ -24,6 +24,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/countries/{id}/subdivisions', 'CountryController@getCountrySubdivisions');
 
 
+    //  Subdivision Operations
+    Route::get('/subdivisions', 'SubdivisionController@index');
+    Route::get('/subdivisions/{id}', 'SubdivisionController@show');
+
+
     //  User Operations
     Route::get('/users', 'UserController@index');
     Route::get('/users/me', 'UserController@me');
