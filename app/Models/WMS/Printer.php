@@ -3,6 +3,7 @@
 namespace App\Models\WMS;
 
 
+use App\Models\CMS\Organization;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class Printer
@@ -19,15 +20,15 @@ class Printer
     protected $name;
 
     /**
-     * @var FulfillmentCenter
+     * @var Organization
      */
-    protected $fulfillmentCenter;
+    protected $organization;
 
 
     public function __construct($data = [])
     {
         $this->name                     = AU::get($data['name']);
-        $this->fulfillmentCenter        = AU::get($data['fulfillmentCenter']);
+        $this->organization             = AU::get($data['organization']);
     }
 
     /**
@@ -37,7 +38,7 @@ class Printer
     {
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
-        $object['fulfillmentCenter']    = $this->fulfillmentCenter->jsonSerialize();
+        $object['organization']         = $this->organization->jsonSerialize();
 
         return $object;
     }
@@ -68,20 +69,19 @@ class Printer
     }
 
     /**
-     * @return FulfillmentCenter
+     * @return Organization
      */
-    public function getFulfillmentCenter()
+    public function getOrganization()
     {
-        return $this->fulfillmentCenter;
+        return $this->organization;
     }
 
     /**
-     * @param FulfillmentCenter $fulfillmentCenter
+     * @param Organization $organization
      */
-    public function setFulfillmentCenter($fulfillmentCenter)
+    public function setOrganization($organization)
     {
-        $this->fulfillmentCenter = $fulfillmentCenter;
+        $this->organization = $organization;
     }
-
 
 }

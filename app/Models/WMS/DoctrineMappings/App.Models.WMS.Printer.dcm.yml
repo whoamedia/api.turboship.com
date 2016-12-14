@@ -24,11 +24,11 @@ App\Models\WMS\Printer:
         comment:      "Printer name"
 
   manyToOne:
-    fulfillmentCenter:
-      targetEntity:   FulfillmentCenter
+    organization:
+      targetEntity:   App\Models\CMS\Organization
       nullable:       false
       fetch:          EAGER
       inversedBy:     printers
       joinColumn:
-        name:         fulfillmentCenterId
+        name:         organizationId
         referencedColumnName: id

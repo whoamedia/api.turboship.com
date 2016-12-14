@@ -4,7 +4,7 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
-use App\Models\WMS\FulfillmentCenter;
+use App\Models\WMS\Printer;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -34,7 +34,7 @@ class Organization extends BaseModel
     /**
      * @var ArrayCollection
      */
-    protected $fulfillmentCenters;
+    protected $printers;
 
     /**
      * @var ArrayCollection
@@ -55,7 +55,7 @@ class Organization extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->clients                  = new ArrayCollection();
-        $this->fulfillmentCenters       = new ArrayCollection();
+        $this->printers                 = new ArrayCollection();
         $this->users                    = new ArrayCollection();
         
         if (is_array($data))
@@ -147,20 +147,20 @@ class Organization extends BaseModel
     }
 
     /**
-     * @param FulfillmentCenter $fulfillmentCenter
+     * @param Printer $printer
      */
-    public function addFulfillmentCenter(FulfillmentCenter $fulfillmentCenter)
+    public function addPrinter (Printer $printer)
     {
-        $fulfillmentCenter->setOrganization($this);
-        $this->fulfillmentCenters->add($fulfillmentCenter);
+        $printer->setOrganization($this);
+        $this->printers->add($printer);
     }
 
     /**
-     * @return FulfillmentCenter[]
+     * @return Printer[]
      */
-    public function getFulfillmentCenters ()
+    public function getPrinters ()
     {
-        return $this->fulfillmentCenters->toArray();
+        return $this->printers->toArray();
     }
 
 }

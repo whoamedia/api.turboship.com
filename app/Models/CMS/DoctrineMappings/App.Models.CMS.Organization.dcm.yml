@@ -40,7 +40,7 @@ App\Models\CMS\Organization:
       targetEntity:   Client
       mappedBy:       organization
       cascade:        ["persist", "remove"]
-    fulfillmentCenters:
-      targetEntity:   App\Models\WMS\FulfillmentCenter
+    printers:
+      targetEntity:   App\Models\WMS\Printer
       mappedBy:       organization
       cascade:        ["persist", "remove"]

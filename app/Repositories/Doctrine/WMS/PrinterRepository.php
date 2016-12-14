@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Repositories\Doctrine\Locations;
+namespace App\Repositories\Doctrine\WMS;
 
 
-use App\Models\Locations\PostalDistrict;
+use App\Models\WMS\Printer;
 use App\Repositories\Doctrine\BaseRepository;
 
-class PostalDistrictRepository extends BaseRepository
+class PrinterRepository extends BaseRepository
 {
 
     /**
      * @param   int         $id
-     * @return  PostalDistrict|null
+     * @return  Printer|null
      */
     public function getOneById($id)
     {
         return $this->find($id);
     }
+
 }

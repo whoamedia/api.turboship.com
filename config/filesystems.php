@@ -44,22 +44,22 @@ return [
     'disks' => [
 
         'local' => [
-            'driver' => 'local',
-            'root' => storage_path('app'),
+            'driver'        => 'local',
+            'root'          => storage_path('app'),
         ],
 
         'public' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'visibility' => 'public',
+            'driver'        => 'local',
+            'root'          => storage_path('app/public'),
+            'visibility'    => 'public',
         ],
 
         's3' => [
-            'driver' => 's3',
-            'key' => 'your-key',
-            'secret' => 'your-secret',
-            'region' => 'your-region',
-            'bucket' => 'your-bucket',
+            'driver'        => 's3',
+            'key'           => config('aws.credentials.key'),
+            'secret'        => config('aws.credentials.secret'),
+            'region'        => config('aws.region'),
+            'bucket'        => config('aws.bucket'),
         ],
 
     ],
