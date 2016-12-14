@@ -1,0 +1,65 @@
+App\Models\Locations\Subdivision:
+  type:               entity
+  table:              Subdivision
+  repositoryClass:    App\Repositories\Doctrine\Locations\SubdivisionRepository
+
+  manyToOne:
+    country:
+      targetEntity:   Country
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     subdivisions
+      joinColumn:
+        name:         countryId
+        referencedColumnName: id
+    subdivisionType:
+      targetEntity:   SubdivisionType
+      nullable:       false
+      fetch:          LAZY
+      joinColumn:
+        name:         subdivisionTypeId
+        referencedColumnName: id
+
+  oneToMany:
+    altNames:
+      targetEntity:   SubdivisionAltName
+      mappedBy:       subdivision
+      cascade:        ["persist", "remove"]
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Subdivision id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Unique name for the Subdivision"
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      length:         50
+      options:
+        fixed:        false
+        comment:      "Unique symbol for the Subdivision"
+    localSymbol:
+      column:         localSymbol
+      type:           string
+      nullable:       false
+      length:         50
+      options:
+        fixed:        false
+        comment:      "localSymbol is unique for its Country  for the Subdivision"

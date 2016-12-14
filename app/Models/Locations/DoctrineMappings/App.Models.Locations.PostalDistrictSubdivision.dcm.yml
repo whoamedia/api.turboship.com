@@ -1,0 +1,33 @@
+App\Models\Locations\PostalDistrictSubdivision:
+  type:               entity
+  table:              PostalDistrictSubdivision
+  repositoryClass:    App\Repositories\Doctrine\Locations\PostalDistrictSubdivisionRepository
+
+  manyToOne:
+    postalDistrict:
+      targetEntity:   PostalDistrict
+      nullable:       false
+      fetch:          LAZY
+      inversedBy:     postalDistrictSubdivisions
+      joinColumn:
+        name:         postalDistrictId
+        referencedColumnName: id
+    subdivision:
+      targetEntity:   Subdivision
+      nullable:       false
+      fetch:          LAZY
+      joinColumn:
+        name:         subdivisionId
+        referencedColumnName: id
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PostalDistrictSubdivision id'
+      id:             true
+      generator:
+        strategy:     IDENTITY

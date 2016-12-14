@@ -1,0 +1,104 @@
+App\Models\Locations\Country:
+  type:               entity
+  table:              Country
+  repositoryClass:    App\Repositories\Doctrine\Locations\CountryRepository
+
+  manyToOne:
+    continent:
+      targetEntity:   Continent
+      nullable:       false
+      fetch:          LAZY
+      inversedBy:     countries
+      joinColumn:
+        name:         continentId
+        referencedColumnName: id
+
+  oneToMany:
+    subdivisions:
+      targetEntity:   Subdivision
+      mappedBy:       country
+      cascade:        ["persist", "remove"]
+    postalDistricts:
+      targetEntity:   PostalDistrict
+      mappedBy:       country
+      cascade:        ["persist", "remove"]
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Country id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         30
+      options:
+        fixed:        false
+        comment:      "Country unique name"
+    iso2:
+      column:         iso2
+      type:           string
+      nullable:       false
+      length:         2
+      options:
+        fixed:        true
+        comment:      "Country unique iso2"
+    iso3:
+      column:         iso3
+      type:           string
+      nullable:       false
+      length:         3
+      options:
+        fixed:        true
+        comment:      "Country unique iso3"
+    isoNumeric:
+      column:         isoNumeric
+      type:           string
+      nullable:       false
+      length:         3
+      options:
+        fixed:        true
+        comment:      "Country unique isoNumeric"
+    fipsCode:
+      column:         fipsCode
+      type:           string
+      nullable:       false
+      length:         2
+      options:
+        fixed:        true
+        comment:      "Country unique fipsCode"
+    capital:
+      column:         capital
+      type:           string
+      nullable:       true
+      length:         50
+      options:
+        fixed:        false
+        comment:      "Country capital"
+    isEU:
+      column:         isEU
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If country is in EU"
+    isUK:
+      column:         isUK
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the country is in the UK"
+    isUSTerritory:
+      column:         isUSTerritory
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the country is a territory of the US"

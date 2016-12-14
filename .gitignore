@@ -59,6 +59,7 @@ storage/databaseBlank.sqlite.bk
 storage/databaseHydrated.sqlite.bk
 storage/database.sqlite
 _ide_helper.php
+.phpstorm.meta.php
 storage/database_logging.sqlite
 storage/database_tracking.sqlite
 .DS_Store

@@ -1,0 +1,34 @@
+App\Models\WMS\Printer:
+  type:               entity
+  table:              Printer
+  repositoryClass:    App\Repositories\Doctrine\WMS\PrinterRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Printer id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Printer name"
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     printers
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

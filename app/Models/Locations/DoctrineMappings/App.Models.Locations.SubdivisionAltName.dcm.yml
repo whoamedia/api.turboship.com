@@ -1,0 +1,36 @@
+App\Models\Locations\SubdivisionAltName:
+  type:               entity
+  table:              SubdivisionAltName
+  repositoryClass:    App\Repositories\Doctrine\Locations\SubdivisionAltNameRepository
+
+  manyToOne:
+    subdivision:
+      targetEntity:   Subdivision
+      nullable:       false
+      inversedBy:     altNames
+      fetch:          LAZY
+      joinColumn:
+        name:         subdivisionId
+        referencedColumnName: id
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'SubdivisionAltName id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Alternative name for the Subdivision"

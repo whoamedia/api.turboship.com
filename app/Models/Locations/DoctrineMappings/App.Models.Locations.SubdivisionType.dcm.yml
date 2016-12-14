@@ -1,0 +1,26 @@
+App\Models\Locations\SubdivisionType:
+  type:               entity
+  table:              SubdivisionType
+  repositoryClass:    App\Repositories\Doctrine\Locations\SubdivisionTypeRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'SubdivisionType id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "SubdivisionType name"

@@ -1,0 +1,97 @@
+App\Models\Locations\Address:
+  type:               entity
+  table:              Address
+  repositoryClass:    App\Repositories\Doctrine\Locations\AddressRepository
+
+  manyToOne:
+    subdivision:
+      targetEntity:   Subdivision
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         subdivisionId
+        referencedColumnName: id
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+      comment:        'Address id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    firstName:
+      column:         firstName
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Address firstName"
+    lastName:
+      column:         lastName
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Address lastName"
+    company:
+      column:         company
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        comment:      "Company for the address"
+    street1:
+      column:         street1
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        comment:      "Street line 1 for the address"
+    street2:
+      column:         street2
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        comment:      "Street line 2 for the address"
+    city:
+      column:         city
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        comment:      "City for the address"
+    postalCode:
+      column:         postalCode
+      type:           string
+      nullable:       true
+      length:         20
+      options:
+        comment:      "Postal code for the address"
+    phone:
+      column:         phone
+      type:           string
+      nullable:       true
+      length:         20
+      options:
+        comment:      "Phone number for this address"
+    email:
+      column:         email
+      type:           string
+      nullable:       true
+      length:         50
+      options:
+        comment:      "Email for this address"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Address was created"
+        default:      CURRENT_datetime

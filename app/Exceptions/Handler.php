@@ -14,6 +14,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
+        \League\OAuth2\Server\Exception\AccessDeniedException::class,
         \Illuminate\Auth\AuthenticationException::class,
         \Illuminate\Auth\Access\AuthorizationException::class,
         \Symfony\Component\HttpKernel\Exception\HttpException::class,
@@ -32,7 +33,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        parent::report($exception);
+        if ($exception->getCode() == 500 || ($this->isHttpException($exception) && $exception->getStatusCode() == 500))
+        {
+            parent::report($exception);
+        }
     }
 
     /**
@@ -44,6 +48,39 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if (!config('app.debug') || $this->isHttpException($exception))
+        {
+            $response = [
+                'message'           => $exception->getMessage(),
+            ];
+
+            $status                 = 500;
+
+            //  HttpException checks
+            if ($this->isHttpException($exception))
+            {
+                $status = $exception->getStatusCode();
+                if ($status == 404)
+                {
+                    if (empty($response['message']))
+                        $response['message'] = 'You are most likely trying access a route that does not exist. Check your spelling and syntax.';
+                }
+            }
+
+
+
+            if (config('app.debug'))
+            {
+                $response['debug'] = [
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'exception' => $exception->getTraceAsString()
+                ];
+            }
+
+            return response()->json($response, $status);
+        }
+
         return parent::render($request, $exception);
     }
 

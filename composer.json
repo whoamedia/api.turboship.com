@@ -8,7 +8,17 @@
         "php": ">=5.6.4",
         "laravel/framework": "5.3.*",
         "guzzlehttp/guzzle": "^6.2",
-        "aws/aws-sdk-php-laravel": "^3.1"
+        "aws/aws-sdk-php-laravel": "^3.1",
+        "barryvdh/laravel-ide-helper": "^2.2",
+        "barryvdh/laravel-cors": "^0.8.2",
+        "aws/aws-sdk-php": "^3.20",
+        "bugsnag/bugsnag-laravel": "^2.4",
+        "barryvdh/laravel-dompdf": "^0.7.0",
+        "laravel-doctrine/orm": "^1.2",
+        "jamesvweston/php-utilities": "dev-master",
+        "soapbox/laravel-formatter": "^2.0",
+        "lucadegasperi/oauth2-server-laravel": "^5.2",
+        "respect/validation": "^1.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -43,10 +53,14 @@
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan optimize"
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
+            "php artisan optimize --force"
         ]
     },
     "config": {
         "preferred-install": "dist"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable" : true
 }

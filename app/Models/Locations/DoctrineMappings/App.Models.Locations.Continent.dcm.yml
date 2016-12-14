@@ -1,0 +1,38 @@
+App\Models\Locations\Continent:
+  type:               entity
+  table:              Continent
+  repositoryClass:    App\Repositories\Doctrine\Locations\ContinentRepository
+
+  oneToMany:
+    countries:
+      targetEntity:   Country
+      mappedBy:       continent
+      cascade:        ["persist", "remove"]
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Continent id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         30
+      options:
+        comment:      "Continent unique name"
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      length:         3
+      options:
+        comment:      "Continent unique symbol"

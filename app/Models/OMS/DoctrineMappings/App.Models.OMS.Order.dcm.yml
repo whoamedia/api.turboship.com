@@ -1,0 +1,88 @@
+App\Models\OMS\Order:
+  type:               entity
+  table:              Order
+  repositoryClass:    App\Repositories\Doctrine\OMS\OrderRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Order id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "Order externalId"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Order was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    toAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       true
+      fetch:          EAGER
+      options:
+        default:      NULL
+      joinColumn:
+        name:         toAddressId
+        referencedColumnName: id
+    providedAddress:
+      targetEntity:   App\Models\Locations\ProvidedAddress
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         providedAddressId
+        referencedColumnName: id
+    billingAddress:
+      targetEntity:   App\Models\Locations\ProvidedAddress
+      nullable:       false
+      fetch:          LAZY
+      joinColumn:
+        name:         billingAddressId
+        referencedColumnName: id
+    source:
+      targetEntity:   OrderSource
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         orderSourceId
+        referencedColumnName: id
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
+    status:
+      targetEntity:   OrderStatusHistory
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         statusId
+        referencedColumnName: id
+
+  oneToMany:
+    items:
+      targetEntity:   OrderItem
+      mappedBy:       order
+      cascade:        ["persist", "remove"]
+    statusHistory:
+      targetEntity:   OrderStatusHistory
+      mappedBy:       order
+      cascade:        ["persist", "remove"]

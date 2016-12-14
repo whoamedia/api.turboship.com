@@ -178,6 +178,18 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Third-Party Providers...
+         */
+        Aws\Laravel\AwsServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        LaravelDoctrine\ORM\DoctrineServiceProvider::class,
+        LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
+        LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
+
     ],
 
     /*
@@ -226,6 +238,15 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+
+        /*
+         * Third-Party Aliases
+         */
+        'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
+        'AWS'                   => Aws\Laravel\AwsFacade::class,
+        'Bugsnag'               => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'EntityManager'         => LaravelDoctrine\ORM\Facades\EntityManager::class,
+        'PDF'                   => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

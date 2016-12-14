@@ -1,0 +1,47 @@
+App\Models\WMS\Product:
+  type:               entity
+  table:              Product
+  repositoryClass:    App\Repositories\Doctrine\WMS\ProductRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Product id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Product name"
+    description:
+      column:         description
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Product description"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Product was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     products
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
