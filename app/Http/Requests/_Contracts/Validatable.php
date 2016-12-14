@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Requests;
+namespace App\Http\Requests\_Contracts;
 
 
 interface Validatable

@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Requests\Users;
+namespace App\Http\Requests\Users;
 
 
-use App\Requests\Validatable;
+use App\Http\Requests\_Contracts\Cleanable;
+use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use jamesvweston\Utilities\InputUtil;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class GetUsersRequest implements Validatable, \JsonSerializable
+class GetUsersRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -46,7 +49,13 @@ class GetUsersRequest implements Validatable, \JsonSerializable
 
     public function validate()
     {
-        // TODO: Implement validate() method.
+
+    }
+
+    public function clean ()
+    {
+        $this->ids                      = InputUtil::getIdsString($this->ids);
+        $this->organizationIds          = InputUtil::getIdsString($this->organizationIds);
     }
 
     /**
