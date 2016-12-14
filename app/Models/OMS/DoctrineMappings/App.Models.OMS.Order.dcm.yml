@@ -55,6 +55,10 @@ App\Models\OMS\Order:
         referencedColumnName: id
 
   oneToMany:
+    items:
+      targetEntity:   OrderItem
+      mappedBy:       order
+      cascade:        ["persist", "remove"]
     statusHistory:
       targetEntity:   OrderStatusHistory
       mappedBy:       order

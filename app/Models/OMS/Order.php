@@ -38,6 +38,11 @@ class Order implements \JsonSerializable
     /**
      * @var ArrayCollection
      */
+    protected $items;
+
+    /**
+     * @var ArrayCollection
+     */
     protected $statusHistory;
 
     /**
@@ -53,6 +58,7 @@ class Order implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
+        $this->items                    = new ArrayCollection();
         $this->statusHistory            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
@@ -72,6 +78,12 @@ class Order implements \JsonSerializable
         $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
+
+        $object['items']                = [];
+        foreach ($this->getItems() AS $item)
+        {
+            $object['items'][]          = $item->jsonSerialize();
+        }
 
         return $object;
     }
@@ -130,6 +142,23 @@ class Order implements \JsonSerializable
     public function setClient($client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @return OrderItem[]
+     */
+    public function getItems ()
+    {
+        return $this->items->toArray();
+    }
+
+    /**
+     * @param OrderItem $item
+     */
+    public function addItem (OrderItem $item)
+    {
+        $item->setOrder($this);
+        $this->items->add($item);
     }
 
     /**

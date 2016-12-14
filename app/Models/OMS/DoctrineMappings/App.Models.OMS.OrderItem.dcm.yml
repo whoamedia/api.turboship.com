@@ -1,0 +1,49 @@
+App\Models\OMS\OrderItem:
+  type:               entity
+  table:              OrderItem
+  repositoryClass:    App\Repositories\Doctrine\OMS\OrderItemRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'OrderItem id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "OrderItem externalId"
+    statusId:
+      column:         statusId
+      type:           integer
+      nullable:       false
+      options:
+        default:      1
+        comment:      "OrderItem externalId"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the OrderItem was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    order:
+      targetEntity:   Order
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     items
+      joinColumn:
+        name:         orderId
+        referencedColumnName: id
