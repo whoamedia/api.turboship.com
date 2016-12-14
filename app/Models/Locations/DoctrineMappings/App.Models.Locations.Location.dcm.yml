@@ -1,0 +1,59 @@
+App\Models\Locations\Location:
+  type:               entity
+  table:              Location
+  repositoryClass:    App\Repositories\Locations\LocationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Location id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    street1:
+      column:         street1
+      type:           string
+      nullable:       false
+      options:
+        comment:      "street1 of the Location"
+    street2:
+      column:         street2
+      type:           string
+      nullable:       true
+      options:
+        comment:      "street2 for the Location"
+    city:
+      column:         city
+      type:           string
+      nullable:       false
+      options:
+        comment:      "city of the Location"
+    postalCode:
+      column:         postalCode
+      type:           string
+      nullable:       false
+      length:         50
+      options:
+        comment:      "postalCode of the Location"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Address was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    subdivision:
+      targetEntity:   Subdivision
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         subdivisionId
+        referencedColumnName: id

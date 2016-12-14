@@ -1,0 +1,40 @@
+App\Models\WMS\FulfillmentCenter:
+  type:               entity
+  table:              FulfillmentCenter
+  repositoryClass:    App\Repositories\Doctrine\WMS\FulfillmentCenterRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'FulfillmentCenter id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      options:
+        comment:      "FulfillmentCenter name"
+
+  manyToOne:
+    location:
+      targetEntity:   App\Models\Locations\Location
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         locationId
+        referencedColumnName: id
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
