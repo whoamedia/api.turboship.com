@@ -39,3 +39,9 @@ App\Models\WMS\FulfillmentCenter:
       joinColumn:
         name:         organizationId
         referencedColumnName: id
+
+  oneToMany:
+    printers:
+      targetEntity:   Printer
+      mappedBy:       fulfillmentCenter
+      cascade:        ["persist", "remove"]

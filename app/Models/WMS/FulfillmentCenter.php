@@ -5,6 +5,7 @@ namespace App\Models\WMS;
 
 use App\Models\CMS\Organization;
 use App\Models\Locations\Location;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class FulfillmentCenter
@@ -30,6 +31,11 @@ class FulfillmentCenter
      */
     protected $organization;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $printers;
+
 
     /**
      * FulfillmentCenter constructor.
@@ -37,6 +43,8 @@ class FulfillmentCenter
      */
     public function __construct($data = [])
     {
+        $this->printers                 = new ArrayCollection();
+
         $this->name                     = AU::get($data['name']);
         $this->location                 = AU::get($data['location']);
         $this->organization             = AU::get($data['organization']);
@@ -110,6 +118,23 @@ class FulfillmentCenter
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @param Printer $printer
+     */
+    public function addPrinter (Printer $printer)
+    {
+        $printer->setFulfillmentCenter($this);
+        $this->printers->add($printer);
+    }
+
+    /**
+     * @return Printer[]
+     */
+    public function getPrinters ()
+    {
+        return $this->printers->toArray();
     }
 
 }

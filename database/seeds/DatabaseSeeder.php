@@ -18,9 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(SubdivisionAltNameSeeder::class);
         $this->call(PostalDistrictSeeder::class);
         $this->call(PostalDistrictSubdivisionSeeder::class);
-        $this->call(OrganizationSeeder::class);
-        $this->call(UserSeeder::class);
 
-        $this->call(ClientSeeder::class);
+        $this->call(WhoaMediaSeeder::class);
+        $this->call(NicheLogisticsSeeder::class);
     }
 }
