@@ -81,7 +81,7 @@ class OrderSourceRepository extends BaseRepository
      */
     public function getOneByName($name)
     {
-        return $this->find($name);
+        return $this->findOneBy(['name' => $name]);
     }
 
 }

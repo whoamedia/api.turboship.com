@@ -18,6 +18,9 @@ class CreateOrderTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('externalId')->index();
 
+            $table->integer('toAddressId')->unsigned()->index()->nullable()->default(NULL);
+            $table->foreign('toAddressId')->references('id')->on('Address');
+
             $table->integer('orderSourceId')->unsigned()->index();
             $table->foreign('orderSourceId')->references('id')->on('OrderSource');
 

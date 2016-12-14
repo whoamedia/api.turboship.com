@@ -32,6 +32,15 @@ App\Models\OMS\Order:
         default:      CURRENT_datetime
 
   manyToOne:
+    toAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       true
+      fetch:          EAGER
+      options:
+        default:      NULL
+      joinColumn:
+        name:         toAddressId
+        referencedColumnName: id
     source:
       targetEntity:   OrderSource
       nullable:       false

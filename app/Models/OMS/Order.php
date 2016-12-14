@@ -4,6 +4,7 @@ namespace App\Models\OMS;
 
 
 use App\Models\CMS\Client;
+use App\Models\Locations\Address;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -19,6 +20,11 @@ class Order implements \JsonSerializable
      * @var string
      */
     protected $externalId;
+
+    /**
+     * @var Address|null
+     */
+    protected $toAddress;
 
     /**
      * @var OrderSource
@@ -62,6 +68,7 @@ class Order implements \JsonSerializable
         $this->statusHistory            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
+        $this->toAddress                = AU::get($data['toAddress']);
         $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
@@ -75,6 +82,7 @@ class Order implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
+        $object['toAddress']            = is_null($this->toAddress) ? NULL : $this->toAddress->jsonSerialize();
         $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
@@ -110,6 +118,22 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return Address|null
+     */
+    public function getToAddress()
+    {
+        return $this->toAddress;
+    }
+
+    /**
+     * @param Address|null $toAddress
+     */
+    public function setToAddress($toAddress)
+    {
+        $this->toAddress = $toAddress;
     }
 
     /**
