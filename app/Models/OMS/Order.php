@@ -5,6 +5,7 @@ namespace App\Models\OMS;
 
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
+use App\Models\Locations\ProvidedAddress;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -25,6 +26,16 @@ class Order implements \JsonSerializable
      * @var Address|null
      */
     protected $toAddress;
+
+    /**
+     * @var ProvidedAddress
+     */
+    protected $providedAddress;
+
+    /**
+     * @var ProvidedAddress
+     */
+    protected $billingAddress;
 
     /**
      * @var OrderSource
@@ -69,6 +80,8 @@ class Order implements \JsonSerializable
 
         $this->externalId               = AU::get($data['externalId']);
         $this->toAddress                = AU::get($data['toAddress']);
+        $this->providedAddress          = AU::get($data['providedAddress'], new ProvidedAddress());
+        $this->billingAddress           = AU::get($data['billingAddress'], new ProvidedAddress());
         $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
@@ -83,6 +96,7 @@ class Order implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
         $object['toAddress']            = is_null($this->toAddress) ? NULL : $this->toAddress->jsonSerialize();
+        $object['providedAddress']      = $this->providedAddress->jsonSerialize();
         $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
@@ -134,6 +148,38 @@ class Order implements \JsonSerializable
     public function setToAddress($toAddress)
     {
         $this->toAddress = $toAddress;
+    }
+
+    /**
+     * @return ProvidedAddress
+     */
+    public function getProvidedAddress()
+    {
+        return $this->providedAddress;
+    }
+
+    /**
+     * @param ProvidedAddress $providedAddress
+     */
+    public function setProvidedAddress($providedAddress)
+    {
+        $this->providedAddress = $providedAddress;
+    }
+
+    /**
+     * @return ProvidedAddress
+     */
+    public function getBillingAddress()
+    {
+        return $this->billingAddress;
+    }
+
+    /**
+     * @param ProvidedAddress $billingAddress
+     */
+    public function setBillingAddress($billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
     }
 
     /**

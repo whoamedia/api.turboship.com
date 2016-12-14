@@ -21,6 +21,12 @@ class CreateOrderTable extends Migration
             $table->integer('toAddressId')->unsigned()->index()->nullable()->default(NULL);
             $table->foreign('toAddressId')->references('id')->on('Address');
 
+            $table->integer('providedAddressId')->unsigned()->index();
+            $table->foreign('providedAddressId')->references('id')->on('ProvidedAddress');
+
+            $table->integer('billingAddressId')->unsigned()->index();
+            $table->foreign('billingAddressId')->references('id')->on('ProvidedAddress');
+
             $table->integer('orderSourceId')->unsigned()->index();
             $table->foreign('orderSourceId')->references('id')->on('OrderSource');
 
