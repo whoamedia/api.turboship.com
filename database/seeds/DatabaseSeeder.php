@@ -20,5 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PostalDistrictSubdivisionSeeder::class);
         $this->call(OrganizationSeeder::class);
         $this->call(UserSeeder::class);
+
+        $this->call(ClientSeeder::class);
     }
 }
