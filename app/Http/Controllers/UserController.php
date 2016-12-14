@@ -31,7 +31,6 @@ class UserController extends Controller
      */
     public function index (Request $request)
     {
-        throw new \Exception('Testing bugsnag', 500);
         $authUser                       = \Auth::getUser();
 
         $getUsersRequest                = new GetUsersRequest($request->input());
