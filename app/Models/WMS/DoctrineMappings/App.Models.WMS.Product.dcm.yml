@@ -1,7 +1,7 @@
-App\Models\CMS\Client:
+App\Models\WMS\Product:
   type:               entity
-  table:              Client
-  repositoryClass:    App\Repositories\Doctrine\CMS\ClientRepository
+  table:              Product
+  repositoryClass:    App\Repositories\Doctrine\WMS\ProductRepository
 
   id:
     id:
@@ -10,7 +10,7 @@ App\Models\CMS\Client:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'Client id'
+        comment:      'Product id'
       id:             true
       generator:
         strategy:     IDENTITY
@@ -20,29 +20,28 @@ App\Models\CMS\Client:
       column:         name
       type:           string
       nullable:       false
-      length:         100
       options:
-        comment:      "Client name"
+        comment:      "Product name"
+    description:
+      column:         description
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Product description"
     createdAt:
       column:         createdAt
       type:           datetime
       nullable:       false
       options:
-        comment:      "When the Client was created"
+        comment:      "When the Product was created"
         default:      CURRENT_datetime
 
   manyToOne:
-    organization:
-      targetEntity:   Organization
+    client:
+      targetEntity:   App\Models\CMS\Client
       nullable:       false
       fetch:          EAGER
-      inversedBy:     clients
+      inversedBy:     products
       joinColumn:
-        name:         organizationId
+        name:         clientId
         referencedColumnName: id
-
-  oneToMany:
-    products:
-      targetEntity:   App\Models\WMS\Product
-      mappedBy:       client
-      cascade:        ["persist", "remove"]

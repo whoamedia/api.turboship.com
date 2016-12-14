@@ -15,16 +15,6 @@ App\Models\CMS\Organization:
       generator:
         strategy:     IDENTITY
 
-  oneToMany:
-    users:
-      targetEntity:   User
-      mappedBy:       organization
-      cascade:        ["persist", "remove"]
-    clients:
-      targetEntity:   Client
-      mappedBy:       organization
-      cascade:        ["persist", "remove"]
-
   fields:
     name:
       column:         name
@@ -40,3 +30,13 @@ App\Models\CMS\Organization:
       options:
         comment:      "When the Organization was created"
         default:      CURRENT_datetime
+
+  oneToMany:
+    users:
+      targetEntity:   User
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]
+    clients:
+      targetEntity:   Client
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]

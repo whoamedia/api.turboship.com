@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Models\CMS;
+namespace App\Models\WMS;
 
 
 use App\Models\BaseModel;
-use App\Models\WMS\Product;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Models\CMS\Client;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Client extends BaseModel
+class Product extends BaseModel
 {
 
     /**
@@ -22,14 +21,14 @@ class Client extends BaseModel
     protected $name;
 
     /**
-     * @var Organization
+     * @var string|null
      */
-    protected $organization;
+    protected $description;
 
     /**
-     * @var ArrayCollection
+     * @var Client
      */
-    protected $products;
+    protected $client;
 
     /**
      * @var \DateTime
@@ -37,17 +36,13 @@ class Client extends BaseModel
     protected $createdAt;
 
 
-    /**
-     * Client constructor.
-     * @param array $data
-     */
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
-        $this->products                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
-        $this->organization             = AU::get($data['organization']);
+        $this->description              = AU::get($data['description']);
+        $this->client                   = AU::get($data['client']);
     }
 
     /**
@@ -57,7 +52,8 @@ class Client extends BaseModel
     {
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
-        $object['organization']         = $this->getOrganization()->jsonSerialize();
+        $object['client']               = $this->getClient()->jsonSerialize();
+        $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
 
         return $object;
@@ -93,19 +89,35 @@ class Client extends BaseModel
     }
 
     /**
-     * @return Organization
+     * @return null|string
      */
-    public function getOrganization()
+    public function getDescription()
     {
-        return $this->organization;
+        return $this->description;
     }
 
     /**
-     * @param Organization $organization
+     * @param null|string $description
      */
-    public function setOrganization($organization)
+    public function setDescription($description)
     {
-        $this->organization = $organization;
+        $this->description = $description;
+    }
+
+    /**
+     * @return Client
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param Client $client
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
     }
 
     /**
@@ -116,21 +128,5 @@ class Client extends BaseModel
         return $this->createdAt;
     }
 
-    /**
-     * @param Product $product
-     */
-    public function addProduct(Product $product)
-    {
-        $product->setClient($this);
-        $this->products->add($product);
-    }
-
-    /**
-     * @return Product[]
-     */
-    public function getProducts ()
-    {
-        return $this->products->toArray();
-    }
 
 }
