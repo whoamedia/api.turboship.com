@@ -20,6 +20,10 @@ App\Models\CMS\Organization:
       targetEntity:   User
       mappedBy:       organization
       cascade:        ["persist", "remove"]
+    clients:
+      targetEntity:   Client
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]
 
   fields:
     name:

@@ -28,6 +28,11 @@ class Organization extends BaseModel
     /**
      * @var ArrayCollection
      */
+    protected $clients;
+
+    /**
+     * @var ArrayCollection
+     */
     protected $users;
     
     /**
@@ -43,6 +48,7 @@ class Organization extends BaseModel
     public function __construct($data = null)
     {
         $this->createdAt                = new \DateTime();
+        $this->clients                  = new ArrayCollection();
         $this->users                    = new ArrayCollection();
         
         if (is_array($data))
@@ -115,5 +121,22 @@ class Organization extends BaseModel
     {
         return $this->users->toArray();
     }
-    
+
+    /**
+     * @param Client $client
+     */
+    public function addClient(Client $client)
+    {
+        $client->setOrganization($this);
+        $this->clients->add($client);
+    }
+
+    /**
+     * @return Client[]
+     */
+    public function getClients ()
+    {
+        return $this->clients->toArray();
+    }
+
 }

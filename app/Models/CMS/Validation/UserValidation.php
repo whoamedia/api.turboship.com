@@ -5,6 +5,7 @@ namespace App\Models\CMS\Validation;
 
 use App\Repositories\Doctrine\CMS\UserRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\CMS\User;
 
@@ -70,7 +71,7 @@ class UserValidation
         $user                           = $this->userRepo->getOneByEmail($email);
 
         if (!is_null($user))
-            throw new NotFoundHttpException('User email already exists');
+            throw new BadRequestHttpException('User email already exists');
 
         return null;
     }

@@ -18,6 +18,13 @@ Route::post('/oauth/access_token',
 Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 {
 
+    //  Client Operations
+    Route::get('/clients', 'ClientController@index');
+    Route::get('/clients/{id}', 'ClientController@show');
+    Route::put('/clients/{id}', 'ClientController@update');
+    Route::post('/clients', 'ClientController@store');
+
+
     //  Country Operations
     Route::get('/countries', 'CountryController@index');
     Route::get('/countries/{id}', 'CountryController@show');
