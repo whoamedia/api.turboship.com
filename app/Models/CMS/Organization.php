@@ -4,6 +4,7 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
+use App\Models\WMS\FulfillmentCenter;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -33,6 +34,11 @@ class Organization extends BaseModel
     /**
      * @var ArrayCollection
      */
+    protected $fulfillmentCenters;
+
+    /**
+     * @var ArrayCollection
+     */
     protected $users;
     
     /**
@@ -49,6 +55,7 @@ class Organization extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->clients                  = new ArrayCollection();
+        $this->fulfillmentCenters       = new ArrayCollection();
         $this->users                    = new ArrayCollection();
         
         if (is_array($data))
@@ -137,6 +144,23 @@ class Organization extends BaseModel
     public function getClients ()
     {
         return $this->clients->toArray();
+    }
+
+    /**
+     * @param FulfillmentCenter $fulfillmentCenter
+     */
+    public function addFulfillmentCenter(FulfillmentCenter $fulfillmentCenter)
+    {
+        $fulfillmentCenter->setOrganization($this);
+        $this->fulfillmentCenters->add($fulfillmentCenter);
+    }
+
+    /**
+     * @return FulfillmentCenter[]
+     */
+    public function getFulfillmentCenters ()
+    {
+        return $this->fulfillmentCenters->toArray();
     }
 
 }

@@ -35,6 +35,7 @@ App\Models\WMS\FulfillmentCenter:
       targetEntity:   App\Models\CMS\Organization
       nullable:       false
       fetch:          EAGER
+      inversedBy:     fulfillmentCenters
       joinColumn:
         name:         organizationId
         referencedColumnName: id
