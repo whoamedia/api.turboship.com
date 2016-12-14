@@ -18,9 +18,6 @@ class CreateOrderTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('externalId')->index();
 
-            $table->integer('organizationId')->unsigned()->index();
-            $table->foreign('organizationId')->references('id')->on('Organization');
-
             $table->integer('orderSourceId')->unsigned()->index();
             $table->foreign('orderSourceId')->references('id')->on('OrderSource');
 
@@ -34,7 +31,7 @@ class CreateOrderTable extends Migration
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
-            $table->unique(['externalId', 'organizationId', 'orderSourceId', 'clientId']);
+            $table->unique(['externalId', 'orderSourceId', 'clientId']);
         });
 
 

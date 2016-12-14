@@ -4,7 +4,6 @@ namespace App\Models\OMS;
 
 
 use App\Models\CMS\Client;
-use App\Models\CMS\Organization;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -20,11 +19,6 @@ class Order implements \JsonSerializable
      * @var string
      */
     protected $externalId;
-
-    /**
-     * @var Organization
-     */
-    protected $organization;
 
     /**
      * @var OrderSource
@@ -62,7 +56,6 @@ class Order implements \JsonSerializable
         $this->statusHistory            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
-        $this->organization             = AU::get($data['organization']);
         $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
@@ -76,7 +69,6 @@ class Order implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
-        $object['organization']         = $this->organization->jsonSerialize();
         $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
@@ -106,22 +98,6 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
-    }
-
-    /**
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * @param Organization $organization
-     */
-    public function setOrganization($organization)
-    {
-        $this->organization = $organization;
     }
 
     /**

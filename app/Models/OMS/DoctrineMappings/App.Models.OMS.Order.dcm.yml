@@ -32,13 +32,6 @@ App\Models\OMS\Order:
         default:      CURRENT_datetime
 
   manyToOne:
-    organization:
-      targetEntity:   App\Models\CMS\Organization
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         organizationId
-        referencedColumnName: id
     source:
       targetEntity:   OrderSource
       nullable:       false
