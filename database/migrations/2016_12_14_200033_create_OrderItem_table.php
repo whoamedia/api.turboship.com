@@ -17,6 +17,10 @@ class CreateOrderItemTable extends Migration
         {
             $table->increments('id')->unsigned();
             $table->string('externalId')->index()->nullable()->default(NULL);
+            $table->string('sku')->index();
+            $table->integer('quantity')->unsigned()->index();
+            $table->decimal('declaredValue', 10, 2)->unsigned()->index();
+
 
             $table->integer('orderId')->unsigned()->index();
             $table->foreign('orderId')->references('id')->on('Order');
@@ -24,6 +28,7 @@ class CreateOrderItemTable extends Migration
 
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index();
+            $table->foreign('statusId')->references('id')->on('OrderStatus');
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });

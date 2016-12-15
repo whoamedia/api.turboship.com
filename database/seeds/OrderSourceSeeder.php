@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use \App\Utilities\OrderSourceUtility;
 
 class OrderSourceSeeder extends Seeder
 {
@@ -19,8 +20,14 @@ class OrderSourceSeeder extends Seeder
     private function getSources ()
     {
         return [
-            ['id'    => 1,       'name'  => 'Internal',],
-            ['id'    => 2,       'name'  => 'Shopify',],
+            [
+                'id'    => OrderSourceUtility::INTERNAL_ID,
+                'name'  => 'Internal',
+            ],
+            [
+                'id'    => OrderSourceUtility::SHOPIFY_ID,
+                'name'  => 'Shopify',
+            ],
         ];
     }
 }

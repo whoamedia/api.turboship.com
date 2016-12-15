@@ -6,6 +6,7 @@ namespace App\Models\OMS;
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
 use App\Models\Locations\ProvidedAddress;
+use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -48,7 +49,7 @@ class Order implements \JsonSerializable
     protected $client;
 
     /**
-     * @var OrderStatusHistory
+     * @var OrderStatus
      */
     protected $status;
 
@@ -85,6 +86,15 @@ class Order implements \JsonSerializable
         $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
+
+        if (is_null($this->status))
+        {
+            /**
+             * Add the created status but don't add it to the OrderStatusHistory
+             */
+            $orderStatusUtility         = new OrderStatusUtility();
+            $this->status               = $orderStatusUtility->getCreated();
+        }
     }
 
 
@@ -232,7 +242,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return OrderStatusHistory
+     * @return OrderStatus
      */
     public function getStatus()
     {
@@ -244,11 +254,12 @@ class Order implements \JsonSerializable
      */
     public function addStatus ($status)
     {
+        $this->status                   = $status;
+
         $orderStatusHistory             = new OrderStatusHistory();
         $orderStatusHistory->setOrder($this);
         $orderStatusHistory->setStatus($status);
 
-        $this->status                   = $orderStatusHistory;
         $this->statusHistory->add($orderStatusHistory);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use \App\Utilities\OrderStatusUtility;
 
 class OrderStatusSeeder extends Seeder
 {
@@ -19,25 +20,92 @@ class OrderStatusSeeder extends Seeder
     private function getSources ()
     {
         return [
+
+            /**
+             * LifeCycle
+             */
+            [
+                'id'    => OrderStatusUtility::CREATED_ID,
+                'name'  => 'Created',
+                'isError' => false
+            ],
+
+
+
+
             /**
              * Error Statuses
              */
-            ['id'    => 100,       'name'  => 'Back Ordered',           'isError' => true],
+            [
+                'id'    => OrderStatusUtility::INVALID_CITY_ID,
+                'name'  => 'Invalid City',
+                'isError' => true
+            ],
+            [
+                'id'    => OrderStatusUtility::INVALID_STATE_ID,
+                'name'  => 'Invalid State',
+                'isError' => true
+            ],
+            [
+                'id'    => OrderStatusUtility::INVALID_ADDRESS_ID,
+                'name'  => 'Invalid Address',
+                'isError' => true
+            ],
+            [
+                'id'    => OrderStatusUtility::MULTIPLE_ADDRESSES_FOUND_ID,
+                'name'  => 'Multiple Addresses Found',
+                'isError' => true
+            ],
+            [
+                'id'    => OrderStatusUtility::INVALID_POSTAL_CODE_ID,
+                'name'  => 'Invalid Postal Code',
+                'isError' => true
+            ],
+            [
+                'id'    => OrderStatusUtility::INVALID_COUNTRY_ID,
+                'name'  => 'Invalid Country',
+                'isError' => true
+            ],
+
+
 
 
             /**
              * Fulfillment Operations
              */
-            ['id'    => 200,       'name'  => 'Pending Fulfillment',    'isError' => false],
-            ['id'    => 201,       'name'  => 'Pulled',                 'isError' => false],
-            ['id'    => 202,       'name'  => 'Picked',                 'isError' => false],
+            [
+                'id'    => OrderStatusUtility::PENDING_FULFILLMENT_ID,
+                'name'  => 'Pending Fulfillment',
+                'isError' => false
+            ],
+            [
+                'id'    => OrderStatusUtility::PULLED_ID,
+                'name'  => 'Pulled',
+                'isError' => false
+            ],
+            [
+                'id'    => OrderStatusUtility::PICKED_ID,
+                'name'  => 'Picked',
+                'isError' => false
+            ],
+
+
 
 
             /**
              * Shipping Operations
              */
-            ['id'    => 300,       'name'  => 'Partially Shipped',      'isError' => false],
-            ['id'    => 301,       'name'  => 'Fully Shipped',          'isError' => false],
+            [
+                'id'    => OrderStatusUtility::PARTIALLY_SHIPPED_ID,
+                'name'  => 'Partially Shipped',
+                'isError' => false
+            ],
+            [
+                'id'    => OrderStatusUtility::FULLY_SHIPPED_ID,
+                'name'  => 'Fully Shipped',
+                'isError' => false
+            ],
+
         ];
     }
 }

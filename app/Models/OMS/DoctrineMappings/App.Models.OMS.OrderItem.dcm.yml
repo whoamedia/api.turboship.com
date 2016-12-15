@@ -21,15 +21,28 @@ App\Models\OMS\OrderItem:
       type:           string
       nullable:       false
       options:
-        fixed:        false
         comment:      "OrderItem externalId"
-    statusId:
-      column:         statusId
+    sku:
+      column:         sku
+      type:           string
+      nullable:       false
+      options:
+        comment:      "OrderItem sku"
+    quantity:
+      column:         quantity
       type:           integer
       nullable:       false
       options:
-        default:      1
-        comment:      "OrderItem externalId"
+        unsigned:     true
+    declaredValue:
+      column:         declaredValue
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
     createdAt:
       column:         createdAt
       type:           datetime
@@ -46,4 +59,11 @@ App\Models\OMS\OrderItem:
       inversedBy:     items
       joinColumn:
         name:         orderId
+        referencedColumnName: id
+    status:
+      targetEntity:   OrderStatus
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         statusId
         referencedColumnName: id

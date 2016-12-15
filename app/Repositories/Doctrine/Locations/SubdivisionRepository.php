@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use App\Models\Locations\Subdivision;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Illuminate\Pagination\LengthAwarePaginator;
+use jamesvweston\Utilities\InputUtil;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 
 class SubdivisionRepository extends BaseRepository
@@ -114,4 +115,19 @@ class SubdivisionRepository extends BaseRepository
         return $this->findOneBy(['symbol' => $symbol]);
     }
 
+    /**
+     * @param   mixed           $param
+     * @param   string|null     $countryISO2
+     * @return  Subdivision|null
+     */
+    public function getOneByWildCard ($param, $countryISO2 = null)
+    {
+        if (!is_null(InputUtil::getInt($param)))
+            return $this->getOneById(InputUtil::getInt($param));
+        else if (!is_null($countryISO2))
+            return $this->getOneBySymbol($countryISO2 . '-' . $param);
+        else
+            return null;
+
+    }
 }

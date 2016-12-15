@@ -3,6 +3,7 @@
 namespace App\Models\OMS;
 
 
+use App\Utilities\OrderStatusUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class OrderItem implements \JsonSerializable
@@ -19,14 +20,29 @@ class OrderItem implements \JsonSerializable
     protected $externalId;
 
     /**
+     * @var string
+     */
+    protected $sku;
+
+    /**
+     * @var int
+     */
+    protected $quantity;
+
+    /**
+     * @var float
+     */
+    protected $declaredValue;
+
+    /**
      * @var Order
      */
     protected $order;
 
     /**
-     * @var int
+     * @var OrderStatus
      */
-    protected $statusId;
+    protected $status;
 
     /**
      * @var \DateTime
@@ -43,8 +59,17 @@ class OrderItem implements \JsonSerializable
         $this->createdAt                = new \DateTime();
 
         $this->externalId               = AU::get($data['externalId']);
-        $this->statusId                 = AU::get($data['statusId']);
+        $this->sku                      = AU::get($data['sku']);
+        $this->quantity                 = AU::get($data['quantity']);
+        $this->declaredValue            = AU::get($data['declaredValue']);
+        $this->status                   = AU::get($data['status']);
         $this->order                    = AU::get($data['order']);
+
+        if (is_null($this->status))
+        {
+            $orderStatusUtility         = new OrderStatusUtility();
+            $this->setStatus($orderStatusUtility->getCreated());
+        }
     }
 
     /**
@@ -54,7 +79,10 @@ class OrderItem implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
-        $object['statusId']             = $this->statusId;
+        $object['sku']                  = $this->sku;
+        $object['quantity']             = $this->quantity;
+        $object['declaredValue']        = $this->declaredValue;
+        $object['status']               = $this->status->jsonSerialize();
 
         return $object;
     }
@@ -84,6 +112,55 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getSku()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * @param string $sku
+     */
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param int $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+
+    /**
+     * @return float
+     */
+    public function getDeclaredValue()
+    {
+        return $this->declaredValue;
+    }
+
+    /**
+     * @param float $declaredValue
+     */
+    public function setDeclaredValue($declaredValue)
+    {
+        $this->declaredValue = $declaredValue;
+    }
+
+
+    /**
      * @return Order
      */
     public function getOrder()
@@ -100,19 +177,19 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return OrderStatus
      */
-    public function getStatusId()
+    public function getStatus()
     {
-        return $this->statusId;
+        return $this->status;
     }
 
     /**
-     * @param int $statusId
+     * @param OrderStatus $status
      */
-    public function setStatusId($statusId)
+    public function setStatus($status)
     {
-        $this->statusId = $statusId;
+        $this->status = $status;
     }
 
     /**

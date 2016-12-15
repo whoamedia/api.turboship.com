@@ -1,6 +1,6 @@
 App\Models\OMS\Order:
   type:               entity
-  table:              Order
+  table:              "`Order`"
   repositoryClass:    App\Repositories\Doctrine\OMS\OrderRepository
 
   id:
@@ -45,6 +45,7 @@ App\Models\OMS\Order:
       targetEntity:   App\Models\Locations\ProvidedAddress
       nullable:       false
       fetch:          EAGER
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         providedAddressId
         referencedColumnName: id
@@ -52,6 +53,7 @@ App\Models\OMS\Order:
       targetEntity:   App\Models\Locations\ProvidedAddress
       nullable:       false
       fetch:          LAZY
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         billingAddressId
         referencedColumnName: id
@@ -70,7 +72,7 @@ App\Models\OMS\Order:
         name:         clientId
         referencedColumnName: id
     status:
-      targetEntity:   OrderStatusHistory
+      targetEntity:   OrderStatus
       nullable:       false
       fetch:          EAGER
       joinColumn:
