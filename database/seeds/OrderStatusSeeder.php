@@ -66,6 +66,11 @@ class OrderStatusSeeder extends Seeder
                 'name'  => 'Invalid Country',
                 'isError' => true
             ],
+            [
+                'id'    => OrderStatusUtility::INVALID_STREET_ID,
+                'name'  => 'Invalid Street Address',
+                'isError' => true
+            ],
 
 
 

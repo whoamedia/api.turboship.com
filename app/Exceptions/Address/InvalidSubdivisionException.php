@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions\Country;
+namespace App\Exceptions\Address;
 
 
 use App\Utilities\OrderStatusUtility;

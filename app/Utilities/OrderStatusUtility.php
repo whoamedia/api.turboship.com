@@ -19,6 +19,7 @@ class OrderStatusUtility
     const MULTIPLE_ADDRESSES_FOUND_ID   = 103;
     const INVALID_POSTAL_CODE_ID        = 104;
     const INVALID_COUNTRY_ID            = 105;
+    const INVALID_STREET_ID             = 106;
 
 
     //  Fulfillment Operations

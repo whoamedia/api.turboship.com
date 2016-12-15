@@ -7,6 +7,7 @@ use App\Models\CMS\Validation\ClientValidation;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Address\USPSAddressService;
 use App\Utilities\OrderSourceUtility;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Console\Command;
@@ -63,10 +64,9 @@ class TestJunkCommand extends Command
 
 
         $order                          = new Order();
-        $order->setExternalId('asdfasdfdaddffsd');
+        $order->setExternalId('asdfasdfdadddffsd');
         $order->setSource($shopify);
         $order->setClient($client);
-        //  $order->addStatus($backOrderedStatus);
 
         $orderItem                      = new OrderItem();
         $orderItem->setExternalId('asdf');
@@ -76,9 +76,20 @@ class TestJunkCommand extends Command
 
         $order->addItem($orderItem);
 
+
+        $order->getProvidedAddress()->setStreet1('24 East Liberty St');
+        $order->getProvidedAddress()->setCity('Savannah');
+        $order->getProvidedAddress()->setSubdivision('Georgia');
+        $order->getProvidedAddress()->setPostalCode('31401');
+        $order->getProvidedAddress()->setCountry('US');
+
+
+
+
         $this->orderRepo->saveAndCommit($order);
 
-        dd($order->jsonSerialize());
+        $uspsAddressService             = new USPSAddressService();
+
     }
 
 }
