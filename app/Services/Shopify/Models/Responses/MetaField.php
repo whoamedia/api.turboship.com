@@ -3,9 +3,10 @@
 namespace App\Services\Shopify\Models\Responses;
 
 
+use App\Services\Shopify\Models\Requests\CreateShopifyMetaField;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ProductImage implements \JsonSerializable
+class MetaField extends CreateShopifyMetaField implements \JsonSerializable
 {
 
     /**
@@ -16,12 +17,7 @@ class ProductImage implements \JsonSerializable
     /**
      * @var int
      */
-    protected $product_id;
-
-    /**
-     * @var int
-     */
-    protected $position;
+    protected $owner_id;
 
     /**
      * @var string
@@ -36,27 +32,17 @@ class ProductImage implements \JsonSerializable
     /**
      * @var string
      */
-    protected $src;
-
-    /**
-     * @var array
-     */
-    protected $variant_ids;
+    protected $owner_resource;
 
 
-    /**
-     * ProductImage constructor.
-     * @param array $data
-     */
     public function __construct($data = [])
     {
+        parent::__construct($data);
         $this->id                       = AU::get($data['id']);
-        $this->product_id               = AU::get($data['product_id']);
-        $this->position                 = AU::get($data['position']);
+        $this->owner_id                 = AU::get($data['owner_id']);
         $this->created_at               = AU::get($data['created_at']);
         $this->updated_at               = AU::get($data['updated_at']);
-        $this->src                      = AU::get($data['src']);
-        $this->variant_ids              = AU::get($data['variant_ids']);
+        $this->owner_resource           = AU::get($data['owner_resource']);
     }
 
     /**
@@ -64,13 +50,12 @@ class ProductImage implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+        $object                         = parent::jsonSerialize();
         $object['id']                   = $this->id;
-        $object['product_id']           = $this->product_id;
-        $object['position']             = $this->position;
+        $object['owner_id']             = $this->owner_id;
         $object['created_at']           = $this->created_at;
         $object['updated_at']           = $this->updated_at;
-        $object['src']                  = $this->src;
-        $object['variant_ids']          = $this->variant_ids;
+        $object['owner_resource']       = $this->owner_resource;
 
         return $object;
     }
@@ -94,33 +79,17 @@ class ProductImage implements \JsonSerializable
     /**
      * @return int
      */
-    public function getProductId()
+    public function getOwnerId()
     {
-        return $this->product_id;
+        return $this->owner_id;
     }
 
     /**
-     * @param int $product_id
+     * @param int $owner_id
      */
-    public function setProductId($product_id)
+    public function setOwnerId($owner_id)
     {
-        $this->product_id = $product_id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param int $position
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
+        $this->owner_id = $owner_id;
     }
 
     /**
@@ -158,33 +127,17 @@ class ProductImage implements \JsonSerializable
     /**
      * @return string
      */
-    public function getSrc()
+    public function getOwnerResource()
     {
-        return $this->src;
+        return $this->owner_resource;
     }
 
     /**
-     * @param string $src
+     * @param string $owner_resource
      */
-    public function setSrc($src)
+    public function setOwnerResource($owner_resource)
     {
-        $this->src = $src;
-    }
-
-    /**
-     * @return array
-     */
-    public function getVariantIds()
-    {
-        return $this->variant_ids;
-    }
-
-    /**
-     * @param array $variant_ids
-     */
-    public function setVariantIds($variant_ids)
-    {
-        $this->variant_ids = $variant_ids;
+        $this->owner_resource = $owner_resource;
     }
 
 }

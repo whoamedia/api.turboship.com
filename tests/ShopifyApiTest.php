@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use App\Services\Shopify\ShopifyConfiguration;
-use App\Services\Shopify\ShopifyService;
-use App\Utilities\CredentialUtility;
+use App\Services\Shopify\Models\Requests\CreateShopifyProduct;
+use App\Services\Shopify\Models\Requests\GetShopifyProducts;
+use App\Services\Shopify\Models\Responses\Product;
 
 class ShopifyApiTest extends TestCase
 {
@@ -12,23 +12,49 @@ class ShopifyApiTest extends TestCase
 
     public function testIntegration ()
     {
-        $client                         = $this->clientValidation->idExists(1);
+        $shopifyService                 = $this->getShopifyService();
 
-        $credentialUtility              = new CredentialUtility($client);
-        $apiKey                         = $credentialUtility->getShopifyApiKey()->getValue();
-        $password                       = $credentialUtility->getShopifyPassword()->getValue();
-        $hostName                       = $credentialUtility->getShopifyHostName()->getValue();
+        $getShopifyProducts             = new GetShopifyProducts();
+        $getShopifyProducts->setIds('9142425166');
+        $products                       = $shopifyService->productApi->get($getShopifyProducts);
+        foreach ($products AS $item)
+        {
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\Product', $item);
+        }
 
-        $shopifyConfiguration           = new ShopifyConfiguration();
-        $shopifyConfiguration->setApiKey($apiKey);
-        $shopifyConfiguration->setPassword($password);
-        $shopifyConfiguration->setHostName($hostName);
+        $product                        = $this->createProduct();
+        $this->assertInstanceOf('App\Services\Shopify\Models\Responses\Product', $product);
 
-        $shopifyService                 = new ShopifyService($shopifyConfiguration);
+        $product                        = $shopifyService->productApi->show($product->getId());
+        $this->assertInstanceOf('App\Services\Shopify\Models\Responses\Product', $product);
 
-        $products                       = $shopifyService->productApi->get();
+        $variants                       = $shopifyService->productApi->getVariants($product->getId());
+        foreach ($variants AS $item)
+        {
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\Variant', $item);
+        }
 
-        $count                          = $shopifyService->productApi->count();
-        dd($count);
+        $product                        = $shopifyService->productApi->update($product);
+        $this->assertInstanceOf('App\Services\Shopify\Models\Responses\Product', $product);
+
+        $deletionResponse               = $shopifyService->productApi->delete($product->getId());
+        $this->assertTrue($deletionResponse);
+    }
+
+    /**
+     * @return Product
+     */
+    private function createProduct ()
+    {
+        $shopifyService                 = $this->getShopifyService();
+
+        $product                        = new CreateShopifyProduct();
+        $product->setTitle('Burton Custom Freestyle 151');
+        $product->setBodyHtml("<strong>Good snowboard!</strong>");
+        $product->setVendor('CheapUndies');
+        $product->setProductType('Snowboard');
+
+        $product                        = $shopifyService->productApi->create($product);
+        return $product;
     }
 }

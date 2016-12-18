@@ -24,6 +24,7 @@ class Variant implements \JsonSerializable
     protected $title;
 
     /**
+     * The price of the product variant.
      * @var float
      */
     protected $price;
@@ -34,31 +35,40 @@ class Variant implements \JsonSerializable
     protected $sku;
 
     /**
+     * The order of the product variant in the list of product variants.
+     * 1 is the first position.
      * @var int
      */
     protected $position;
 
     /**
+     * The weight of the product variant in grams.
      * @var int
      */
     protected $grams;
 
     /**
+     * Specifies whether or not customers are allowed to place an order for a product variant when it's out of stock.
+     * Valid values are: deny (default), continue
      * @var string
      */
     protected $inventory_policy;
 
     /**
+     * The competitors prices for the same item.
      * @var string|null
      */
     protected $compare_at_price;
 
     /**
+     * Service which is doing the fulfillment. Possible values are manual or the handle of a FulfillmentService.
      * @var string
      */
     protected $fulfillment_service;
 
     /**
+     * Specifies whether or not Shopify tracks the number of items in stock for this product variant.
+     * Valid values are: blank, shopify
      * @var string
      */
     protected $inventory_management;
@@ -89,41 +99,60 @@ class Variant implements \JsonSerializable
     protected $updated_at;
 
     /**
+     * Specifies whether or not a tax is charged when the product variant is sold.
      * @var bool
      */
     protected $taxable;
 
     /**
+     * The barcode, UPC or ISBN number for the product.
      * @var string
      */
     protected $barcode;
 
     /**
+     * The unique numeric identifier for a product's image.
+     * Image must be associated to the same product as the variant.
      * @var int|null
      */
     protected $image_id;
 
     /**
+     * The number of items in stock for this product variant.
      * @var int
      */
     protected $inventory_quantity;
 
     /**
+     * The weight of the product variant in the unit system specified with weight_unit.
      * @var float
      */
     protected $weight;
 
     /**
+     * The unit system that the product variant's weight is measure in.
+     * The weight_unit can be either "g", "kg, "oz", or "lb".
      * @var string
      */
     protected $weight_unit;
 
     /**
+     * The original stock level the client believes the product variant has.
+     * This should be sent to avoid a race condition when the item being adjusted is simultaneously sold online.
      * @var int
      */
     protected $old_inventory_quantity;
 
     /**
+     * Instead of sending a new and old value for inventory an adjustment value can be sent.
+     * If an adjustment value is sent it will take priority.
+     * @var int|null
+     */
+    protected $inventory_quantity_adjustment;
+
+    /**
+     * Specifies whether or not a customer needs to provide a shipping address when placing an order for this product variant.
+     * Valid values are: true, false
      * @var bool
      */
     protected $requires_shipping;
@@ -142,7 +171,7 @@ class Variant implements \JsonSerializable
         $this->sku                      = AU::get($data['sku']);
         $this->position                 = AU::get($data['position']);
         $this->grams                    = AU::get($data['grams']);
-        $this->inventory_policy         = AU::get($data['inventory_policy']);
+        $this->inventory_policy         = AU::get($data['inventory_policy'], 'deny');
         $this->compare_at_price         = AU::get($data['compare_at_price']);
         $this->fulfillment_service      = AU::get($data['fulfillment_service']);
         $this->inventory_management     = AU::get($data['inventory_management']);
@@ -158,6 +187,7 @@ class Variant implements \JsonSerializable
         $this->weight                   = AU::get($data['weight']);
         $this->weight_unit              = AU::get($data['weight_unit']);
         $this->old_inventory_quantity   = AU::get($data['old_inventory_quantity']);
+        $this->inventory_quantity_adjustment = AU::get($data['inventory_quantity_adjustment']);
         $this->requires_shipping        = AU::get($data['requires_shipping']);
     }
 
@@ -189,6 +219,7 @@ class Variant implements \JsonSerializable
         $object['weight']               = $this->weight;
         $object['weight_unit']          = $this->weight_unit;
         $object['old_inventory_quantity'] = $this->old_inventory_quantity;
+        $object['inventory_quantity_adjustment'] = $this->inventory_quantity_adjustment;
         $object['requires_shipping']    = $this->requires_shipping;
 
         return $object;
@@ -560,6 +591,22 @@ class Variant implements \JsonSerializable
     public function setOldInventoryQuantity($old_inventory_quantity)
     {
         $this->old_inventory_quantity = $old_inventory_quantity;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getInventoryQuantityAdjustment()
+    {
+        return $this->inventory_quantity_adjustment;
+    }
+
+    /**
+     * @param int|null $inventory_quantity_adjustment
+     */
+    public function setInventoryQuantityAdjustment($inventory_quantity_adjustment)
+    {
+        $this->inventory_quantity_adjustment = $inventory_quantity_adjustment;
     }
 
     /**
