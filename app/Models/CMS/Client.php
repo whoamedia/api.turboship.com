@@ -4,6 +4,7 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
+use App\Models\Integrations\ClientCredential;
 use App\Models\WMS\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -32,6 +33,11 @@ class Client extends BaseModel
     protected $products;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $credentials;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -44,6 +50,7 @@ class Client extends BaseModel
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
+        $this->credentials              = new ArrayCollection();
         $this->products                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
@@ -114,6 +121,23 @@ class Client extends BaseModel
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param ClientCredential $clientCredential
+     */
+    public function addCredential (ClientCredential $clientCredential)
+    {
+        $clientCredential->setClient($this);
+        $this->credentials->add($clientCredential);
+    }
+
+    /**
+     * @return ClientCredential[]
+     */
+    public function getCredentials ()
+    {
+        return $this->credentials->toArray();
     }
 
     /**

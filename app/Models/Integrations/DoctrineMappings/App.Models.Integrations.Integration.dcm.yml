@@ -1,0 +1,32 @@
+App\Models\Integrations\Integration:
+  type:               entity
+  table:              Integration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\IntegrationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Integration id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Integration name"
+
+  oneToMany:
+    integrationCredentials:
+      targetEntity:   IntegrationCredential
+      mappedBy:       integration
+      cascade:        ["persist", "remove"]
