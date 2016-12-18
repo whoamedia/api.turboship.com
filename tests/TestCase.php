@@ -4,8 +4,8 @@ namespace Tests;
 
 
 use App\Models\CMS\Validation\ClientValidation;
-use App\Services\Shopify\ShopifyConfiguration;
-use App\Services\Shopify\ShopifyService;
+use App\Integrations\Shopify\ShopifyConfiguration;
+use App\Integrations\Shopify\ShopifyIntegration;
 use App\Utilities\CredentialUtility;
 use EntityManager;
 
@@ -38,9 +38,9 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
     }
 
     /**
-     * @return ShopifyService
+     * @return ShopifyIntegration
      */
-    protected function getShopifyService ()
+    protected function getShopifyIntegration ()
     {
         $client                         = $this->clientValidation->idExists(1);
 
@@ -54,7 +54,7 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
         $shopifyConfiguration->setPassword($password);
         $shopifyConfiguration->setHostName($hostName);
 
-        $shopifyService                 = new ShopifyService($shopifyConfiguration);
-        return $shopifyService;
+        $shopifyIntegration             = new ShopifyIntegration($shopifyConfiguration);
+        return $shopifyIntegration;
     }
 }

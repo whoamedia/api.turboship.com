@@ -6,8 +6,8 @@ namespace App\Repositories\Shopify;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Repositories\Doctrine\CMS\ClientRepository;
-use App\Services\Shopify\ShopifyConfiguration;
-use App\Services\Shopify\ShopifyService;
+use App\Integrations\Shopify\ShopifyConfiguration;
+use App\Integrations\Shopify\ShopifyIntegration;
 use App\Utilities\CredentialUtility;
 use EntityManager;
 
@@ -15,9 +15,9 @@ class BaseShopifyRepository
 {
 
     /**
-     * @var ShopifyService
+     * @var ShopifyIntegration
      */
-    protected $shopifyService;
+    protected $shopifyIntegration;
 
     /**
      * @var Client
@@ -33,16 +33,16 @@ class BaseShopifyRepository
     /**
      * BaseShopifyRepository constructor.
      * @param Client                    $client
-     * @param ShopifyService|null       $shopifyService
+     * @param ShopifyIntegration|null       $shopifyIntegration
      */
-    public function __construct(Client $client, $shopifyService = null)
+    public function __construct(Client $client, $shopifyIntegration = null)
     {
         $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->clientValidation         = new ClientValidation($this->clientRepo);
         $this->client                   = $client;
 
-        if (!is_null($shopifyService))
-            $this->shopifyService       = $shopifyService;
+        if (!is_null($shopifyIntegration))
+            $this->shopifyIntegration   = $shopifyIntegration;
         else
         {
             $credentialUtility          = new CredentialUtility($this->client);
@@ -55,24 +55,24 @@ class BaseShopifyRepository
             $shopifyConfiguration->setPassword($password);
             $shopifyConfiguration->setHostName($hostName);
 
-            $this->shopifyService       = new ShopifyService($shopifyConfiguration);
+            $this->shopifyIntegration       = new ShopifyIntegration($shopifyConfiguration);
         }
     }
 
     /**
-     * @return ShopifyService
+     * @return ShopifyIntegration
      */
-    public function getShopifyService()
+    public function getShopifyIntegration()
     {
-        return $this->shopifyService;
+        return $this->shopifyIntegration;
     }
 
     /**
-     * @param ShopifyService $shopifyService
+     * @param ShopifyIntegration $shopifyIntegration
      */
-    public function setShopifyService($shopifyService)
+    public function setShopifyIntegration($shopifyIntegration)
     {
-        $this->shopifyService = $shopifyService;
+        $this->shopifyIntegration = $shopifyIntegration;
     }
 
 }

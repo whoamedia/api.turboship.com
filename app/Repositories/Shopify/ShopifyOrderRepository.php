@@ -6,7 +6,7 @@ namespace App\Repositories\Shopify;
 use App\Models\CMS\Client;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
-use App\Services\Shopify\Models\Requests\GetShopifyOrders;
+use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
 use App\Services\ShopifyMappingService;
 use App\Utilities\OrderSourceUtility;
 use EntityManager;
@@ -29,9 +29,9 @@ class ShopifyOrderRepository extends BaseShopifyRepository
      */
     private $orderApprovalService;
 
-    public function __construct(Client $client, $shopifyService = null)
+    public function __construct(Client $client, $shopifyIntegration = null)
     {
-        parent::__construct($client, $shopifyService);
+        parent::__construct($client, $shopifyIntegration);
 
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $this->shopifyMappingService    = new ShopifyMappingService();
@@ -65,7 +65,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
     }
 
     /**
-     * @return \App\Services\Shopify\Models\Responses\ShopifyOrder[]
+     * @return \App\Integrations\Shopify\Models\Responses\ShopifyOrder[]
      */
     public function getCandidateImportOrders ()
     {
@@ -75,7 +75,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         $getShopifyOrders->setPage(1);
         $getShopifyOrders->setLimit(250);
 
-        $shopifyOrdersResponse          = $this->shopifyService->orderApi->get($getShopifyOrders);
+        $shopifyOrdersResponse          = $this->shopifyIntegration->orderApi->get($getShopifyOrders);
         return $shopifyOrdersResponse;
     }
 }

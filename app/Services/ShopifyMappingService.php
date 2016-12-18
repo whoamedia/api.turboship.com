@@ -9,9 +9,9 @@ use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Models\OMS\OrderSource;
 use App\Models\OMS\Validation\OrderSourceValidation;
-use App\Services\Shopify\Models\Responses\ShopifyAddress;
-use App\Services\Shopify\Models\Responses\ShopifyOrder;
-use App\Services\Shopify\Models\Responses\ShopifyOrderLineItem;
+use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
+use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
 use App\Utilities\OrderSourceUtility;
 
 class ShopifyMappingService
