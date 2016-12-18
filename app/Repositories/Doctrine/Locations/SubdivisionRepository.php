@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use App\Models\Locations\Subdivision;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Illuminate\Pagination\LengthAwarePaginator;
+use jamesvweston\Utilities\InputUtil;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 
 class SubdivisionRepository extends BaseRepository
@@ -114,4 +115,41 @@ class SubdivisionRepository extends BaseRepository
         return $this->findOneBy(['symbol' => $symbol]);
     }
 
+    /**
+     * This is not guaranteed to uniquely identify a Subdivision
+     * @param   string      $name
+     * @return      Subdivision|null
+     */
+    public function getOneByName ($name)
+    {
+
+    }
+
+    /**
+     * @param   mixed           $param
+     * @param   int             $countryId
+     * @return  Subdivision|null
+     */
+    public function getOneByWildCard ($param, $countryId)
+    {
+        if (!is_null(InputUtil::getInt($param)))
+            return $this->getOneById(InputUtil::getInt($param));
+        else
+        {
+            $qb                         =   $this->_em->createQueryBuilder();
+            $qb
+                ->select(['subdivision'])
+                ->from('App\Models\Locations\Subdivision', 'subdivision')
+                ->join('subdivision.country', 'country', Query\Expr\Join::ON)
+                ->orWhere($qb->expr()->eq('subdivision.localSymbol', $qb->expr()->literal($param)))
+                ->orWhere($qb->expr()->eq('subdivision.name', $qb->expr()->literal($param)))
+                ->andWhere($qb->expr()->in('country.id', $countryId));
+
+            $result                     = $qb->getQuery()->getResult();
+            if (sizeof($result) == 1)
+                return $result[0];
+        }
+
+        return null;
+    }
 }

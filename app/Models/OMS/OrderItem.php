@@ -3,6 +3,7 @@
 namespace App\Models\OMS;
 
 
+use App\Utilities\OrderStatusUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class OrderItem implements \JsonSerializable
@@ -14,9 +15,49 @@ class OrderItem implements \JsonSerializable
     protected $id;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $externalId;
+
+    /**
+     * @var string|null
+     */
+    protected $externalProductId;
+
+    /**
+     * @var string|null
+     */
+    protected $externalVariantId;
+
+    /**
+     * @var string
+     */
+    protected $sku;
+
+    /**
+     * @var int
+     */
+    protected $quantityPurchased;
+
+    /**
+     * @var int
+     */
+    protected $quantityToFulfill;
+
+    /**
+     * @var float
+     */
+    protected $basePrice;
+
+    /**
+     * @var float
+     */
+    protected $totalDiscount;
+
+    /**
+     * @var float
+     */
+    protected $totalTaxes;
 
     /**
      * @var Order
@@ -24,9 +65,9 @@ class OrderItem implements \JsonSerializable
     protected $order;
 
     /**
-     * @var int
+     * @var OrderStatus
      */
-    protected $statusId;
+    protected $status;
 
     /**
      * @var \DateTime
@@ -43,8 +84,22 @@ class OrderItem implements \JsonSerializable
         $this->createdAt                = new \DateTime();
 
         $this->externalId               = AU::get($data['externalId']);
-        $this->statusId                 = AU::get($data['statusId']);
+        $this->externalProductId        = AU::get($data['externalProductId']);
+        $this->externalVariantId        = AU::get($data['externalVariantId']);
+        $this->sku                      = AU::get($data['sku']);
+        $this->quantityPurchased        = AU::get($data['quantityPurchased']);
+        $this->quantityToFulfill        = AU::get($data['quantityToFulfill']);
+        $this->basePrice                = AU::get($data['basePrice']);
+        $this->totalDiscount            = AU::get($data['totalDiscount']);
+        $this->totalTaxes               = AU::get($data['totalTaxes']);
+        $this->status                   = AU::get($data['status']);
         $this->order                    = AU::get($data['order']);
+
+        if (is_null($this->status))
+        {
+            $orderStatusUtility         = new OrderStatusUtility();
+            $this->setStatus($orderStatusUtility->getCreated());
+        }
     }
 
     /**
@@ -54,7 +109,15 @@ class OrderItem implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
-        $object['statusId']             = $this->statusId;
+        $object['externalProductId']    = $this->externalProductId;
+        $object['externalVariantId']    = $this->externalVariantId;
+        $object['sku']                  = $this->sku;
+        $object['quantityPurchased']    = $this->quantityPurchased;
+        $object['quantityToFulfill']    = $this->quantityToFulfill;
+        $object['basePrice']            = $this->basePrice;
+        $object['totalDiscount']        = $this->totalDiscount;
+        $object['totalTaxes']           = $this->totalTaxes;
+        $object['status']               = $this->status->jsonSerialize();
 
         return $object;
     }
@@ -68,7 +131,7 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getExternalId()
     {
@@ -76,11 +139,139 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
-     * @param null|string $externalId
+     * @param string $externalId
      */
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalProductId()
+    {
+        return $this->externalProductId;
+    }
+
+    /**
+     * @param null|string $externalProductId
+     */
+    public function setExternalProductId($externalProductId)
+    {
+        $this->externalProductId = $externalProductId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalVariantId()
+    {
+        return $this->externalVariantId;
+    }
+
+    /**
+     * @param null|string $externalVariantId
+     */
+    public function setExternalVariantId($externalVariantId)
+    {
+        $this->externalVariantId = $externalVariantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSku()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * @param string $sku
+     */
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantityPurchased()
+    {
+        return $this->quantityPurchased;
+    }
+
+    /**
+     * @param int $quantityPurchased
+     */
+    public function setQuantityPurchased($quantityPurchased)
+    {
+        $this->quantityPurchased = $quantityPurchased;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantityToFulfill()
+    {
+        return $this->quantityToFulfill;
+    }
+
+    /**
+     * @param int $quantityToFulfill
+     */
+    public function setQuantityToFulfill($quantityToFulfill)
+    {
+        $this->quantityToFulfill = $quantityToFulfill;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBasePrice()
+    {
+        return $this->basePrice;
+    }
+
+    /**
+     * @param float $basePrice
+     */
+    public function setBasePrice($basePrice)
+    {
+        $this->basePrice = $basePrice;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalDiscount()
+    {
+        return $this->totalDiscount;
+    }
+
+    /**
+     * @param float $totalDiscount
+     */
+    public function setTotalDiscount($totalDiscount)
+    {
+        $this->totalDiscount = $totalDiscount;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalTaxes()
+    {
+        return $this->totalTaxes;
+    }
+
+    /**
+     * @param float $totalTaxes
+     */
+    public function setTotalTaxes($totalTaxes)
+    {
+        $this->totalTaxes = $totalTaxes;
     }
 
     /**
@@ -100,19 +291,19 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return OrderStatus
      */
-    public function getStatusId()
+    public function getStatus()
     {
-        return $this->statusId;
+        return $this->status;
     }
 
     /**
-     * @param int $statusId
+     * @param OrderStatus $status
      */
-    public function setStatusId($statusId)
+    public function setStatus($status)
     {
-        $this->statusId = $statusId;
+        $this->status = $status;
     }
 
     /**

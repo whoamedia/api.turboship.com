@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ClientCreatorCommand::class,
         \App\Console\Commands\RebootApplicationCommand::class,
+        \App\Console\Commands\TestJunkCommand::class,
     ];
 
     /**

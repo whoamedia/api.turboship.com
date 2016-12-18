@@ -1,6 +1,6 @@
 App\Models\OMS\Order:
   type:               entity
-  table:              Order
+  table:              "`Order`"
   repositoryClass:    App\Repositories\Doctrine\OMS\OrderRepository
 
   id:
@@ -23,6 +23,57 @@ App\Models\OMS\Order:
       options:
         fixed:        false
         comment:      "Order externalId"
+    externalCreatedAt:
+      column:         externalCreatedAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Order was remotely created"
+    basePrice:
+      column:         basePrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalDiscount:
+      column:         totalDiscount
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalTaxes:
+      column:         totalTaxes
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalItemsPrice:
+      column:         totalItemsPrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalPrice:
+      column:         totalPrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
     createdAt:
       column:         createdAt
       type:           datetime
@@ -36,6 +87,7 @@ App\Models\OMS\Order:
       targetEntity:   App\Models\Locations\Address
       nullable:       true
       fetch:          EAGER
+      cascade:        ["persist", "remove"]
       options:
         default:      NULL
       joinColumn:
@@ -45,6 +97,7 @@ App\Models\OMS\Order:
       targetEntity:   App\Models\Locations\ProvidedAddress
       nullable:       false
       fetch:          EAGER
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         providedAddressId
         referencedColumnName: id
@@ -52,6 +105,7 @@ App\Models\OMS\Order:
       targetEntity:   App\Models\Locations\ProvidedAddress
       nullable:       false
       fetch:          LAZY
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         billingAddressId
         referencedColumnName: id
@@ -70,7 +124,7 @@ App\Models\OMS\Order:
         name:         clientId
         referencedColumnName: id
     status:
-      targetEntity:   OrderStatusHistory
+      targetEntity:   OrderStatus
       nullable:       false
       fetch:          EAGER
       joinColumn:

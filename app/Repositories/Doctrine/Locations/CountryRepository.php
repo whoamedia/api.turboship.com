@@ -8,6 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use App\Models\Locations\Country;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Illuminate\Pagination\LengthAwarePaginator;
+use jamesvweston\Utilities\InputUtil;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 
 class CountryRepository extends BaseRepository
@@ -122,6 +123,29 @@ class CountryRepository extends BaseRepository
     public function getOneByISO3($iso3)
     {
         return $this->findOneBy(['iso3' => $iso3]);
+    }
+
+    /**
+     * @param       mixed                   $param
+     * @return      Country|null
+     */
+    public function getOneByWildCard ($param)
+    {
+        if (!is_null(InputUtil::getInt($param)))
+            return $this->getOneById(InputUtil::getInt($param));
+        else if (is_string($param))
+        {
+            if (strlen($param) <= 1)
+                return null;
+            else if (strlen($param) == 2)
+                return $this->getOneByISO2($param);
+            else if (strlen($param) == 3)
+                return $this->getOneByISO3($param);
+            else
+                return $this->getOneByName($param);
+        }
+        else
+            return null;
     }
 
 }

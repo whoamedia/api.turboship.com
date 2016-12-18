@@ -24,6 +24,13 @@ class DatabaseSeeder extends Seeder
 
 
         /**
+         * Integrations
+         */
+        $this->call(IntegrationSeeder::class);
+        $this->call(IntegrationCredentialSeeder::class);
+
+
+        /**
          * Orders
          */
         $this->call(OrderSourceSeeder::class);

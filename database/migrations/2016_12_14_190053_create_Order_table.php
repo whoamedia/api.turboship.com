@@ -16,7 +16,6 @@ class CreateOrderTable extends Migration
         Schema::create('Order', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('externalId')->index();
 
             $table->integer('toAddressId')->unsigned()->index()->nullable()->default(NULL);
             $table->foreign('toAddressId')->references('id')->on('Address');
@@ -34,10 +33,18 @@ class CreateOrderTable extends Migration
             $table->foreign('clientId')->references('id')->on('Client');
 
 
+            $table->string('externalId')->index();
+            $table->datetime('externalCreatedAt')->index();
+            $table->decimal('basePrice', 10, 2)->unsigned()->index();
+            $table->decimal('totalDiscount', 10, 2)->unsigned()->index();
+            $table->decimal('totalTaxes', 10, 2)->unsigned()->index();
+            $table->decimal('totalItemsPrice', 10, 2)->unsigned()->index();
+            $table->decimal('totalPrice', 10, 2)->unsigned()->index();
+
+
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('OrderStatus');
-
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
             $table->unique(['externalId', 'orderSourceId', 'clientId']);

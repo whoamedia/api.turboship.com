@@ -16,20 +16,51 @@ App\Models\OMS\OrderItem:
         strategy:     IDENTITY
 
   fields:
-    externalId:
-      column:         externalId
+    sku:
+      column:         sku
       type:           string
       nullable:       false
       options:
-        fixed:        false
-        comment:      "OrderItem externalId"
-    statusId:
-      column:         statusId
+        comment:      "OrderItem sku"
+    quantityPurchased:
+      column:         quantityPurchased
       type:           integer
       nullable:       false
       options:
-        default:      1
-        comment:      "OrderItem externalId"
+        unsigned:     true
+    quantityToFulfill:
+      column:         quantityToFulfill
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+    basePrice:
+      column:         basePrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalDiscount:
+      column:         totalDiscount
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalTaxes:
+      column:         totalTaxes
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
     createdAt:
       column:         createdAt
       type:           datetime
@@ -37,6 +68,26 @@ App\Models\OMS\OrderItem:
       options:
         comment:      "When the OrderItem was created"
         default:      CURRENT_datetime
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        comment:      "OrderItem externalId"
+    externalProductId:
+      column:         externalProductId
+      type:           string
+      nullable:       true
+      options:
+        default:      NULL
+        comment:      "OrderItem externalProductId"
+    externalVariantId:
+      column:         externalVariantId
+      type:           string
+      nullable:       true
+      options:
+        default:      NULL
+        comment:      "OrderItem externalVariantId"
 
   manyToOne:
     order:
@@ -46,4 +97,11 @@ App\Models\OMS\OrderItem:
       inversedBy:     items
       joinColumn:
         name:         orderId
+        referencedColumnName: id
+    status:
+      targetEntity:   OrderStatus
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         statusId
         referencedColumnName: id
