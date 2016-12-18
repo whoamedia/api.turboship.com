@@ -53,6 +53,11 @@ class ShopifyOrderLineItem implements \JsonSerializable
     protected $product_id;
 
     /**
+     * @var bool
+     */
+    protected $product_exists;
+
+    /**
      * The number of products that were purchased.
      * @var int
      */
@@ -155,6 +160,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
         $this->grams                    = AU::get($data['grams']);
         $this->price                    = AU::get($data['price']);
         $this->product_id               = AU::get($data['product_id']);
+        $this->product_exists           = AU::get($data['product_exists']);
         $this->quantity                 = AU::get($data['quantity']);
         $this->requires_shipping        = AU::get($data['requires_shipping']);
         $this->sku                      = AU::get($data['sku']);
@@ -166,7 +172,12 @@ class ShopifyOrderLineItem implements \JsonSerializable
         $this->gift_card                = AU::get($data['gift_card']);
         $this->properties               = AU::get($data['properties']);
         $this->taxable                  = AU::get($data['taxable']);
-        $this->tax_lines                = AU::get($data['tax_lines']);
+
+        $this->tax_lines                = [];
+        $tax_lines                      = AU::get($data['tax_lines']);
+        foreach ($tax_lines AS $item)
+            $this->tax_lines[]          = new ShopifyTaxLine($item);
+
         $this->total_discount           = AU::get($data['total_discount']);
         $this->created_at               = AU::get($data['created_at']);
         $this->updated_at               = AU::get($data['updated_at']);
@@ -184,6 +195,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
         $object['grams']                = $this->grams;
         $object['price']                = $this->price;
         $object['product_id']           = $this->product_id;
+        $object['product_exists']       = $this->product_exists;
         $object['quantity']             = $this->quantity;
         $object['requires_shipping']    = $this->requires_shipping;
         $object['sku']                  = $this->sku;
@@ -195,7 +207,11 @@ class ShopifyOrderLineItem implements \JsonSerializable
         $object['gift_card']            = $this->gift_card;
         $object['properties']           = $this->properties;
         $object['taxable']              = $this->taxable;
-        $object['tax_lines']            = $this->tax_lines;
+
+        $object['tax_lines']            = [];
+        foreach ($this->tax_lines AS $item)
+            $object['tax_lines'][]      = $item->jsonSerialize();
+
         $object['total_discount']       = $this->total_discount;
         $object['created_at']           = $this->created_at;
         $object['updated_at']           = $this->updated_at;
@@ -313,6 +329,22 @@ class ShopifyOrderLineItem implements \JsonSerializable
     public function setProductId($product_id)
     {
         $this->product_id = $product_id;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isProductExists()
+    {
+        return $this->product_exists;
+    }
+
+    /**
+     * @param boolean $product_exists
+     */
+    public function setProductExists($product_exists)
+    {
+        $this->product_exists = $product_exists;
     }
 
     /**

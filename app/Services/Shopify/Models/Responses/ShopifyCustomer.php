@@ -31,7 +31,32 @@ class ShopifyCustomer implements \JsonSerializable
     /**
      * @var bool
      */
+    protected $verified_email;
+
+    /**
+     * @var string|null
+     */
+    protected $multipass_identifier;
+
+    /**
+     * @var bool
+     */
     protected $accepts_marketing;
+
+    /**
+     * @var int|null
+     */
+    protected $last_order_id;
+
+    /**
+     * @var ShopifyAddress
+     */
+    protected $default_address;
+
+    /**
+     * @var string|null
+     */
+    protected $last_order_name;
 
     /**
      * @var string|null
@@ -52,6 +77,11 @@ class ShopifyCustomer implements \JsonSerializable
      * @var float
      */
     protected $total_spent;
+
+    /**
+     * @var bool
+     */
+    protected $tax_exempt;
 
     /**
      * @var string
@@ -75,8 +105,18 @@ class ShopifyCustomer implements \JsonSerializable
         $this->last_name                = AU::get($data['last_name']);
         $this->email                    = AU::get($data['email']);
         $this->accepts_marketing        = AU::get($data['accepts_marketing']);
+        $this->verified_email           = AU::get($data['verified_email']);
+        $this->multipass_identifier     = AU::get($data['multipass_identifier']);
+        $this->last_order_id            = AU::get($data['last_order_id']);
+        $this->last_order_name          = AU::get($data['last_order_name']);
+
+        $this->default_address          = AU::get($data['default_address']);
+        if (!is_null($this->default_address))
+            $this->default_address      = new ShopifyAddress($this->default_address);
+
         $this->note                     = AU::get($data['note']);
         $this->orders_count             = AU::get($data['orders_count']);
+        $this->tax_exempt               = AU::get($data['tax_exempt']);
         $this->state                    = AU::get($data['state']);
         $this->total_spent              = AU::get($data['total_spent']);
         $this->created_at               = AU::get($data['created_at']);
@@ -89,6 +129,8 @@ class ShopifyCustomer implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+        //
+        //
         $object['id']                   = $this->id;
         $object['first_name']           = $this->first_name;
         $object['last_name']            = $this->last_name;
@@ -101,6 +143,12 @@ class ShopifyCustomer implements \JsonSerializable
         $object['created_at']           = $this->created_at;
         $object['updated_at']           = $this->updated_at;
         $object['tags']                 = $this->tags;
+        $object['verified_email']       = $this->verified_email;
+        $object['multipass_identifier'] = $this->multipass_identifier;
+        $object['last_order_id']        = $this->last_order_id;
+        $object['default_address']      = is_null($this->default_address) ? null : $this->default_address->jsonSerialize();
+        $object['last_order_name']      = $this->last_order_name;
+        $object['tax_exempt']           = $this->tax_exempt;
 
         return $object;
     }
@@ -172,6 +220,38 @@ class ShopifyCustomer implements \JsonSerializable
     /**
      * @return boolean
      */
+    public function isVerifiedEmail()
+    {
+        return $this->verified_email;
+    }
+
+    /**
+     * @param boolean $verified_email
+     */
+    public function setVerifiedEmail($verified_email)
+    {
+        $this->verified_email = $verified_email;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getMultipassIdentifier()
+    {
+        return $this->multipass_identifier;
+    }
+
+    /**
+     * @param null|string $multipass_identifier
+     */
+    public function setMultipassIdentifier($multipass_identifier)
+    {
+        $this->multipass_identifier = $multipass_identifier;
+    }
+
+    /**
+     * @return boolean
+     */
     public function isAcceptsMarketing()
     {
         return $this->accepts_marketing;
@@ -183,6 +263,54 @@ class ShopifyCustomer implements \JsonSerializable
     public function setAcceptsMarketing($accepts_marketing)
     {
         $this->accepts_marketing = $accepts_marketing;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLastOrderId()
+    {
+        return $this->last_order_id;
+    }
+
+    /**
+     * @param int|null $last_order_id
+     */
+    public function setLastOrderId($last_order_id)
+    {
+        $this->last_order_id = $last_order_id;
+    }
+
+    /**
+     * @return ShopifyAddress
+     */
+    public function getDefaultAddress()
+    {
+        return $this->default_address;
+    }
+
+    /**
+     * @param ShopifyAddress $default_address
+     */
+    public function setDefaultAddress($default_address)
+    {
+        $this->default_address = $default_address;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLastOrderName()
+    {
+        return $this->last_order_name;
+    }
+
+    /**
+     * @param null|string $last_order_name
+     */
+    public function setLastOrderName($last_order_name)
+    {
+        $this->last_order_name = $last_order_name;
     }
 
     /**
@@ -247,6 +375,22 @@ class ShopifyCustomer implements \JsonSerializable
     public function setTotalSpent($total_spent)
     {
         $this->total_spent = $total_spent;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTaxExempt()
+    {
+        return $this->tax_exempt;
+    }
+
+    /**
+     * @param boolean $tax_exempt
+     */
+    public function setTaxExempt($tax_exempt)
+    {
+        $this->tax_exempt = $tax_exempt;
     }
 
     /**

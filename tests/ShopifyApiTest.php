@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Services\Shopify\Models\Requests\CreateShopifyProduct;
+use App\Services\Shopify\Models\Requests\GetShopifyOrders;
 use App\Services\Shopify\Models\Requests\GetShopifyProducts;
 use App\Services\Shopify\Models\Responses\Product;
 
@@ -39,6 +40,14 @@ class ShopifyApiTest extends TestCase
 
         $deletionResponse               = $shopifyService->productApi->delete($product->getId());
         $this->assertTrue($deletionResponse);
+    }
+
+    public function testOrderApi ()
+    {
+        $shopifyService                 = $this->getShopifyService();
+        $getShopifyOrders               = new GetShopifyOrders();
+        $orders                         = $shopifyService->orderApi->get($getShopifyOrders);
+        dd($orders);
     }
 
     /**

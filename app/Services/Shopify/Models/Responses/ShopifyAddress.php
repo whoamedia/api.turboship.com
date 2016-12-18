@@ -5,13 +5,8 @@ namespace App\Services\Shopify\Models\Responses;
 
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ShopifyShippingAddress implements \JsonSerializable
+class ShopifyAddress implements \JsonSerializable
 {
-
-    /**
-     * @var int
-     */
-    protected $id;
 
     /**
      * @var string
@@ -24,12 +19,12 @@ class ShopifyShippingAddress implements \JsonSerializable
     protected $last_name;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $name;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $company;
 
@@ -51,17 +46,17 @@ class ShopifyShippingAddress implements \JsonSerializable
     /**
      * @var string
      */
-    protected $province;
-
-    /**
-     * @var string|null
-     */
-    protected $province_code;
+    protected $zip;
 
     /**
      * @var string
      */
-    protected $zip;
+    protected $province;
+
+    /**
+     * @var string
+     */
+    protected $province_code;
 
     /**
      * @var string
@@ -69,7 +64,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     protected $country;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $country_code;
 
@@ -77,11 +72,6 @@ class ShopifyShippingAddress implements \JsonSerializable
      * @var string|null
      */
     protected $phone;
-
-    /**
-     * @var bool
-     */
-    protected $default;
 
     /**
      * @var string|null
@@ -96,7 +86,6 @@ class ShopifyShippingAddress implements \JsonSerializable
 
     public function __construct($data = [])
     {
-        $this->id                       = AU::get($data['id']);
         $this->first_name               = AU::get($data['first_name']);
         $this->last_name                = AU::get($data['last_name']);
         $this->name                     = AU::get($data['name']);
@@ -110,7 +99,6 @@ class ShopifyShippingAddress implements \JsonSerializable
         $this->country                  = AU::get($data['country']);
         $this->country_code             = AU::get($data['country_code']);
         $this->phone                    = AU::get($data['phone']);
-        $this->default                  = AU::get($data['default']);
         $this->latitude                 = AU::get($data['latitude']);
         $this->longitude                = AU::get($data['longitude']);
     }
@@ -120,7 +108,6 @@ class ShopifyShippingAddress implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $object['id']                   = $this->id;
         $object['first_name']           = $this->first_name;
         $object['last_name']            = $this->last_name;
         $object['name']                 = $this->name;
@@ -134,27 +121,10 @@ class ShopifyShippingAddress implements \JsonSerializable
         $object['country']              = $this->country;
         $object['country_code']         = $this->country_code;
         $object['phone']                = $this->phone;
-        $object['default']              = $this->default;
         $object['latitude']             = $this->latitude;
         $object['longitude']            = $this->longitude;
 
         return $object;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -190,7 +160,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getName()
     {
@@ -198,7 +168,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @param null|string $name
+     * @param string $name
      */
     public function setName($name)
     {
@@ -206,7 +176,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getCompany()
     {
@@ -214,7 +184,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @param null|string $company
+     * @param string $company
      */
     public function setCompany($company)
     {
@@ -272,6 +242,22 @@ class ShopifyShippingAddress implements \JsonSerializable
     /**
      * @return string
      */
+    public function getZip()
+    {
+        return $this->zip;
+    }
+
+    /**
+     * @param string $zip
+     */
+    public function setZip($zip)
+    {
+        $this->zip = $zip;
+    }
+
+    /**
+     * @return string
+     */
     public function getProvince()
     {
         return $this->province;
@@ -286,7 +272,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getProvinceCode()
     {
@@ -294,27 +280,11 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @param null|string $province_code
+     * @param string $province_code
      */
     public function setProvinceCode($province_code)
     {
         $this->province_code = $province_code;
-    }
-
-    /**
-     * @return string
-     */
-    public function getZip()
-    {
-        return $this->zip;
-    }
-
-    /**
-     * @param string $zip
-     */
-    public function setZip($zip)
-    {
-        $this->zip = $zip;
     }
 
     /**
@@ -334,7 +304,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getCountryCode()
     {
@@ -342,7 +312,7 @@ class ShopifyShippingAddress implements \JsonSerializable
     }
 
     /**
-     * @param null|string $country_code
+     * @param string $country_code
      */
     public function setCountryCode($country_code)
     {
@@ -363,22 +333,6 @@ class ShopifyShippingAddress implements \JsonSerializable
     public function setPhone($phone)
     {
         $this->phone = $phone;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isDefault()
-    {
-        return $this->default;
-    }
-
-    /**
-     * @param boolean $default
-     */
-    public function setDefault($default)
-    {
-        $this->default = $default;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Services\Shopify;
 
 
 use App\Services\Shopify\Api\CollectApi;
+use App\Services\Shopify\Api\OrderApi;
 use App\Services\Shopify\Api\ProductApi;
 
 class ShopifyService
@@ -20,6 +21,11 @@ class ShopifyService
     public $collectApi;
 
     /**
+     * @var OrderApi
+     */
+    public $orderApi;
+
+    /**
      * @var ProductApi
      */
     public $productApi;
@@ -34,6 +40,7 @@ class ShopifyService
 
         $this->collectApi               = new CollectApi($this->shopifyConfiguration);
         $this->productApi               = new ProductApi($this->shopifyConfiguration);
+        $this->orderApi                 = new OrderApi($this->shopifyConfiguration);
     }
 
 

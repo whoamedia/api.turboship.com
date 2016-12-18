@@ -19,7 +19,7 @@ class ShopifyOrder implements \JsonSerializable
     protected $id;
 
     /**
-     * @var ShopifyBillingAddress
+     * @var ShopifyAddress
      */
     protected $billing_address;
 
@@ -68,6 +68,31 @@ class ShopifyOrder implements \JsonSerializable
      * @var string|null
      */
     protected $closed_at;
+
+    /**
+     * @var string|null
+     */
+    protected $checkout_id;
+
+    /**
+     * @var string|null
+     */
+    protected $checkout_token;
+
+    /**
+     * @var bool
+     */
+    protected $confirmed;
+
+    /**
+     * @var string|null
+     */
+    protected $contact_email;
+
+    /**
+     * @var string|null
+     */
+    protected $device_id;
 
     /**
      * @var string
@@ -143,6 +168,11 @@ class ShopifyOrder implements \JsonSerializable
     protected $landing_site;
 
     /**
+     * @var string|null
+     */
+    protected $landing_site_ref;
+
+    /**
      * @var ShopifyOrderLineItem[]
      */
     protected $line_items;
@@ -187,6 +217,16 @@ class ShopifyOrder implements \JsonSerializable
     protected $order_number;
 
     /**
+     * @var string
+     */
+    protected $gateway;
+
+    /**
+     * @var bool
+     */
+    protected $test;
+
+    /**
      * The list of all payment gateways used for the order.
      * @var array
      */
@@ -208,6 +248,11 @@ class ShopifyOrder implements \JsonSerializable
     protected $processing_method;
 
     /**
+     * @var string|null
+     */
+    protected $reference;
+
+    /**
      * The website that the customer clicked on to come to the shop
      * @var string
      */
@@ -220,7 +265,7 @@ class ShopifyOrder implements \JsonSerializable
     protected $refunds;
 
     /**
-     * @var ShopifyShippingAddress
+     * @var ShopifyAddress
      */
     protected $shipping_address;
 
@@ -230,11 +275,21 @@ class ShopifyOrder implements \JsonSerializable
     protected $shipping_lines;
 
     /**
+     * @var string|null
+     */
+    protected $source_identifier;
+
+    /**
      * Where the order originated
      * May only be set during creation, and is not writeable thereafter.
      * @var string
      */
     protected $source_name;
+
+    /**
+     * @var string|null
+     */
+    protected $source_url;
 
     /**
      * Price of the order before shipping and taxes
@@ -279,6 +334,11 @@ class ShopifyOrder implements \JsonSerializable
     protected $total_price;
 
     /**
+     * @var float
+     */
+    protected $total_price_usd;
+
+    /**
      * The sum of all the taxes applied to the order (must be positive).
      * @var float
      */
@@ -311,7 +371,7 @@ class ShopifyOrder implements \JsonSerializable
 
         $this->billing_address          = AU::get($data['billing_address']);
         if (!is_null($this->billing_address))
-            $this->billing_address      = new ShopifyBillingAddress($this->billing_address);
+            $this->billing_address      = new ShopifyAddress($this->billing_address);
 
         $this->browser_ip               = AU::get($data['browser_ip']);
         $this->buyer_accepts_marketing  = AU::get($data['buyer_accepts_marketing']);
@@ -369,7 +429,7 @@ class ShopifyOrder implements \JsonSerializable
 
         $this->shipping_address         = AU::get($data['shipping_address']);
         if (!is_null($this->shipping_address))
-            $this->shipping_address     = new ShopifyShippingAddress($this->shipping_address);
+            $this->shipping_address     = new ShopifyAddress($this->shipping_address);
 
         $this->shipping_lines           = [];
         $shipping_lines                 = AU::get($data['shipping_lines']);
@@ -397,6 +457,20 @@ class ShopifyOrder implements \JsonSerializable
         $this->total_weight             = AU::get($data['total_weight']);
         $this->user_id                  = AU::get($data['user_id']);
         $this->order_status_url         = AU::get($data['order_status_url']);
+
+
+        $this->checkout_id              = AU::get($data['checkout_id']);
+        $this->checkout_token           = AU::get($data['checkout_token']);
+        $this->confirmed                = AU::get($data['confirmed']);
+        $this->contact_email            = AU::get($data['contact_email']);
+        $this->device_id                = AU::get($data['device_id']);
+        $this->landing_site_ref         = AU::get($data['landing_site_ref']);
+        $this->gateway                  = AU::get($data['gateway']);
+        $this->test                     = AU::get($data['test']);
+        $this->reference                = AU::get($data['reference']);
+        $this->source_identifier        = AU::get($data['source_identifier']);
+        $this->source_url               = AU::get($data['source_url']);
+        $this->total_price_usd          = AU::get($data['total_price_usd']);
     }
 
     /**
@@ -468,6 +542,20 @@ class ShopifyOrder implements \JsonSerializable
         $object['user_id']              = $this->user_id;
         $object['order_status_url']     = $this->order_status_url;
 
+
+        $object['checkout_id']          = $this->checkout_id;
+        $object['checkout_token']       = $this->checkout_token;
+        $object['confirmed']            = $this->confirmed;
+        $object['contact_email']        = $this->contact_email;
+        $object['device_id']            = $this->device_id;
+        $object['landing_site_ref']     = $this->landing_site_ref;
+        $object['gateway']              = $this->gateway;
+        $object['test']                 = $this->test;
+        $object['reference']            = $this->reference;
+        $object['source_identifier']    = $this->source_identifier;
+        $object['source_url']           = $this->source_url;
+        $object['total_price_usd']      = $this->total_price_usd;
+
         return $object;
     }
 
@@ -489,7 +577,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @return ShopifyBillingAddress
+     * @return ShopifyAddress
      */
     public function getBillingAddress()
     {
@@ -497,7 +585,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @param ShopifyBillingAddress $billing_address
+     * @param ShopifyAddress $billing_address
      */
     public function setBillingAddress($billing_address)
     {
@@ -985,7 +1073,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @return ShopifyShippingAddress
+     * @return ShopifyAddress
      */
     public function getShippingAddress()
     {
@@ -993,7 +1081,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @param ShopifyShippingAddress $shipping_address
+     * @param ShopifyAddress $shipping_address
      */
     public function setShippingAddress($shipping_address)
     {
