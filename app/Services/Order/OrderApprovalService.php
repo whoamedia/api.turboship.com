@@ -160,6 +160,7 @@ class OrderApprovalService
         try
         {
             $uspsAddressService->validateAddress($order->getToAddress());
+
             return true;
         }
         catch (USPSApiErrorException $ex)

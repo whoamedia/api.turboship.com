@@ -14,7 +14,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
     protected $id;
 
     /**
-     * he amount available to fulfill.
+     * The amount available to fulfill.
      * This is the quantity - max(refunded_quantity, fulfilled_quantity) - pending_fulfilled_quantity - open_fulfilled_quantity.
      * @var int
      */
@@ -129,7 +129,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
 
     /**
      * A list of tax_line objects, each of which details the taxes applicable to this line_item.
-     * @var array
+     * @var ShopifyTaxLine[]
      */
     protected $tax_lines;
 
@@ -524,7 +524,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * @return ShopifyTaxLine[]
      */
     public function getTaxLines()
     {
@@ -532,7 +532,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
     }
 
     /**
-     * @param array $tax_lines
+     * @param ShopifyTaxLine[] $tax_lines
      */
     public function setTaxLines($tax_lines)
     {

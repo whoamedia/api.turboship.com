@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 
+use App\Jobs\Shopify\ShopifyOrderImportJob;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
@@ -12,9 +13,12 @@ use App\Utilities\OrderSourceUtility;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Console\Command;
 use EntityManager;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class TestJunkCommand extends Command
 {
+
+    use DispatchesJobs;
 
     protected $signature = 'turboship:test';
 
@@ -59,37 +63,9 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $client                         = $this->clientValidation->idExists(1);
-        $shopify                        = $this->orderSourceUtility->getShopify();
-
-
-        $order                          = new Order();
-        $order->setExternalId('asdfasdfdadddffsd');
-        $order->setSource($shopify);
-        $order->setClient($client);
-
-        $orderItem                      = new OrderItem();
-        $orderItem->setExternalId('asdf');
-        $orderItem->setSku('asdfas');
-        $orderItem->setQuantity(1);
-        $orderItem->setDeclaredValue(302.42);
-
-        $order->addItem($orderItem);
-
-
-        $order->getProvidedAddress()->setStreet1('24 East Liberty St');
-        $order->getProvidedAddress()->setCity('Savannah');
-        $order->getProvidedAddress()->setSubdivision('Georgia');
-        $order->getProvidedAddress()->setPostalCode('31401');
-        $order->getProvidedAddress()->setCountry('US');
-
-
-
-
-        $this->orderRepo->saveAndCommit($order);
-
-        $uspsAddressService             = new USPSAddressService();
-
+        $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
+        $shopifyOrderImportJob->handle();
+        //  $this->dispatch(new ShopifyOrderImportJob(1));
     }
 
 }

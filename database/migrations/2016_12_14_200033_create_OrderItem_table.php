@@ -16,17 +16,27 @@ class CreateOrderItemTable extends Migration
         Schema::create('OrderItem', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('externalId')->index()->nullable()->default(NULL);
             $table->string('sku')->index();
-            $table->integer('quantity')->unsigned()->index();
-            $table->decimal('declaredValue', 10, 2)->unsigned()->index();
-
 
             $table->integer('orderId')->unsigned()->index();
             $table->foreign('orderId')->references('id')->on('Order');
 
 
-            //  Boilerplate
+
+
+
+            $table->integer('quantityPurchased')->unsigned()->index();
+            $table->integer('quantityToFulfill')->unsigned()->index();
+            $table->decimal('basePrice', 10, 2)->unsigned()->index();
+            $table->decimal('totalDiscount', 10, 2)->unsigned()->index();
+            $table->decimal('totalTaxes', 10, 2)->unsigned()->index();
+
+
+            $table->string('externalId')->index();
+            $table->string('externalProductId')->index()->nullable()->default(NULL);
+            $table->string('externalVariantId')->index()->nullable()->default(NULL);
+
+
             $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('OrderStatus');
 

@@ -65,21 +65,26 @@ class USPSAddressService
                         <Address ID="0">
                             <Address1>' . $address->getStreet2() . '</Address1>
                             <Address2>' . $address->getStreet1() . '</Address2>
-                            <City>' . $address->getCity() . '</City
-                            ><State>' . $address->getSubdivision()->getName() . '</State>
+                            <City>' . $address->getCity() . '</City>
+                            <State>' . $address->getSubdivision()->getName() . '</State>
                             <Zip5>' . $address->getPostalCode() . '</Zip5>
                             <Zip4></Zip4>
                         </Address>
                     </AddressValidateRequest>');
+
         $request                        = $this->devurl . "?API=" . $this->service . "&xml=" . $xml;
         $response                       = $this->guzzle->get($request);
         $response                       = $response->getBody()->getContents();
 
         $dom                            = new \DOMDocument();
+
         if (is_null($response) || empty($response))
+        {
             throw new USPSApiErrorException('No response from address validation service');
+        }
 
         $dom->loadXML($response);
+
         if (!$dom)
             exit;
 
@@ -117,9 +122,8 @@ class USPSAddressService
             $street2                    = ucwords(strtolower($s->Address[0]->Address1));
 
         $city                           = ucwords(strtolower($s->Address[0]->City));
-        $subdivisionName                = $s->Address[0]->State->__toString();
+        $subdivisionName                = (string)$s->Address[0]->State;
         $postalCode                     = ucwords(strtolower($s->Address[0]->Zip5));
-
 
         // It's common for the USPS to repond with empty values. This attempts to avoid setting those values
         if (trim($street1) == "" || trim($city) == "" || trim($subdivisionName) == "" || trim($postalCode) == "")
@@ -132,6 +136,7 @@ class USPSAddressService
         $address->setPostalCode($postalCode);
 
         $subdivision                = $this->subdivisionRepo->getOneByWildCard($subdivisionName, CountryUtility::UNITED_STATES);
+
         $address->setSubdivision($subdivision);
         return $address;
     }

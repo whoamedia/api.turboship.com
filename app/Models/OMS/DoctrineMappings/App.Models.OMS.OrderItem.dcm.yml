@@ -16,26 +16,44 @@ App\Models\OMS\OrderItem:
         strategy:     IDENTITY
 
   fields:
-    externalId:
-      column:         externalId
-      type:           string
-      nullable:       false
-      options:
-        comment:      "OrderItem externalId"
     sku:
       column:         sku
       type:           string
       nullable:       false
       options:
         comment:      "OrderItem sku"
-    quantity:
-      column:         quantity
+    quantityPurchased:
+      column:         quantityPurchased
       type:           integer
       nullable:       false
       options:
         unsigned:     true
-    declaredValue:
-      column:         declaredValue
+    quantityToFulfill:
+      column:         quantityToFulfill
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+    basePrice:
+      column:         basePrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalDiscount:
+      column:         totalDiscount
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalTaxes:
+      column:         totalTaxes
       type:           decimal
       nullable:       false
       precision:      10
@@ -50,6 +68,26 @@ App\Models\OMS\OrderItem:
       options:
         comment:      "When the OrderItem was created"
         default:      CURRENT_datetime
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        comment:      "OrderItem externalId"
+    externalProductId:
+      column:         externalProductId
+      type:           string
+      nullable:       true
+      options:
+        default:      NULL
+        comment:      "OrderItem externalProductId"
+    externalVariantId:
+      column:         externalVariantId
+      type:           string
+      nullable:       true
+      options:
+        default:      NULL
+        comment:      "OrderItem externalVariantId"
 
   manyToOne:
     order:

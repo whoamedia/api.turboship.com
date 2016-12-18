@@ -29,7 +29,7 @@ class OrderRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['order']);
+        $qb->select(['orderz']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,16 +45,40 @@ class OrderRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\Order', 'order')
-            ->join('order.items', 'items', Query\Expr\Join::ON);
+        $qb->from('App\Models\OMS\Order', 'orderz')
+            ->join('orderz.items', 'items', Query\Expr\Join::ON)
+            ->join('orderz.source', 'source', Query\Expr\Join::ON)
+            ->join('orderz.client', 'client', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('order.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('orderz.id', $query['ids']));
 
         if (!is_null(AU::get($query['itemIds'])))
             $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
 
-        $qb->orderBy('order.id', 'ASC');
+        if (!is_null(AU::get($query['sourceIds'])))
+            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
+
+        if (!is_null(AU::get($query['clientIds'])))
+            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['externalIds'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $externalIds            = explode(',', $query['externalIds']);
+            foreach ($externalIds AS $externalId)
+            {
+                $orX->add($qb->expr()->eq('orderz.externalId', $qb->expr()->literal($externalId)));
+            }
+            $qb->andWhere($orX);
+        }
+
+
+        if (!is_null(AU::get($query['externalCreatedFrom'])))
+            $qb->andWhere($qb->expr()->gte('orderz.externalCreatedAt', $query['externalCreatedFrom']));
+
+        $qb->orderBy('orderz.id', 'ASC');
+
         return $qb;
     }
 
