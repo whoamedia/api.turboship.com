@@ -11,6 +11,7 @@ use App\Exceptions\Address\USPSApiErrorException;
 use App\Models\Locations\Address;
 use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use App\Utilities\CountryUtility;
+use GuzzleHttp\Client;
 use Log;
 use EntityManager;
 
@@ -33,6 +34,11 @@ class USPSAddressService
     protected $userid;
 
     /**
+     * @var Client
+     */
+    protected $guzzle;
+
+    /**
      * @var SubdivisionRepository
      */
     protected $subdivisionRepo;
@@ -42,6 +48,8 @@ class USPSAddressService
         $this->devurl                   = "http://production.shippingapis.com/ShippingAPI.dll";
         $this->service                  = "Verify";
         $this->userid                   = "842ATCOS7827";   //  789NUWEA6459    842ATCOS7827
+
+        $this->guzzle                   = new Client();
 
         $this->subdivisionRepo          = EntityManager::getRepository('App\Models\Locations\Subdivision');
     }
@@ -64,13 +72,8 @@ class USPSAddressService
                         </Address>
                     </AddressValidateRequest>');
         $request                        = $this->devurl . "?API=" . $this->service . "&xml=" . $xml;
-        $ch                             = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $request);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_HTTPGET, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response                       = curl_exec($ch);
-        curl_close($ch);
+        $response                       = $this->guzzle->get($request);
+        $response                       = $response->getBody()->getContents();
 
         $dom                            = new \DOMDocument();
         if (is_null($response) || empty($response))
@@ -81,6 +84,7 @@ class USPSAddressService
             exit;
 
         $s                              = simplexml_import_dom($dom);
+
         if (isset($s->Address[0]->Error[0]->Description) || isset($s->Description))
         {
             if (isset($s->Description))
