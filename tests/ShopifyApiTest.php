@@ -46,9 +46,57 @@ class ShopifyApiTest extends TestCase
     {
         $shopifyService                 = $this->getShopifyService();
         $getShopifyOrders               = new GetShopifyOrders();
+
         $orders                         = $shopifyService->orderApi->get($getShopifyOrders);
-        dd($orders);
+
+        $testOrder                      = sizeof($orders) > 0 ? $orders[0] : null;
+        foreach ($orders AS $item)
+        {
+            $testOrder                  = $item;
+
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyOrder', $item);
+
+            if (!is_null($item->getBillingAddress()))
+                $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyAddress', $item->getBillingAddress());
+
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyAddress', $item->getShippingAddress());
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyCustomer', $item->getCustomer());
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyAddress', $item->getCustomer()->getDefaultAddress());
+
+            foreach ($item->getLineItems() AS $lineItem)
+            {
+                $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyOrderLineItem', $lineItem);
+
+                foreach ($lineItem->getTaxLines() AS $taxLine)
+                {
+                    $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyTaxLine', $taxLine);
+                }
+            }
+
+            foreach ($item->getTaxLines() AS $taxLine)
+            {
+                $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyTaxLine', $taxLine);
+            }
+        }
+
+        if (!is_null($testOrder))
+        {
+            $order                      = $shopifyService->orderApi->show($testOrder->getId());
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyOrder', $order);
+        }
     }
+
+    public function testCarrierServiceApi ()
+    {
+        $shopifyService                 = $this->getShopifyService();
+        $carrierServiceResponse         = $shopifyService->carrierServiceApi->get();
+        foreach ($carrierServiceResponse AS $carrierService)
+        {
+            $this->assertInstanceOf('App\Services\Shopify\Models\Responses\ShopifyCarrierService', $carrierService);
+        }
+    }
+
+
 
     /**
      * @return Product

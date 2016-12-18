@@ -19,7 +19,7 @@ class ShopifyOrder implements \JsonSerializable
     protected $id;
 
     /**
-     * @var ShopifyAddress
+     * @var ShopifyAddress|null
      */
     protected $billing_address;
 
@@ -559,7 +559,6 @@ class ShopifyOrder implements \JsonSerializable
         return $object;
     }
 
-
     /**
      * @return int
      */
@@ -577,7 +576,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @return ShopifyAddress
+     * @return ShopifyAddress|null
      */
     public function getBillingAddress()
     {
@@ -585,7 +584,7 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
-     * @param ShopifyAddress $billing_address
+     * @param ShopifyAddress|null $billing_address
      */
     public function setBillingAddress($billing_address)
     {
@@ -702,6 +701,86 @@ class ShopifyOrder implements \JsonSerializable
     public function setClosedAt($closed_at)
     {
         $this->closed_at = $closed_at;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCheckoutId()
+    {
+        return $this->checkout_id;
+    }
+
+    /**
+     * @param null|string $checkout_id
+     */
+    public function setCheckoutId($checkout_id)
+    {
+        $this->checkout_id = $checkout_id;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCheckoutToken()
+    {
+        return $this->checkout_token;
+    }
+
+    /**
+     * @param null|string $checkout_token
+     */
+    public function setCheckoutToken($checkout_token)
+    {
+        $this->checkout_token = $checkout_token;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param boolean $confirmed
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getContactEmail()
+    {
+        return $this->contact_email;
+    }
+
+    /**
+     * @param null|string $contact_email
+     */
+    public function setContactEmail($contact_email)
+    {
+        $this->contact_email = $contact_email;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getDeviceId()
+    {
+        return $this->device_id;
+    }
+
+    /**
+     * @param null|string $device_id
+     */
+    public function setDeviceId($device_id)
+    {
+        $this->device_id = $device_id;
     }
 
     /**
@@ -881,6 +960,22 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
+     * @return null|string
+     */
+    public function getLandingSiteRef()
+    {
+        return $this->landing_site_ref;
+    }
+
+    /**
+     * @param null|string $landing_site_ref
+     */
+    public function setLandingSiteRef($landing_site_ref)
+    {
+        $this->landing_site_ref = $landing_site_ref;
+    }
+
+    /**
      * @return ShopifyOrderLineItem[]
      */
     public function getLineItems()
@@ -993,6 +1088,38 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getGateway()
+    {
+        return $this->gateway;
+    }
+
+    /**
+     * @param string $gateway
+     */
+    public function setGateway($gateway)
+    {
+        $this->gateway = $gateway;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isTest()
+    {
+        return $this->test;
+    }
+
+    /**
+     * @param boolean $test
+     */
+    public function setTest($test)
+    {
+        $this->test = $test;
+    }
+
+    /**
      * @return array
      */
     public function getPaymentGatewayNames()
@@ -1038,6 +1165,22 @@ class ShopifyOrder implements \JsonSerializable
     public function setProcessingMethod($processing_method)
     {
         $this->processing_method = $processing_method;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param null|string $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
     }
 
     /**
@@ -1105,6 +1248,22 @@ class ShopifyOrder implements \JsonSerializable
     }
 
     /**
+     * @return null|string
+     */
+    public function getSourceIdentifier()
+    {
+        return $this->source_identifier;
+    }
+
+    /**
+     * @param null|string $source_identifier
+     */
+    public function setSourceIdentifier($source_identifier)
+    {
+        $this->source_identifier = $source_identifier;
+    }
+
+    /**
      * @return string
      */
     public function getSourceName()
@@ -1118,6 +1277,22 @@ class ShopifyOrder implements \JsonSerializable
     public function setSourceName($source_name)
     {
         $this->source_name = $source_name;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSourceUrl()
+    {
+        return $this->source_url;
+    }
+
+    /**
+     * @param null|string $source_url
+     */
+    public function setSourceUrl($source_url)
+    {
+        $this->source_url = $source_url;
     }
 
     /**
@@ -1230,6 +1405,22 @@ class ShopifyOrder implements \JsonSerializable
     public function setTotalPrice($total_price)
     {
         $this->total_price = $total_price;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalPriceUsd()
+    {
+        return $this->total_price_usd;
+    }
+
+    /**
+     * @param float $total_price_usd
+     */
+    public function setTotalPriceUsd($total_price_usd)
+    {
+        $this->total_price_usd = $total_price_usd;
     }
 
     /**
