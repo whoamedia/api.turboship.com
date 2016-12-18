@@ -13,7 +13,6 @@ use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use App\Utilities\CountryUtility;
 use Log;
 use EntityManager;
-use Psy\Exception\FatalErrorException;
 
 class USPSAddressService
 {
