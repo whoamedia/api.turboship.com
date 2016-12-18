@@ -45,7 +45,7 @@ class ClientCredentialRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\CMS\ClientCredential', 'clientCredential')
+        $qb->from('App\Models\Integrations\ClientCredential', 'clientCredential')
             ->join('clientCredential.integrationCredential', 'integrationCredential', Query\Expr\Join::ON)
             ->join('integrationCredential.integration', 'integration', Query\Expr\Join::ON)
             ->join('clientCredential.client', 'client', Query\Expr\Join::ON);

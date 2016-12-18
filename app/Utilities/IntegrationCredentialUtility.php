@@ -10,5 +10,7 @@ class IntegrationCredentialUtility
 
     const SHOPIFY_PASSWORD_ID       = 2;
 
-    const EASYPOST_API_KEY_ID       = 3;
+    const SHOPIFY_HOSTNAME_ID       = 3;
+
+    const EASYPOST_API_KEY_ID       = 4;
 }

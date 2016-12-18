@@ -3,19 +3,20 @@
 namespace Tests;
 
 
+use App\Models\CMS\Validation\ClientValidation;
+use EntityManager;
+
 abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     /**
-     * The base URL to use while testing the application.
-     *
      * @var string
      */
     protected $baseUrl = 'http://localhost';
 
     /**
-     * @var
+     * @var ClientValidation
      */
-    public static $reg;
+    protected $clientValidation;
 
     /**
      * Creates the application.
@@ -27,6 +28,8 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
         $app = require __DIR__.'/../bootstrap/app.php';
 
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+        $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
 
         return $app;
     }

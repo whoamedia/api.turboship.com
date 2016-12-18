@@ -37,6 +37,12 @@ class IntegrationCredentialSeeder extends Seeder
                 'integrationId'     => IntegrationUtility::SHOPIFY_ID,
                 'isRequired'        => true
             ],
+            [
+                'id'                => IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID,
+                'name'              => 'hostName',
+                'integrationId'     => IntegrationUtility::SHOPIFY_ID,
+                'isRequired'        => true
+            ],
 
 
             /**

@@ -34,7 +34,7 @@ class CredentialUtility
     {
         $query      = [
             'clientIds'             => $this->client->getId(),
-            'integrationCredential' => IntegrationCredentialUtility::SHOPIFY_API_KEY_ID
+            'integrationCredentialIds' => IntegrationCredentialUtility::SHOPIFY_API_KEY_ID
         ];
 
         $result                         = $this->clientCredentialRepo->where($query);
@@ -48,8 +48,8 @@ class CredentialUtility
     public function getShopifyPassword ()
     {
         $query      = [
-            'clientIds'             => $this->client->getId(),
-            'integrationCredential' => IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID
+            'clientIds'                 => $this->client->getId(),
+            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID
         ];
 
         $result                         = $this->clientCredentialRepo->where($query);
@@ -60,11 +60,27 @@ class CredentialUtility
     /**
      * @return  ClientCredential|null
      */
+    public function getShopifyHostName ()
+    {
+        $query      = [
+            'clientIds'                 => $this->client->getId(),
+            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID
+        ];
+
+        $result                         = $this->clientCredentialRepo->where($query);
+
+        return (sizeof($result) == 1) ? $result[0] : null;
+    }
+
+
+    /**
+     * @return  ClientCredential|null
+     */
     public function getEasyPostApiKey ()
     {
         $query      = [
-            'clientIds'             => $this->client->getId(),
-            'integrationCredential' => IntegrationCredentialUtility::EASYPOST_API_KEY_ID
+            'clientIds'                 => $this->client->getId(),
+            'integrationCredentialIds'  => IntegrationCredentialUtility::EASYPOST_API_KEY_ID
         ];
 
         $result                         = $this->clientCredentialRepo->where($query);
