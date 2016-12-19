@@ -5,7 +5,7 @@ namespace App\Integrations\Shopify\Models\Requests;
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
 use App\Integrations\Shopify\Models\Responses\ShopifyProductOption;
-use App\Integrations\Shopify\Models\Responses\Variant;
+use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class CreateShopifyProduct implements \JsonSerializable
@@ -81,7 +81,7 @@ class CreateShopifyProduct implements \JsonSerializable
     /**
      * A list of variant objects, each one representing a slightly different version of the product.
      *
-     * @var Variant[]
+     * @var ShopifyVariant[]
      */
     protected $variants;
 
@@ -122,7 +122,7 @@ class CreateShopifyProduct implements \JsonSerializable
         $variants                       = AU::get($data['variants'], []);
         foreach ($variants AS $item)
         {
-            $this->variants[]           = new Variant($item);
+            $this->variants[]           = new ShopifyVariant($item);
         }
 
         $this->options                  = [];
@@ -339,7 +339,7 @@ class CreateShopifyProduct implements \JsonSerializable
     }
 
     /**
-     * @return Variant[]
+     * @return ShopifyVariant[]
      */
     public function getVariants()
     {
@@ -347,7 +347,7 @@ class CreateShopifyProduct implements \JsonSerializable
     }
 
     /**
-     * @param Variant[] $variants
+     * @param ShopifyVariant[] $variants
      */
     public function setVariants($variants)
     {

@@ -28,31 +28,12 @@ App\Models\OMS\Product:
       nullable:       true
       options:
         comment:      "Product description"
-    sku:
-      column:         sku
-      type:           string
-      nullable:       false
-      options:
-        comment:      "Product sku"
-    externalId:
-      column:         externalId
-      type:           string
-      nullable:       false
-      options:
-        comment:      "Product externalId"
     createdAt:
       column:         createdAt
       type:           datetime
       nullable:       false
       options:
         comment:      "When the Product was created"
-        default:      CURRENT_datetime
-    externalCreatedAt:
-      column:         externalCreatedAt
-      type:           datetime
-      nullable:       false
-      options:
-        comment:      "When the Product was on an integrated system"
         default:      CURRENT_datetime
 
   manyToOne:
@@ -64,3 +45,13 @@ App\Models\OMS\Product:
       joinColumn:
         name:         clientId
         referencedColumnName: id
+
+  oneToMany:
+    aliases:
+      targetEntity:   ProductAlias
+      mappedBy:       product
+      cascade:        ["persist", "remove"]
+    variants:
+      targetEntity:   Variant
+      mappedBy:       product
+      cascade:        ["persist", "remove"]

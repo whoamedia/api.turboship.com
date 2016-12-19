@@ -88,7 +88,13 @@ App\Models\OMS\OrderItem:
       options:
         default:      NULL
         comment:      "OrderItem externalVariantId"
-
+    externalVariantTitle:
+      column:         externalVariantTitle
+      type:           string
+      nullable:       true
+      options:
+        default:      NULL
+        comment:      "OrderItem externalVariantTitle"
   manyToOne:
     order:
       targetEntity:   Order
@@ -97,6 +103,13 @@ App\Models\OMS\OrderItem:
       inversedBy:     items
       joinColumn:
         name:         orderId
+        referencedColumnName: id
+    variant:
+      targetEntity:   Variant
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         variantId
         referencedColumnName: id
     status:
       targetEntity:   OrderStatus

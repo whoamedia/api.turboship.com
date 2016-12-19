@@ -5,7 +5,9 @@ namespace App\Models\OMS;
 
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Product extends BaseModel
 {
@@ -16,19 +18,16 @@ class Product extends BaseModel
     protected $id;
 
     /**
+     * Mapped to Shopify title
      * @var string
      */
     protected $name;
 
     /**
+     * Mapped to Shopify body_html
      * @var string|null
      */
     protected $description;
-
-    /**
-     * @var string
-     */
-    protected $sku;
 
     /**
      * @var Client
@@ -36,30 +35,32 @@ class Product extends BaseModel
     protected $client;
 
     /**
-     * @var string
-     */
-    protected $externalId;
-
-    /**
-     * @var \DateTime
-     */
-    protected $externalCreatedAt;
-
-    /**
      * @var \DateTime
      */
     protected $createdAt;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $aliases;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $variants;
+
+    /**
+     * Product constructor.
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
-        $this->externalCreatedAt        = new \DateTime();
+        $this->aliases                  = new ArrayCollection();
+        $this->variants                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
-        $this->sku                      = AU::get($data['sku']);
-        $this->externalId               = AU::get($data['externalId']);
         $this->client                   = AU::get($data['client']);
     }
 
@@ -73,8 +74,6 @@ class Product extends BaseModel
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
-        $object['externalId']           = $this->externalId;
-        $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         return $object;
     }
@@ -125,22 +124,6 @@ class Product extends BaseModel
     }
 
     /**
-     * @return string
-     */
-    public function getSku()
-    {
-        return $this->sku;
-    }
-
-    /**
-     * @param string $sku
-     */
-    public function setSku($sku)
-    {
-        $this->sku = $sku;
-    }
-
-    /**
      * @return Client
      */
     public function getClient()
@@ -165,35 +148,69 @@ class Product extends BaseModel
     }
 
     /**
-     * @return string
+     * @param ProductAlias $alias
      */
-    public function getExternalId()
+    public function addAlias (ProductAlias $alias)
     {
-        return $this->externalId;
+        $alias->setProduct($this);
+        $alias->setClient($this->client);
+        $this->aliases->add($alias);
     }
 
     /**
-     * @param string $externalId
+     * @return ProductAlias[]
      */
-    public function setExternalId($externalId)
+    public function getAliases ()
     {
-        $this->externalId = $externalId;
+        return $this->aliases->toArray();
+    }
+
+    public function removeAlias (ProductAlias $productAlias)
+    {
+        $this->aliases->removeElement($productAlias);
     }
 
     /**
-     * @return \DateTime
+     * @param   Variant $variant
+     * @return  Variant
+     * @throws  BadRequestHttpException
      */
-    public function getExternalCreatedAt()
+    public function addVariant(Variant $variant)
     {
-        return $this->externalCreatedAt;
+        foreach ($this->getVariants() AS $item)
+        {
+
+
+        }
+
+        $variant->setProduct($this);
+        $variant->setClient($this->client);
+        $this->variants->add($variant);
+
+        return $variant;
     }
 
     /**
-     * @param \DateTime $externalCreatedAt
+     * @return Variant[]
      */
-    public function setExternalCreatedAt($externalCreatedAt)
+    public function getVariants ()
     {
-        $this->externalCreatedAt = $externalCreatedAt;
+        return $this->variants->toArray();
     }
+
+    /**
+     * @param Variant $variant
+     */
+    public function removeVariant (Variant $variant)
+    {
+        $this->variants->removeElement($variant);
+
+    }
+
 
 }
+/**
+ * select count(*), sku
+ *  from variants
+ *  GROUP BY sku ORDER BY count(*) desc HAVING count(*) > 1;
+ */

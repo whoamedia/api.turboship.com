@@ -3,49 +3,71 @@
 namespace App\Services\Shopify;
 
 
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
 use App\Models\Locations\ProvidedAddress;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
-use App\Models\OMS\OrderSource;
-use App\Models\OMS\Validation\OrderSourceValidation;
+use App\Models\OMS\CRMSource;
+use App\Models\OMS\Product;
+use App\Models\OMS\ProductAlias;
+use App\Models\OMS\Validation\CRMSourceValidation;
 use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
-use App\Utilities\OrderSourceUtility;
+use App\Models\OMS\Variant;
+use App\Services\MappingExceptionService;
+use App\Services\WeightConversionService;
+use App\Utilities\CRMSourceUtility;
 
 class ShopifyMappingService
 {
 
     /**
-     * @var OrderSourceValidation
+     * @var CRMSourceValidation
      */
-    private $orderSourceValidation;
+    private $crmSourceValidation;
 
     /**
-     * @var OrderSource
+     * @var CRMSource
      */
-    private $shopifyOrderSource;
+    private $shopifyCRMSource;
+
+    /**
+     * @var WeightConversionService
+     */
+    private $weightConversionService;
+
+    /**
+     * @var MappingExceptionService
+     */
+    private $mappingExceptionService;
 
 
     public function __construct()
     {
-        $this->orderSourceValidation    = new OrderSourceValidation();
-        $this->shopifyOrderSource       = $this->orderSourceValidation->idExists(OrderSourceUtility::SHOPIFY_ID);
+        $this->crmSourceValidation      = new CRMSourceValidation();
+        $this->shopifyCRMSource         = $this->crmSourceValidation->idExists(CRMSourceUtility::SHOPIFY_ID);
+        $this->weightConversionService  = new WeightConversionService();
+        $this->mappingExceptionService  = new MappingExceptionService();
     }
 
     /**
      * @param   Client          $client
      * @param   ShopifyOrder    $shopifyOrder
+     * @param   Order|null      $order
      * @return  Order
      */
-    public function fromShopifyOrder (Client $client, ShopifyOrder $shopifyOrder)
+    public function fromShopifyOrder (Client $client, ShopifyOrder $shopifyOrder, Order $order = null)
     {
-        $order                          = new Order();
+        if (is_null($order))
+            $order                          = new Order();
+
         $order->setExternalId($shopifyOrder->getId());
         $externalCreatedAt              = $this->fromShopifyDate($shopifyOrder->getCreatedAt());
         $order->setExternalCreatedAt($externalCreatedAt);
-        $order->setSource($this->shopifyOrderSource);
+        $order->setCRMSource($this->shopifyCRMSource);
         $order->setClient($client);
 
         /**
@@ -72,12 +94,6 @@ class ShopifyMappingService
             $order->setBillingAddress($billingAddress);
         }
 
-        foreach ($shopifyOrder->getLineItems() AS $shopifyOrderLineItem)
-        {
-            $orderItem                  = $this->fromShopifyOrderLineItem($shopifyOrderLineItem);
-            $order->addItem($orderItem);
-        }
-
         return $order;
     }
 
@@ -91,6 +107,7 @@ class ShopifyMappingService
         $orderItem->setExternalId($shopifyOrderLineItem->getId());
         $orderItem->setExternalProductId($shopifyOrderLineItem->getProductId());
         $orderItem->setExternalVariantId($shopifyOrderLineItem->getVariantId());
+        $orderItem->setExternalVariantTitle($shopifyOrderLineItem->getVariantTitle());
         $orderItem->setSku($shopifyOrderLineItem->getSku());
         $orderItem->setQuantityPurchased($shopifyOrderLineItem->getQuantity());
         $orderItem->setQuantityToFulfill($shopifyOrderLineItem->getFulfillableQuantity());
@@ -130,12 +147,102 @@ class ShopifyMappingService
     }
 
     /**
+     * Creates a Product and ProductAlias from a ShopifyProduct
+     * @param   Client $client
+     * @param   ShopifyProduct $shopifyProduct
+     * @param   Product $product
+     * @return  Product
+     */
+    public function fromShopifyProduct (Client $client, ShopifyProduct $shopifyProduct, Product $product = null)
+    {
+        if (is_null($product))
+            $product                        = new Product();
+
+        $product->setName($shopifyProduct->getTitle());
+        $product->setDescription($shopifyProduct->getBodyHtml());
+        $product->setClient($client);
+
+        return $product;
+    }
+
+    /**
+     * @param   Client $client
+     * @param   ShopifyProduct $shopifyProduct
+     * @param   ProductAlias|null $productAlias
+     * @return  ProductAlias
+     */
+    public function toLocalProductAlias (Client $client, ShopifyProduct $shopifyProduct, ProductAlias $productAlias = null)
+    {
+        if (is_null($productAlias))
+            $productAlias                   = new ProductAlias();
+
+        $productAlias->setClient($client);
+        $productAlias->setCrmSource($this->shopifyCRMSource);
+        $productAlias->setExternalId($shopifyProduct->getId());
+        $productAlias->setExternalCreatedAt($this->fromShopifyDate($shopifyProduct->getCreatedAt()));
+
+        return $productAlias;
+    }
+
+    /**
+     * Creates or updates a Variant
+     * @param   Product $product
+     * @param   ShopifyVariant $shopifyVariant
+     * @param\   Variant $variant
+     * @return  Variant
+     */
+    public function fromShopifyVariant (Product $product, ShopifyVariant $shopifyVariant, Variant $variant = null)
+    {
+        if (is_null($variant))
+            $variant                        = new Variant();
+
+        $variant->setProduct($product);
+        $variant->setClient($product->getClient());
+        $variant->setCrmSource($this->shopifyCRMSource);
+        $variant->setTitle($shopifyVariant->getTitle());
+        $variant->setPrice($shopifyVariant->getPrice());
+        $variant->setBarcode($shopifyVariant->getBarcode());
+        $variant->setExternalId($shopifyVariant->getId());
+        $variant->setExternalCreatedAt($this->fromShopifyDate($shopifyVariant->getCreatedAt()));
+
+        //  Convert grams to ounces
+        $grams                              = $shopifyVariant->getGrams();
+        if (is_null($grams) || empty($grams) || $grams < 0)
+            $variant->setWeight(0.00);
+        else
+            $variant->setWeight($this->weightConversionService->gramsToOunces($grams));
+
+
+        //  Lastly, handle the sku
+        $variant->setOriginalSku($shopifyVariant->getSku());
+        $sku                                = $this->mappingExceptionService->getShopifySku($product->getClient(), $shopifyVariant->getSku(), $shopifyVariant->getTitle());
+        $variant->setSku($sku);
+
+
+        return $variant;
+    }
+
+    /**
      * @param   string  $shopifyDate
      * @return  \DateTime
      */
     public function fromShopifyDate ($shopifyDate)
     {
         return \DateTime::createFromFormat('Y-m-d\TH:i:sO', $shopifyDate);
+    }
+
+
+
+    private function handleVariantExceptions (Variant $variant)
+    {
+        //   Whoa media. Update the sku to be sku_title
+        if ($variant->getClient()->getId() == 1)
+        {
+
+        }
+
+
+        return $variant;
     }
 
 }

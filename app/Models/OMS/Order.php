@@ -64,9 +64,9 @@ class Order implements \JsonSerializable
     protected $billingAddress;
 
     /**
-     * @var OrderSource
+     * @var CRMSource
      */
-    protected $source;
+    protected $crmSource;
 
     /**
      * @var Client
@@ -117,7 +117,7 @@ class Order implements \JsonSerializable
         $this->toAddress                = AU::get($data['toAddress']);
         $this->providedAddress          = AU::get($data['providedAddress'], new ProvidedAddress());
         $this->billingAddress           = AU::get($data['billingAddress'], new ProvidedAddress());
-        $this->source                   = AU::get($data['source']);
+        $this->crmSource                = AU::get($data['crmSource']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
 
@@ -152,7 +152,7 @@ class Order implements \JsonSerializable
         $object['totalPrice']           = $this->totalPrice;
         $object['toAddress']            = is_null($this->toAddress) ? NULL : $this->toAddress->jsonSerialize();
         $object['providedAddress']      = $this->providedAddress->jsonSerialize();
-        $object['source']               = $this->source->jsonSerialize();
+        $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
 
@@ -334,19 +334,19 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return OrderSource
+     * @return CRMSource
      */
-    public function getSource ()
+    public function getCRMSource ()
     {
-        return $this->source;
+        return $this->crmSource;
     }
 
     /**
-     * @param OrderSource $source
+     * @param CRMSource $crmSource
      */
-    public function setSource($source)
+    public function setCRMSource($crmSource)
     {
-        $this->source = $source;
+        $this->crmSource = $crmSource;
     }
 
     /**

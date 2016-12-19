@@ -3,7 +3,7 @@
 namespace App\Repositories\Doctrine\OMS;
 
 
-use App\Models\OMS\OrderSource;
+use App\Models\OMS\Variant;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class OrderSourceRepository extends BaseRepository
+class VariantRepository extends BaseRepository
 {
 
     use Paginatable;
@@ -22,14 +22,14 @@ class OrderSourceRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      OrderSource[]|LengthAwarePaginator
+     * @return      Variant[]|LengthAwarePaginator
      */
     function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['orderSource']);
+        $qb->select(['variant']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,43 +45,57 @@ class OrderSourceRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\OrderSource', 'orderSource');
+        $qb->from('App\Models\OMS\Variant', 'variant')
+            ->join('variant.client', 'client', Query\Expr\Join::ON)
+            ->join('variant.product', 'product', Query\Expr\Join::ON)
+            ->join('variant.crmSource', 'crmSource', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('orderSource.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('variant.id', $query['ids']));
 
-        if (!is_null(AU::get($query['names'])))
+        if (!is_null(AU::get($query['clientIds'])))
+            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['productIds'])))
+            $qb->andWhere($qb->expr()->in('product.id', $query['productIds']));
+
+        if (!is_null(AU::get($query['crmSourceIds'])))
+            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+
+        if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();
-            $names                  = explode(',', $query['names']);
-            foreach ($names AS $name)
+            $externalIds            = explode(',', $query['externalIds']);
+            foreach ($externalIds AS $externalId)
             {
-                $orX->add($qb->expr()->LIKE('orderSource.name', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->eq('variant.externalId', $qb->expr()->literal($externalId)));
             }
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('orderSource.id', 'ASC');
+        if (!is_null(AU::get($query['skus'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $skus                   = explode(',', $query['skus']);
+            foreach ($skus AS $sku)
+            {
+                $orX->add($qb->expr()->eq('variant.sku', $qb->expr()->literal(trim($sku))));
+            }
+            $qb->andWhere($orX);
+        }
+
+        $qb->orderBy('variant.id', 'ASC');
         return $qb;
     }
 
 
     /**
      * @param   int         $id
-     * @return  OrderSource|null
+     * @return  Variant|null
      */
     public function getOneById($id)
     {
         return $this->find($id);
-    }
-
-    /**
-     * @param   string      $name
-     * @return  OrderSource|null
-     */
-    public function getOneByName($name)
-    {
-        return $this->findOneBy(['name' => $name]);
     }
 
 }

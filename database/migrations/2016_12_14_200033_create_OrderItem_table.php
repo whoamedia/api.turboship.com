@@ -21,8 +21,7 @@ class CreateOrderItemTable extends Migration
             $table->integer('orderId')->unsigned()->index();
             $table->foreign('orderId')->references('id')->on('Order');
 
-
-
+            $table->integer('variantId')->unsigned()->index()->nullable()->default(NULL);
 
 
             $table->integer('quantityPurchased')->unsigned()->index();
@@ -35,6 +34,7 @@ class CreateOrderItemTable extends Migration
             $table->string('externalId')->index();
             $table->string('externalProductId')->index()->nullable()->default(NULL);
             $table->string('externalVariantId')->index()->nullable()->default(NULL);
+            $table->string('externalVariantTitle')->index()->nullable()->default(NULL);
 
 
             $table->integer('statusId')->unsigned()->index();

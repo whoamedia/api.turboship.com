@@ -1,7 +1,7 @@
-App\Models\OMS\OrderSource:
+App\Models\OMS\CRMSource:
   type:               entity
-  table:              OrderSource
-  repositoryClass:    App\Repositories\Doctrine\OMS\OrderSourceRepository
+  table:              CRMSource
+  repositoryClass:    App\Repositories\Doctrine\OMS\CRMSourceRepository
 
   id:
     id:
@@ -10,7 +10,7 @@ App\Models\OMS\OrderSource:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'OrderSource id'
+        comment:      'CRMSource id'
       id:             true
       generator:
         strategy:     IDENTITY
@@ -23,4 +23,4 @@ App\Models\OMS\OrderSource:
       length:         100
       options:
         fixed:        false
-        comment:      "OrderSource name"
+        comment:      "CRMSource name"

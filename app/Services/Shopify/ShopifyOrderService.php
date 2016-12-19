@@ -3,12 +3,13 @@
 namespace App\Services\Shopify;
 
 
+use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Models\CMS\Client;
+use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
 use App\Services\Order\OrderApprovalService;
-use App\Services\Shopify\ShopifyMappingService;
-use App\Utilities\OrderSourceUtility;
+use App\Utilities\CRMSourceUtility;
 use EntityManager;
 
 class ShopifyOrderService
@@ -54,25 +55,47 @@ class ShopifyOrderService
         $shopifyOrdersResponse          = $this->shopifyOrderRepo->getImportCandidates();
         foreach ($shopifyOrdersResponse AS $shopifyOrder)
         {
-            $orderQuery     = [
-                'clientIds'             => $this->client->getId(),
-                'sourceIds'             => OrderSourceUtility::SHOPIFY_ID,
-                'externalIds'           => $shopifyOrder->getId(),
-            ];
-
-            $orderResult                = $this->orderRepo->where($orderQuery);
+            $order                      = $this->getOrder($shopifyOrder);
 
             //  We found a match and do not need to do an import
-            if (sizeof($orderResult) == 1)
+            if (!is_null($order))
                 continue;
             else
             {
-                $order                  = $this->shopifyMappingService->fromShopifyOrder($this->client, $shopifyOrder);
+                $order                  = $this->shopifyMappingService->fromShopifyOrder($this->client, $shopifyOrder, $order);
+
+                foreach ($shopifyOrder->getLineItems() AS $shopifyOrderLineItem)
+                {
+                    $orderItem                  = $this->shopifyMappingService->fromShopifyOrderLineItem($shopifyOrderLineItem);
+                    $order->addItem($orderItem);
+                }
+
                 $this->orderRepo->saveAndCommit($order);
                 $this->orderApprovalService->processOrder($order);
                 $this->orderRepo->saveAndCommit($order);
             }
         }
+    }
+
+    /**
+     * @param   ShopifyOrder $shopifyOrder
+     * @return  Order|null
+     */
+    public function getOrder (ShopifyOrder $shopifyOrder)
+    {
+        $orderQuery     = [
+            'clientIds'             => $this->client->getId(),
+            'crmSourceIds'          => CRMSourceUtility::SHOPIFY_ID,
+            'externalIds'           => $shopifyOrder->getId(),
+        ];
+
+        $orderResult                = $this->orderRepo->where($orderQuery);
+
+        //  We found a match and do not need to do an import
+        if (sizeof($orderResult) == 1)
+            return $orderResult[0];
+        else
+            return null;
     }
 
 }

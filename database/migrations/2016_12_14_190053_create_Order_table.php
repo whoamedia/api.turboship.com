@@ -26,8 +26,8 @@ class CreateOrderTable extends Migration
             $table->integer('billingAddressId')->unsigned()->index();
             $table->foreign('billingAddressId')->references('id')->on('ProvidedAddress');
 
-            $table->integer('orderSourceId')->unsigned()->index();
-            $table->foreign('orderSourceId')->references('id')->on('OrderSource');
+            $table->integer('crmSourceId')->unsigned()->index();
+            $table->foreign('crmSourceId')->references('id')->on('CRMSource');
 
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
@@ -47,7 +47,7 @@ class CreateOrderTable extends Migration
             $table->foreign('statusId')->references('id')->on('OrderStatus');
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
-            $table->unique(['externalId', 'orderSourceId', 'clientId']);
+            $table->unique(['externalId', 'crmSourceId', 'clientId']);
         });
 
 
