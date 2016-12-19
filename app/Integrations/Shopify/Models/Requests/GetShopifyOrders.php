@@ -31,6 +31,11 @@ class GetShopifyOrders implements \JsonSerializable
     protected $page;
 
     /**
+     * @var bool|null
+     */
+    protected $test;
+
+    /**
      * Restrict results to after the specified ID
      * @var int|null
      */
@@ -109,6 +114,7 @@ class GetShopifyOrders implements \JsonSerializable
         $this->ids                      = AU::get($data['ids']);
         $this->limit                    = AU::get($data['limit'], 50);
         $this->page                     = AU::get($data['page'], 1);
+        $this->test                     = AU::get($data['test']);
         $this->since_id                 = AU::get($data['since_id']);
         $this->created_at_min           = AU::get($data['created_at_min']);
         $this->created_at_max           = AU::get($data['created_at_max']);
@@ -129,6 +135,7 @@ class GetShopifyOrders implements \JsonSerializable
         $object['ids']                  = $this->ids;
         $object['limit']                = $this->limit;
         $object['page']                 = $this->page;
+        $object['test']                 = $this->test;
         $object['since_id']             = $this->since_id;
         $object['created_at_min']       = $this->created_at_min;
         $object['created_at_max']       = $this->created_at_max;
@@ -188,6 +195,22 @@ class GetShopifyOrders implements \JsonSerializable
     public function setPage($page)
     {
         $this->page = $page;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getTest()
+    {
+        return $this->test;
+    }
+
+    /**
+     * @param bool|null $test
+     */
+    public function setTest($test)
+    {
+        $this->test = $test;
     }
 
     /**
