@@ -30,6 +30,11 @@ class OrderItem implements \JsonSerializable
     protected $externalVariantId;
 
     /**
+     * @var string|null
+     */
+    protected $externalVariantTitle;
+
+    /**
      * @var string
      */
     protected $sku;
@@ -65,6 +70,11 @@ class OrderItem implements \JsonSerializable
     protected $order;
 
     /**
+     * @var Variant|null
+     */
+    protected $variant;
+
+    /**
      * @var OrderStatus
      */
     protected $status;
@@ -86,6 +96,7 @@ class OrderItem implements \JsonSerializable
         $this->externalId               = AU::get($data['externalId']);
         $this->externalProductId        = AU::get($data['externalProductId']);
         $this->externalVariantId        = AU::get($data['externalVariantId']);
+        $this->externalVariantTitle     = AU::get($data['externalVariantTitle']);
         $this->sku                      = AU::get($data['sku']);
         $this->quantityPurchased        = AU::get($data['quantityPurchased']);
         $this->quantityToFulfill        = AU::get($data['quantityToFulfill']);
@@ -94,6 +105,7 @@ class OrderItem implements \JsonSerializable
         $this->totalTaxes               = AU::get($data['totalTaxes']);
         $this->status                   = AU::get($data['status']);
         $this->order                    = AU::get($data['order']);
+        $this->variant                  = AU::get($data['variant']);
 
         if (is_null($this->status))
         {
@@ -118,6 +130,7 @@ class OrderItem implements \JsonSerializable
         $object['totalDiscount']        = $this->totalDiscount;
         $object['totalTaxes']           = $this->totalTaxes;
         $object['status']               = $this->status->jsonSerialize();
+        $object['variant']              = is_null($this->variant) ? null : $this->variant->jsonSerialize();
 
         return $object;
     }
@@ -176,6 +189,22 @@ class OrderItem implements \JsonSerializable
     public function setExternalVariantId($externalVariantId)
     {
         $this->externalVariantId = $externalVariantId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalVariantTitle()
+    {
+        return $this->externalVariantTitle;
+    }
+
+    /**
+     * @param null|string $externalVariantTitle
+     */
+    public function setExternalVariantTitle($externalVariantTitle)
+    {
+        $this->externalVariantTitle = $externalVariantTitle;
     }
 
     /**
@@ -288,6 +317,22 @@ class OrderItem implements \JsonSerializable
     public function setOrder($order)
     {
         $this->order = $order;
+    }
+
+    /**
+     * @return Variant|null
+     */
+    public function getVariant()
+    {
+        return $this->variant;
+    }
+
+    /**
+     * @param Variant|null $variant
+     */
+    public function setVariant($variant)
+    {
+        $this->variant = $variant;
     }
 
     /**

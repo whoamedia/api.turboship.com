@@ -58,12 +58,6 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $shopifyProductImportJob        = new ShopifyProductImportJob(1);
-        $shopifyProductImportJob->handle();
-        RETURN;
-
-
-
         $this->call('turboship:reboot');
 
         $this->info('Importing Shopify products...');
@@ -73,7 +67,6 @@ class TestJunkCommand extends Command
         $this->info('Importing Shopify orders...');
         $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
         $shopifyOrderImportJob->handle();
-        //  $this->dispatch(new ShopifyOrderImportJob(1));
     }
 
 }

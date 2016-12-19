@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\CMS\Client;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Product extends BaseModel
 {
@@ -17,11 +18,13 @@ class Product extends BaseModel
     protected $id;
 
     /**
+     * Mapped to Shopify title
      * @var string
      */
     protected $name;
 
     /**
+     * Mapped to Shopify body_html
      * @var string|null
      */
     protected $description;
@@ -42,6 +45,11 @@ class Product extends BaseModel
     protected $aliases;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $variants;
+
+    /**
      * Product constructor.
      * @param array $data
      */
@@ -49,6 +57,7 @@ class Product extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->aliases                  = new ArrayCollection();
+        $this->variants                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
@@ -139,14 +148,6 @@ class Product extends BaseModel
     }
 
     /**
-     * @return ProductAlias[]
-     */
-    public function getAliases ()
-    {
-        return $this->aliases->toArray();
-    }
-
-    /**
      * @param ProductAlias $alias
      */
     public function addAlias (ProductAlias $alias)
@@ -156,4 +157,60 @@ class Product extends BaseModel
         $this->aliases->add($alias);
     }
 
+    /**
+     * @return ProductAlias[]
+     */
+    public function getAliases ()
+    {
+        return $this->aliases->toArray();
+    }
+
+    public function removeAlias (ProductAlias $productAlias)
+    {
+        $this->aliases->removeElement($productAlias);
+    }
+
+    /**
+     * @param   Variant $variant
+     * @return  Variant
+     * @throws  BadRequestHttpException
+     */
+    public function addVariant(Variant $variant)
+    {
+        foreach ($this->getVariants() AS $item)
+        {
+
+
+        }
+
+        $variant->setProduct($this);
+        $variant->setClient($this->client);
+        $this->variants->add($variant);
+
+        return $variant;
+    }
+
+    /**
+     * @return Variant[]
+     */
+    public function getVariants ()
+    {
+        return $this->variants->toArray();
+    }
+
+    /**
+     * @param Variant $variant
+     */
+    public function removeVariant (Variant $variant)
+    {
+        $this->variants->removeElement($variant);
+
+    }
+
+
 }
+/**
+ * select count(*), sku
+ *  from variants
+ *  GROUP BY sku ORDER BY count(*) desc HAVING count(*) > 1;
+ */

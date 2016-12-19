@@ -1,0 +1,105 @@
+App\Models\OMS\Variant:
+  type:               entity
+  table:              Variant
+  repositoryClass:    App\Repositories\Doctrine\OMS\VariantRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Variant id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    title:
+      column:         title
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Variant title"
+    barcode:
+      column:         barcode
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Variant barcode"
+    originalSku:
+      column:         originalSku
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Variant originalSku"
+        default:      null
+    sku:
+      column:         sku
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Variant sku"
+    price:
+      column:         price
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    weight:
+      column:         weight
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Variant was created"
+        default:      CURRENT_datetime
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Variant externalId"
+    externalCreatedAt:
+      column:         externalCreatedAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Variant was created on an integrated system"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    product:
+      targetEntity:   Product
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     variants
+      joinColumn:
+        name:         productId
+        referencedColumnName: id
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
+    crmSource:
+      targetEntity:   CRMSource
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         crmSourceId
+        referencedColumnName: id

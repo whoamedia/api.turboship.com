@@ -51,3 +51,7 @@ App\Models\OMS\Product:
       targetEntity:   ProductAlias
       mappedBy:       product
       cascade:        ["persist", "remove"]
+    variants:
+      targetEntity:   Variant
+      mappedBy:       product
+      cascade:        ["persist", "remove"]

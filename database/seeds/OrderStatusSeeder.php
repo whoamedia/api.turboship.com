@@ -34,7 +34,7 @@ class OrderStatusSeeder extends Seeder
 
 
             /**
-             * Error Statuses
+             * Address Error Statuses
              */
             [
                 'id'    => OrderStatusUtility::INVALID_CITY_ID,
@@ -72,6 +72,17 @@ class OrderStatusSeeder extends Seeder
                 'isError' => true
             ],
 
+
+
+
+            /**
+             * Order Approval Error Statuses
+             */
+            [
+                'id'    => OrderStatusUtility::UNMAPPED_SKU,
+                'name'  => 'Unmapped Sku',
+                'isError' => true
+            ],
 
 
 

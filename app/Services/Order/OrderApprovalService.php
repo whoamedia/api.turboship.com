@@ -13,8 +13,11 @@ use App\Models\OMS\Order;
 use App\Repositories\Doctrine\Locations\CountryRepository;
 use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use App\Repositories\Doctrine\OMS\OrderStatusRepository;
+use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Services\Address\ProvidedAddressService;
 use App\Services\Address\USPSAddressService;
+use App\Services\MappingExceptionService;
+use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
 use EntityManager;
 
@@ -46,6 +49,13 @@ class OrderApprovalService
      */
     private $orderStatusRepo;
 
+    /**
+     * @var VariantRepository
+     */
+    private $variantRepo;
+
+
+
     public function __construct()
     {
         $this->orderStatusUtility       = new OrderStatusUtility();
@@ -53,11 +63,12 @@ class OrderApprovalService
         $this->countryRepo              = EntityManager::getRepository('App\Models\Locations\Country');
         $this->subdivisionRepo          = EntityManager::getRepository('App\Models\Locations\Subdivision');
         $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
+        $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
     }
 
     /**
-     * @param Order $order
-     * @return Order
+     * @param   Order $order
+     * @return  Order
      */
     public function processOrder (Order $order)
     {
@@ -66,6 +77,10 @@ class OrderApprovalService
 
         if (!$this->validateToAddress($order))
             return $order;
+
+        if (!$this->mapOrderItemSkus($order))
+            return $order;
+
 
         $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::PENDING_FULFILLMENT_ID);
         $order->addStatus($status);
@@ -193,6 +208,43 @@ class OrderApprovalService
             $order->addStatus($status);
             return false;
         }
+    }
+
+    /**
+     * @param   Order $order
+     * @return  bool
+     */
+    public function mapOrderItemSkus (Order $order)
+    {
+        $mappingExceptionService    = new MappingExceptionService();
+        $mappingFailure             = false;
+        foreach ($order->getItems() AS $orderItem)
+        {
+            $sku                    = $orderItem->getSku();
+            if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
+                $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantTitle());
+            $variantQuery   = [
+                'clientIds'         => $order->getClient()->getId(),
+                'skus'              => $sku,
+            ];
+
+            $variantResult          = $this->variantRepo->where($variantQuery);
+
+            $variant                = sizeof($variantResult) == 1 ? $variantResult[0] : null;
+
+            if (!is_null($variant))
+                $orderItem->setVariant($variant);
+            else
+                $mappingFailure     = true;
+        }
+
+        if ($mappingFailure == true)
+        {
+            $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::UNMAPPED_SKU);
+            $order->addStatus($status);
+        }
+
+        return !$mappingFailure;
     }
 
 

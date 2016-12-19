@@ -22,6 +22,10 @@ class OrderStatusUtility
     const INVALID_STREET_ID             = 106;
 
 
+    //  Order Error Statuses
+    const UNMAPPED_SKU                  = 120;
+
+
     //  Fulfillment Operations
     const PENDING_FULFILLMENT_ID        = 200;
     const PULLED_ID                     = 201;
