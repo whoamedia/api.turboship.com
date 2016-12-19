@@ -3,35 +3,37 @@
 namespace App\Services\Shopify;
 
 
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 use App\Models\CMS\Client;
 use App\Models\Locations\ProvidedAddress;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
-use App\Models\OMS\OrderSource;
-use App\Models\OMS\Validation\OrderSourceValidation;
+use App\Models\OMS\CRMSource;
+use App\Models\OMS\Product;
+use App\Models\OMS\Validation\CRMSourceValidation;
 use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
-use App\Utilities\OrderSourceUtility;
+use App\Utilities\CRMSourceUtility;
 
 class ShopifyMappingService
 {
 
     /**
-     * @var OrderSourceValidation
+     * @var CRMSourceValidation
      */
-    private $orderSourceValidation;
+    private $crmSourceValidation;
 
     /**
-     * @var OrderSource
+     * @var CRMSource
      */
-    private $shopifyOrderSource;
+    private $shopifyCRMSource;
 
 
     public function __construct()
     {
-        $this->orderSourceValidation    = new OrderSourceValidation();
-        $this->shopifyOrderSource       = $this->orderSourceValidation->idExists(OrderSourceUtility::SHOPIFY_ID);
+        $this->crmSourceValidation      = new CRMSourceValidation();
+        $this->shopifyCRMSource         = $this->crmSourceValidation->idExists(CRMSourceUtility::SHOPIFY_ID);
     }
 
     /**
@@ -45,7 +47,7 @@ class ShopifyMappingService
         $order->setExternalId($shopifyOrder->getId());
         $externalCreatedAt              = $this->fromShopifyDate($shopifyOrder->getCreatedAt());
         $order->setExternalCreatedAt($externalCreatedAt);
-        $order->setSource($this->shopifyOrderSource);
+        $order->setCRMSource($this->shopifyCRMSource);
         $order->setClient($client);
 
         /**
@@ -127,6 +129,21 @@ class ShopifyMappingService
         $providedAddress->setPhone($shopifyAddress->getPhone());
 
         return $providedAddress;
+    }
+
+    /**
+     * @param   Client $client
+     * @param   ShopifyProduct $shopifyProduct
+     * @return  Product
+     */
+    public function fromShopifyProduct (Client $client, ShopifyProduct $shopifyProduct)
+    {
+        $product                        = new Product();
+        $product->setName($shopifyProduct->getTitle());
+        $product->setDescription($shopifyProduct->getBodyHtml());
+        $product->setClient($client);
+
+        return $product;
     }
 
     /**

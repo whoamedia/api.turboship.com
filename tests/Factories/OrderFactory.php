@@ -8,7 +8,7 @@ use App\Models\Locations\ProvidedAddress;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Utilities\OrderSourceUtility;
+use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
 use LaravelDoctrine\ORM\Facades\EntityManager;
 use Illuminate\Support\Str;
@@ -22,9 +22,9 @@ class OrderFactory
     private $clientValidation;
 
     /**
-     * @var OrderSourceUtility
+     * @var CRMSourceUtility
      */
-    private $orderSourceUtility;
+    private $crmSourceUtility;
 
     /**
      * @var OrderStatusUtility
@@ -43,7 +43,7 @@ class OrderFactory
     public function __construct()
     {
         $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
-        $this->orderSourceUtility       = new OrderSourceUtility();
+        $this->crmSourceUtility         = new CRMSourceUtility();
         $this->orderStatusUtility       = new OrderStatusUtility();
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
     }
@@ -54,12 +54,12 @@ class OrderFactory
     public function getValidOrder ()
     {
         $client                         = $this->clientValidation->idExists(1);
-        $shopify                        = $this->orderSourceUtility->getShopify();
+        $shopify                        = $this->crmSourceUtility->getShopify();
 
 
         $order                          = new Order();
         $order->setExternalId(Str::random(32));
-        $order->setSource($shopify);
+        $order->setCRMSource($shopify);
         $order->setClient($client);
 
         $numItems                       = rand(1, 5);

@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\Utilities\OrderSourceUtility;
+use \App\Utilities\CRMSourceUtility;
 
-class OrderSourceSeeder extends Seeder
+class CRMSourceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,7 +12,7 @@ class OrderSourceSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('OrderSource')->insert(
+        DB::table('CRMSource')->insert(
             $this->getSources()
         );
     }
@@ -21,11 +21,11 @@ class OrderSourceSeeder extends Seeder
     {
         return [
             [
-                'id'    => OrderSourceUtility::INTERNAL_ID,
+                'id'    => CRMSourceUtility::INTERNAL_ID,
                 'name'  => 'Internal',
             ],
             [
-                'id'    => OrderSourceUtility::SHOPIFY_ID,
+                'id'    => CRMSourceUtility::SHOPIFY_ID,
                 'name'  => 'Shopify',
             ],
         ];

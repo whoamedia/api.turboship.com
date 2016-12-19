@@ -47,7 +47,7 @@ class OrderRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Order', 'orderz')
             ->join('orderz.items', 'items', Query\Expr\Join::ON)
-            ->join('orderz.source', 'source', Query\Expr\Join::ON)
+            ->join('orderz.crmSource', 'crmSource', Query\Expr\Join::ON)
             ->join('orderz.client', 'client', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
@@ -56,8 +56,8 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['itemIds'])))
             $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
 
-        if (!is_null(AU::get($query['sourceIds'])))
-            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
+        if (!is_null(AU::get($query['crmSourceIds'])))
+            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));

@@ -5,6 +5,7 @@ namespace App\Models\OMS;
 
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class Product extends BaseModel
@@ -26,40 +27,31 @@ class Product extends BaseModel
     protected $description;
 
     /**
-     * @var string
-     */
-    protected $sku;
-
-    /**
      * @var Client
      */
     protected $client;
-
-    /**
-     * @var string
-     */
-    protected $externalId;
-
-    /**
-     * @var \DateTime
-     */
-    protected $externalCreatedAt;
 
     /**
      * @var \DateTime
      */
     protected $createdAt;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $aliases;
 
+    /**
+     * Product constructor.
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
-        $this->externalCreatedAt        = new \DateTime();
+        $this->aliases                  = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
-        $this->sku                      = AU::get($data['sku']);
-        $this->externalId               = AU::get($data['externalId']);
         $this->client                   = AU::get($data['client']);
     }
 
@@ -73,8 +65,6 @@ class Product extends BaseModel
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
-        $object['externalId']           = $this->externalId;
-        $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         return $object;
     }
@@ -125,22 +115,6 @@ class Product extends BaseModel
     }
 
     /**
-     * @return string
-     */
-    public function getSku()
-    {
-        return $this->sku;
-    }
-
-    /**
-     * @param string $sku
-     */
-    public function setSku($sku)
-    {
-        $this->sku = $sku;
-    }
-
-    /**
      * @return Client
      */
     public function getClient()
@@ -165,35 +139,21 @@ class Product extends BaseModel
     }
 
     /**
-     * @return string
+     * @return ProductAlias[]
      */
-    public function getExternalId()
+    public function getAliases ()
     {
-        return $this->externalId;
+        return $this->aliases->toArray();
     }
 
     /**
-     * @param string $externalId
+     * @param ProductAlias $alias
      */
-    public function setExternalId($externalId)
+    public function addAlias (ProductAlias $alias)
     {
-        $this->externalId = $externalId;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExternalCreatedAt()
-    {
-        return $this->externalCreatedAt;
-    }
-
-    /**
-     * @param \DateTime $externalCreatedAt
-     */
-    public function setExternalCreatedAt($externalCreatedAt)
-    {
-        $this->externalCreatedAt = $externalCreatedAt;
+        $alias->setProduct($this);
+        $alias->setClient($this->client);
+        $this->aliases->add($alias);
     }
 
 }

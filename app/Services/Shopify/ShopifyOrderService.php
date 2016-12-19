@@ -7,8 +7,7 @@ use App\Models\CMS\Client;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
 use App\Services\Order\OrderApprovalService;
-use App\Services\Shopify\ShopifyMappingService;
-use App\Utilities\OrderSourceUtility;
+use App\Utilities\CRMSourceUtility;
 use EntityManager;
 
 class ShopifyOrderService
@@ -56,7 +55,7 @@ class ShopifyOrderService
         {
             $orderQuery     = [
                 'clientIds'             => $this->client->getId(),
-                'sourceIds'             => OrderSourceUtility::SHOPIFY_ID,
+                'crmSourceIds'          => CRMSourceUtility::SHOPIFY_ID,
                 'externalIds'           => $shopifyOrder->getId(),
             ];
 

@@ -3,6 +3,7 @@
 namespace App\Jobs\Shopify;
 
 use App\Repositories\Doctrine\CMS\ClientRepository;
+use App\Services\Shopify\ShopifyProductService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -42,8 +43,8 @@ class ShopifyProductImportJob implements ShouldQueue
     public function handle()
     {
         $client                         = $this->clientRepo->getOneById($this->clientId);
-        $shopifyOrderService            = new ShopifyOrderService($client);
-        $shopifyOrderService->downloadOrders();
+        $shopifyProductService          = new ShopifyProductService($client);
+        $shopifyProductService->download();
     }
 
 }

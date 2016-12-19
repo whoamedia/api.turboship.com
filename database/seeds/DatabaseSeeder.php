@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         /**
          * Orders
          */
-        $this->call(OrderSourceSeeder::class);
+        $this->call(CRMSourceSeeder::class);
         $this->call(OrderStatusSeeder::class);
 
 

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductTable extends Migration
+class CreateProductAliasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,24 @@ class CreateProductTable extends Migration
      */
     public function up()
     {
-        Schema::create('Product', function (Blueprint $table)
+        Schema::create('ProductAlias', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('name')->index();
-            $table->text('description')->nullable()->default(NULL);
 
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
 
+            $table->integer('productId')->unsigned()->index();
+            $table->foreign('productId')->references('id')->on('Product');
 
-            //  Boilerplate
-            $table->integer('statusId')->unsigned()->index()->default(1);
+            $table->integer('crmSourceId')->unsigned()->index();
+            $table->foreign('crmSourceId')->references('id')->on('CRMSource');
+
+            $table->string('externalId')->index();
+            $table->datetime('externalCreatedAt')->index();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
+
+            $table->unique(['clientId', 'externalId', 'crmSourceId']);
         });
     }
 
@@ -36,7 +41,7 @@ class CreateProductTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Product');
+        Schema::drop('ProductAlias');
     }
 
 }

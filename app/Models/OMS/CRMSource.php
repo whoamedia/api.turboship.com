@@ -3,7 +3,7 @@
 namespace App\Models\OMS;
 
 
-class OrderSource implements \JsonSerializable
+class CRMSource implements \JsonSerializable
 {
 
     /**

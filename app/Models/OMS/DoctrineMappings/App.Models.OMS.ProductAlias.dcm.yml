@@ -1,0 +1,62 @@
+App\Models\OMS\ProductAlias:
+  type:               entity
+  table:              ProductAlias
+  repositoryClass:    App\Repositories\Doctrine\OMS\ProductAliasRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ProductAlias id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        comment:      "ProductAlias externalId"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the ProductAlias was created"
+        default:      CURRENT_datetime
+    externalCreatedAt:
+      column:         externalCreatedAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the ProductAlias was created on an integrated system"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    product:
+      targetEntity:   Product
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     aliases
+      joinColumn:
+        name:         productId
+        referencedColumnName: id
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
+    crmSource:
+      targetEntity:   CRMSource
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         crmSourceId
+        referencedColumnName: id
