@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Shopify;
 
 
 use App\Models\CMS\Client;

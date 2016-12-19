@@ -1,7 +1,7 @@
-App\Models\WMS\Product:
+App\Models\OMS\Product:
   type:               entity
   table:              Product
-  repositoryClass:    App\Repositories\Doctrine\WMS\ProductRepository
+  repositoryClass:    App\Repositories\Doctrine\OMS\ProductRepository
 
   id:
     id:
@@ -28,12 +28,31 @@ App\Models\WMS\Product:
       nullable:       true
       options:
         comment:      "Product description"
+    sku:
+      column:         sku
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Product sku"
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Product externalId"
     createdAt:
       column:         createdAt
       type:           datetime
       nullable:       false
       options:
         comment:      "When the Product was created"
+        default:      CURRENT_datetime
+    externalCreatedAt:
+      column:         externalCreatedAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Product was on an integrated system"
         default:      CURRENT_datetime
 
   manyToOne:
