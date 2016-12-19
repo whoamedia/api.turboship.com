@@ -3,17 +3,15 @@
 namespace App\Jobs\Shopify;
 
 use App\Repositories\Doctrine\CMS\ClientRepository;
-use App\Services\Shopify\ShopifyOrderService;
-use EntityManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use EntityManager;
 
-class ShopifyOrderImportJob implements ShouldQueue
+class ShopifyProductImportJob implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
-
 
     /**
      * @var int

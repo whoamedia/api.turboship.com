@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Doctrine\WMS;
+namespace App\Repositories\Doctrine\OMS;
 
 
-use App\Models\WMS\Product;
+use App\Models\OMS\Product;
 use App\Repositories\Doctrine\BaseRepository;
 
 class ProductRepository extends BaseRepository

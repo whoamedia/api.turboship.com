@@ -5,7 +5,7 @@ namespace App\Models\CMS;
 
 use App\Models\BaseModel;
 use App\Models\Integrations\ClientCredential;
-use App\Models\WMS\Product;
+use App\Models\OMS\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 

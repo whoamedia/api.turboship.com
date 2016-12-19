@@ -25,6 +25,15 @@ class CreateProductTable extends Migration
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index()->default(1);
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
+
+
+
+            $table->string('sku')->index();
+            $table->string('externalId')->index();
+            $table->datetime('externalCreatedAt')->index();
+
+
+            $table->unique(['clientId', 'sku']);
         });
 
         Schema::table('Product', function (Blueprint $table)

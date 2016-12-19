@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\WMS;
+namespace App\Models\OMS;
 
 
 use App\Models\BaseModel;
@@ -26,9 +26,24 @@ class Product extends BaseModel
     protected $description;
 
     /**
+     * @var string
+     */
+    protected $sku;
+
+    /**
      * @var Client
      */
     protected $client;
+
+    /**
+     * @var string
+     */
+    protected $externalId;
+
+    /**
+     * @var \DateTime
+     */
+    protected $externalCreatedAt;
 
     /**
      * @var \DateTime
@@ -39,9 +54,12 @@ class Product extends BaseModel
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
+        $this->externalCreatedAt        = new \DateTime();
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
+        $this->sku                      = AU::get($data['sku']);
+        $this->externalId               = AU::get($data['externalId']);
         $this->client                   = AU::get($data['client']);
     }
 
@@ -55,6 +73,8 @@ class Product extends BaseModel
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
+        $object['externalId']           = $this->externalId;
+        $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         return $object;
     }
@@ -105,6 +125,22 @@ class Product extends BaseModel
     }
 
     /**
+     * @return string
+     */
+    public function getSku()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * @param string $sku
+     */
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+    }
+
+    /**
      * @return Client
      */
     public function getClient()
@@ -128,5 +164,36 @@ class Product extends BaseModel
         return $this->createdAt;
     }
 
+    /**
+     * @return string
+     */
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     */
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getExternalCreatedAt()
+    {
+        return $this->externalCreatedAt;
+    }
+
+    /**
+     * @param \DateTime $externalCreatedAt
+     */
+    public function setExternalCreatedAt($externalCreatedAt)
+    {
+        $this->externalCreatedAt = $externalCreatedAt;
+    }
 
 }

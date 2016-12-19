@@ -43,7 +43,7 @@ App\Models\CMS\Client:
 
   oneToMany:
     products:
-      targetEntity:   App\Models\WMS\Product
+      targetEntity:   App\Models\OMS\Product
       mappedBy:       client
       cascade:        ["persist", "remove"]
     credentials:
