@@ -29,7 +29,7 @@ class OrderRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['orderz']);
+        $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,14 +45,14 @@ class OrderRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\Order', 'orderz')
-            ->join('orderz.items', 'items', Query\Expr\Join::ON)
-            ->join('orderz.crmSource', 'crmSource', Query\Expr\Join::ON)
-            ->join('orderz.client', 'client', Query\Expr\Join::ON)
-            ->join('orderz.status', 'status', Query\Expr\Join::ON);
+        $qb->from('App\Models\OMS\Order', 'orders')
+            ->join('orders.items', 'items', Query\Expr\Join::ON)
+            ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
+            ->join('orders.client', 'client', Query\Expr\Join::ON)
+            ->join('orders.status', 'status', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('orderz.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('orders.id', $query['ids']));
 
         if (!is_null(AU::get($query['itemIds'])))
             $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
@@ -73,7 +73,7 @@ class OrderRepository extends BaseRepository
             $externalIds            = explode(',', $query['externalIds']);
             foreach ($externalIds AS $externalId)
             {
-                $orX->add($qb->expr()->eq('orderz.externalId', $qb->expr()->literal($externalId)));
+                $orX->add($qb->expr()->eq('orders.externalId', $qb->expr()->literal($externalId)));
             }
             $qb->andWhere($orX);
         }
@@ -91,9 +91,9 @@ class OrderRepository extends BaseRepository
 
 
         if (!is_null(AU::get($query['externalCreatedFrom'])))
-            $qb->andWhere($qb->expr()->gte('orderz.externalCreatedAt', $query['externalCreatedFrom']));
+            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', $query['externalCreatedFrom']));
 
-        $qb->orderBy('orderz.id', 'ASC');
+        $qb->orderBy('orders.id', 'ASC');
 
         return $qb;
     }
@@ -105,7 +105,7 @@ class OrderRepository extends BaseRepository
     public function getMaxExternalId ($query)
     {
         $qb                         = $this->_em->createQueryBuilder();
-        $qb->select(['MAX(orderz.externalId)']);
+        $qb->select(['MAX(orders.externalId)']);
         $qb                         = $this->buildQueryConditions($qb, $query);
 
         $result                     = $qb->getQuery()->getResult();

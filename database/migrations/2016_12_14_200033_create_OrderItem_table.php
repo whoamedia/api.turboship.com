@@ -19,7 +19,7 @@ class CreateOrderItemTable extends Migration
             $table->string('sku')->index();
 
             $table->integer('orderId')->unsigned()->index();
-            $table->foreign('orderId')->references('id')->on('Order');
+            $table->foreign('orderId')->references('id')->on('Orders');
 
             $table->integer('variantId')->unsigned()->index()->nullable()->default(NULL);
 

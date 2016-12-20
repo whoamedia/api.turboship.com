@@ -18,7 +18,7 @@ class CreateOrderStatusHistoryTable extends Migration
             $table->increments('id')->unsigned();
 
             $table->integer('orderId')->unsigned()->index();
-            $table->foreign('orderId')->references('id')->on('Order');
+            $table->foreign('orderId')->references('id')->on('Orders');
 
 
             //  Boilerplate
