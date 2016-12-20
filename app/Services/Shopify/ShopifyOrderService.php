@@ -5,6 +5,7 @@ namespace App\Services\Shopify;
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Models\CMS\Client;
+use App\Models\Integrations\ClientIntegration;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
@@ -19,6 +20,11 @@ class ShopifyOrderService
      * @var Client
      */
     private $client;
+
+    /**
+     * @var ClientIntegration
+     */
+    private $clientIntegration;
 
     /**
      * @var OrderRepository
@@ -41,13 +47,14 @@ class ShopifyOrderService
     private $shopifyOrderRepo;
 
 
-    public function __construct(Client $client)
+    public function __construct(ClientIntegration $clientIntegration)
     {
-        $this->client                   = $client;
+        $this->clientIntegration        = $clientIntegration;
+        $this->client                   = $clientIntegration->getClient();
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $this->shopifyMappingService    = new ShopifyMappingService();
         $this->orderApprovalService     = new OrderApprovalService();
-        $this->shopifyOrderRepo         = new ShopifyOrderRepository($this->client);
+        $this->shopifyOrderRepo         = new ShopifyOrderRepository($this->clientIntegration);
     }
 
     public function downloadOrders ()

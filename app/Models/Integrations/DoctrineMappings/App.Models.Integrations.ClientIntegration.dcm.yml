@@ -1,0 +1,53 @@
+App\Models\Integrations\ClientIntegration:
+  type:               entity
+  table:              ClientIntegration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ClientIntegrationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ClientIntegration id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      options:
+        comment:      "ClientIntegration symbol"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the ClientIntegration was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
+    integration:
+      targetEntity:   Integration
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         integrationId
+        referencedColumnName: id
+
+  oneToMany:
+    credentials:
+      targetEntity:   ClientCredential
+      mappedBy:       clientIntegration
+      cascade:        ["persist", "remove"]

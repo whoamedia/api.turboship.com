@@ -18,17 +18,16 @@ class CreateClientCredentialTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('value', 500);
 
+            $table->integer('clientIntegrationId')->unsigned()->index();
+            $table->foreign('clientIntegrationId')->references('id')->on('ClientIntegration');
+
             $table->integer('integrationCredentialId')->unsigned()->index();
             $table->foreign('integrationCredentialId')->references('id')->on('IntegrationCredential');
-
-            $table->integer('clientId')->unsigned()->index();
-            $table->foreign('clientId')->references('id')->on('Client');
-
 
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
-            $table->unique(['integrationCredentialId', 'clientId']);
+            $table->unique(['clientIntegrationId', 'integrationCredentialId'], 'clientcredential_unique_keys');
         });
 
 
