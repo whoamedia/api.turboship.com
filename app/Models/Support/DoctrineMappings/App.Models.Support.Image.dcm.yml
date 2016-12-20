@@ -1,0 +1,53 @@
+App\Models\Support\Image:
+  type:               entity
+  table:              Image
+  repositoryClass:    App\Repositories\Doctrine\Support\ImageRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Image id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    path:
+      column:         path
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Image path"
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Image externalId"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Image was created"
+        default:      CURRENT_datetime
+    externalCreatedAt:
+      column:         externalCreatedAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Image was created in an integrated system"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    crmSource:
+      targetEntity:   App\Models\OMS\CRMSource
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         crmSourceId
+        referencedColumnName: id

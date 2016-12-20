@@ -5,6 +5,7 @@ namespace App\Models\OMS;
 
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
+use App\Models\Support\Image;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -50,6 +51,11 @@ class Product extends BaseModel
     protected $variants;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $images;
+
+    /**
      * Product constructor.
      * @param array $data
      */
@@ -58,6 +64,7 @@ class Product extends BaseModel
         $this->createdAt                = new \DateTime();
         $this->aliases                  = new ArrayCollection();
         $this->variants                 = new ArrayCollection();
+        $this->images                   = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
@@ -207,10 +214,18 @@ class Product extends BaseModel
 
     }
 
+    /**
+     * @return Image[]
+     */
+    public function getImages ()
+    {
+        return $this->images->toArray();
+    }
+
+
+    public function addImage (Image $image)
+    {
+        $this->images->add($image);
+    }
 
 }
-/**
- * select count(*), sku
- *  from variants
- *  GROUP BY sku ORDER BY count(*) desc HAVING count(*) > 1;
- */

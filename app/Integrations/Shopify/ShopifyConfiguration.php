@@ -44,7 +44,7 @@ class ShopifyConfiguration
         if (is_null($this->apiKey) || is_null($this->password) || is_null($this->hostName))
             return;
 
-        $this->url                      = 'https://' . $this->apiKey . ':' . $this->password . '@' . $this->hostName . '/admin';
+        $this->url                      = 'https://' . $this->apiKey . ':' . $this->password . '@' . $this->hostName . '.myshopify.com/admin';
     }
 
     /**

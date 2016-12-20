@@ -23,6 +23,7 @@ class ShopifyProductRepository extends BaseShopifyRepository
         $getShopifyProducts->setPublishedStatus('published');
 
         $shopifyProductsResponse        = $this->shopifyIntegration->productApi->get($getShopifyProducts);
+
         return $shopifyProductsResponse;
     }
 
