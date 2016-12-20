@@ -1,6 +1,6 @@
 App\Models\OMS\Order:
   type:               entity
-  table:              "`Order`"
+  table:              Orders
   repositoryClass:    App\Repositories\Doctrine\OMS\OrderRepository
 
   id:
