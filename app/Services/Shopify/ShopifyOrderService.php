@@ -53,6 +53,7 @@ class ShopifyOrderService
     public function downloadOrders ()
     {
         $shopifyOrdersResponse          = $this->shopifyOrderRepo->getImportCandidates();
+
         foreach ($shopifyOrdersResponse AS $shopifyOrder)
         {
             $order                      = $this->getOrder($shopifyOrder);
