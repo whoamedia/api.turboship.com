@@ -15,7 +15,9 @@ use EntityManager;
 class TestJunkCommand extends Command
 {
 
-    protected $signature = 'turboship:test';
+    protected $signature    =   'turboship:test
+                                {--PRODUCTS : Import products}
+                                {--ORDERS : Import orders}';
 
     protected $description = 'Test whatever junk you want here';
 
@@ -58,15 +60,26 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $this->call('turboship:reboot');
+        //  $this->call('turboship:reboot');
 
-        $this->info('Importing Shopify products...');
-        $shopifyProductImportJob        = new ShopifyProductImportJob(1);
-        $shopifyProductImportJob->handle();
+        if ($this->option('PRODUCTS') === true)
+        {
+            $this->info('Importing Shopify products...');
+            $shopifyProductImportJob        = new ShopifyProductImportJob(1);
+            $shopifyProductImportJob->handle();
+        }
 
-        //  $this->info('Importing Shopify orders...');
-        //  $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
-        //  $shopifyOrderImportJob->handle();
+        if ($this->option('ORDERS') === true)
+        {
+            $this->info('Importing Shopify orders...');
+            $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
+            $shopifyOrderImportJob->handle();
+        }
+
+
+
+
+
     }
 
 }

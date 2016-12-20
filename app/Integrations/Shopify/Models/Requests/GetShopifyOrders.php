@@ -104,6 +104,14 @@ class GetShopifyOrders implements \JsonSerializable
      */
     protected $fulfillment_status;
 
+    /**
+     * Format is: "<field> <direction>"
+     * Field values:        created_at, updated_at, processed_at
+     * Direction values:    asc, desc
+     * @var string|null
+     */
+    protected $order;
+
 
     /**
      * GetShopifyOrders constructor.
@@ -125,6 +133,7 @@ class GetShopifyOrders implements \JsonSerializable
         $this->status                   = AU::get($data['status'], 'open');
         $this->financial_status         = AU::get($data['financial_status'], 'any');
         $this->fulfillment_status       = AU::get($data['fulfillment_status'], 'any');
+        $this->order                    = AU::get($data['order']);
     }
 
     /**
@@ -145,6 +154,7 @@ class GetShopifyOrders implements \JsonSerializable
         $object['status']               = $this->status;
         $object['financial_status']     = $this->financial_status;
         $object['fulfillment_status']   = $this->fulfillment_status;
+        $object['order']                = $this->order;
 
         return $object;
     }
@@ -371,6 +381,22 @@ class GetShopifyOrders implements \JsonSerializable
     public function setFulfillmentStatus($fulfillment_status)
     {
         $this->fulfillment_status = $fulfillment_status;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param null|string $order
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
     }
 
 }

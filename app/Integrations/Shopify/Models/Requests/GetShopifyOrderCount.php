@@ -70,6 +70,16 @@ class GetShopifyOrderCount implements \JsonSerializable
      */
     protected $fulfillment_status;
 
+    /**
+     * @var bool|null
+     */
+    protected $test;
+
+    /**
+     * @var int|null
+     */
+    protected $since_id;
+
 
 
 
@@ -86,6 +96,8 @@ class GetShopifyOrderCount implements \JsonSerializable
         $this->status                   = AU::get($data['status']);
         $this->financial_status         = AU::get($data['financial_status']);
         $this->fulfillment_status       = AU::get($data['fulfillment_status']);
+        $this->test                     = AU::get($data['test']);
+        $this->since_id                 = AU::get($data['since_id']);
     }
 
     /**
@@ -100,6 +112,8 @@ class GetShopifyOrderCount implements \JsonSerializable
         $object['status']               = $this->status;
         $object['financial_status']     = $this->financial_status;
         $object['fulfillment_status']   = $this->fulfillment_status;
+        $object['test']                 = $this->test;
+        $object['since_id']             = $this->since_id;
 
         return $object;
     }
@@ -214,6 +228,38 @@ class GetShopifyOrderCount implements \JsonSerializable
     public function setFulfillmentStatus($fulfillment_status)
     {
         $this->fulfillment_status = $fulfillment_status;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getTest()
+    {
+        return $this->test;
+    }
+
+    /**
+     * @param bool|null $test
+     */
+    public function setTest($test)
+    {
+        $this->test = $test;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getSinceId()
+    {
+        return $this->since_id;
+    }
+
+    /**
+     * @param int|null $since_id
+     */
+    public function setSinceId($since_id)
+    {
+        $this->since_id = $since_id;
     }
 
 }

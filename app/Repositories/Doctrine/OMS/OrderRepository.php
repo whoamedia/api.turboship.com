@@ -82,6 +82,20 @@ class OrderRepository extends BaseRepository
         return $qb;
     }
 
+    /**
+     * @param   array   $query
+     * @return  string|null
+     */
+    public function getMaxExternalId ($query)
+    {
+        $qb                         = $this->_em->createQueryBuilder();
+        $qb->select(['MAX(orderz.externalId)']);
+        $qb                         = $this->buildQueryConditions($qb, $query);
+
+        $result                     = $qb->getQuery()->getResult();
+        return $result[0][1];
+    }
+
 
     /**
      * @param   int         $id

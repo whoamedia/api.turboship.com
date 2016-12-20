@@ -170,6 +170,10 @@ class OrderApprovalService
      */
     public function validateToAddress (Order $order)
     {
+        //  Only ran in production
+        if (config('app.env') != 'production')
+            return true;
+
         $uspsAddressService             = new USPSAddressService();
 
         try
