@@ -61,12 +61,13 @@ class USPSAddressService
      */
     public function validateAddress(Address $address)
     {
+        $subdivisionName                = is_null($address->getSubdivision()) ? $address->getStateProvince() : $address->getSubdivision()->getName();
         $xml = rawurlencode('<AddressValidateRequest USERID="' . $this->userid . '">
                         <Address ID="0">
                             <Address1>' . $address->getStreet2() . '</Address1>
                             <Address2>' . $address->getStreet1() . '</Address2>
                             <City>' . $address->getCity() . '</City>
-                            <State>' . $address->getSubdivision()->getName() . '</State>
+                            <State>' . $subdivisionName . '</State>
                             <Zip5>' . $address->getPostalCode() . '</Zip5>
                             <Zip4></Zip4>
                         </Address>
@@ -136,6 +137,8 @@ class USPSAddressService
         $address->setPostalCode($postalCode);
 
         $subdivision                = $this->subdivisionRepo->getOneByWildCard($subdivisionName, CountryUtility::UNITED_STATES);
+        if (is_null($subdivision))
+            echo $subdivisionName . PHP_EOL;
 
         $address->setSubdivision($subdivision);
         return $address;

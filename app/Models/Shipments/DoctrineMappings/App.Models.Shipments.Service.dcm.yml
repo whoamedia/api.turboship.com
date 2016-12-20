@@ -1,0 +1,42 @@
+App\Models\Shipments\Service:
+  type:               entity
+  table:              Service
+  repositoryClass:    App\Repositories\Doctrine\Shipments\ServiceRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Service id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Service name"
+    isDomestic:
+      column:         isDomestic
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the service is domestic"
+
+  manyToOne:
+    carrier:
+      targetEntity:   Carrier
+      nullable:       false
+      fetch:          LAZY
+      inversedBy:     services
+      joinColumn:
+        name:         carrierId
+        referencedColumnName: id

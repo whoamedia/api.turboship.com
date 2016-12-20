@@ -5,7 +5,6 @@ namespace App\Models\OMS;
 
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
-use App\Models\Locations\ProvidedAddress;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -56,19 +55,19 @@ class Order implements \JsonSerializable
 
     /**
      * Shopify shipping_address mapped to Address
-     * @var Address|null
+     * @var Address
      */
-    protected $toAddress;
+    protected $shippingAddress;
 
     /**
      * Shopify shipping_address
-     * @var ProvidedAddress
+     * @var Address
      */
     protected $providedAddress;
 
     /**
      * Shopify billing_address
-     * @var ProvidedAddress
+     * @var Address|null
      */
     protected $billingAddress;
 
@@ -131,9 +130,9 @@ class Order implements \JsonSerializable
         $this->totalTaxes               = AU::get($data['totalTaxes'], 0.00);
         $this->totalItemsPrice          = AU::get($data['totalItemsPrice'], 0.00);
         $this->totalPrice               = AU::get($data['totalPrice'], 0.00);
-        $this->toAddress                = AU::get($data['toAddress']);
-        $this->providedAddress          = AU::get($data['providedAddress'], new ProvidedAddress());
-        $this->billingAddress           = AU::get($data['billingAddress'], new ProvidedAddress());
+        $this->shippingAddress          = AU::get($data['shippingAddress']);
+        $this->providedAddress          = AU::get($data['providedAddress']);
+        $this->billingAddress           = AU::get($data['billingAddress']);
         $this->crmSource                = AU::get($data['crmSource']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
@@ -168,8 +167,7 @@ class Order implements \JsonSerializable
         $object['totalTaxes']           = $this->totalTaxes;
         $object['totalItemsPrice']      = $this->totalItemsPrice;
         $object['totalPrice']           = $this->totalPrice;
-        $object['toAddress']            = is_null($this->toAddress) ? NULL : $this->toAddress->jsonSerialize();
-        $object['providedAddress']      = $this->providedAddress->jsonSerialize();
+        $object['shippingAddress']      = $this->shippingAddress->jsonSerialize();
         $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
@@ -320,23 +318,23 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return Address|null
+     * @return Address
      */
-    public function getToAddress()
+    public function getShippingAddress()
     {
-        return $this->toAddress;
+        return $this->shippingAddress;
     }
 
     /**
-     * @param Address|null $toAddress
+     * @param Address $shippingAddress
      */
-    public function setToAddress($toAddress)
+    public function setShippingAddress($shippingAddress)
     {
-        $this->toAddress = $toAddress;
+        $this->shippingAddress = $shippingAddress;
     }
 
     /**
-     * @return ProvidedAddress
+     * @return Address
      */
     public function getProvidedAddress()
     {
@@ -344,7 +342,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @param ProvidedAddress $providedAddress
+     * @param Address $providedAddress
      */
     public function setProvidedAddress($providedAddress)
     {
@@ -352,7 +350,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return ProvidedAddress
+     * @return Address|null
      */
     public function getBillingAddress()
     {
@@ -360,7 +358,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @param ProvidedAddress $billingAddress
+     * @param Address|null $billingAddress
      */
     public function setBillingAddress($billingAddress)
     {

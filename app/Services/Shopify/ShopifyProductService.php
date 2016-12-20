@@ -103,6 +103,7 @@ class ShopifyProductService
                 }
                 catch (\Exception $exception)
                 {
+                    echo 'ProductAlias failed to validate ' . $exception->getMessage() . PHP_EOL;
                     //  TODO: Log this. Do nothing and continue with import
                 }
 
@@ -116,7 +117,10 @@ class ShopifyProductService
                 {
                     //  If the Variant sku isn't set we shouldn't import it
                     if (is_null($shopifyVariant->getSku()) || empty(trim($shopifyVariant->getSku())))
+                    {
+                        echo 'Variant sku is empty' . PHP_EOL;
                         continue;
+                    }
 
                     $variant            = $this->getVariant($shopifyVariant);
                     $variant            = $this->shopifyMappingService->fromShopifyVariant($product, $shopifyVariant, $variant);
@@ -132,6 +136,7 @@ class ShopifyProductService
                     }
                     catch (\Exception $exception)
                     {
+                        echo 'Variant failed to validate ' . $variant->getExternalId() . '   '. $exception->getMessage() . PHP_EOL;
                         //  TODO: Log this
                         $product->removeVariant($variant);
                     }

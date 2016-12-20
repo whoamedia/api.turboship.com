@@ -1,0 +1,41 @@
+App\Models\Shipments\ShipmentItem:
+  type:               entity
+  table:              ShipmentItem
+  repositoryClass:    App\Repositories\Doctrine\Shipments\ShipmentItemRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ShipmentItem id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    quantity:
+      column:         quantity
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+
+  manyToOne:
+    shipment:
+      targetEntity:   Shipment
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     items
+      joinColumn:
+        name:         shipmentId
+        referencedColumnName: id
+    orderItem:
+      targetEntity:   App\Models\OMS\OrderItem
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         orderItemId
+        referencedColumnName: id

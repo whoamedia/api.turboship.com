@@ -1,25 +1,32 @@
 <?php
 
-namespace App\Models\Postage;
+namespace App\Models\Shipments;
 
 
-class Service implements \JsonSerializable
+use Doctrine\Common\Collections\ArrayCollection;
+
+class Carrier implements \JsonSerializable
 {
 
     /**
-     * @var     int
+     * @var int
      */
     protected $id;
 
     /**
-     * @var     string
+     * @var string
      */
     protected $name;
 
     /**
-     * @var     Carrier
+     * @var string
      */
-    protected $carrier;
+    protected $symbol;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $services;
 
 
     /**
@@ -29,7 +36,7 @@ class Service implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
-        $object['carrier']              = $this->carrier->jsonSerialize();
+        $object['symbol']               = $this->symbol;
 
         return $object;
     }
@@ -51,11 +58,19 @@ class Service implements \JsonSerializable
     }
 
     /**
-     * @return Carrier
+     * @return string
      */
-    public function getCarrier()
+    public function getSymbol()
     {
-        return $this->carrier;
+        return $this->symbol;
+    }
+
+    /**
+     * @return Service[]
+     */
+    public function getServices ()
+    {
+        return $this->services->toArray();
     }
 
 }

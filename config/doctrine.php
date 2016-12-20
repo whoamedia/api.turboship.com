@@ -34,6 +34,7 @@ return [
                 base_path('app/Models/Integrations/DoctrineMappings'),
                 base_path('app/Models/OAuth/DoctrineMappings'),
                 base_path('app/Models/OMS/DoctrineMappings'),
+                base_path('app/Models/Shipments/DoctrineMappings'),
                 base_path('app/Models/Support/DoctrineMappings'),
                 base_path('app/Models/WMS/DoctrineMappings'),
             ],

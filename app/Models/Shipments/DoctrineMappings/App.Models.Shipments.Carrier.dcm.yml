@@ -1,0 +1,40 @@
+App\Models\Shipments\Carrier:
+  type:               entity
+  table:              Carrier
+  repositoryClass:    App\Repositories\Doctrine\Shipments\CarrierRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Carrier id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Carrier name"
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Carrier symbol"
+
+  oneToMany:
+    services:
+      targetEntity:   Service
+      mappedBy:       carrier
+      cascade:        ["persist", "remove"]

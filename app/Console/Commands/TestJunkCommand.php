@@ -76,10 +76,6 @@ class TestJunkCommand extends Command
             $shopifyOrderImportJob->handle();
         }
 
-
-
-
-
     }
 
 }

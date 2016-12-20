@@ -11,7 +11,6 @@ use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\CRMSourceUtility;
-use App\Utilities\OrderStatusUtility;
 use EntityManager;
 
 class ShopifyOrderService
