@@ -7,6 +7,7 @@ use App\Integrations\Shopify\Api\CarrierServiceApi;
 use App\Integrations\Shopify\Api\CollectApi;
 use App\Integrations\Shopify\Api\OrderApi;
 use App\Integrations\Shopify\Api\ProductApi;
+use App\Integrations\Shopify\Api\WebHookApi;
 
 class ShopifyIntegration
 {
@@ -37,6 +38,11 @@ class ShopifyIntegration
     public $productApi;
 
     /**
+     * @var WebHookApi
+     */
+    public $webHookApi;
+
+    /**
      * ShopifyIntegration constructor.
      * @param ShopifyConfiguration $shopifyConfiguration
      */
@@ -48,6 +54,7 @@ class ShopifyIntegration
         $this->collectApi               = new CollectApi($this->shopifyConfiguration);
         $this->productApi               = new ProductApi($this->shopifyConfiguration);
         $this->orderApi                 = new OrderApi($this->shopifyConfiguration);
+        $this->webHookApi               = new WebHookApi($this->shopifyConfiguration);
     }
 
 
