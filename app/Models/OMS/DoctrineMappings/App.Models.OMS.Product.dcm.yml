@@ -55,3 +55,17 @@ App\Models\OMS\Product:
       targetEntity:   Variant
       mappedBy:       product
       cascade:        ["persist", "remove"]
+
+  manyToMany:
+    images:
+      fetch:          LAZY
+      targetEntity:   App\Models\Support\Image
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         ProductImage
+        joinColumns:
+          productId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          imageId:
+            referencedColumnName: id
