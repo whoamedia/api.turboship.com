@@ -64,9 +64,9 @@ class TestJunkCommand extends Command
         $shopifyProductImportJob        = new ShopifyProductImportJob(1);
         $shopifyProductImportJob->handle();
 
-        $this->info('Importing Shopify orders...');
-        $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
-        $shopifyOrderImportJob->handle();
+        //  $this->info('Importing Shopify orders...');
+        //  $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
+        //  $shopifyOrderImportJob->handle();
     }
 
 }

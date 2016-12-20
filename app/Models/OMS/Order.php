@@ -19,46 +19,55 @@ class Order implements \JsonSerializable
     protected $id;
 
     /**
+     * Shopify id
      * @var string
      */
     protected $externalId;
 
     /**
+     * Shopify subtotal_price
      * @var float
      */
     protected $basePrice;
 
     /**
+     * Shopify total_discounts
      * @var float
      */
     protected $totalDiscount;
 
     /**
+     * Shopify total_tax
      * @var float
      */
     protected $totalTaxes;
 
     /**
+     * Shopify total_line_items_price
      * @var float
      */
     protected $totalItemsPrice;
 
     /**
+     * Shopify total_price
      * @var float
      */
     protected $totalPrice;
 
     /**
+     * Shopify shipping_address mapped to Address
      * @var Address|null
      */
     protected $toAddress;
 
     /**
+     * Shopify shipping_address
      * @var ProvidedAddress
      */
     protected $providedAddress;
 
     /**
+     * Shopify billing_address
      * @var ProvidedAddress
      */
     protected $billingAddress;
@@ -94,9 +103,16 @@ class Order implements \JsonSerializable
     protected $createdAt;
 
     /**
+     * Shopify created_at
      * @var \DateTime
      */
     protected $externalCreatedAt;
+
+    /**
+     * Shopify order total_weight
+     * @var float
+     */
+    protected $externalWeight;
 
 
     /**
@@ -109,6 +125,7 @@ class Order implements \JsonSerializable
         $this->items                    = new ArrayCollection();
         $this->statusHistory            = new ArrayCollection();
         $this->externalId               = AU::get($data['externalId']);
+        $this->externalWeight           = AU::get($data['externalWeight']);
         $this->basePrice                = AU::get($data['basePrice'], 0.00);
         $this->totalDiscount            = AU::get($data['totalDiscount'], 0.00);
         $this->totalTaxes               = AU::get($data['totalTaxes'], 0.00);
@@ -144,6 +161,7 @@ class Order implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
+        $object['externalWeight']       = $this->externalWeight;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
         $object['basePrice']            = $this->basePrice;
         $object['totalDiscount']        = $this->totalDiscount;
@@ -187,6 +205,22 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return float
+     */
+    public function getExternalWeight()
+    {
+        return $this->externalWeight;
+    }
+
+    /**
+     * @param float $externalWeight
+     */
+    public function setExternalWeight($externalWeight)
+    {
+        $this->externalWeight = $externalWeight;
     }
 
     /**

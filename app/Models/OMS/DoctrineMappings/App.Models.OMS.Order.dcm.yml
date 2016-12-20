@@ -29,6 +29,15 @@ App\Models\OMS\Order:
       nullable:       false
       options:
         comment:      "When the Order was remotely created"
+    externalWeight:
+      column:         externalWeight
+      type:           decimal
+      nullable:       true
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
     basePrice:
       column:         basePrice
       type:           decimal

@@ -4,6 +4,7 @@ namespace App\Services\Shopify;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
 use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
 use App\Models\Locations\ProvidedAddress;
@@ -17,6 +18,7 @@ use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
 use App\Models\OMS\Variant;
+use App\Models\Support\Image;
 use App\Services\MappingExceptionService;
 use App\Services\WeightConversionService;
 use App\Utilities\CRMSourceUtility;
@@ -65,8 +67,12 @@ class ShopifyMappingService
             $order                          = new Order();
 
         $order->setExternalId($shopifyOrder->getId());
-        $externalCreatedAt              = $this->fromShopifyDate($shopifyOrder->getCreatedAt());
-        $order->setExternalCreatedAt($externalCreatedAt);
+        $order->setExternalCreatedAt($this->fromShopifyDate($shopifyOrder->getCreatedAt()));
+
+        $weightGrams                        = $shopifyOrder->getTotalWeight();
+        $weightOunces                       = $this->weightConversionService->gramsToOunces($weightGrams);
+        $order->setExternalWeight($weightOunces);
+
         $order->setCRMSource($this->shopifyCRMSource);
         $order->setClient($client);
 
@@ -166,6 +172,23 @@ class ShopifyMappingService
     }
 
     /**
+     * @param   ShopifyProductImage $shopifyProductImage
+     * @param   Image|null $image
+     * @return  Image
+     */
+    public function fromShopifyProductImage (ShopifyProductImage $shopifyProductImage, Image $image = null)
+    {
+        if (is_null($image))
+            $image                          = new Image();
+
+        $image->setCrmSource($this->shopifyCRMSource);
+        $image->setExternalId($shopifyProductImage->getId());
+        $image->setExternalCreatedAt($this->fromShopifyDate($shopifyProductImage->getCreatedAt()));
+        $image->setPath($shopifyProductImage->getSrc());
+        return $image;
+    }
+
+    /**
      * @param   Client $client
      * @param   ShopifyProduct $shopifyProduct
      * @param   ProductAlias|null $productAlias
@@ -188,7 +211,7 @@ class ShopifyMappingService
      * Creates or updates a Variant
      * @param   Product $product
      * @param   ShopifyVariant $shopifyVariant
-     * @param\   Variant $variant
+     * @param   Variant $variant
      * @return  Variant
      */
     public function fromShopifyVariant (Product $product, ShopifyVariant $shopifyVariant, Variant $variant = null)
@@ -217,7 +240,6 @@ class ShopifyMappingService
         $variant->setOriginalSku($shopifyVariant->getSku());
         $sku                                = $this->mappingExceptionService->getShopifySku($product->getClient(), $shopifyVariant->getSku(), $shopifyVariant->getTitle());
         $variant->setSku($sku);
-
 
         return $variant;
     }

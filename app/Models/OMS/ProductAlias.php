@@ -31,11 +31,13 @@ class ProductAlias extends BaseModel
     protected $crmSource;
 
     /**
+     * Shopify product id
      * @var string
      */
     protected $externalId;
 
     /**
+     * Shopify product created_at
      * @var \DateTime
      */
     protected $externalCreatedAt;
