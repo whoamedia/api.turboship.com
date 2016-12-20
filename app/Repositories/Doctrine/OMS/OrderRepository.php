@@ -48,7 +48,8 @@ class OrderRepository extends BaseRepository
         $qb->from('App\Models\OMS\Order', 'orderz')
             ->join('orderz.items', 'items', Query\Expr\Join::ON)
             ->join('orderz.crmSource', 'crmSource', Query\Expr\Join::ON)
-            ->join('orderz.client', 'client', Query\Expr\Join::ON);
+            ->join('orderz.client', 'client', Query\Expr\Join::ON)
+            ->join('orderz.status', 'status', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orderz.id', $query['ids']));
@@ -62,6 +63,10 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
 
+        if (!is_null(AU::get($query['statusIds'])))
+            $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
+
+
         if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();
@@ -69,6 +74,17 @@ class OrderRepository extends BaseRepository
             foreach ($externalIds AS $externalId)
             {
                 $orX->add($qb->expr()->eq('orderz.externalId', $qb->expr()->literal($externalId)));
+            }
+            $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['itemSkus'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $itemSkus               = explode(',', $query['itemSkus']);
+            foreach ($itemSkus AS $sku)
+            {
+                $orX->add($qb->expr()->eq('items.sku', $qb->expr()->literal($sku)));
             }
             $qb->andWhere($orX);
         }

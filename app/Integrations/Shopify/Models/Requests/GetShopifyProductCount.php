@@ -9,6 +9,11 @@ class GetShopifyProductCount implements \JsonSerializable
 {
 
     /**
+     * @var string|null
+     */
+    protected $ids;
+
+    /**
      * Filter by product vendor
      * @var string|null
      */
@@ -77,6 +82,7 @@ class GetShopifyProductCount implements \JsonSerializable
      */
     public function __construct($data = [])
     {
+        $this->ids                      = AU::get($data['ids']);
         $this->vendor                   = AU::get($data['vendor']);
         $this->product_type             = AU::get($data['product_type']);
         $this->collection_id            = AU::get($data['collection_id']);
@@ -94,6 +100,7 @@ class GetShopifyProductCount implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+        $object['ids']                  = $this->ids;
         $object['vendor']               = $this->vendor;
         $object['product_type']         = $this->product_type;
         $object['collection_id']        = $this->collection_id;
@@ -106,6 +113,22 @@ class GetShopifyProductCount implements \JsonSerializable
         $object['published_status']     = $this->published_status;
 
         return $object;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIds()
+    {
+        return $this->ids;
+    }
+
+    /**
+     * @param null|string $ids
+     */
+    public function setIds($ids)
+    {
+        $this->ids = $ids;
     }
 
     /**

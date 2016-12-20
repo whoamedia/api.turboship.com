@@ -93,9 +93,9 @@ class OrderApprovalService
      */
     public function processProvidedAddress (Order $order)
     {
-        /**
-         * Validate that street1 is not empty
-         */
+        if (!is_null($order->getToAddress()))
+            return true;
+
         $address                        = !is_null($order->getToAddress()) ? $order->getToAddress() : new Address();
 
         $street1                        = $order->getProvidedAddress()->getStreet1();
@@ -225,8 +225,10 @@ class OrderApprovalService
         foreach ($order->getItems() AS $orderItem)
         {
             $sku                    = $orderItem->getSku();
+
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
                 $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantTitle());
+
             $variantQuery   = [
                 'clientIds'         => $order->getClient()->getId(),
                 'skus'              => $sku,
