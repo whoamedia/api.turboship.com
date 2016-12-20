@@ -22,7 +22,17 @@ class CreateAddressTable extends Migration
             $table->string('street2', 100)->index()->nullable();
             $table->string('city', 100)->index()->nullable();
             $table->string('postalCode', 20)->index()->nullable();
-            $table->integer('subdivisionId')->unsigned()->index();
+
+
+            $table->string('stateProvince', 100)->index()->nullable();
+            $table->integer('subdivisionId')->unsigned()->index()->nullable()->default(NULL);
+
+            $table->string('countryCode', 100)->index()->nullable();
+            $table->integer('countryId')->unsigned()->index()->nullable()->default(NULL);
+
+
+
+
             $table->string('phone', 20)->index()->nullable();
             $table->string('email', 50)->index()->nullable();
 

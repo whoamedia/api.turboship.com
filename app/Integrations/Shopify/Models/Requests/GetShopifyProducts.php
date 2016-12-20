@@ -114,6 +114,14 @@ class GetShopifyProducts implements \JsonSerializable
      */
     protected $fields;
 
+    /**
+     * Format is: "<field> <direction>"
+     * Field values:        created_at, updated_at, processed_at
+     * Direction values:    asc, desc
+     * @var string|null
+     */
+    protected $order;
+
 
     /**
      * GetShopifyProducts constructor.
@@ -138,6 +146,7 @@ class GetShopifyProducts implements \JsonSerializable
         $this->published_at_max         = AU::get($data['published_at_max']);
         $this->published_status         = AU::get($data['published_status'], 'any');
         $this->fields                   = AU::get($data['fields']);
+        $this->order                    = AU::get($data['order']);
     }
 
     /**
@@ -162,6 +171,7 @@ class GetShopifyProducts implements \JsonSerializable
         $object['published_at_max']     = $this->published_at_max;
         $object['published_status']     = $this->published_status;
         $object['fields']               = $this->fields;
+        $object['order']                = $this->order;
 
         return $object;
     }
@@ -436,6 +446,22 @@ class GetShopifyProducts implements \JsonSerializable
     public function setFields($fields)
     {
         $this->fields = $fields;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param null|string $order
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
     }
 
 }

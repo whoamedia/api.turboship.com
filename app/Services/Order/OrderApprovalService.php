@@ -8,13 +8,11 @@ use App\Exceptions\Address\InvalidCityException;
 use App\Exceptions\Address\InvalidSubdivisionException;
 use App\Exceptions\Address\MultipleAddressesFoundException;
 use App\Exceptions\Address\USPSApiErrorException;
-use App\Models\Locations\Address;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\Locations\CountryRepository;
 use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
-use App\Services\Address\ProvidedAddressService;
 use App\Services\Address\USPSAddressService;
 use App\Services\MappingExceptionService;
 use App\Utilities\CRMSourceUtility;
@@ -28,11 +26,6 @@ class OrderApprovalService
      * @var OrderStatusUtility
      */
     private $orderStatusUtility;
-
-    /**
-     * @var ProvidedAddressService
-     */
-    private $providedAddressService;
 
     /**
      * @var CountryRepository
@@ -59,7 +52,6 @@ class OrderApprovalService
     public function __construct()
     {
         $this->orderStatusUtility       = new OrderStatusUtility();
-        $this->providedAddressService   = new ProvidedAddressService();
         $this->countryRepo              = EntityManager::getRepository('App\Models\Locations\Country');
         $this->subdivisionRepo          = EntityManager::getRepository('App\Models\Locations\Subdivision');
         $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
@@ -72,10 +64,10 @@ class OrderApprovalService
      */
     public function processOrder (Order $order)
     {
-        if (!$this->processProvidedAddress($order))
+        if (!$this->processShippingAddress($order))
             return $order;
 
-        if (!$this->validateToAddress($order))
+        if (!$this->validateShippingAddress($order))
             return $order;
 
         if (!$this->mapOrderItemSkus($order))
@@ -91,27 +83,22 @@ class OrderApprovalService
      * @param   Order $order
      * @return  bool
      */
-    public function processProvidedAddress (Order $order)
+    public function processShippingAddress (Order $order)
     {
-        /**
-         * Validate that street1 is not empty
-         */
-        $address                        = !is_null($order->getToAddress()) ? $order->getToAddress() : new Address();
+        $address                        = $order->getShippingAddress();
 
-        $street1                        = $order->getProvidedAddress()->getStreet1();
-        if (is_null($street1) || empty(trim($street1)))
+        if (is_null($address->getStreet1()) || empty(trim($address->getStreet1())))
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STREET_ID);
             $order->addStatus($status);
             return false;
         }
-        $address->setStreet1($street1);
-        $address->setStreet2($order->getProvidedAddress()->getStreet2());
+
 
         /**
          * Validate that the provided country is not empty and map it
          */
-        $providedCountry                = $order->getProvidedAddress()->getCountry();
+        $providedCountry                = $address->getCountryCode();
         if (is_null($providedCountry) || empty(trim($providedCountry)))
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_COUNTRY_ID);
@@ -128,38 +115,38 @@ class OrderApprovalService
                 return false;
             }
         }
+        $address->setCountry($country);
 
         /**
          * Validate the provided Subdivision is not empty and map it
+         * Only do this for US orders
          */
-        $providedSubdivision            = $order->getProvidedAddress()->getSubdivision();
-        if (is_null($providedSubdivision) || empty(trim($providedSubdivision)))
+        $providedSubdivision            = $address->getStateProvince();
+        if ( (is_null($providedSubdivision) || empty(trim($providedSubdivision))) && $address->getCountry()->getIso2() == 'US')
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
             $order->addStatus($status);
             return false;
         }
-        else
+
+        $subdivision                = $this->subdivisionRepo->getOneByWildCard($providedSubdivision, $country->getId());
+
+        /**
+         * Not going to stop this from allowing the order to be approved. If the order is US address validation may fix the subdivision
+         */
+
+        /**
+        //  Only fail for US orders
+        if (is_null($subdivision)  && $address->getCountry()->getIso2() == 'US')
         {
-            $subdivision                = $this->subdivisionRepo->getOneByWildCard($providedSubdivision, $country->getId());
-            if (is_null($subdivision))
-            {
-                $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
-                $order->addStatus($status);
-                return false;
-            }
-            $address->setSubdivision($subdivision);
+        $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
+        $order->addStatus($status);
+        return false;
         }
+         */
+        $address->setSubdivision($subdivision);
 
-        $address->setFirstName($order->getProvidedAddress()->getFirstName());
-        $address->setLastName($order->getProvidedAddress()->getLastName());
-        $address->setCompany($order->getProvidedAddress()->getCompany());
-        $address->setCity($order->getProvidedAddress()->getCity());
-        $address->setPostalCode($order->getProvidedAddress()->getPostalCode());
-        $address->setPhone($order->getProvidedAddress()->getPhone());
-        $address->setEmail($order->getProvidedAddress()->getEmail());
-
-        $order->setToAddress($address);
+        $order->setShippingAddress($address);
 
         return true;
     }
@@ -168,13 +155,17 @@ class OrderApprovalService
      * @param   Order $order
      * @return  bool
      */
-    public function validateToAddress (Order $order)
+    public function validateShippingAddress (Order $order)
     {
+        //  Only run in production for US orders
+        if (config('turboship.address.uspsValidation') == true || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
+            return true;
+
         $uspsAddressService             = new USPSAddressService();
 
         try
         {
-            $uspsAddressService->validateAddress($order->getToAddress());
+            $uspsAddressService->validateAddress($order->getShippingAddress());
 
             return true;
         }
@@ -221,8 +212,10 @@ class OrderApprovalService
         foreach ($order->getItems() AS $orderItem)
         {
             $sku                    = $orderItem->getSku();
+
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
                 $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantTitle());
+
             $variantQuery   = [
                 'clientIds'         => $order->getClient()->getId(),
                 'skus'              => $sku,

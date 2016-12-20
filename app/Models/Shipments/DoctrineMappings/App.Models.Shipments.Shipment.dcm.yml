@@ -1,0 +1,69 @@
+App\Models\Shipments\Shipment:
+  type:               entity
+  table:              Shipment
+  repositoryClass:    App\Repositories\Doctrine\Shipments\ShipmentRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Shipment id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    weight:
+      column:         weight
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        default:      CURRENT_datetime
+
+  manyToOne:
+    fromAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         fromAddressId
+        referencedColumnName: id
+    toAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         toAddressId
+        referencedColumnName: id
+    service:
+      targetEntity:   Service
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         serviceId
+        referencedColumnName: id
+    postage:
+      targetEntity:   Postage
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         postageId
+        referencedColumnName: id
+
+  oneToMany:
+    items:
+      targetEntity:   ShipmentItem
+      mappedBy:       shipment
+      cascade:        ["persist", "remove"]

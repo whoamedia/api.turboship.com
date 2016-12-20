@@ -17,14 +17,14 @@ class CreateOrderTable extends Migration
         {
             $table->increments('id')->unsigned();
 
-            $table->integer('toAddressId')->unsigned()->index()->nullable()->default(NULL);
-            $table->foreign('toAddressId')->references('id')->on('Address');
-
             $table->integer('providedAddressId')->unsigned()->index();
-            $table->foreign('providedAddressId')->references('id')->on('ProvidedAddress');
+            $table->foreign('providedAddressId')->references('id')->on('Address');
 
-            $table->integer('billingAddressId')->unsigned()->index();
-            $table->foreign('billingAddressId')->references('id')->on('ProvidedAddress');
+            $table->integer('shippingAddressId')->unsigned()->index();
+            $table->foreign('shippingAddressId')->references('id')->on('Address');
+
+            $table->integer('billingAddressId')->unsigned()->index()->nullable()->default(null);
+            $table->foreign('billingAddressId')->references('id')->on('Address');
 
             $table->integer('crmSourceId')->unsigned()->index();
             $table->foreign('crmSourceId')->references('id')->on('CRMSource');
@@ -35,6 +35,7 @@ class CreateOrderTable extends Migration
 
             $table->string('externalId')->index();
             $table->datetime('externalCreatedAt')->index();
+            $table->decimal('externalWeight', 10, 2)->unsigned()->index()->nullable()->default(null);
             $table->decimal('basePrice', 10, 2)->unsigned()->index();
             $table->decimal('totalDiscount', 10, 2)->unsigned()->index();
             $table->decimal('totalTaxes', 10, 2)->unsigned()->index();

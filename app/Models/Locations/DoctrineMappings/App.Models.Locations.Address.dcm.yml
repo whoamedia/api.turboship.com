@@ -3,15 +3,6 @@ App\Models\Locations\Address:
   table:              Address
   repositoryClass:    App\Repositories\Doctrine\Locations\AddressRepository
 
-  manyToOne:
-    subdivision:
-      targetEntity:   Subdivision
-      nullable:       true
-      fetch:          EAGER
-      joinColumn:
-        name:         subdivisionId
-        referencedColumnName: id
-
   id:
     id:
       column:         id
@@ -74,6 +65,20 @@ App\Models\Locations\Address:
       length:         20
       options:
         comment:      "Postal code for the address"
+    stateProvince:
+      column:         stateProvince
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        comment:      "Province for the address"
+    countryCode:
+      column:         countryCode
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        comment:      "Country name or iso2 for the address"
     phone:
       column:         phone
       type:           string
@@ -95,3 +100,19 @@ App\Models\Locations\Address:
       options:
         comment:      "When the Address was created"
         default:      CURRENT_datetime
+
+  manyToOne:
+    country:
+      targetEntity:   Country
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         countryId
+        referencedColumnName: id
+    subdivision:
+      targetEntity:   Subdivision
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         subdivisionId
+        referencedColumnName: id

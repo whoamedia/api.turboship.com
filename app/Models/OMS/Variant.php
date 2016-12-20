@@ -52,6 +52,7 @@ class Variant extends BaseModel
     protected $barcode;
 
     /**
+     * The original unmodified sku
      * @var string|null
      */
     protected $originalSku;

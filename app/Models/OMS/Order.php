@@ -5,7 +5,6 @@ namespace App\Models\OMS;
 
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
-use App\Models\Locations\ProvidedAddress;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -19,47 +18,56 @@ class Order implements \JsonSerializable
     protected $id;
 
     /**
+     * Shopify id
      * @var string
      */
     protected $externalId;
 
     /**
+     * Shopify subtotal_price
      * @var float
      */
     protected $basePrice;
 
     /**
+     * Shopify total_discounts
      * @var float
      */
     protected $totalDiscount;
 
     /**
+     * Shopify total_tax
      * @var float
      */
     protected $totalTaxes;
 
     /**
+     * Shopify total_line_items_price
      * @var float
      */
     protected $totalItemsPrice;
 
     /**
+     * Shopify total_price
      * @var float
      */
     protected $totalPrice;
 
     /**
-     * @var Address|null
+     * Shopify shipping_address mapped to Address
+     * @var Address
      */
-    protected $toAddress;
+    protected $shippingAddress;
 
     /**
-     * @var ProvidedAddress
+     * Shopify shipping_address
+     * @var Address
      */
     protected $providedAddress;
 
     /**
-     * @var ProvidedAddress
+     * Shopify billing_address
+     * @var Address|null
      */
     protected $billingAddress;
 
@@ -94,9 +102,16 @@ class Order implements \JsonSerializable
     protected $createdAt;
 
     /**
+     * Shopify created_at
      * @var \DateTime
      */
     protected $externalCreatedAt;
+
+    /**
+     * Shopify order total_weight
+     * @var float
+     */
+    protected $externalWeight;
 
 
     /**
@@ -109,14 +124,15 @@ class Order implements \JsonSerializable
         $this->items                    = new ArrayCollection();
         $this->statusHistory            = new ArrayCollection();
         $this->externalId               = AU::get($data['externalId']);
+        $this->externalWeight           = AU::get($data['externalWeight']);
         $this->basePrice                = AU::get($data['basePrice'], 0.00);
         $this->totalDiscount            = AU::get($data['totalDiscount'], 0.00);
         $this->totalTaxes               = AU::get($data['totalTaxes'], 0.00);
         $this->totalItemsPrice          = AU::get($data['totalItemsPrice'], 0.00);
         $this->totalPrice               = AU::get($data['totalPrice'], 0.00);
-        $this->toAddress                = AU::get($data['toAddress']);
-        $this->providedAddress          = AU::get($data['providedAddress'], new ProvidedAddress());
-        $this->billingAddress           = AU::get($data['billingAddress'], new ProvidedAddress());
+        $this->shippingAddress          = AU::get($data['shippingAddress']);
+        $this->providedAddress          = AU::get($data['providedAddress']);
+        $this->billingAddress           = AU::get($data['billingAddress']);
         $this->crmSource                = AU::get($data['crmSource']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
@@ -144,14 +160,14 @@ class Order implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['externalId']           = $this->externalId;
+        $object['externalWeight']       = $this->externalWeight;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
         $object['basePrice']            = $this->basePrice;
         $object['totalDiscount']        = $this->totalDiscount;
         $object['totalTaxes']           = $this->totalTaxes;
         $object['totalItemsPrice']      = $this->totalItemsPrice;
         $object['totalPrice']           = $this->totalPrice;
-        $object['toAddress']            = is_null($this->toAddress) ? NULL : $this->toAddress->jsonSerialize();
-        $object['providedAddress']      = $this->providedAddress->jsonSerialize();
+        $object['shippingAddress']      = $this->shippingAddress->jsonSerialize();
         $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
@@ -187,6 +203,22 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return float
+     */
+    public function getExternalWeight()
+    {
+        return $this->externalWeight;
+    }
+
+    /**
+     * @param float $externalWeight
+     */
+    public function setExternalWeight($externalWeight)
+    {
+        $this->externalWeight = $externalWeight;
     }
 
     /**
@@ -286,23 +318,23 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return Address|null
+     * @return Address
      */
-    public function getToAddress()
+    public function getShippingAddress()
     {
-        return $this->toAddress;
+        return $this->shippingAddress;
     }
 
     /**
-     * @param Address|null $toAddress
+     * @param Address $shippingAddress
      */
-    public function setToAddress($toAddress)
+    public function setShippingAddress($shippingAddress)
     {
-        $this->toAddress = $toAddress;
+        $this->shippingAddress = $shippingAddress;
     }
 
     /**
-     * @return ProvidedAddress
+     * @return Address
      */
     public function getProvidedAddress()
     {
@@ -310,7 +342,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @param ProvidedAddress $providedAddress
+     * @param Address $providedAddress
      */
     public function setProvidedAddress($providedAddress)
     {
@@ -318,7 +350,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return ProvidedAddress
+     * @return Address|null
      */
     public function getBillingAddress()
     {
@@ -326,7 +358,7 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @param ProvidedAddress $billingAddress
+     * @param Address|null $billingAddress
      */
     public function setBillingAddress($billingAddress)
     {

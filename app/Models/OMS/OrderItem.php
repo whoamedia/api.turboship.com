@@ -15,51 +15,61 @@ class OrderItem implements \JsonSerializable
     protected $id;
 
     /**
+     * Shopify id
      * @var string
      */
     protected $externalId;
 
     /**
+     * Shopify product_id
      * @var string|null
      */
     protected $externalProductId;
 
     /**
+     * Shopify variant_id
      * @var string|null
      */
     protected $externalVariantId;
 
     /**
+     * Shopify variant_title
      * @var string|null
      */
     protected $externalVariantTitle;
 
     /**
+     * Shopify sku
      * @var string
      */
     protected $sku;
 
     /**
+     * Shopify quantity
      * @var int
      */
     protected $quantityPurchased;
 
     /**
+     * Shopify fulfillable_quantity
      * @var int
      */
     protected $quantityToFulfill;
 
     /**
+     * Shopify price
      * @var float
      */
     protected $basePrice;
 
     /**
+     * Shopify total_discount
      * @var float
      */
     protected $totalDiscount;
 
     /**
+     * Shopify total of each tax_lines->price
      * @var float
      */
     protected $totalTaxes;

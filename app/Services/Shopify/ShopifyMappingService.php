@@ -4,9 +4,10 @@ namespace App\Services\Shopify;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
 use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
-use App\Models\Locations\ProvidedAddress;
+use App\Models\Locations\Address;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Models\OMS\CRMSource;
@@ -17,6 +18,7 @@ use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
 use App\Models\OMS\Variant;
+use App\Models\Support\Image;
 use App\Services\MappingExceptionService;
 use App\Services\WeightConversionService;
 use App\Utilities\CRMSourceUtility;
@@ -65,8 +67,12 @@ class ShopifyMappingService
             $order                          = new Order();
 
         $order->setExternalId($shopifyOrder->getId());
-        $externalCreatedAt              = $this->fromShopifyDate($shopifyOrder->getCreatedAt());
-        $order->setExternalCreatedAt($externalCreatedAt);
+        $order->setExternalCreatedAt($this->fromShopifyDate($shopifyOrder->getCreatedAt()));
+
+        $weightGrams                        = $shopifyOrder->getTotalWeight();
+        $weightOunces                       = $this->weightConversionService->gramsToOunces($weightGrams);
+        $order->setExternalWeight($weightOunces);
+
         $order->setCRMSource($this->shopifyCRMSource);
         $order->setClient($client);
 
@@ -79,18 +85,19 @@ class ShopifyMappingService
         $order->setTotalItemsPrice($shopifyOrder->getTotalLineItemsPrice());
         $order->setTotalPrice($shopifyOrder->getTotalPrice());
 
-        $providedAddress                = $this->fromShopifyAddressToProvidedAddress($shopifyOrder->getShippingAddress());
 
-        if (!is_null($shopifyOrder->getEmail()))
-            $providedAddress->setEmail($shopifyOrder->getEmail());
-
+        $providedAddress                    = $this->fromShopifyAddress($shopifyOrder->getShippingAddress());
         $order->setProvidedAddress($providedAddress);
+
+        $shippingAddress                    = $this->fromShopifyAddress($shopifyOrder->getShippingAddress());
+        if (!is_null($shopifyOrder->getEmail()))
+            $shippingAddress->setEmail($shopifyOrder->getEmail());
+        $order->setShippingAddress($shippingAddress);
+
 
         if (!is_null($shopifyOrder->getBillingAddress()))
         {
-            $billingAddress             = $this->fromShopifyAddressToProvidedAddress($shopifyOrder->getBillingAddress());
-            if (!is_null($shopifyOrder->getEmail()))
-                $billingAddress->setEmail($shopifyOrder->getEmail());
+            $billingAddress             = $this->fromShopifyAddress($shopifyOrder->getBillingAddress());
             $order->setBillingAddress($billingAddress);
         }
 
@@ -126,24 +133,29 @@ class ShopifyMappingService
     }
 
     /**
-     * @param   ShopifyAddress  $shopifyAddress
-     * @return  ProvidedAddress
+     * @param   ShopifyAddress $shopifyAddress
+     * @return  Address
      */
-    public function fromShopifyAddressToProvidedAddress (ShopifyAddress $shopifyAddress)
+    public function fromShopifyAddress (ShopifyAddress $shopifyAddress)
     {
-        $providedAddress                = new ProvidedAddress();
-        $providedAddress->setFirstName($shopifyAddress->getFirstName());
-        $providedAddress->setLastName($shopifyAddress->getLastName());
-        $providedAddress->setCompany($shopifyAddress->getCompany());
-        $providedAddress->setStreet1($shopifyAddress->getAddress1());
-        $providedAddress->setStreet2($shopifyAddress->getAddress2());
-        $providedAddress->setCity($shopifyAddress->getCity());
-        $providedAddress->setPostalCode($shopifyAddress->getZip());
-        $providedAddress->setSubdivision($shopifyAddress->getProvinceCode());
-        $providedAddress->setCountry($shopifyAddress->getCountryCode());
-        $providedAddress->setPhone($shopifyAddress->getPhone());
+        $address                        = new Address();
+        $address->setFirstName(trim($shopifyAddress->getFirstName()));
+        $address->setLastName(trim($shopifyAddress->getLastName()));
+        $address->setCompany(trim($shopifyAddress->getCompany()));
+        $address->setStreet1(trim($shopifyAddress->getAddress1()));
+        $address->setStreet2(trim($shopifyAddress->getAddress2()));
+        $address->setCity(trim($shopifyAddress->getCity()));
+        $address->setPostalCode(trim($shopifyAddress->getZip()));
 
-        return $providedAddress;
+        if (is_null($shopifyAddress->getProvinceCode()))
+            $address->setStateProvince(trim($shopifyAddress->getProvinceCode()));
+        else
+            $address->setStateProvince(trim($shopifyAddress->getProvince()));
+
+        $address->setCountryCode(trim($shopifyAddress->getCountryCode()));
+        $address->setPhone(trim($shopifyAddress->getPhone()));
+
+        return $address;
     }
 
     /**
@@ -163,6 +175,23 @@ class ShopifyMappingService
         $product->setClient($client);
 
         return $product;
+    }
+
+    /**
+     * @param   ShopifyProductImage $shopifyProductImage
+     * @param   Image|null $image
+     * @return  Image
+     */
+    public function fromShopifyProductImage (ShopifyProductImage $shopifyProductImage, Image $image = null)
+    {
+        if (is_null($image))
+            $image                          = new Image();
+
+        $image->setCrmSource($this->shopifyCRMSource);
+        $image->setExternalId($shopifyProductImage->getId());
+        $image->setExternalCreatedAt($this->fromShopifyDate($shopifyProductImage->getCreatedAt()));
+        $image->setPath($shopifyProductImage->getSrc());
+        return $image;
     }
 
     /**
@@ -188,7 +217,7 @@ class ShopifyMappingService
      * Creates or updates a Variant
      * @param   Product $product
      * @param   ShopifyVariant $shopifyVariant
-     * @param\   Variant $variant
+     * @param   Variant $variant
      * @return  Variant
      */
     public function fromShopifyVariant (Product $product, ShopifyVariant $shopifyVariant, Variant $variant = null)
@@ -218,7 +247,6 @@ class ShopifyMappingService
         $sku                                = $this->mappingExceptionService->getShopifySku($product->getClient(), $shopifyVariant->getSku(), $shopifyVariant->getTitle());
         $variant->setSku($sku);
 
-
         return $variant;
     }
 
@@ -229,20 +257,6 @@ class ShopifyMappingService
     public function fromShopifyDate ($shopifyDate)
     {
         return \DateTime::createFromFormat('Y-m-d\TH:i:sO', $shopifyDate);
-    }
-
-
-
-    private function handleVariantExceptions (Variant $variant)
-    {
-        //   Whoa media. Update the sku to be sku_title
-        if ($variant->getClient()->getId() == 1)
-        {
-
-        }
-
-
-        return $variant;
     }
 
 }

@@ -103,3 +103,8 @@ App\Models\OMS\Variant:
       joinColumn:
         name:         crmSourceId
         referencedColumnName: id
+
+  entityListeners:
+    App\Listeners\VariantListener:
+      postPersist:  [postPersistHandler]
+      postUpdate:   [postUpdateHandler]

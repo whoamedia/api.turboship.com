@@ -21,6 +21,8 @@ class ShopifyProductRepository extends BaseShopifyRepository
         $getShopifyProducts->setPage($page);
         $getShopifyProducts->setLimit($limit);
         $getShopifyProducts->setPublishedStatus('published');
+        $getShopifyProducts->setOrder('created_at desc');
+
 
         $shopifyProductsResponse        = $this->shopifyIntegration->productApi->get($getShopifyProducts);
 
@@ -34,6 +36,7 @@ class ShopifyProductRepository extends BaseShopifyRepository
     {
         $getShopifyProducts             = new GetShopifyProductCount();
         $getShopifyProducts->setPublishedStatus('published');
+
         $shopifyProductsResponse        = $this->shopifyIntegration->productApi->count($getShopifyProducts);
         return $shopifyProductsResponse;
     }

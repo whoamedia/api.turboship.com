@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Doctrine\OMS;
+namespace App\Repositories\Doctrine\Support;
 
 
-use App\Models\OMS\Order;
+use App\Models\Support\Image;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class OrderRepository extends BaseRepository
+class ImageRepository extends BaseRepository
 {
 
     use Paginatable;
@@ -22,14 +22,14 @@ class OrderRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      Order[]|LengthAwarePaginator
+     * @return      Image[]|LengthAwarePaginator
      */
     function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['orderz']);
+        $qb->select(['image']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,27 +45,14 @@ class OrderRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\Order', 'orderz')
-            ->join('orderz.items', 'items', Query\Expr\Join::ON)
-            ->join('orderz.crmSource', 'crmSource', Query\Expr\Join::ON)
-            ->join('orderz.client', 'client', Query\Expr\Join::ON)
-            ->join('orderz.status', 'status', Query\Expr\Join::ON);
+        $qb->from('App\Models\Support\Image', 'image')
+            ->join('image.crmSource', 'crmSource', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('orderz.id', $query['ids']));
-
-        if (!is_null(AU::get($query['itemIds'])))
-            $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
+            $qb->andWhere($qb->expr()->in('image.id', $query['ids']));
 
         if (!is_null(AU::get($query['crmSourceIds'])))
             $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
-
-        if (!is_null(AU::get($query['clientIds'])))
-            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
-
-        if (!is_null(AU::get($query['statusIds'])))
-            $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
-
 
         if (!is_null(AU::get($query['externalIds'])))
         {
@@ -73,49 +60,19 @@ class OrderRepository extends BaseRepository
             $externalIds            = explode(',', $query['externalIds']);
             foreach ($externalIds AS $externalId)
             {
-                $orX->add($qb->expr()->eq('orderz.externalId', $qb->expr()->literal($externalId)));
+                $orX->add($qb->expr()->eq('image.externalId', $qb->expr()->literal($externalId)));
             }
             $qb->andWhere($orX);
         }
 
-        if (!is_null(AU::get($query['itemSkus'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $itemSkus               = explode(',', $query['itemSkus']);
-            foreach ($itemSkus AS $sku)
-            {
-                $orX->add($qb->expr()->eq('items.sku', $qb->expr()->literal($sku)));
-            }
-            $qb->andWhere($orX);
-        }
-
-
-        if (!is_null(AU::get($query['externalCreatedFrom'])))
-            $qb->andWhere($qb->expr()->gte('orderz.externalCreatedAt', $query['externalCreatedFrom']));
-
-        $qb->orderBy('orderz.id', 'ASC');
-
+        $qb->orderBy('image.id', 'ASC');
         return $qb;
-    }
-
-    /**
-     * @param   array   $query
-     * @return  string|null
-     */
-    public function getMaxExternalId ($query)
-    {
-        $qb                         = $this->_em->createQueryBuilder();
-        $qb->select(['MAX(orderz.externalId)']);
-        $qb                         = $this->buildQueryConditions($qb, $query);
-
-        $result                     = $qb->getQuery()->getResult();
-        return $result[0][1];
     }
 
 
     /**
      * @param   int         $id
-     * @return  Order|null
+     * @return  Image|null
      */
     public function getOneById($id)
     {

@@ -29,6 +29,15 @@ App\Models\OMS\Order:
       nullable:       false
       options:
         comment:      "When the Order was remotely created"
+    externalWeight:
+      column:         externalWeight
+      type:           decimal
+      nullable:       true
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
     basePrice:
       column:         basePrice
       type:           decimal
@@ -83,29 +92,27 @@ App\Models\OMS\Order:
         default:      CURRENT_datetime
 
   manyToOne:
-    toAddress:
+    shippingAddress:
       targetEntity:   App\Models\Locations\Address
-      nullable:       true
-      fetch:          EAGER
-      cascade:        ["persist", "remove"]
-      options:
-        default:      NULL
-      joinColumn:
-        name:         toAddressId
-        referencedColumnName: id
-    providedAddress:
-      targetEntity:   App\Models\Locations\ProvidedAddress
       nullable:       false
       fetch:          EAGER
-      cascade:        ["persist", "remove"]
+      cascade:        ["persist"]
+      joinColumn:
+        name:         shippingAddressId
+        referencedColumnName: id
+    providedAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      cascade:        ["persist"]
       joinColumn:
         name:         providedAddressId
         referencedColumnName: id
     billingAddress:
-      targetEntity:   App\Models\Locations\ProvidedAddress
-      nullable:       false
+      targetEntity:   App\Models\Locations\Address
+      nullable:       true
       fetch:          LAZY
-      cascade:        ["persist", "remove"]
+      cascade:        ["persist"]
       joinColumn:
         name:         billingAddressId
         referencedColumnName: id

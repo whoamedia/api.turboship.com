@@ -60,6 +60,18 @@ class Address implements \JsonSerializable
     protected $postalCode;
 
     /**
+     * @SWG\Property(example="GA")
+     * @var     string|null
+     */
+    protected $stateProvince;
+
+    /**
+     * @SWG\Property(example="US")
+     * @var     string|null
+     */
+    protected $countryCode;
+
+    /**
      * @SWG\Property(example="111-111-1111")
      * @var     string|null
      */
@@ -79,7 +91,13 @@ class Address implements \JsonSerializable
 
     /**
      * @SWG\Property()
-     * @var     Subdivision
+     * @var     Country|null
+     */
+    protected $country;
+
+    /**
+     * @SWG\Property()
+     * @var     Subdivision|null
      */
     protected $subdivision;
 
@@ -101,8 +119,11 @@ class Address implements \JsonSerializable
             $this->street2              = AU::get($data['street2']);
             $this->city                 = AU::get($data['city']);
             $this->postalCode           = AU::get($data['postalCode']);
+            $this->stateProvince        = AU::get($data['stateProvince']);
+            $this->countryCode          = AU::get($data['countryCode']);
             $this->phone                = AU::get($data['phone']);
             $this->email                = AU::get($data['email']);
+            $this->country              = AU::get($data['country']);
             $this->subdivision          = AU::get($data['subdivision']);
         }
     }
@@ -120,7 +141,10 @@ class Address implements \JsonSerializable
         $object['street2']              = $this->getStreet2();
         $object['city']                 = $this->getCity();
         $object['postalCode']           = $this->getPostalCode();
-        $object['subdivision']          = $this->subdivision->jsonSerialize();
+        $object['stateProvince']        = $this->stateProvince;
+        $object['countryCode']          = $this->countryCode;
+        $object['country']              = is_null($this->country) ? null : $this->country->jsonSerialize();
+        $object['subdivision']          = is_null($this->subdivision) ? null : $this->subdivision->jsonSerialize();
         $object['phone']                = $this->getPhone();
         $object['email']                = $this->getEmail();
 
@@ -250,6 +274,38 @@ class Address implements \JsonSerializable
     /**
      * @return null|string
      */
+    public function getStateProvince()
+    {
+        return $this->stateProvince;
+    }
+
+    /**
+     * @param null|string $stateProvince
+     */
+    public function setStateProvince($stateProvince)
+    {
+        $this->stateProvince = $stateProvince;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
+     * @param null|string $countryCode
+     */
+    public function setCountryCode($countryCode)
+    {
+        $this->countryCode = $countryCode;
+    }
+
+    /**
+     * @return null|string
+     */
     public function getPhone()
     {
         return $this->phone;
@@ -288,7 +344,23 @@ class Address implements \JsonSerializable
     }
 
     /**
-     * @return Subdivision
+     * @return Country|null
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param Country|null $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * @return Subdivision|null
      */
     public function getSubdivision()
     {
@@ -296,7 +368,7 @@ class Address implements \JsonSerializable
     }
 
     /**
-     * @param Subdivision $subdivision
+     * @param Subdivision|null $subdivision
      */
     public function setSubdivision($subdivision)
     {

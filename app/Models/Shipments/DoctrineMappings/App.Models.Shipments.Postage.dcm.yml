@@ -1,0 +1,99 @@
+App\Models\Shipments\Postage:
+  type:               entity
+  table:              Postage
+  repositoryClass:    App\Repositories\Doctrine\Shipments\PostageRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Postage id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    trackingNumber:
+      column:         trackingNumber
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Postage trackingNumber"
+    labelPath:
+      column:         labelPath
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Path to the label image"
+    weight:
+      column:         weight
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalPrice:
+      column:         totalPrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    basePrice:
+      column:         basePrice
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    totalTaxes:
+      column:         totalTaxes
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+        default:      0.00
+    fuelSurcharge:
+      column:         fuelSurcharge
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+        default:      0.00
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        default:      CURRENT_datetime
+
+  manyToOne:
+    shipment:
+      targetEntity:   Shipment
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         shipmentId
+        referencedColumnName: id
+    service:
+      targetEntity:   Service
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         serviceId
+        referencedColumnName: id

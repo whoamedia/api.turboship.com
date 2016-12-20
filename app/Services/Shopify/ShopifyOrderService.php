@@ -59,28 +59,43 @@ class ShopifyOrderService
 
     public function downloadOrders ()
     {
-        $shopifyOrdersResponse          = $this->shopifyOrderRepo->getImportCandidates();
+        $orderQuery     = [
+            'clientIds'                 => $this->client->getId(),
+            'crmSourceIds'              => CRMSourceUtility::SHOPIFY_ID,
+        ];
 
-        foreach ($shopifyOrdersResponse AS $shopifyOrder)
+        $maxExternalId                  = $this->orderRepo->getMaxExternalId($orderQuery);
+
+        $totalCandidates                = $this->shopifyOrderRepo->getImportCandidatesCount($maxExternalId);
+
+        $limit                          = 250;
+        $totalPages                     = (int)ceil($totalCandidates / $limit);
+
+        for ($page = 1; $page <= $totalPages; $page++)
         {
-            $order                      = $this->getOrder($shopifyOrder);
+            $shopifyOrdersResponse          = $this->shopifyOrderRepo->getImportCandidates($page, $limit, $maxExternalId);
 
-            //  We found a match and do not need to do an import
-            if (!is_null($order))
-                continue;
-            else
+            foreach ($shopifyOrdersResponse AS $shopifyOrder)
             {
-                $order                  = $this->shopifyMappingService->fromShopifyOrder($this->client, $shopifyOrder, $order);
+                $order                      = $this->getOrder($shopifyOrder);
 
-                foreach ($shopifyOrder->getLineItems() AS $shopifyOrderLineItem)
+                //  We found a match and do not need to do an import
+                if (!is_null($order))
+                    continue;
+                else
                 {
-                    $orderItem                  = $this->shopifyMappingService->fromShopifyOrderLineItem($shopifyOrderLineItem);
-                    $order->addItem($orderItem);
-                }
+                    $order                  = $this->shopifyMappingService->fromShopifyOrder($this->client, $shopifyOrder, $order);
 
-                $this->orderRepo->saveAndCommit($order);
-                $this->orderApprovalService->processOrder($order);
-                $this->orderRepo->saveAndCommit($order);
+                    foreach ($shopifyOrder->getLineItems() AS $shopifyOrderLineItem)
+                    {
+                        $orderItem                  = $this->shopifyMappingService->fromShopifyOrderLineItem($shopifyOrderLineItem);
+                        $order->addItem($orderItem);
+                    }
+
+                    $this->orderRepo->saveAndCommit($order);
+                    $this->orderApprovalService->processOrder($order);
+                    $this->orderRepo->saveAndCommit($order);
+                }
             }
         }
     }

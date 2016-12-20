@@ -30,6 +30,11 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
     protected $published_at;
 
     /**
+     * @var ShopifyProductImage[]
+     */
+    protected $images;
+
+    /**
      * @var ShopifyProductImage|null
      */
     protected $image;
@@ -47,6 +52,13 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
         $this->updated_at               = AU::get($data['updated_at']);
         $this->published_at             = AU::get($data['published_at']);
 
+        $this->images                   = [];
+        $images                         = AU::get($data['images'], []);
+        foreach ($images AS $item)
+        {
+            $this->images[]             = new ShopifyProductImage($item);
+        }
+
         $this->image                    = AU::get($data['image']);
         if (!is_null($this->image))
             $this->image                = new ShopifyProductImage($this->image);
@@ -62,6 +74,12 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
         $object['created_at']           = $this->created_at;
         $object['updated_at']           = $this->updated_at;
         $object['published_at']         = $this->published_at;
+
+        $object['images']               = [];
+        foreach ($this->images AS $image)
+        {
+            $object['images'][]         = $image->jsonSerialize();
+        }
 
         $object['image']                = !is_null($this->image) ? $this->image->jsonSerialize() : null;
 
@@ -130,6 +148,22 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
     public function setPublishedAt($published_at)
     {
         $this->published_at = $published_at;
+    }
+
+    /**
+     * @return ShopifyProductImage[]
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * @param ShopifyProductImage[] $images
+     */
+    public function setImages($images)
+    {
+        $this->images = $images;
     }
 
     /**

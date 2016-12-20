@@ -4,6 +4,7 @@ namespace App\Integrations\Shopify\Api;
 
 
 use App\Integrations\Shopify\Models\Requests\CancelShopifyOrder;
+use App\Integrations\Shopify\Models\Requests\GetShopifyOrderCount;
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -42,6 +43,18 @@ class OrderApi extends BaseApi
 
         $items                          = AU::get($response['order']);
         return is_null($items) ? null : new ShopifyOrder($items);
+    }
+
+    /**
+     * @see     https://help.shopify.com/api/reference/order#count
+     * @param   GetShopifyOrderCount|array    $request
+     * @return  int
+     */
+    public function count ($request = [])
+    {
+        $request                        = $request instanceof GetShopifyOrderCount ? $request : new GetShopifyOrderCount($request);
+        $response                       = parent::makeHttpRequest('get', '/orders/count.json', $request);
+        return $response['count'];
     }
 
     /**

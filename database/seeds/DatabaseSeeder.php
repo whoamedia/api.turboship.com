@@ -24,6 +24,13 @@ class DatabaseSeeder extends Seeder
 
 
         /**
+         * Shipments
+         */
+        $this->call(CarrierSeeder::class);
+        $this->call(ServiceSeeder::class);
+
+
+        /**
          * Integrations
          */
         $this->call(IntegrationSeeder::class);
