@@ -129,7 +129,7 @@ class WhoaMediaSeeder extends Seeder
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(\App\Utilities\IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID);
         $clientCredential       = new \App\Models\Integrations\ClientCredential();
         $clientCredential->setIntegrationCredential($shopifyPassword);
-        $clientCredential->setValue('ship-test.myshopify.com');
+        $clientCredential->setValue('ship-test');
         $clientIntegration->addCredential($clientCredential);
 
         $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
