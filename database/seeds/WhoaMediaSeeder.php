@@ -18,6 +18,11 @@ class WhoaMediaSeeder extends Seeder
     private $integrationCredentialRepo;
 
     /**
+     * @var \App\Repositories\Doctrine\Integrations\IntegrationRepository
+     */
+    private $integrationRepo;
+
+    /**
      * @var \App\Repositories\Doctrine\CMS\UserRepository
      */
     private $userRepo;
@@ -38,12 +43,19 @@ class WhoaMediaSeeder extends Seeder
      */
     private $client;
 
+    /**
+     * @var \App\Repositories\Doctrine\Integrations\ClientIntegrationRepository
+     */
+    private $clientIntegrationRepo;
+
     public function run()
     {
         $this->clientRepo       = EntityManager::getRepository('App\Models\CMS\Client');
+        $this->integrationRepo  = EntityManager::getRepository('App\Models\Integrations\Integration');
         $this->integrationCredentialRepo    = EntityManager::getRepository('App\Models\Integrations\IntegrationCredential');
         $this->userRepo         = EntityManager::getRepository('App\Models\CMS\User');
         $this->organizationRepo = EntityManager::getRepository('App\Models\CMS\Organization');
+        $this->clientIntegrationRepo    = EntityManager::getRepository('App\Models\Integrations\ClientIntegration');
 
         $this->organization();
         $this->users();
@@ -94,25 +106,32 @@ class WhoaMediaSeeder extends Seeder
 
     private function shopifyCredentials ()
     {
+        $clientIntegration      = new \App\Models\Integrations\ClientIntegration();
+        $clientIntegration->setSymbol('WHOA_MEDIA_SHOPIFY');
+        $clientIntegration->setClient($this->client);
+
+        $shopifyIntegration     = $this->integrationRepo->getOneById(\App\Utilities\IntegrationUtility::SHOPIFY_ID);
+        $clientIntegration->setIntegration($shopifyIntegration);
+
         $shopifyApiKey          = $this->integrationCredentialRepo->getOneById(\App\Utilities\IntegrationCredentialUtility::SHOPIFY_API_KEY_ID);
         $clientCredential       = new \App\Models\Integrations\ClientCredential();
         $clientCredential->setIntegrationCredential($shopifyApiKey);
         $clientCredential->setValue('95fc4807a02d76f0e1251be499079371');
-        $this->client->addCredential($clientCredential);
+        $clientIntegration->addCredential($clientCredential);
 
 
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(\App\Utilities\IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID);
         $clientCredential       = new \App\Models\Integrations\ClientCredential();
         $clientCredential->setIntegrationCredential($shopifyPassword);
         $clientCredential->setValue('ffca6bc8c3af8ae6e7077a9644d5d294');
-        $this->client->addCredential($clientCredential);
+        $clientIntegration->addCredential($clientCredential);
 
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(\App\Utilities\IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID);
         $clientCredential       = new \App\Models\Integrations\ClientCredential();
         $clientCredential->setIntegrationCredential($shopifyPassword);
         $clientCredential->setValue('ship-test.myshopify.com');
-        $this->client->addCredential($clientCredential);
+        $clientIntegration->addCredential($clientCredential);
 
-        $this->clientRepo->saveAndCommit($this->client);
+        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
     }
 }

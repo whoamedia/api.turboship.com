@@ -3,7 +3,6 @@
 namespace App\Models\Integrations;
 
 
-use App\Models\CMS\Client;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Crypt;
 
@@ -26,9 +25,9 @@ class ClientCredential
     protected $integrationCredential;
 
     /**
-     * @var Client
+     * @var ClientIntegration
      */
-    protected $client;
+    protected $clientIntegration;
 
     /**
      * @var \DateTime
@@ -42,7 +41,7 @@ class ClientCredential
 
         $this->value                    = AU::get($data['value']);
         $this->integrationCredential    = AU::get($data['integrationCredential']);
-        $this->client                   = AU::get($data['client']);
+        $this->clientIntegration        = AU::get($data['clientIntegration']);
 
         if (!is_null($this->value))
             $this->setValue($this->value);
@@ -89,19 +88,19 @@ class ClientCredential
     }
 
     /**
-     * @return Client
+     * @return ClientIntegration
      */
-    public function getClient()
+    public function getClientIntegration()
     {
-        return $this->client;
+        return $this->clientIntegration;
     }
 
     /**
-     * @param Client $client
+     * @param ClientIntegration $clientIntegration
      */
-    public function setClient($client)
+    public function setClientIntegration($clientIntegration)
     {
-        $this->client = $client;
+        $this->clientIntegration = $clientIntegration;
     }
 
     /**

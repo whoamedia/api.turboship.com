@@ -15,6 +15,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         $getShopifyOrders               = new GetShopifyOrders();
         $getShopifyOrders->setFulfillmentStatus('unshipped');
         $getShopifyOrders->setFinancialStatus('paid');
+        $getShopifyOrders->setTest(false);
         $getShopifyOrders->setPage(1);
         $getShopifyOrders->setLimit(250);
 

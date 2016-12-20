@@ -2,7 +2,8 @@
 
 namespace App\Jobs\Shopify;
 
-use App\Repositories\Doctrine\CMS\ClientRepository;
+
+use App\Repositories\Doctrine\Integrations\ClientIntegrationRepository;
 use App\Services\Shopify\ShopifyOrderService;
 use EntityManager;
 use Illuminate\Bus\Queueable;
@@ -18,22 +19,22 @@ class ShopifyOrderImportJob implements ShouldQueue
     /**
      * @var int
      */
-    private $clientId;
+    private $clientIntegrationId;
 
     /**
-     * @var ClientRepository
+     * @var ClientIntegrationRepository
      */
-    private $clientRepo;
+    private $clientIntegrationRepo;
 
 
     /**
      * ShopifyOrderImportJob constructor.
-     * @param   int     $clientId
+     * @param   int     $clientIntegrationId
      */
-    public function __construct($clientId)
+    public function __construct($clientIntegrationId)
     {
-        $this->clientId                 = $clientId;
-        $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
+        $this->clientIntegrationId      = $clientIntegrationId;
+        $this->clientIntegrationRepo    = EntityManager::getRepository('App\Models\Integrations\ClientIntegration');
     }
 
     /**
@@ -43,8 +44,8 @@ class ShopifyOrderImportJob implements ShouldQueue
      */
     public function handle()
     {
-        $client                         = $this->clientRepo->getOneById($this->clientId);
-        $shopifyOrderService            = new ShopifyOrderService($client);
+        $clientIntegration              = $this->clientIntegrationRepo->getOneById($this->clientIntegrationId);
+        $shopifyOrderService            = new ShopifyOrderService($clientIntegration);
         $shopifyOrderService->downloadOrders();
     }
 

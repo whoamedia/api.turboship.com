@@ -46,7 +46,3 @@ App\Models\CMS\Client:
       targetEntity:   App\Models\OMS\Product
       mappedBy:       client
       cascade:        ["persist", "remove"]
-    credentials:
-      targetEntity:   App\Models\Integrations\ClientCredential
-      mappedBy:       client
-      cascade:        ["persist", "remove"]

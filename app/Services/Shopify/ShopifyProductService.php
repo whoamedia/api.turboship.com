@@ -6,6 +6,7 @@ namespace App\Services\Shopify;
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
+use App\Models\Integrations\ClientIntegration;
 use App\Models\OMS\ProductAlias;
 use App\Models\OMS\Variant;
 use App\Repositories\Doctrine\OMS\ProductAliasRepository;
@@ -22,6 +23,11 @@ class ShopifyProductService
      * @var Client
      */
     private $client;
+
+    /**
+     * @var ClientIntegration
+     */
+    private $clientIntegration;
 
     /**
      * @var ProductRepository
@@ -44,14 +50,15 @@ class ShopifyProductService
     private $shopifyProductRepo;
 
 
-    public function __construct(Client $client)
+    public function __construct(ClientIntegration $clientIntegration)
     {
-        $this->client                   = $client;
+        $this->clientIntegration        = $clientIntegration;
+        $this->client                   = $clientIntegration->getClient();
         $this->productRepo              = EntityManager::getRepository('App\Models\OMS\Product');
         $this->productAliasRepo         = EntityManager::getRepository('App\Models\OMS\ProductAlias');
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
         $this->shopifyMappingService    = new ShopifyMappingService();
-        $this->shopifyProductRepo       = new ShopifyProductRepository($this->client);
+        $this->shopifyProductRepo       = new ShopifyProductRepository($this->clientIntegration);
     }
 
 
