@@ -22,7 +22,8 @@ class ShopifyProductController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            //  Do Nothing
+            $this->webHookLog->setSuccess(false);
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
         return response('', 200);
@@ -36,7 +37,8 @@ class ShopifyProductController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            //  Do Nothing
+            $this->webHookLog->setSuccess(false);
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
         return response('', 200);
@@ -50,7 +52,8 @@ class ShopifyProductController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            //  Do Nothing
+            $this->webHookLog->setSuccess(false);
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
         return response('', 200);

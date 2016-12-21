@@ -28,8 +28,13 @@ App\Models\Logs\WebHookLog:
       type:           boolean
       nullable:       false
       options:
-        fixed:        false
         comment:      "If the webhook was verified"
+    success:
+      column:         success
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the webhook was successfully processed"
 
   manyToOne:
     clientIntegration:

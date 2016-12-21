@@ -118,17 +118,17 @@ class ShopifyApiTest extends TestCase
 
     public function testWebHookApi ()
     {
-        RETURN;
+
         $shopifyIntegration                 = $this->getShopifyIntegration();
         $createShopifyWebHook               = new CreateShopifyWebHook();
 
         foreach ($this->clientIntegration->getWebHooks() AS $clientWebHook)
         {
-            if ($clientWebHook->getIntegrationWebHook()->getTopic() == 'products/update')
+            if ($clientWebHook->getIntegrationWebHook()->isActive())
             {
                 $createShopifyWebHook->setTopic($clientWebHook->getIntegrationWebHook()->getTopic());
                 //  config('app.url')       'https://dev-api.turboship.com'
-                $address    = config('app.url') . '/webhooks/shopify/' . $this->clientIntegration->getId() . '/' . $clientWebHook->getIntegrationWebHook()->getTopic();
+                $address    = 'https://dev-api.turboship.com' . '/webhooks/shopify/' . $this->clientIntegration->getId() . '/' . $createShopifyWebHook->getTopic();
                 $createShopifyWebHook->setAddress($address);
                 $response = $shopifyIntegration->webHookApi->create($createShopifyWebHook);
                 dd($response);

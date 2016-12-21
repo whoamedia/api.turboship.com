@@ -35,6 +35,11 @@ class WebHookLog
      */
     protected $verified;
 
+    /**
+     * @var bool
+     */
+    protected $success;
+
 
     public function __construct($data = [])
     {
@@ -42,6 +47,7 @@ class WebHookLog
         $this->integrationWebHook       = AU::get($data['integrationWebHook']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
         $this->verified                 = AU::get($data['verified']);
+        $this->success                  = AU::get($data['success']);
     }
 
     /**
@@ -122,6 +128,22 @@ class WebHookLog
     public function setVerified($verified)
     {
         $this->verified = $verified;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * @param boolean $success
+     */
+    public function setSuccess($success)
+    {
+        $this->success = $success;
     }
 
 }

@@ -76,6 +76,7 @@ class BaseShopifyController extends Controller
         $this->webHookLog->setClientIntegration($this->clientIntegration);
         $this->webHookLog->setIntegrationWebHook($integrationWebHook);
         $this->webHookLog->setIncomingMessage(json_encode($request->input(), true));
+        $this->webHookLog->setSuccess(true);
 
         $this->webHookLogRepo->saveAndCommit($this->webHookLog);
     }

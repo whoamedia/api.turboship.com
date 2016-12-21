@@ -24,6 +24,7 @@ class CreateWebHookLogTable extends Migration
             $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');
 
             $table->boolean('verified')->index();
+            $table->boolean('success')->index();
             $table->text('incomingMessage');
         });
 
