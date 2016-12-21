@@ -37,6 +37,11 @@ class BaseShopifyController extends Controller
     protected $clientIntegration;
 
     /**
+     * @var WebHookLog
+     */
+    protected $webHookLog;
+
+    /**
      * @var string
      */
     protected $shopifySharedSecret;
@@ -65,14 +70,14 @@ class BaseShopifyController extends Controller
 
         $integrationWebHook             = $webHookResult[0];
 
-        $webHookLog                     = new WebHookLog();
+        $this->webHookLog                     = new WebHookLog();
         $verified                       = $this->verifyWebHook($request);
-        $webHookLog->setVerified($verified);
-        $webHookLog->setClientIntegration($this->clientIntegration);
-        $webHookLog->setIntegrationWebHook($integrationWebHook);
-        $webHookLog->setIncomingMessage(json_encode($request->input(), true));
+        $this->webHookLog->setVerified($verified);
+        $this->webHookLog->setClientIntegration($this->clientIntegration);
+        $this->webHookLog->setIntegrationWebHook($integrationWebHook);
+        //  $this->webHookLog->setIncomingMessage(json_encode($request->input(), true));
 
-        $this->webHookLogRepo->saveAndCommit($webHookLog);
+        $this->webHookLogRepo->saveAndCommit($this->webHookLog);
     }
 
     private function verifyWebHook (Request $request)
@@ -80,6 +85,8 @@ class BaseShopifyController extends Controller
         $data                           = file_get_contents('php://input');
         $hmac_header                    = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
         $calculated_hmac                = base64_encode(hash_hmac('sha256', $data, $this->shopifySharedSecret, true));
+
+        $this->webHookLog->setIncomingMessage($hmac_header);
         return ($hmac_header == $calculated_hmac);
     }
 
