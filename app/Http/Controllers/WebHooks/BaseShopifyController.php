@@ -54,7 +54,6 @@ class BaseShopifyController extends Controller
         $this->shopifySharedSecret      = $credentialUtility->getShopifySharedSecret()->getValue();
 
 
-
         $topic                          = str_replace('webhooks/shopify/' . $request->route('id') . '/', '', $request->path());
 
         $webHookQuery   = [
@@ -72,6 +71,7 @@ class BaseShopifyController extends Controller
         $webHookLog->setClientIntegration($this->clientIntegration);
         $webHookLog->setIntegrationWebHook($integrationWebHook);
         $webHookLog->setIncomingMessage(json_encode($request->input(), true));
+        $webHookLog->setIncomingMessage($request->header('X-Shopify-Hmac-Sha256') . '  asdf');
 
         $this->webHookLogRepo->saveAndCommit($webHookLog);
     }
