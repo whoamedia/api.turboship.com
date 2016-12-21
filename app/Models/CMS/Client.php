@@ -5,6 +5,7 @@ namespace App\Models\CMS;
 
 use App\Models\BaseModel;
 use App\Models\Integrations\ClientCredential;
+use App\Models\Integrations\ClientIntegration;
 use App\Models\OMS\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -33,6 +34,11 @@ class Client extends BaseModel
     protected $products;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $integrations;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -46,6 +52,7 @@ class Client extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->products                 = new ArrayCollection();
+        $this->integrations             = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -132,6 +139,23 @@ class Client extends BaseModel
     public function getProducts ()
     {
         return $this->products->toArray();
+    }
+
+    /**
+     * @return ClientIntegration[]
+     */
+    public function getIntegrations ()
+    {
+        return $this->integrations->toArray();
+    }
+
+    /**
+     * @param ClientIntegration $clientIntegration
+     */
+    public function addIntegration (ClientIntegration $clientIntegration)
+    {
+        $clientIntegration->setClient($this);
+        $this->integrations->add($clientIntegration);
     }
 
 }

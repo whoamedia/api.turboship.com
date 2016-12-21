@@ -72,6 +72,12 @@ class ClientIntegration implements \JsonSerializable
         $object['symbol']               = $this->symbol;
         $object['createdAt']            = $this->createdAt;
 
+        $object['credentials']          = [];
+        foreach ($this->getCredentials() AS $credential)
+        {
+            $object['credentials'][]    = $credential->jsonSerialize();
+        }
+
         return $object;
     }
 

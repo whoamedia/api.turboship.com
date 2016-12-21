@@ -48,6 +48,19 @@ class ClientCredential
     }
 
     /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $object['id']                   = $this->id;
+        $object['integrationCredential']= $this->integrationCredential->jsonSerialize();
+        $object['value']                = $this->getValue();
+        $object['createdAt']            = $this->createdAt;
+
+        return $object;
+    }
+
+    /**
      * @return int
      */
     public function getId()

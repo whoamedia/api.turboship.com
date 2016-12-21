@@ -23,6 +23,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
     Route::post('/clients', 'ClientController@store');
+    Route::get('/clients/{id}/integrations', 'ClientController@getIntegrations');
+    Route::post('/clients/{id}/integrations', 'ClientController@createIntegration');
 
 
     //  Country Operations

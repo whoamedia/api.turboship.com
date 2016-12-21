@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Clients\CreateClientRequest;
+use App\Http\Requests\Integrations\CreateClientIntegration;
+use App\Http\Requests\Integrations\GetClientIntegrations;
 use App\Http\Requests\Clients\GetClientsRequest;
 use App\Http\Requests\Clients\ShowClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Integrations\ClientIntegration;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -126,5 +129,31 @@ class ClientController extends Controller
         return response($client, 201);
     }
 
+    /**
+     * @param   Request $request
+     * @return  ClientIntegration[]
+     */
+    public function getIntegrations (Request $request)
+    {
+        $getClientIntegrations          = new GetClientIntegrations();
+        $getClientIntegrations->setId($request->route('id'));
+        $getClientIntegrations->validate();
+        $getClientIntegrations->clean();
 
+        $client                         = $this->clientValidation->idExists($getClientIntegrations->getId(), true);
+        return response ($client->getIntegrations());
+    }
+
+    /**
+     * @param   Request $request
+     */
+    public function createIntegration (Request $request)
+    {
+        $createClientIntegration        = new CreateClientIntegration($request->input());
+        $createClientIntegration->setId($request->route('id'));
+        $createClientIntegration->validate();
+        $createClientIntegration->clean();
+
+
+    }
 }
