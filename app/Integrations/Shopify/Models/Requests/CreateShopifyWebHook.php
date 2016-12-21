@@ -76,7 +76,7 @@ class CreateShopifyWebHook implements \JsonSerializable
     {
         $this->topic                    = AU::get($data['topic']);
         $this->address                  = AU::get($data['address']);
-        $this->format                   = AU::get($data['format']);
+        $this->format                   = AU::get($data['format'], 'json');
         $this->fields                   = AU::get($data['fields']);
     }
 

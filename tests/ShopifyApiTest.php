@@ -3,8 +3,10 @@
 namespace Tests;
 
 use App\Integrations\Shopify\Models\Requests\CreateShopifyProduct;
+use App\Integrations\Shopify\Models\Requests\CreateShopifyWebHook;
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
 use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 
 class ShopifyApiTest extends TestCase
 {
@@ -96,9 +98,8 @@ class ShopifyApiTest extends TestCase
     }
 
 
-
     /**
-     * @return Product
+     * @return ShopifyProduct
      */
     private function createProduct ()
     {
@@ -112,5 +113,28 @@ class ShopifyApiTest extends TestCase
 
         $product                        = $shopifyIntegration->productApi->create($product);
         return $product;
+    }
+
+
+    public function testWebHookApi ()
+    {
+        RETURN;
+        $shopifyIntegration                 = $this->getShopifyIntegration();
+        $createShopifyWebHook               = new CreateShopifyWebHook();
+
+        foreach ($this->clientIntegration->getWebHooks() AS $clientWebHook)
+        {
+            if ($clientWebHook->getIntegrationWebHook()->getTopic() == 'products/update')
+            {
+                $createShopifyWebHook->setTopic($clientWebHook->getIntegrationWebHook()->getTopic());
+                //  config('app.url')       'https://dev-api.turboship.com'
+                $address    = config('app.url') . '/webhooks/shopify/' . $this->clientIntegration->getId() . '/' . $clientWebHook->getIntegrationWebHook()->getTopic();
+                $createShopifyWebHook->setAddress($address);
+                $response = $shopifyIntegration->webHookApi->create($createShopifyWebHook);
+                dd($response);
+            }
+        }
+
+
     }
 }
