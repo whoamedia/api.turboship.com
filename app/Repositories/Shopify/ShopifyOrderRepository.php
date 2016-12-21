@@ -5,6 +5,7 @@ namespace App\Repositories\Shopify;
 
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrderCount;
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
+use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 
 class ShopifyOrderRepository extends BaseShopifyRepository
 {
@@ -49,5 +50,21 @@ class ShopifyOrderRepository extends BaseShopifyRepository
 
         $shopifyOrderCountResponse      = $this->shopifyIntegration->orderApi->count($getShopifyOrderCount);
         return $shopifyOrderCountResponse;
+    }
+
+    /**
+     * @param   ShopifyOrder $shopifyOrder
+     * @return  bool
+     */
+    public function shouldImport (ShopifyOrder $shopifyOrder)
+    {
+        if ($shopifyOrder->isTest())
+            return false;
+        else if ($shopifyOrder->getFinancialStatus() != 'paid')
+            return false;
+        else if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
+            return false;
+        else
+            return true;
     }
 }

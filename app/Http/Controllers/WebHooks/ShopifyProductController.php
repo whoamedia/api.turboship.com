@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\WebHooks;
 
 
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 use Illuminate\Http\Request;
 
 class ShopifyProductController extends BaseShopifyController
@@ -18,7 +19,7 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
-
+            $shopifyProduct                 = new ShopifyProduct($request->input());
         }
         catch (\Exception $exception)
         {
@@ -33,7 +34,7 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
-
+            $shopifyProduct                 = new ShopifyProduct($request->input());
         }
         catch (\Exception $exception)
         {
@@ -48,7 +49,7 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
-
+            $shopifyProduct                 = new ShopifyProduct($request->input());
         }
         catch (\Exception $exception)
         {
