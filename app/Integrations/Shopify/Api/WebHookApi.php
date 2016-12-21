@@ -23,9 +23,9 @@ class WebHookApi extends BaseApi
         $items                          = AU::get($response['webhooks'], []);
 
         $result                         = [];
-        foreach ($items AS $order)
+        foreach ($items AS $webHook)
         {
-            $result[]                   = new GetShopifyWebHooks($order);
+            $result[]                   = new GetShopifyWebHooks($webHook);
         }
 
         return $result;
@@ -34,7 +34,7 @@ class WebHookApi extends BaseApi
     /**
      * @see     https://help.shopify.com/api/reference/webhook#show
      * @param   int         $id
-     * @return  ShopifyWebHook()|null
+     * @return  ShopifyWebHook|null
      */
     public function show ($id)
     {

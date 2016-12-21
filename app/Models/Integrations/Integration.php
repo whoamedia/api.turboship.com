@@ -27,6 +27,11 @@ class Integration implements \JsonSerializable
      */
     protected $integrationCredentials;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $webHooks;
+
 
     /**
      * @return array
@@ -61,6 +66,14 @@ class Integration implements \JsonSerializable
     public function getIntegrationCredentials ()
     {
         return $this->integrationCredentials->toArray();
+    }
+
+    /**
+     * @return IntegrationWebHook[]
+     */
+    public function getWebHooks ()
+    {
+        return $this->webHooks->toArray();
     }
 
 }

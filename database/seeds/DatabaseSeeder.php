@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
          */
         $this->call(IntegrationSeeder::class);
         $this->call(IntegrationCredentialSeeder::class);
+        $this->call(IntegrationWebHookSeeder::class);
 
 
         /**

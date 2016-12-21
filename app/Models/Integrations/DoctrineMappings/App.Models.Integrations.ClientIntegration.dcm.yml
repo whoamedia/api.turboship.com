@@ -51,3 +51,7 @@ App\Models\Integrations\ClientIntegration:
       targetEntity:   ClientCredential
       mappedBy:       clientIntegration
       cascade:        ["persist", "remove"]
+    webHooks:
+      targetEntity:   ClientWebHook
+      mappedBy:       clientIntegration
+      cascade:        ["persist", "remove"]

@@ -24,10 +24,9 @@ class OrderApprovalTest extends TestCase
         $order                          = $orderFactory->getValidOrder();
         $approvalService->processOrder($order);
 
-        $this->assertInstanceOf('App\Models\Locations\ProvidedAddress', $order->getProvidedAddress());
-        $this->assertInstanceOf('App\Models\Locations\Address', $order->getToAddress());
-        $this->assertInstanceOf('App\Models\Locations\Subdivision', $order->getToAddress()->getSubdivision());
-        $this->assertInstanceOf('App\Models\Locations\Country', $order->getToAddress()->getSubdivision()->getCountry());
+        $this->assertInstanceOf('App\Models\Locations\Address', $order->getShippingAddress());
+        $this->assertInstanceOf('App\Models\Locations\Subdivision', $order->getShippingAddress()->getSubdivision());
+        $this->assertInstanceOf('App\Models\Locations\Country', $order->getShippingAddress()->getSubdivision()->getCountry());
         $this->assertInstanceOf('App\Models\OMS\Order', $order);
 
         foreach ($order->getItems() AS $item)
