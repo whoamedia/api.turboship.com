@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIntegrationWebHookLogTable extends Migration
+class CreateWebHookLogTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateIntegrationWebHookLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('IntegrationWebHookLog', function (Blueprint $table)
+        Schema::create('WebHookLog', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
 
@@ -23,6 +23,7 @@ class CreateIntegrationWebHookLogTable extends Migration
             $table->integer('integrationWebHookId')->unsigned()->index();
             $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');
 
+            $table->boolean('verified')->index();
             $table->text('incomingMessage');
         });
 
@@ -36,6 +37,6 @@ class CreateIntegrationWebHookLogTable extends Migration
      */
     public function down()
     {
-        Schema::drop('IntegrationWebHookLog');
+        Schema::drop('WebHookLog');
     }
 }

@@ -11,7 +11,7 @@ return [
 
         'shopify'                  => [
             'webHookEnabled'    => env('SHOPIFY_WEBHOOKS_ENABLED', false),
-            'baseUrl'           => config('app.url') . '/shopify'
+            'route'             => config('app.url') . '/shopify'
         ],
 
     ],

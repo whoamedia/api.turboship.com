@@ -31,6 +31,7 @@ return [
             'paths'         => [
                 base_path('app/Models/CMS/DoctrineMappings'),
                 base_path('app/Models/Locations/DoctrineMappings'),
+                base_path('app/Models/Logs/DoctrineMappings'),
                 base_path('app/Models/Integrations/DoctrineMappings'),
                 base_path('app/Models/OAuth/DoctrineMappings'),
                 base_path('app/Models/OMS/DoctrineMappings'),

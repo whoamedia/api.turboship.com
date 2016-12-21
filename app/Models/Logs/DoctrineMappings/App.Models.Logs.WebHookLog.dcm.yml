@@ -1,0 +1,48 @@
+App\Models\Logs\WebHookLog:
+  type:               entity
+  table:              WebHookLog
+  repositoryClass:    App\Repositories\Doctrine\Logs\WebHookLogRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'WebHookLog id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    incomingMessage:
+      column:         incomingMessage
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "WebHookLog incomingMessage"
+    verified:
+      column:         verified
+      type:           boolean
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "If the webhook was verified"
+
+  manyToOne:
+    clientIntegration:
+      targetEntity:   App\Models\Integrations\ClientIntegration
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         clientIntegrationId
+        referencedColumnName: id
+    integrationWebHook:
+      targetEntity:   App\Models\Integrations\IntegrationWebHook
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         integrationWebHookId
+        referencedColumnName: id

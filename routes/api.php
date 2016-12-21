@@ -45,3 +45,28 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::put('/users/{id}/password', 'UserController@updatePassword');
 
 });
+
+
+Route::post('/webhooks/shopify/{id}/orders/cancelled',
+    'WebHooks\ShopifyOrderController@cancelOrder');
+
+Route::post('/webhooks/shopify/{id}/orders/create',
+    'WebHooks\ShopifyOrderController@createOrder');
+
+Route::post('/webhooks/shopify/{id}/orders/delete',
+    'WebHooks\ShopifyOrderController@deleteOrder');
+
+Route::post('/webhooks/shopify/{id}/orders/paid',
+    'WebHooks\ShopifyOrderController@orderPaid');
+
+Route::post('/webhooks/shopify/{id}/orders/updated',
+    'WebHooks\ShopifyOrderController@orderUpdated');
+
+Route::post('/webhooks/shopify/{id}/products/create',
+    'WebHooks\ShopifyProductController@createProduct');
+
+Route::post('/webhooks/shopify/{id}/products/delete',
+    'WebHooks\ShopifyProductController@deleteProduct');
+
+Route::post('/webhooks/shopify/{id}/products/update',
+    'WebHooks\ShopifyProductController@updateProduct');

@@ -129,7 +129,7 @@ class IntegrationWebHookSeeder extends Seeder
             [
                 'integrationId'         => IntegrationUtility::SHOPIFY_ID,
                 'topic'                 => 'order_transactions/create',
-                'isActive'              => true,
+                'isActive'              => false,
             ],
             [
                 'integrationId'         => IntegrationUtility::SHOPIFY_ID,
@@ -184,7 +184,7 @@ class IntegrationWebHookSeeder extends Seeder
             [
                 'integrationId'         => IntegrationUtility::SHOPIFY_ID,
                 'topic'                 => 'refunds/create',
-                'isActive'              => true,
+                'isActive'              => false,
             ],
             [
                 'integrationId'         => IntegrationUtility::SHOPIFY_ID,
