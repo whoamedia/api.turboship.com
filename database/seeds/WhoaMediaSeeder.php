@@ -144,8 +144,8 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential       = new \App\Models\Integrations\ClientCredential();
         $clientCredential->setIntegrationCredential($shopifySharedSecret);
 
-        //  (test)521764f500fe886bc7c36004c4c28ad9
-        $clientCredential->setValue('521764f500fe886bc7c36004c4c28ad9');
+        //  (test)1a59ea54bddd0635cdaf9662e5a1235c
+        $clientCredential->setValue('1a59ea54bddd0635cdaf9662e5a1235c');
         $clientIntegration->addCredential($clientCredential);
 
         $this->clientIntegrationRepo->saveAndCommit($clientIntegration);

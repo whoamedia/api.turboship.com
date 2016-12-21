@@ -75,7 +75,7 @@ class BaseShopifyController extends Controller
         $this->webHookLog->setVerified($verified);
         $this->webHookLog->setClientIntegration($this->clientIntegration);
         $this->webHookLog->setIntegrationWebHook($integrationWebHook);
-        //  $this->webHookLog->setIncomingMessage(json_encode($request->input(), true));
+        $this->webHookLog->setIncomingMessage(json_encode($request->input(), true));
 
         $this->webHookLogRepo->saveAndCommit($this->webHookLog);
     }
@@ -86,7 +86,6 @@ class BaseShopifyController extends Controller
         $hmac_header                    = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
         $calculated_hmac                = base64_encode(hash_hmac('sha256', $data, $this->shopifySharedSecret, true));
 
-        $this->webHookLog->setIncomingMessage($hmac_header);
         return ($hmac_header == $calculated_hmac);
     }
 
