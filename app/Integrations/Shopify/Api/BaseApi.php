@@ -44,6 +44,7 @@ class BaseApi
      * @throws  ShopifyBadRequestException
      * @throws  ShopifyInvalidCredentialsException
      * @throws  ShopifyItemNotFoundException
+     * @throws  ShopifyUnprocessableEntityException
      * @throws  ShopifyApiException
      */
     protected function makeHttpRequest($method, $path, $apiRequest = [])
