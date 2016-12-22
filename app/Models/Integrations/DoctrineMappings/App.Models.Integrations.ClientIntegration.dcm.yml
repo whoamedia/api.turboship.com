@@ -55,4 +55,5 @@ App\Models\Integrations\ClientIntegration:
     webHooks:
       targetEntity:   ClientWebHook
       mappedBy:       clientIntegration
+      orphanRemoval:  true
       cascade:        ["persist", "remove"]

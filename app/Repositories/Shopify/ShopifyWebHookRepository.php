@@ -30,4 +30,10 @@ class ShopifyWebHookRepository extends BaseShopifyRepository
         $clientWebHook->setExternalId($response->getId());
         return $clientWebHook;
     }
+
+
+    public function deleteWebHook ($id)
+    {
+        return $this->shopifyIntegration->webHookApi->delete($id);
+    }
 }

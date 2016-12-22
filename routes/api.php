@@ -31,6 +31,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@getWebHooks');
     Route::get('/clientIntegrations/{id}/availableWebHooks', 'ClientIntegrationController@getAvailableWebHooks');
     Route::post('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@createWebHook');
+    Route::delete('/clientIntegrations/{id}/webHooks/{clientWebHookId}', 'ClientIntegrationController@deleteWebHook');
 
 
     //  Country Operations

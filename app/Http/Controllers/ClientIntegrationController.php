@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Integrations\CreateWebHook;
+use App\Http\Requests\Integrations\DeleteClientIntegrationWebHook;
 use App\Http\Requests\Integrations\GetClientIntegrationWebHooks;
 use App\Models\Integrations\ClientWebHook;
 use App\Models\Integrations\IntegrationWebHook;
@@ -121,5 +122,39 @@ class ClientIntegrationController extends Controller
         $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
 
         return response($clientIntegration->getWebHooks(), 201);
+    }
+
+    /**
+     * @param   Request $request
+     * @return  string
+     */
+    public function deleteWebHook (Request $request)
+    {
+        $deleteClientIntegrationWebHook = new DeleteClientIntegrationWebHook();
+        $deleteClientIntegrationWebHook->setId($request->route('id'));
+        $deleteClientIntegrationWebHook->setClientWebHookId($request->route('clientWebHookId'));
+        $deleteClientIntegrationWebHook->validate();
+        $deleteClientIntegrationWebHook->clean();
+
+        $clientIntegration              = $this->clientIntegrationValidation->idExists($deleteClientIntegrationWebHook->getId());
+
+        $providedWebHook                = null;
+        foreach ($clientIntegration->getWebHooks() AS $clientWebHook)
+        {
+            if ($clientWebHook->getId() == $deleteClientIntegrationWebHook->getClientWebHookId())
+                $providedWebHook        = $clientWebHook;
+        }
+
+        if (is_null($providedWebHook))
+            throw new BadRequestHttpException('clientIntegration does not have provided clientWebHookId');
+
+        //  Delete the webHook in Shopify
+        $shopifyWebHookRepository       = new ShopifyWebHookRepository($clientIntegration);
+        $shopifyWebHookRepository->deleteWebHook($providedWebHook->getExternalId());
+
+        $clientIntegration->removeWebHook($providedWebHook);
+        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+
+        return response('', 204);
     }
 }

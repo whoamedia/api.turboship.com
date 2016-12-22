@@ -57,4 +57,11 @@ class WebHookApi extends BaseApi
     }
 
 
+    public function delete ($id)
+    {
+        $response                       = parent::makeHttpRequest('delete', '/webhooks/' . $id . '.json');
+        return true;
+    }
+
+
 }
