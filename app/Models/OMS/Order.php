@@ -472,4 +472,13 @@ class Order implements \JsonSerializable
         return true;
     }
 
+    /**
+     * Is it safe for us to run the OrderApprovalProcess on the order?
+     * @return bool
+     */
+    public function canRunApprovalProcess ()
+    {
+        return true;
+    }
+
 }
