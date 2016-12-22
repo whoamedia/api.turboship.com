@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\WebHooks;
+namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Http\Controllers\Controller;
@@ -81,6 +81,11 @@ class BaseShopifyController extends Controller
         $this->webHookLogRepo->saveAndCommit($this->webHookLog);
     }
 
+    /**
+     * Validate that the request is coming from Shopify
+     * @param   Request $request
+     * @return  bool
+     */
     private function verifyWebHook (Request $request)
     {
         $data                           = file_get_contents('php://input');

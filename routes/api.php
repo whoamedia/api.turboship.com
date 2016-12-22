@@ -27,10 +27,22 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/clients/{id}/integrations', 'ClientController@createIntegration');
 
 
+    //  ClientIntegration Operations
+    Route::get('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@getWebHooks');
+    Route::get('/clientIntegrations/{id}/availableWebHooks', 'ClientIntegrationController@getAvailableWebHooks');
+    Route::post('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@createWebHook');
+
+
     //  Country Operations
     Route::get('/countries', 'CountryController@index');
     Route::get('/countries/{id}', 'CountryController@show');
     Route::get('/countries/{id}/subdivisions', 'CountryController@getCountrySubdivisions');
+
+
+    //  Integration Operations
+    Route::get('/integrations', 'IntegrationController@index');
+    Route::get('/integrations/{id}/webHooks', 'IntegrationController@getWebHooks');
+
 
 
     //  Subdivision Operations
@@ -50,25 +62,25 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
 
 Route::post('/webhooks/shopify/{id}/orders/cancelled',
-    'WebHooks\ShopifyOrderController@cancelOrder');
+    'ShopifyWebHooks\ShopifyOrderController@cancelOrder');
 
 Route::post('/webhooks/shopify/{id}/orders/create',
-    'WebHooks\ShopifyOrderController@createOrder');
+    'ShopifyWebHooks\ShopifyOrderController@createOrder');
 
 Route::post('/webhooks/shopify/{id}/orders/delete',
-    'WebHooks\ShopifyOrderController@deleteOrder');
+    'ShopifyWebHooks\ShopifyOrderController@deleteOrder');
 
 Route::post('/webhooks/shopify/{id}/orders/paid',
-    'WebHooks\ShopifyOrderController@orderPaid');
+    'ShopifyWebHooks\ShopifyOrderController@orderPaid');
 
 Route::post('/webhooks/shopify/{id}/orders/updated',
-    'WebHooks\ShopifyOrderController@orderUpdated');
+    'ShopifyWebHooks\ShopifyOrderController@orderUpdated');
 
 Route::post('/webhooks/shopify/{id}/products/create',
-    'WebHooks\ShopifyProductController@createProduct');
+    'ShopifyWebHooks\ShopifyProductController@createProduct');
 
 Route::post('/webhooks/shopify/{id}/products/delete',
-    'WebHooks\ShopifyProductController@deleteProduct');
+    'ShopifyWebHooks\ShopifyProductController@deleteProduct');
 
 Route::post('/webhooks/shopify/{id}/products/update',
-    'WebHooks\ShopifyProductController@updateProduct');
+    'ShopifyWebHooks\ShopifyProductController@updateProduct');

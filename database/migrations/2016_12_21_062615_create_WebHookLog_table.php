@@ -25,6 +25,7 @@ class CreateWebHookLogTable extends Migration
 
             $table->boolean('verified')->index();
             $table->boolean('success')->index();
+            $table->text('errorMessage')->nullable()->default(null);
             $table->text('incomingMessage');
         });
 

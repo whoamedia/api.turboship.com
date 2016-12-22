@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\WebHooks;
+namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
@@ -60,7 +60,7 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setSuccess(false);
+            $this->webHookLog->setErrorMessage($exception->getMessage());
             $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
@@ -77,7 +77,7 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setSuccess(false);
+            $this->webHookLog->setErrorMessage($exception->getMessage());
             $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
@@ -94,7 +94,7 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setSuccess(false);
+            $this->webHookLog->setErrorMessage($exception->getMessage());
             $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
@@ -111,7 +111,7 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setSuccess(false);
+            $this->webHookLog->setErrorMessage($exception->getMessage());
             $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 
@@ -128,7 +128,7 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setSuccess(false);
+            $this->webHookLog->setErrorMessage($exception->getMessage());
             $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
 

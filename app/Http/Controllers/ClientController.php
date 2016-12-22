@@ -11,10 +11,14 @@ use App\Http\Requests\Clients\ShowClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Integrations\ClientCredential;
 use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\Validation\IntegrationCredentialValidation;
+use App\Models\Integrations\Validation\IntegrationValidation;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ClientController extends Controller
 {
@@ -146,6 +150,7 @@ class ClientController extends Controller
 
     /**
      * @param   Request $request
+     * @return  ClientIntegration
      */
     public function createIntegration (Request $request)
     {
@@ -154,6 +159,39 @@ class ClientController extends Controller
         $createClientIntegration->validate();
         $createClientIntegration->clean();
 
+        $client                         = $this->clientValidation->idExists($createClientIntegration->getId());
 
+        foreach ($client->getIntegrations() AS $integration)
+        {
+            if ($integration->getSymbol() == $createClientIntegration->getSymbol())
+                throw new BadRequestHttpException('symbol already exists');
+        }
+
+        $clientIntegration              = new ClientIntegration();
+        $clientIntegration->setClient($client);
+        $clientIntegration->setSymbol($createClientIntegration->getSymbol());
+
+        $integrationValidation          = new IntegrationValidation();
+        $integration                    = $integrationValidation->idExists($createClientIntegration->getIntegrationId());
+        $clientIntegration->setIntegration($integration);
+
+        $integrationCredentialValidation= new IntegrationCredentialValidation();
+        foreach ($createClientIntegration->getCredentials() AS $createClientCredential)
+        {
+            $clientCredential           = new ClientCredential();
+            $integrationCredential      = $integrationCredentialValidation->idExists($createClientCredential->getIntegrationCredentialId());
+
+            if ($integration->hasIntegrationCredential($integrationCredential) == false)
+                throw new BadRequestHttpException('integrationCredential does not belong to integration');
+
+            $clientCredential->setIntegrationCredential($integrationCredential);
+            $clientCredential->setValue($createClientCredential->getValue());
+            $clientIntegration->addCredential($clientCredential);
+        }
+
+        $client->addIntegration($clientIntegration);
+        $this->clientRepo->saveAndCommit($client);
+
+        return response ($clientIntegration, 201);
     }
 }

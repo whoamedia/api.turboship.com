@@ -31,6 +31,11 @@ class WebHookLog
     protected $incomingMessage;
 
     /**
+     * @var string|null
+     */
+    protected $errorMessage;
+
+    /**
      * @var bool
      */
     protected $verified;
@@ -46,6 +51,7 @@ class WebHookLog
         $this->clientIntegration        = AU::get($data['clientIntegration']);
         $this->integrationWebHook       = AU::get($data['integrationWebHook']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
+        $this->errorMessage             = AU::get($data['errorMessage']);
         $this->verified                 = AU::get($data['verified']);
         $this->success                  = AU::get($data['success']);
     }
@@ -112,6 +118,27 @@ class WebHookLog
     public function setIncomingMessage($incomingMessage)
     {
         $this->incomingMessage = $incomingMessage;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * @param null|string $errorMessage
+     */
+    public function setErrorMessage($errorMessage)
+    {
+        $this->setSuccess(false);
+
+        if (is_array($errorMessage))
+            $errorMessage       = json_encode($errorMessage, true);
+
+        $this->errorMessage = $errorMessage;
     }
 
     /**

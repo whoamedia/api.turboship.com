@@ -196,6 +196,21 @@ class ClientIntegration implements \JsonSerializable
     }
 
     /**
+     * Does the ClientIntegration already have the webHook registered?
+     * @param   IntegrationWebHook $integrationWebHook
+     * @return  bool
+     */
+    public function hasIntegrationWebHook (IntegrationWebHook $integrationWebHook)
+    {
+        foreach ($this->getWebHooks() AS $clientWebHook)
+        {
+            if ($clientWebHook->getIntegrationWebHook()->getId() == $integrationWebHook->getId())
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * @param ClientWebHook $clientWebHook
      */
     public function addWebHook (ClientWebHook $clientWebHook)

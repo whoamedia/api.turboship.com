@@ -23,6 +23,13 @@ App\Models\Logs\WebHookLog:
       options:
         fixed:        false
         comment:      "WebHookLog incomingMessage"
+    errorMessage:
+      column:         errorMessage
+      type:           string
+      nullable:       true
+      options:
+        fixed:        false
+        comment:      "Populated if there was an internal error while processing the webHook"
     verified:
       column:         verified
       type:           boolean

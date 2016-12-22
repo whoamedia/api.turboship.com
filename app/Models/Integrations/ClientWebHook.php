@@ -42,6 +42,8 @@ class ClientWebHook implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['externalId']           = $this->externalId;
+        $object['integrationWebHook']   = $this->integrationWebHook->jsonSerialize();
 
         return $object;
     }

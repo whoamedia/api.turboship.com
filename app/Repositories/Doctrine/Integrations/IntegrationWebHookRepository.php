@@ -10,6 +10,7 @@ use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
+use jamesvweston\Utilities\BooleanUtil AS BU;
 
 class IntegrationWebHookRepository extends BaseRepository
 {
@@ -63,6 +64,11 @@ class IntegrationWebHookRepository extends BaseRepository
                 $orX->add($qb->expr()->eq('integrationWebHook.topic', $qb->expr()->literal($topic)));
             }
             $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['isActive'])))
+        {
+            $qb->andWhere($qb->expr()->eq('integrationWebHook.isActive', BU::toString($query['isActive'])));
         }
 
         $qb->orderBy('integrationWebHook.id', 'ASC');
