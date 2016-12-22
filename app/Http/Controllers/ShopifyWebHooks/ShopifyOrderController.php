@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Order\OrderApprovalService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -41,6 +42,10 @@ class ShopifyOrderController extends BaseShopifyController
                 return response('', 200);
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
+
+            $orderApprovalService           = new OrderApprovalService();
+            $orderApprovalService->processOrder($order);
+
             $this->orderRepo->saveAndCommit($order);
         }
         catch (\Exception $exception)
@@ -103,6 +108,12 @@ class ShopifyOrderController extends BaseShopifyController
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
                 }
+
+                if ($order->canRunApprovalProcess())
+                {
+                    $orderApprovalService   = new OrderApprovalService();
+                    $orderApprovalService->processOrder($order);
+                }
             }
 
             $this->orderRepo->saveAndCommit($order);
@@ -132,6 +143,12 @@ class ShopifyOrderController extends BaseShopifyController
                 {
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
+                }
+
+                if ($order->canRunApprovalProcess())
+                {
+                    $orderApprovalService   = new OrderApprovalService();
+                    $orderApprovalService->processOrder($order);
                 }
             }
 
