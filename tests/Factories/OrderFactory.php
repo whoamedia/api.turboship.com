@@ -4,12 +4,12 @@ namespace Tests\Factories;
 
 
 use App\Models\CMS\Validation\ClientValidation;
-use App\Models\Locations\ProvidedAddress;
 use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
+use App\Models\Locations\Address;
 use LaravelDoctrine\ORM\Facades\EntityManager;
 use Illuminate\Support\Str;
 
@@ -70,7 +70,7 @@ class OrderFactory
         }
 
         $providedAddress                = $this->getSavannahCivicCenter();
-        $order->setProvidedAddress($providedAddress);
+        $order->setShippingAddress($providedAddress);
 
         return $order;
     }
@@ -82,26 +82,29 @@ class OrderFactory
     {
         $orderItem                      = new OrderItem();
         $orderItem->setExternalId(Str::random(32));
+        $orderItem->setExternalProductId(rand(500, 10000));
+        $orderItem->setExternalVariantId(rand(500, 10000));
         $orderItem->setSku(Str::random(32));
-        $orderItem->setQuantity(rand(2, 10));
-        $orderItem->setDeclaredValue(rand(20, 100) . '.' . rand(10, 99));
+        $orderItem->setQuantityToFulfill(rand(2, 10));
+        $orderItem->setQuantityPurchased($orderItem->getQuantityToFulfill() + rand(1, 2));
+        $orderItem->setBasePrice(rand(20, 100) . '.' . rand(10, 99));
 
         return $orderItem;
     }
 
     /**
-     * @return ProvidedAddress
+     * @return Address
      */
     public function getSavannahCivicCenter ()
     {
-        $providedAddress                = new ProvidedAddress();
+        $providedAddress                = new Address();
         $providedAddress->setFirstName('John');
         $providedAddress->setLastName('Doe');
         $providedAddress->setStreet1('301 W Oglethorpe Ave');
         $providedAddress->setCity('Savannah');
-        $providedAddress->setSubdivision('Georgia');
+        $providedAddress->setStateProvince('Georgia');
         $providedAddress->setPostalCode('31402');
-        $providedAddress->setCountry('US');
+        $providedAddress->setCountryCode('US');
 
         return $providedAddress;
     }

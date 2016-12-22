@@ -123,6 +123,7 @@ class Order implements \JsonSerializable
         $this->createdAt                = new \DateTime();
         $this->items                    = new ArrayCollection();
         $this->statusHistory            = new ArrayCollection();
+
         $this->externalId               = AU::get($data['externalId']);
         $this->externalWeight           = AU::get($data['externalWeight']);
         $this->basePrice                = AU::get($data['basePrice'], 0.00);
@@ -159,9 +160,6 @@ class Order implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['externalId']           = $this->externalId;
-        $object['externalWeight']       = $this->externalWeight;
-        $object['externalCreatedAt']    = $this->externalCreatedAt;
         $object['basePrice']            = $this->basePrice;
         $object['totalDiscount']        = $this->totalDiscount;
         $object['totalTaxes']           = $this->totalTaxes;
@@ -171,6 +169,10 @@ class Order implements \JsonSerializable
         $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
+        $object['createdAt']            = $this->createdAt;
+        $object['externalId']           = $this->externalId;
+        $object['externalWeight']       = $this->externalWeight;
+        $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         $object['items']                = [];
         foreach ($this->getItems() AS $item)
@@ -452,5 +454,22 @@ class Order implements \JsonSerializable
         return $this->createdAt;
     }
 
+    /**
+     * Is it safe for us to update the order?
+     * @return bool
+     */
+    public function canUpdate ()
+    {
+        return true;
+    }
+
+    /**
+     * Is it safe for us to cancel the order?
+     * @return bool
+     */
+    public function canCancel ()
+    {
+        return true;
+    }
 
 }

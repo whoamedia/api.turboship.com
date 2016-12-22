@@ -43,6 +43,12 @@ class IntegrationCredentialSeeder extends Seeder
                 'integrationId'     => IntegrationUtility::SHOPIFY_ID,
                 'isRequired'        => true
             ],
+            [
+                'id'                => IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID,
+                'name'              => 'sharedSecret',
+                'integrationId'     => IntegrationUtility::SHOPIFY_ID,
+                'isRequired'        => false
+            ],
 
 
             /**

@@ -30,3 +30,7 @@ App\Models\Integrations\Integration:
       targetEntity:   IntegrationCredential
       mappedBy:       integration
       cascade:        ["persist", "remove"]
+    webHooks:
+      targetEntity:   IntegrationWebHook
+      mappedBy:       integration
+      cascade:        ["persist", "remove"]

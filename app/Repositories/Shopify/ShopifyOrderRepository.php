@@ -5,6 +5,7 @@ namespace App\Repositories\Shopify;
 
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrderCount;
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
+use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 
 class ShopifyOrderRepository extends BaseShopifyRepository
 {
@@ -50,4 +51,5 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         $shopifyOrderCountResponse      = $this->shopifyIntegration->orderApi->count($getShopifyOrderCount);
         return $shopifyOrderCountResponse;
     }
+
 }

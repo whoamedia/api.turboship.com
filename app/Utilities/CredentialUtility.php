@@ -29,7 +29,7 @@ class CredentialUtility
     }
 
     /**
-     * @return  ClientCredential|null
+     * @return  ClientCredential
      */
     public function getShopifyApiKey ()
     {
@@ -40,11 +40,11 @@ class CredentialUtility
 
         $result                         = $this->clientCredentialRepo->where($query);
 
-        return (sizeof($result) == 1) ? $result[0] : null;
+        return $result[0];
     }
 
     /**
-     * @return  ClientCredential|null
+     * @return  ClientCredential
      */
     public function getShopifyPassword ()
     {
@@ -55,11 +55,11 @@ class CredentialUtility
 
         $result                         = $this->clientCredentialRepo->where($query);
 
-        return (sizeof($result) == 1) ? $result[0] : null;
+        return $result[0];
     }
 
     /**
-     * @return  ClientCredential|null
+     * @return  ClientCredential
      */
     public function getShopifyHostName ()
     {
@@ -70,23 +70,38 @@ class CredentialUtility
 
         $result                         = $this->clientCredentialRepo->where($query);
 
-        return (sizeof($result) == 1) ? $result[0] : null;
+        return $result[0];
+    }
+
+    /**
+     * @return  ClientCredential
+     */
+    public function getShopifySharedSecret ()
+    {
+        $query      = [
+            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID
+        ];
+
+        $result                         = $this->clientCredentialRepo->where($query);
+
+        return $result[0];
     }
 
 
     /**
-     * @return  ClientCredential|null
+     * @return  ClientCredential
      */
     public function getEasyPostApiKey ()
     {
         $query      = [
-            'clientIds'                 => $this->client->getId(),
+            'clientIntegrationIds'      => $this->clientIntegration->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::EASYPOST_API_KEY_ID
         ];
 
         $result                         = $this->clientCredentialRepo->where($query);
 
-        return (sizeof($result) == 1) ? $result[0] : null;
+        return $result[0];
     }
 
 }

@@ -142,13 +142,13 @@ class Variant extends BaseModel
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['crmSource']            = $this->crmSource->jsonSerialize();
-        $object['product']              = $this->product->jsonSerialize();
         $object['title']                = $this->title;
         $object['price']                = $this->price;
         $object['barcode']              = $this->barcode;
         $object['sku']                  = $this->sku;
+        $object['originalSku']          = $this->originalSku;
         $object['weight']               = $this->weight;
+        $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;

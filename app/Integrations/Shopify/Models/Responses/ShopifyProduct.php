@@ -25,7 +25,7 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
     protected $updated_at;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $published_at;
 
@@ -135,7 +135,7 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPublishedAt()
     {
@@ -143,7 +143,7 @@ class ShopifyProduct extends CreateShopifyProduct implements \JsonSerializable
     }
 
     /**
-     * @param string $published_at
+     * @param string|null $published_at
      */
     public function setPublishedAt($published_at)
     {

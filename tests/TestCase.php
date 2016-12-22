@@ -6,6 +6,8 @@ namespace Tests;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Integrations\Shopify\ShopifyConfiguration;
 use App\Integrations\Shopify\ShopifyIntegration;
+use App\Models\Integrations\ClientIntegration;
+use App\Repositories\Doctrine\Integrations\ClientIntegrationRepository;
 use App\Utilities\CredentialUtility;
 use EntityManager;
 
@@ -17,9 +19,14 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
     protected $baseUrl = 'http://localhost';
 
     /**
-     * @var ClientValidation
+     * @var ClientIntegration
      */
-    protected $clientValidation;
+    protected $clientIntegration;
+
+    /**
+     * @var ClientIntegrationRepository
+     */
+    protected $clientIntegrationRepo;
 
     /**
      * Creates the application.
@@ -32,7 +39,7 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
 
         $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-        $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
+        $this->clientIntegrationRepo    = EntityManager::getRepository('App\Models\Integrations\ClientIntegration');
 
         return $app;
     }
@@ -42,9 +49,9 @@ abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
      */
     protected function getShopifyIntegration ()
     {
-        $client                         = $this->clientValidation->idExists(1);
+        $this->clientIntegration        = $this->clientIntegrationRepo->getOneById(1);
 
-        $credentialUtility              = new CredentialUtility($client);
+        $credentialUtility              = new CredentialUtility($this->clientIntegration);
         $apiKey                         = $credentialUtility->getShopifyApiKey()->getValue();
         $password                       = $credentialUtility->getShopifyPassword()->getValue();
         $hostName                       = $credentialUtility->getShopifyHostName()->getValue();

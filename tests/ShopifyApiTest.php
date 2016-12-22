@@ -3,8 +3,10 @@
 namespace Tests;
 
 use App\Integrations\Shopify\Models\Requests\CreateShopifyProduct;
+use App\Integrations\Shopify\Models\Requests\CreateShopifyWebHook;
 use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
 use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 
 class ShopifyApiTest extends TestCase
 {
@@ -96,9 +98,8 @@ class ShopifyApiTest extends TestCase
     }
 
 
-
     /**
-     * @return Product
+     * @return ShopifyProduct
      */
     private function createProduct ()
     {

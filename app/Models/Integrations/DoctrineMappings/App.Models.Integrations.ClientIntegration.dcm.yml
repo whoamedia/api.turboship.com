@@ -35,6 +35,7 @@ App\Models\Integrations\ClientIntegration:
       targetEntity:   App\Models\CMS\Client
       nullable:       false
       fetch:          EAGER
+      inversedBy:     integrations
       joinColumn:
         name:         clientId
         referencedColumnName: id
@@ -50,4 +51,9 @@ App\Models\Integrations\ClientIntegration:
     credentials:
       targetEntity:   ClientCredential
       mappedBy:       clientIntegration
+      cascade:        ["persist", "remove"]
+    webHooks:
+      targetEntity:   ClientWebHook
+      mappedBy:       clientIntegration
+      orphanRemoval:  true
       cascade:        ["persist", "remove"]

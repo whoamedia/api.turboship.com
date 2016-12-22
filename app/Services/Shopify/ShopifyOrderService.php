@@ -88,6 +88,7 @@ class ShopifyOrderService
 
                     foreach ($shopifyOrder->getLineItems() AS $shopifyOrderLineItem)
                     {
+                        //  TODO: Check to see if the orderitem already exists
                         $orderItem                  = $this->shopifyMappingService->fromShopifyOrderLineItem($shopifyOrderLineItem);
                         $order->addItem($orderItem);
                     }
@@ -99,6 +100,8 @@ class ShopifyOrderService
             }
         }
     }
+
+
 
     /**
      * @param   ShopifyOrder $shopifyOrder

@@ -40,6 +40,11 @@ class ClientIntegration implements \JsonSerializable
      */
     protected $credentials;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $webHooks;
+
 
     /**
      * ClientIntegration constructor.
@@ -49,6 +54,7 @@ class ClientIntegration implements \JsonSerializable
     {
         $this->createdAt                = new \DateTime();
         $this->credentials              = new ArrayCollection();
+        $this->webHooks                 = new ArrayCollection();
 
         $this->client                   = AU::get($data['client']);
         $this->integration              = AU::get($data['integration']);
@@ -65,6 +71,12 @@ class ClientIntegration implements \JsonSerializable
         $object['integration']          = $this->integration->jsonSerialize();
         $object['symbol']               = $this->symbol;
         $object['createdAt']            = $this->createdAt;
+
+        $object['credentials']          = [];
+        foreach ($this->getCredentials() AS $credential)
+        {
+            $object['credentials'][]    = $credential->jsonSerialize();
+        }
 
         return $object;
     }
@@ -164,6 +176,55 @@ class ClientIntegration implements \JsonSerializable
     public function getCredentials ()
     {
         return $this->credentials->toArray();
+    }
+
+    /**
+     * @return ClientWebHook[]
+     */
+    public function getWebHooks ()
+    {
+        return $this->webHooks->toArray();
+    }
+
+    /**
+     * @param   ClientWebHook $clientWebHook
+     * @return  bool
+     */
+    public function hasWebHook (ClientWebHook $clientWebHook)
+    {
+        return $this->webHooks->contains($clientWebHook);
+    }
+
+    /**
+     * Does the ClientIntegration already have the webHook registered?
+     * @param   IntegrationWebHook $integrationWebHook
+     * @return  bool
+     */
+    public function hasIntegrationWebHook (IntegrationWebHook $integrationWebHook)
+    {
+        foreach ($this->getWebHooks() AS $clientWebHook)
+        {
+            if ($clientWebHook->getIntegrationWebHook()->getId() == $integrationWebHook->getId())
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param ClientWebHook $clientWebHook
+     */
+    public function addWebHook (ClientWebHook $clientWebHook)
+    {
+        $clientWebHook->setClientIntegration($this);
+        $this->webHooks->add($clientWebHook);
+    }
+
+    /**
+     * @param ClientWebHook $clientWebHook
+     */
+    public function removeWebHook (ClientWebHook $clientWebHook)
+    {
+        $this->webHooks->removeElement($clientWebHook);
     }
 
 }

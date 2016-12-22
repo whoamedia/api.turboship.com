@@ -7,6 +7,7 @@ use App\Integrations\Shopify\Exceptions\ShopifyInvalidCredentialsException;
 use App\Integrations\Shopify\Exceptions\ShopifyApiException;
 use App\Integrations\Shopify\Exceptions\ShopifyBadRequestException;
 use App\Integrations\Shopify\Exceptions\ShopifyItemNotFoundException;
+use App\Integrations\Shopify\Exceptions\ShopifyUnprocessableEntityException;
 use App\Integrations\Shopify\ShopifyConfiguration;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -83,12 +84,24 @@ class BaseApi
                 $errorMessage       = isset($errorMessage['errors']) ? $errorMessage['errors'] : $errorMessage;
             }
 
+            if (is_array($errorMessage))
+            {
+                $keys               = array_keys($errorMessage);
+                $firstKey           = $keys[0];
+                $errorMessage       = $errorMessage[$firstKey];
+                $errorMessage       = is_array($errorMessage) ? $firstKey . ' ' . $errorMessage[0] : $errorMessage;
+            }
+
             if ($ex->getCode() == 400)
                 throw new ShopifyBadRequestException();
             else if ($ex->getCode() == 403)
                 throw new ShopifyInvalidCredentialsException();
             else if ($ex->getCode() == 404)
                 throw new ShopifyItemNotFoundException('Item not found', $ex->getCode());
+            else if ($ex->getCode() == 422)
+            {
+                throw new ShopifyUnprocessableEntityException($errorMessage);
+            }
             else
                 throw new ShopifyApiException($errorMessage, $ex->getCode());
         }
