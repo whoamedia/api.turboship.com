@@ -3,8 +3,12 @@
 namespace App\Integrations\EasyPost\Models\Requests;
 
 
-class CreateEasyPostAddress
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+
+class CreateEasyPostAddress implements \JsonSerializable
 {
+
+    use SimpleSerialize;
 
     /**
      * First line of the address
@@ -103,6 +107,15 @@ class CreateEasyPostAddress
      * @var	string
      */
     protected $verify_strict;
+
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
     /**
      * @return string
