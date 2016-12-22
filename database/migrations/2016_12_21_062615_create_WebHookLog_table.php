@@ -25,6 +25,9 @@ class CreateWebHookLogTable extends Migration
 
             $table->boolean('verified')->index();
             $table->boolean('success')->index();
+            $table->integer('entityId')->unsigned()->index()->nullable()->default(null);
+            $table->string('externalId')->nullable()->default(null);
+            $table->text('notes')->nullable()->default(null);
             $table->text('errorMessage')->nullable()->default(null);
             $table->text('incomingMessage');
         });

@@ -6,6 +6,9 @@ SELECT
   integrationWebHook.topic AS 'Topic',
   webHookLog.verified,
   webHookLog.success,
+  webHookLog.entityId,
+  webHookLog.externalId,
+  webHookLog.notes,
   webHookLog.errorMessage
 FROM
   WebHookLog webHookLog

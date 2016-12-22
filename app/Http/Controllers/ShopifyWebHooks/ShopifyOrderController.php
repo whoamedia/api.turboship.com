@@ -38,8 +38,14 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            $this->webHookLog->setExternalId($shopifyOrder->getId());
+
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+            {
+                $this->webHookLog->addNote('shouldImportOrder was false');
+                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                 return response('', 200);
+            }
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
 
@@ -47,6 +53,9 @@ class ShopifyOrderController extends BaseShopifyController
             $orderApprovalService->processOrder($order);
 
             $this->orderRepo->saveAndCommit($order);
+
+            $this->webHookLog->setEntityId($order->getId());
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
         catch (\Exception $exception)
         {
@@ -63,6 +72,9 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
+            $this->webHookLog->setExternalId($shopifyOrder->getId());
+            $this->webHookLog->addNote('No action taken to cancel order');
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
 
         }
         catch (\Exception $exception)
@@ -80,7 +92,9 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-
+            $this->webHookLog->setExternalId($shopifyOrder->getId());
+            $this->webHookLog->addNote('No action taken to delete order');
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
         catch (\Exception $exception)
         {
@@ -96,15 +110,24 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            $this->webHookLog->setExternalId($shopifyOrder->getId());
+
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+            {
+                $this->webHookLog->addNote('shouldImportOrder was false');
+                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                 return response('', 200);
+            }
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
 
             if (!is_null($order->getId()))
             {
+                $this->webHookLog->setEntityId($order->getId());
                 if (!$order->canUpdate())
                 {
+                    $this->webHookLog->addNote('$order->canUpdate was false');
+                    $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
                 }
@@ -117,6 +140,9 @@ class ShopifyOrderController extends BaseShopifyController
             }
 
             $this->orderRepo->saveAndCommit($order);
+
+            $this->webHookLog->setEntityId($order->getId());
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
         catch (\Exception $exception)
         {
@@ -132,15 +158,24 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            $this->webHookLog->setExternalId($shopifyOrder->getId());
+
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+            {
+                $this->webHookLog->addNote('shouldImportOrder was false');
+                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                 return response('', 200);
+            }
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
 
             if (!is_null($order->getId()))
             {
+                $this->webHookLog->setEntityId($order->getId());
                 if (!$order->canUpdate())
                 {
+                    $this->webHookLog->addNote('order->canUpdate was false');
+                    $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
                 }
@@ -153,6 +188,10 @@ class ShopifyOrderController extends BaseShopifyController
             }
 
             $this->orderRepo->saveAndCommit($order);
+
+            $this->webHookLog->setEntityId($order->getId());
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+
         }
         catch (\Exception $exception)
         {
