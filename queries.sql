@@ -9,7 +9,8 @@ SELECT
   webHookLog.entityId,
   webHookLog.externalId,
   webHookLog.notes,
-  webHookLog.errorMessage
+  webHookLog.errorMessage,
+  webHookLog.createdAt
 FROM
   WebHookLog webHookLog
   JOIN ClientIntegration clientIntegration ON clientIntegration.id = webHookLog.clientIntegrationId

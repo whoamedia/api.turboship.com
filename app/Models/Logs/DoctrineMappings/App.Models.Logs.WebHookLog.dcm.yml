@@ -61,6 +61,13 @@ App\Models\Logs\WebHookLog:
       options:
         fixed:        false
         comment:      "Notes taken during processing"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Client was created"
+        default:      CURRENT_datetime
 
   manyToOne:
     clientIntegration:

@@ -60,9 +60,15 @@ class WebHookLog
      */
     protected $notes;
 
+    /**
+     * @var \DateTime
+     */
+    protected $createdAt;
+
 
     public function __construct($data = [])
     {
+        $this->createdAt                = new \DateTime();
         $this->clientIntegration        = AU::get($data['clientIntegration']);
         $this->integrationWebHook       = AU::get($data['integrationWebHook']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
