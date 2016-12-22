@@ -52,19 +52,4 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         return $shopifyOrderCountResponse;
     }
 
-    /**
-     * @param   ShopifyOrder $shopifyOrder
-     * @return  bool
-     */
-    public function shouldImport (ShopifyOrder $shopifyOrder)
-    {
-        if ($shopifyOrder->isTest())
-            return false;
-        else if ($shopifyOrder->getFinancialStatus() != 'paid')
-            return false;
-        else if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
-            return false;
-        else
-            return true;
-    }
 }

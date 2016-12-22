@@ -5,9 +5,7 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Repositories\Shopify\ShopifyOrderRepository;
-use App\Services\Shopify\ShopifyMappingService;
-use App\Services\Shopify\ShopifyOrderService;
+use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -15,24 +13,14 @@ class ShopifyOrderController extends BaseShopifyController
 {
 
     /**
-     * @var ShopifyOrderService
-     */
-    private $shopifyOrderService;
-
-    /**
-     * @var ShopifyMappingService
-     */
-    private $shopifyMappingService;
-
-    /**
      * @var OrderRepository
      */
     private $orderRepo;
 
     /**
-     * @var ShopifyOrderRepository
+     * @var ShopifyOrderMappingService
      */
-    private $shopifyOrderReposity;
+    protected $shopifyOrderMappingService;
 
 
     public function __construct (Request $request)
@@ -40,9 +28,7 @@ class ShopifyOrderController extends BaseShopifyController
         parent::__construct($request);
 
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
-        $this->shopifyOrderService          = new ShopifyOrderService($this->clientIntegration);
-        $this->shopifyMappingService        = new ShopifyMappingService();
-        $this->shopifyOrderReposity         = new ShopifyOrderRepository($this->clientIntegration);
+        $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
     }
 
 
@@ -51,12 +37,11 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+                return response('', 200);
 
-            if ($this->shopifyOrderReposity->shouldImport($shopifyOrder))
-            {
-                $order                      = $this->shopifyOrderService->getOrder($shopifyOrder);
-                //  TODO: Check to see if the order is being fulfilled
-            }
+            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
+            $this->orderRepo->saveAndCommit($order);
         }
         catch (\Exception $exception)
         {
@@ -73,7 +58,7 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $order                          = $this->shopifyOrderService->getOrder($shopifyOrder);
+
         }
         catch (\Exception $exception)
         {
@@ -90,7 +75,7 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $order                          = $this->shopifyOrderService->getOrder($shopifyOrder);
+
         }
         catch (\Exception $exception)
         {
@@ -106,8 +91,21 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+                return response('', 200);
 
-            $order                          = $this->shopifyOrderService->getOrder($shopifyOrder);
+            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
+
+            if (!is_null($order->getId()))
+            {
+                if (!$order->canUpdate())
+                {
+                    // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
+                    return response('', 200);
+                }
+            }
+
+            $this->orderRepo->saveAndCommit($order);
         }
         catch (\Exception $exception)
         {
@@ -123,8 +121,21 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
+            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
+                return response('', 200);
 
-            $order                          = $this->shopifyOrderService->getOrder($shopifyOrder);
+            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
+
+            if (!is_null($order->getId()))
+            {
+                if (!$order->canUpdate())
+                {
+                    // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
+                    return response('', 200);
+                }
+            }
+
+            $this->orderRepo->saveAndCommit($order);
         }
         catch (\Exception $exception)
         {

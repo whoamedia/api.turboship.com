@@ -130,9 +130,6 @@ class OrderItem implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['externalId']           = $this->externalId;
-        $object['externalProductId']    = $this->externalProductId;
-        $object['externalVariantId']    = $this->externalVariantId;
         $object['sku']                  = $this->sku;
         $object['quantityPurchased']    = $this->quantityPurchased;
         $object['quantityToFulfill']    = $this->quantityToFulfill;
@@ -141,6 +138,9 @@ class OrderItem implements \JsonSerializable
         $object['totalTaxes']           = $this->totalTaxes;
         $object['status']               = $this->status->jsonSerialize();
         $object['variant']              = is_null($this->variant) ? null : $this->variant->jsonSerialize();
+        $object['externalId']           = $this->externalId;
+        $object['externalProductId']    = $this->externalProductId;
+        $object['externalVariantId']    = $this->externalVariantId;
 
         return $object;
     }

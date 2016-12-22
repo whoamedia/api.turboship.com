@@ -45,10 +45,38 @@ class OrderItemRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\OrderItem', 'orderItem');
+        $qb->from('App\Models\OMS\OrderItem', 'orderItem')
+            ->join('orderItem.order', 'orders', Query\Expr\Join::ON)
+            ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
+            ->join('orders.client', 'client', Query\Expr\Join::ON)
+            ->join('orders.status', 'status', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['ids']));
+
+        if (!is_null(AU::get($query['orderIds'])))
+            $qb->andWhere($qb->expr()->in('orders.id', $query['orderIds']));
+
+        if (!is_null(AU::get($query['crmSourceIds'])))
+            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+
+        if (!is_null(AU::get($query['clientIds'])))
+            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['statusIds'])))
+            $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
+
+        if (!is_null(AU::get($query['externalIds'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $externalIds            = explode(',', $query['externalIds']);
+            foreach ($externalIds AS $externalId)
+            {
+                $orX->add($qb->expr()->eq('orderItem.externalId', $qb->expr()->literal($externalId)));
+            }
+            $qb->andWhere($orX);
+        }
+
 
         $qb->orderBy('orderItem.id', 'ASC');
         return $qb;

@@ -4,14 +4,31 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Repositories\Doctrine\OMS\ProductRepository;
+use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use Illuminate\Http\Request;
+use EntityManager;
 
 class ShopifyProductController extends BaseShopifyController
 {
 
+    /**
+     * @var ShopifyProductMappingService
+     */
+    private $shopifyProductMappingService;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepo;
+
+
     public function __construct (Request $request)
     {
         parent::__construct($request);
+
+        $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
+        $this->productRepo                  = EntityManager::getRepository('App\Models\OMS\Product');
     }
 
 
@@ -20,6 +37,12 @@ class ShopifyProductController extends BaseShopifyController
         try
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
+
+            if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
+                return response('', 200);
+
+            $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+            $this->productRepo->saveAndCommit($product);
         }
         catch (\Exception $exception)
         {
@@ -34,6 +57,7 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
+            //  TODO: Figure out deletion
             $shopifyProduct                 = new ShopifyProduct($request->input());
         }
         catch (\Exception $exception)
@@ -50,6 +74,13 @@ class ShopifyProductController extends BaseShopifyController
         try
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
+
+            //  TODO: The product may exist in turboShip and may need to be set it inactive
+            if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
+                return response('', 200);
+
+            $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+            $this->productRepo->saveAndCommit($product);
         }
         catch (\Exception $exception)
         {

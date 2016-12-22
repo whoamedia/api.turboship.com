@@ -366,7 +366,7 @@ class ShopifyOrderLineItem implements \JsonSerializable
     /**
      * @return boolean
      */
-    public function isRequiresShipping()
+    public function getRequiresShipping()
     {
         return $this->requires_shipping;
     }

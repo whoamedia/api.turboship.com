@@ -74,9 +74,8 @@ class ProductAlias extends BaseModel
     public function jsonSerialize()
     {
         $object['id']                   = $this->getId();
-        $object['createdAt']            = $this->createdAt;
         $object['crmSource']            = $this->crmSource->jsonSerialize();
-        $object['product']              = $this->product->jsonSerialize();
+        $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
 

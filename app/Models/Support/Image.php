@@ -60,9 +60,10 @@ class Image implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['path']                 = $this->path;
-        $object['externalId']           = $this->externalId;
         $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+        $object['externalId']           = $this->externalId;
+        $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         return $object;
     }

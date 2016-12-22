@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\CMS\Client;
 use App\Models\Integrations\ClientIntegration;
 use App\Models\Logs\WebHookLog;
 use App\Repositories\Doctrine\Integrations\ClientIntegrationRepository;
@@ -15,6 +16,11 @@ use EntityManager;
 
 class BaseShopifyController extends Controller
 {
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     /**
      * @var ClientIntegrationRepository
@@ -41,10 +47,6 @@ class BaseShopifyController extends Controller
      */
     protected $webHookLog;
 
-    /**
-     * @var string
-     */
-    protected $shopifySharedSecret;
 
     public function __construct (Request $request)
     {
@@ -54,9 +56,10 @@ class BaseShopifyController extends Controller
 
         $clientIntegrationId            = $request->route('id');
         $this->clientIntegration        = $this->clientIntegrationRepo->getOneById($clientIntegrationId);
+        $this->client                   = $this->clientIntegration->getClient();
 
         $credentialUtility              = new CredentialUtility($this->clientIntegration);
-        $this->shopifySharedSecret      = $credentialUtility->getShopifySharedSecret()->getValue();
+        $shopifySharedSecret            = $credentialUtility->getShopifySharedSecret()->getValue();
 
 
         $topic                          = str_replace('webhooks/shopify/' . $request->route('id') . '/', '', $request->path());
@@ -71,7 +74,7 @@ class BaseShopifyController extends Controller
         $integrationWebHook             = $webHookResult[0];
 
         $this->webHookLog                     = new WebHookLog();
-        $verified                       = $this->verifyWebHook($request);
+        $verified                       = $this->verifyWebHook($request, $shopifySharedSecret);
         $this->webHookLog->setVerified($verified);
         $this->webHookLog->setClientIntegration($this->clientIntegration);
         $this->webHookLog->setIntegrationWebHook($integrationWebHook);
@@ -84,14 +87,15 @@ class BaseShopifyController extends Controller
     /**
      * Validate that the request is coming from Shopify
      * @param   Request $request
+     * @param   string  $shopifySharedSecret
      * @return  bool
      */
-    private function verifyWebHook (Request $request)
+    private function verifyWebHook (Request $request, $shopifySharedSecret)
     {
         $data                           = file_get_contents('php://input');
 
         $hmac_header                    = $request->header('X-Shopify-Hmac-Sha256');
-        $calculated_hmac                = base64_encode(hash_hmac('sha256', $data, $this->shopifySharedSecret, true));
+        $calculated_hmac                = base64_encode(hash_hmac('sha256', $data, $shopifySharedSecret, true));
 
         return ($hmac_header == $calculated_hmac);
     }
