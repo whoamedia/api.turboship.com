@@ -3,14 +3,12 @@
 namespace App\Console\Commands;
 
 
-use App\Jobs\Shopify\ShopifyOrderImportJob;
-use App\Jobs\Shopify\ShopifyProductImportJob;
-use App\Models\CMS\Validation\ClientValidation;
-use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Utilities\CRMSourceUtility;
-use App\Utilities\OrderStatusUtility;
+use App\Integrations\EasyPost\EasyPostConfiguration;
+use App\Integrations\EasyPost\EasyPostIntegration;
+use App\Integrations\EasyPost\Models\Requests\CreateEasyPostAddress;
+use App\Models\Integrations\Validation\ClientIntegrationValidation;
+use App\Utilities\CredentialUtility;
 use Illuminate\Console\Command;
-use EntityManager;
 
 class TestJunkCommand extends Command
 {
@@ -23,34 +21,16 @@ class TestJunkCommand extends Command
 
 
     /**
-     * @var ClientValidation
+     * @var ClientIntegrationValidation
      */
-    private $clientValidation;
-
-    /**
-     * @var CRMSourceUtility
-     */
-    private $crmSourceUtility;
-
-    /**
-     * @var OrderStatusUtility
-     */
-    private $orderStatusUtility;
-
-    /**
-     * @var OrderRepository
-     */
-    private $orderRepo;
+    private $clientIntegrationValidation;
 
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
-        $this->crmSourceUtility         = new CRMSourceUtility();
-        $this->orderStatusUtility       = new OrderStatusUtility();
-        $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $this->clientIntegrationValidation  = new ClientIntegrationValidation();
     }
 
     /**
@@ -60,22 +40,25 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        //  $this->call('turboship:reboot');
+        $clientIntegration          = $this->clientIntegrationValidation->idExists(2);
+        $credentialUtility          = new CredentialUtility($clientIntegration);
 
-        if ($this->option('PRODUCTS') === true)
-        {
-            $this->info('Importing Shopify products...');
-            $shopifyProductImportJob        = new ShopifyProductImportJob(1);
-            $shopifyProductImportJob->handle();
-        }
+        $easyPostApiKey             = $credentialUtility->getEasyPostApiKey();
 
-        if ($this->option('ORDERS') === true)
-        {
-            $this->info('Importing Shopify orders...');
-            $shopifyOrderImportJob          = new ShopifyOrderImportJob(1);
-            $shopifyOrderImportJob->handle();
-        }
+        $easyPostConfiguration      = new EasyPostConfiguration();
+        $easyPostConfiguration->setApiKey($easyPostApiKey->getValue());
 
+        $easyPostIntegration        = new EasyPostIntegration($easyPostConfiguration);
+
+        $createEasyPostAddress      = new CreateEasyPostAddress();
+        $createEasyPostAddress->setStreet1('41 East Liberty St');
+        $createEasyPostAddress->setCity('Savannah');
+        $createEasyPostAddress->setState('GA');
+        $createEasyPostAddress->setZip('31401');
+        $createEasyPostAddress->setCountry('US');
+
+        //  $easyPostIntegration->addressApi->create($createEasyPostAddress);
+        $easyPostIntegration->addressApi->show('adr_d07f7a41fe1642ccbc2750c07cad770b');
     }
 
 }

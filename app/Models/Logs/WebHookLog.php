@@ -45,15 +45,39 @@ class WebHookLog
      */
     protected $success;
 
+    /**
+     * @var int|null
+     */
+    protected $entityId;
+
+    /**
+     * @var string|null
+     */
+    protected $externalId;
+
+    /**
+     * @var string|null
+     */
+    protected $notes;
+
+    /**
+     * @var \DateTime
+     */
+    protected $createdAt;
+
 
     public function __construct($data = [])
     {
+        $this->createdAt                = new \DateTime();
         $this->clientIntegration        = AU::get($data['clientIntegration']);
         $this->integrationWebHook       = AU::get($data['integrationWebHook']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
         $this->errorMessage             = AU::get($data['errorMessage']);
         $this->verified                 = AU::get($data['verified']);
         $this->success                  = AU::get($data['success']);
+        $this->entityId                 = AU::get($data['entityId']);
+        $this->externalId               = AU::get($data['externalId']);
+        $this->notes                    = AU::get($data['notes']);
     }
 
     /**
@@ -171,6 +195,54 @@ class WebHookLog
     public function setSuccess($success)
     {
         $this->success = $success;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getEntityId()
+    {
+        return $this->entityId;
+    }
+
+    /**
+     * @param int|null $entityId
+     */
+    public function setEntityId($entityId)
+    {
+        $this->entityId = $entityId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * @param null|string $externalId
+     */
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    public function addNote ($note)
+    {
+        if (is_null($this->notes))
+            $this->notes    = $note;
+        else
+            $this->notes    .= '       ' . $note;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getNotes()
+    {
+        return $this->notes;
     }
 
 }

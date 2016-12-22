@@ -4,6 +4,8 @@ use Illuminate\Database\Seeder;
 use \App\Models\CMS\User;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 use App\Utilities\IntegrationCredentialUtility;
+use App\Models\Integrations\ClientIntegration;
+use App\Utilities\IntegrationUtility;
 
 class WhoaMediaSeeder extends Seeder
 {
@@ -62,6 +64,7 @@ class WhoaMediaSeeder extends Seeder
         $this->users();
         $this->clients();
         $this->shopifyCredentials();
+        $this->easyPost();
     }
 
     private function organization ()
@@ -107,11 +110,11 @@ class WhoaMediaSeeder extends Seeder
 
     private function shopifyCredentials ()
     {
-        $clientIntegration      = new \App\Models\Integrations\ClientIntegration();
+        $clientIntegration      = new ClientIntegration();
         $clientIntegration->setSymbol('WHOA_MEDIA_SHOPIFY');
         $clientIntegration->setClient($this->client);
 
-        $shopifyIntegration     = $this->integrationRepo->getOneById(\App\Utilities\IntegrationUtility::SHOPIFY_ID);
+        $shopifyIntegration     = $this->integrationRepo->getOneById(IntegrationUtility::SHOPIFY_ID);
         $clientIntegration->setIntegration($shopifyIntegration);
 
         $shopifyApiKey          = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_API_KEY_ID);
@@ -146,6 +149,27 @@ class WhoaMediaSeeder extends Seeder
 
         //  (test)1a59ea54bddd0635cdaf9662e5a1235c      (production)1a7b27523fc4bb310f3f3506c7e90a88
         $clientCredential->setValue('1a59ea54bddd0635cdaf9662e5a1235c');
+        $clientIntegration->addCredential($clientCredential);
+
+        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+    }
+
+
+    private function easyPost ()
+    {
+        $clientIntegration      = new ClientIntegration();
+        $clientIntegration->setSymbol('WHOA_MEDIA_EASYPOST');
+        $clientIntegration->setClient($this->client);
+
+        $easyPostIntegration    = $this->integrationRepo->getOneById(IntegrationUtility::EASYPOST_ID);
+        $clientIntegration->setIntegration($easyPostIntegration);
+
+        $easyPostApiKey         = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::EASYPOST_API_KEY_ID);
+        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential->setIntegrationCredential($easyPostApiKey);
+
+        //  (test)9ryULR9axDntXQZzHQ6zOQ
+        $clientCredential->setValue('9ryULR9axDntXQZzHQ6zOQ');
         $clientIntegration->addCredential($clientCredential);
 
         $this->clientIntegrationRepo->saveAndCommit($clientIntegration);

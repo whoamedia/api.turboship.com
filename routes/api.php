@@ -45,6 +45,15 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/integrations/{id}/webHooks', 'IntegrationController@getWebHooks');
 
 
+    //  Order Operations
+    Route::get('/orders', 'OrderController@index');
+    Route::get('/orders/{id}', 'OrderController@show');
+    Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
+
+
+    //  Product Operations
+    Route::get('/products', 'ProductController@index');
+
 
     //  Subdivision Operations
     Route::get('/subdivisions', 'SubdivisionController@index');

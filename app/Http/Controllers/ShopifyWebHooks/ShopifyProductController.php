@@ -38,11 +38,20 @@ class ShopifyProductController extends BaseShopifyController
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
+            $this->webHookLog->setExternalId($shopifyProduct->getId());
+
             if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
+            {
+                $this->webHookLog->addNote('shouldImport was false');
+                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                 return response('', 200);
+            }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
             $this->productRepo->saveAndCommit($product);
+
+            $this->webHookLog->setEntityId($product->getId());
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
         catch (\Exception $exception)
         {
@@ -59,6 +68,11 @@ class ShopifyProductController extends BaseShopifyController
         {
             //  TODO: Figure out deletion
             $shopifyProduct                 = new ShopifyProduct($request->input());
+
+            $this->webHookLog->setExternalId($shopifyProduct->getId());
+            $this->webHookLog->addNote('No action taken to delete product');
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+
         }
         catch (\Exception $exception)
         {
@@ -75,12 +89,21 @@ class ShopifyProductController extends BaseShopifyController
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
+            $this->webHookLog->setExternalId($shopifyProduct->getId());
+
             //  TODO: The product may exist in turboShip and may need to be set it inactive
             if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
+            {
+                $this->webHookLog->addNote('shouldImport was false');
+                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
                 return response('', 200);
+            }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
             $this->productRepo->saveAndCommit($product);
+
+            $this->webHookLog->setEntityId($product->getId());
+            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
         }
         catch (\Exception $exception)
         {

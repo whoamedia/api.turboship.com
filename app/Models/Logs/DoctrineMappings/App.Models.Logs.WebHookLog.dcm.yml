@@ -42,6 +42,32 @@ App\Models\Logs\WebHookLog:
       nullable:       false
       options:
         comment:      "If the webhook was successfully processed"
+    entityId:
+      column:         entityId
+      type:           integer
+      nullable:       true
+      options:
+        unsigned:     true
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+    notes:
+      column:         notes
+      type:           string
+      nullable:       true
+      options:
+        fixed:        false
+        comment:      "Notes taken during processing"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Client was created"
+        default:      CURRENT_datetime
 
   manyToOne:
     clientIntegration:

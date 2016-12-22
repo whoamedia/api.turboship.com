@@ -66,7 +66,6 @@ class Client extends BaseModel
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
         $object['organization']         = $this->getOrganization()->jsonSerialize();
-        $object['createdAt']            = $this->createdAt;
 
         return $object;
     }
