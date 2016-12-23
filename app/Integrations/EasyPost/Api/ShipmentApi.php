@@ -19,6 +19,7 @@ class ShipmentApi extends BaseApi
 
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-list-of-a-shipments
      * @param   GetEasyPostShipments|array     $request
      * @return  EasyPostShipment[]
      */
@@ -38,7 +39,18 @@ class ShipmentApi extends BaseApi
     }
 
     /**
-     * @see https://www.easypost.com/docs/api.html#shipments
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-shipment
+     * @param   string  $id
+     * @return  EasyPostShipment
+     */
+    public function show ($id)
+    {
+        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id);
+        return new EasyPostShipment($response);
+    }
+
+    /**
+     * @see https://www.easypost.com/docs/api.html#create-a-shipment
      * @param   CreateEasyPostShipment|array     $request
      * @return  EasyPostShipment
      */
@@ -51,16 +63,7 @@ class ShipmentApi extends BaseApi
     }
 
     /**
-     * @param   string  $id
-     * @return  EasyPostShipment
-     */
-    public function show ($id)
-    {
-        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id);
-        return new EasyPostShipment($response);
-    }
-
-    /**
+     * @see https://www.easypost.com/docs/api.html#buy-a-shipment
      * @param   string      $id
      * @param   string      $rate
      * @param   float|null  $insurance
@@ -78,11 +81,12 @@ class ShipmentApi extends BaseApi
     }
 
     /***
+     * @see https://www.easypost.com/docs/api.html#convert-the-label-format-of-a-shipment
      * @param   string      $id
      * @param   string  $fileFormat
      * @return  EasyPostShipment
      */
-    public function getLabel ($id, $fileFormat = 'PNG')
+    public function convertLabel ($id, $fileFormat = 'PNG')
     {
         $request    = [
             'file_format'               => $fileFormat,
@@ -93,16 +97,18 @@ class ShipmentApi extends BaseApi
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#regenerate-rates-for-a-shipment
      * @param   string      $id
      * @return  EasyPostShipment
      */
-    public function getRates ($id)
+    public function regenerateRates ($id)
     {
         $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id . '/rates');
         return new EasyPostShipment($response);
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#insure-a-shipment
      * @param   string      $id
      * @param   float       $amount
      * @return  EasyPostShipment
@@ -118,6 +124,7 @@ class ShipmentApi extends BaseApi
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#refund-a-shipment
      * USPS
      *      Shipping labels can be refunded if requested within 30 days of generation. The processing time is 14 days, after which the funds will return to your EasyPost balance.
      *      EasyPost fees will also be refunded. To qualify, a shipment must not have been scanned by the USPS, or included on a Scan Form.
@@ -130,6 +137,15 @@ class ShipmentApi extends BaseApi
     {
         $response                       = parent::makeHttpRequest('post', $this->path . '/' . $id . '/refund');
         return new EasyPostShipment($response);
+    }
+
+    /**
+     * @see https://www.easypost.com/docs/api.html#create-return-for-a-shipment
+     * @param   string      $id
+     */
+    public function createReturnLabel ($id)
+    {
+
     }
 
 

@@ -18,6 +18,7 @@ class TrackerApi extends BaseApi
 
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-list-of-a-trackers
      * @param   GetEasyPostTrackers|array     $request
      * @return  EasyPostTracker[]
      * @see https://www.easypost.com/docs/api.html#retrieve-a-list-of-a-trackers
@@ -38,6 +39,7 @@ class TrackerApi extends BaseApi
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-tracker
      * @param   string  $id
      * @return  EasyPostTracker
      */

@@ -42,13 +42,13 @@ class EasyPostEvent
 
     /**
      * Previous values of relevant result attributes
-     * @var	object
+     * @var	array
      */
     protected $previous_attributes;
 
     /**
      * The object associated with the Event. See the "object" attribute on the result to determine its specific type
-     * @var	object
+     * @var	array
      */
     protected $result;
 
@@ -81,6 +81,25 @@ class EasyPostEvent
      * @var	string
      */
     protected $updated_at;
+
+
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->id                       = AU::get($data['id']);
+        $this->object                   = AU::get($data['object']);
+        $this->mode                     = AU::get($data['mode']);
+        $this->description              = AU::get($data['description']);
+        $this->previous_attributes      = AU::get($data['previous_attributes']);
+        $this->result                   = AU::get($data['result']);
+        $this->status                   = AU::get($data['status']);
+        $this->pending_urls             = AU::get($data['pending_urls'], []);
+        $this->completed_urls           = AU::get($data['completed_urls'], []);
+        $this->created_at               = AU::get($data['created_at']);
+        $this->updated_at               = AU::get($data['updated_at']);
+    }
 
     /**
      * @return array

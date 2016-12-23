@@ -22,19 +22,24 @@ class CarrierSeeder extends Seeder
     {
         return [
             [
-                'id'        => CarrierUtility::USPS_ID,
+                'id'        => CarrierUtility::USPS,
                 'name'      => 'United States Postal Service',
                 'symbol'    => 'USPS',
             ],
             [
-                'id'        => CarrierUtility::UPS_ID,
+                'id'        => CarrierUtility::UPS,
                 'name'      => 'United Postal Service',
                 'symbol'    => 'UPS',
             ],
             [
-                'id'        => CarrierUtility::DHL_ID,
-                'name'      => 'DHL',
-                'symbol'    => 'DHL',
+                'id'        => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'      => 'UPS Mail Innovations',
+                'symbol'    => 'UPS_MAIL_INNOVATIONS',
+            ],
+            [
+                'id'        => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'      => 'DHL Global Mail',
+                'symbol'    => 'DHL_GLOBAL_MAIL',
             ],
         ];
     }
