@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Utilities\CarrierUtility;
+use App\Utilities\ServiceUtility;
 
 class ServiceSeeder extends Seeder
 {
@@ -21,7 +22,11 @@ class ServiceSeeder extends Seeder
         );
 
         DB::table('Service')->insert(
-            $this->getDHLServices()
+            $this->getUPSMailInnovationsServices()
+        );
+
+        DB::table('Service')->insert(
+            $this->getDHLGlobalMailServices()
         );
     }
 
@@ -32,18 +37,69 @@ class ServiceSeeder extends Seeder
     {
         return [
             [
-                'carrierId'     => CarrierUtility::USPS_ID,
+                'id'            => ServiceUtility::USPS_FIRST_CLASS,
+                'carrierId'     => CarrierUtility::USPS,
                 'name'          => 'First Class',
                 'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::USPS_ID,
+                'id'            => ServiceUtility::USPS_PRIORITY_MAIL,
+                'carrierId'     => CarrierUtility::USPS,
                 'name'          => 'Priority Mail',
                 'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::USPS_ID,
-                'name'          => 'First Class International',
+                'id'            => ServiceUtility::USPS_PRIORITY_MAIL_EXPRESS,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Priority Mail Express',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_PARCEL_SELECT,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Parcel Select',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_LIBRARY_MAIL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Library Mail',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_MEDIA_MAIL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Media Mail',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_CRITICAL_MAIL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Critical Mail',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_FIRST_CLASS_INTERNATIONAL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'First Class Mail International',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_FIRST_CLASS_PACKAGE_INTERNATIONAL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'First Class Package International',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_PRIORITY_MAIL_INTERNATIONAL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Priority Mail International',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::USPS_EXPRESS_MAIL_INTERNATIONAL,
+                'carrierId'     => CarrierUtility::USPS,
+                'name'          => 'Express Mail International',
                 'isDomestic'    => false,
             ],
         ];
@@ -56,28 +112,75 @@ class ServiceSeeder extends Seeder
     {
         return [
             [
-                'carrierId'     => CarrierUtility::UPS_ID,
-                'name'          => '2nd Day Air',
-                'isDomestic'    => true,
-            ],
-            [
-                'carrierId'     => CarrierUtility::UPS_ID,
-                'name'          => 'SurePost Pound Plus',
-                'isDomestic'    => true,
-            ],
-            [
-                'carrierId'     => CarrierUtility::UPS_ID,
-                'name'          => 'SurePost Light',
-                'isDomestic'    => true,
-            ],
-            [
-                'carrierId'     => CarrierUtility::UPS_ID,
+                'id'            => ServiceUtility::UPS_GROUND,
+                'carrierId'     => CarrierUtility::UPS,
                 'name'          => 'Ground',
                 'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::UPS_ID,
-                'name'          => 'Next Day',
+                'id'            => ServiceUtility::UPS_UPS_STANDARD,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'UPS Standard',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_UPS_SAVER,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'UPS Saver',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_EXPRESS,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Express',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_EXPRESS_PLUS,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Express Plus',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_EXPEDITED,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Expedited',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_NEXT_DAY_AIR,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Next Day Air',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_NEXT_DAY_AIR_SAVER,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Next Day Air Saver',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_NEXT_DAY_AIR_EARLY_AM,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => 'Next Day Air Early AM',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_2ND_DAY_AIR,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => '2nd Day Air',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_2ND_DAY_AIR_AM,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => '2nd Day Air AM',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_3_DAY_SELECT,
+                'carrierId'     => CarrierUtility::UPS,
+                'name'          => '3 Day Select',
                 'isDomestic'    => true,
             ],
         ];
@@ -86,29 +189,115 @@ class ServiceSeeder extends Seeder
     /**
      * @return array
      */
-    private function getDHLServices ()
+    private function getUPSMailInnovationsServices ()
     {
         return [
             [
-                'carrierId'     => CarrierUtility::DHL_ID,
-                'name'          => 'Parcel Expedited',
+                'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_FIRST,
+                'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'          => 'First',
                 'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::DHL_ID,
-                'name'          => 'Parcel Plus Ground',
+                'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_PRIORITY,
+                'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'          => 'Priority',
                 'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::DHL_ID,
-                'name'          => 'International',
-                'isDomestic'    => false,
+                'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_EXPEDITED_MAIL_INNOVATIONS,
+                'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'          => 'Mail Innovations Expedited',
+                'isDomestic'    => true,
             ],
             [
-                'carrierId'     => CarrierUtility::DHL_ID,
-                'name'          => 'Parcel Plus Expedited',
+                'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_PRIORITY_MAIL_INNOVATIONS,
+                'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'          => 'Mail Innovations Priority',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_ECONOMY_MAIL_INNOVATIONS,
+                'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
+                'name'          => 'Mail Innovations Economy',
                 'isDomestic'    => true,
             ],
         ];
     }
+
+    /**
+     * @return array
+     */
+    private function getDHLGlobalMailServices ()
+    {
+        return [
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_BPM_EXPEDITED_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'BPM Expedited',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_BPM_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'BPM Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_FLATS_EXPEDITED_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Flats Expedited',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_FLATS_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Flats Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_MEDIA_MAIL_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Media Mail Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_PLUS_EXPEDITED_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Parcel Plus Expedited',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_PLUS_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Parcels Plus Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_EXPEDITED_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Parcels Expedited',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Parcel Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_MARKETING_PARCEL_EXPEDITED_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Marketing Parcel Expedited',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::DHL_GLOBAL_MAIL_MARKETING_PARCEL_GROUND_DOMESTIC,
+                'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
+                'name'          => 'Marketing Parcel Ground',
+                'isDomestic'    => true,
+            ],
+        ];
+    }
+
 }

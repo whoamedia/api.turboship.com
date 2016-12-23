@@ -6,10 +6,12 @@ namespace App\Utilities;
 class CarrierUtility
 {
 
-    const USPS_ID                   = 1;
+    const USPS                      = 1;
 
-    const UPS_ID                    = 2;
+    const UPS                       = 2;
 
-    const DHL_ID                    = 3;
+    const UPS_MAIL_INNOVATIONS      = 3;
+
+    const DHL_GLOBAL_MAIL           = 4;
 
 }
