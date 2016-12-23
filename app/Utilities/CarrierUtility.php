@@ -14,4 +14,5 @@ class CarrierUtility
 
     const DHL_GLOBAL_MAIL           = 4;
 
+    const FEDEX                     = 5;
 }

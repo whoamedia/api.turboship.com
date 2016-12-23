@@ -7,7 +7,7 @@ use App\Models\Integrations\IntegrationCredential;
 use App\Models\Integrations\IntegrationWebHook;
 
 
-class ECommerceIntegrationSeeder extends Seeder
+class ShopifyECommerceIntegrationSeeder extends Seeder
 {
 
     /**

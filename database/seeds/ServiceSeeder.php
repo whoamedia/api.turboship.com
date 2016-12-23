@@ -28,6 +28,10 @@ class ServiceSeeder extends Seeder
         DB::table('Service')->insert(
             $this->getDHLGlobalMailServices()
         );
+
+        DB::table('Service')->insert(
+            $this->getFedExServices()
+        );
     }
 
     /**
@@ -295,6 +299,84 @@ class ServiceSeeder extends Seeder
                 'id'            => ServiceUtility::DHL_GLOBAL_MAIL_MARKETING_PARCEL_GROUND_DOMESTIC,
                 'carrierId'     => CarrierUtility::DHL_GLOBAL_MAIL,
                 'name'          => 'Marketing Parcel Ground',
+                'isDomestic'    => true,
+            ],
+        ];
+    }
+
+    private function getFedExServices ()
+    {
+        return [
+            [
+                'id'            => ServiceUtility::FEDEX_GROUND,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Ground',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_2_DAY,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => '2 Day',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_2_DAY_AM,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => '2 Day AM',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_EXPRESS_SAVER,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Express Saver',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_STANDARD_OVERNIGHT,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Standard Overnight',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_FIRST_OVERNIGHT,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'First Overnight',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_PRIORITY_OVERNIGHT,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Priority Overnight',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_INTERNATIONAL_ECONOMY,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'International Economy',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_INTERNATIONAL_FIRST,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'International First',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_INTERNATIONAL_PRIORITY,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'International Priority',
+                'isDomestic'    => false,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_GROUND_HOME_DELIVERY,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Ground Home Delivery',
+                'isDomestic'    => true,
+            ],
+            [
+                'id'            => ServiceUtility::FEDEX_SMART_POST,
+                'carrierId'     => CarrierUtility::FEDEX,
+                'name'          => 'Smart Post',
                 'isDomestic'    => true,
             ],
         ];

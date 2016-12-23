@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
         /**
          * Integrations
          */
-        $this->call(ECommerceIntegrationSeeder::class);
-        $this->call(ShippingIntegrationSeeder::class);
+        $this->call(ShopifyECommerceIntegrationSeeder::class);
+        $this->call(EasyPostShippingIntegrationSeeder::class);
 
 
         /**
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         /**
          * Organizations
          */
-        $this->call(WhoaMediaSeeder::class);
+        //  $this->call(WhoaMediaSeeder::class);
         $this->call(NicheLogisticsSeeder::class);
     }
 }

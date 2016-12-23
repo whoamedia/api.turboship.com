@@ -48,19 +48,37 @@ class ServiceUtility
     const UPS_MAIL_INNOVATIONS_PRIORITY_MAIL_INNOVATIONS        = 303;
     const UPS_MAIL_INNOVATIONS_ECONOMY_MAIL_INNOVATIONS         = 304;
 
+
     /**
      * DHL Global Mail
      */
-    const DHL_GLOBAL_MAIL_BPM_EXPEDITED_DOMESTIC                = 401;
-    const DHL_GLOBAL_MAIL_BPM_GROUND_DOMESTIC                   = 402;
-    const DHL_GLOBAL_MAIL_FLATS_EXPEDITED_DOMESTIC              = 403;
-    const DHL_GLOBAL_MAIL_FLATS_GROUND_DOMESTIC                 = 404;
-    const DHL_GLOBAL_MAIL_MEDIA_MAIL_GROUND_DOMESTIC            = 405;
-    const DHL_GLOBAL_MAIL_PARCEL_PLUS_EXPEDITED_DOMESTIC        = 406;
-    const DHL_GLOBAL_MAIL_PARCEL_PLUS_GROUND_DOMESTIC           = 407;
-    const DHL_GLOBAL_MAIL_PARCEL_EXPEDITED_DOMESTIC             = 408;
-    const DHL_GLOBAL_MAIL_PARCEL_GROUND_DOMESTIC                = 409;
-    const DHL_GLOBAL_MAIL_MARKETING_PARCEL_EXPEDITED_DOMESTIC   = 410;
-    const DHL_GLOBAL_MAIL_MARKETING_PARCEL_GROUND_DOMESTIC      = 411;
+    const DHL_GLOBAL_MAIL_BPM_EXPEDITED_DOMESTIC                = 400;
+    const DHL_GLOBAL_MAIL_BPM_GROUND_DOMESTIC                   = 401;
+    const DHL_GLOBAL_MAIL_FLATS_EXPEDITED_DOMESTIC              = 402;
+    const DHL_GLOBAL_MAIL_FLATS_GROUND_DOMESTIC                 = 403;
+    const DHL_GLOBAL_MAIL_MEDIA_MAIL_GROUND_DOMESTIC            = 404;
+    const DHL_GLOBAL_MAIL_PARCEL_PLUS_EXPEDITED_DOMESTIC        = 405;
+    const DHL_GLOBAL_MAIL_PARCEL_PLUS_GROUND_DOMESTIC           = 406;
+    const DHL_GLOBAL_MAIL_PARCEL_EXPEDITED_DOMESTIC             = 407;
+    const DHL_GLOBAL_MAIL_PARCEL_GROUND_DOMESTIC                = 408;
+    const DHL_GLOBAL_MAIL_MARKETING_PARCEL_EXPEDITED_DOMESTIC   = 409;
+    const DHL_GLOBAL_MAIL_MARKETING_PARCEL_GROUND_DOMESTIC      = 410;
+
+
+    /**
+     * FedEx
+     */
+    const FEDEX_GROUND                                          = 500;
+    const FEDEX_2_DAY                                           = 501;
+    const FEDEX_2_DAY_AM                                        = 502;
+    const FEDEX_EXPRESS_SAVER                                   = 503;
+    const FEDEX_STANDARD_OVERNIGHT                              = 504;
+    const FEDEX_FIRST_OVERNIGHT                                 = 505;
+    const FEDEX_PRIORITY_OVERNIGHT                              = 506;
+    const FEDEX_INTERNATIONAL_ECONOMY                           = 507;
+    const FEDEX_INTERNATIONAL_FIRST                             = 508;
+    const FEDEX_INTERNATIONAL_PRIORITY                          = 509;
+    const FEDEX_GROUND_HOME_DELIVERY                            = 510;
+    const FEDEX_SMART_POST                                      = 511;
 
 }

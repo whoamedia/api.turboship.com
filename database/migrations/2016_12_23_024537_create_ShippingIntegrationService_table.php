@@ -16,13 +16,17 @@ class CreateShippingIntegrationServiceTable extends Migration
         Schema::create('ShippingIntegrationService', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('name', 100)->unique();
+            $table->string('name', 100);
 
             $table->integer('shippingIntegrationCarrierId')->unsigned()->index();
             $table->foreign('shippingIntegrationCarrierId')->references('id')->on('ShippingIntegrationCarrier');
 
             $table->integer('serviceId')->unsigned()->index();
             $table->foreign('serviceId')->references('id')->on('Service');
+
+
+            $table->unique(['name', 'shippingIntegrationCarrierId'], 'shippingintegrationservice_name_carrierid');
+            $table->unique(['shippingIntegrationCarrierId', 'serviceId'], 'shippingintegrationservice_id_serviceid');
         });
     }
 

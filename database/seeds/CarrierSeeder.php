@@ -41,6 +41,11 @@ class CarrierSeeder extends Seeder
                 'name'      => 'DHL Global Mail',
                 'symbol'    => 'DHL_GLOBAL_MAIL',
             ],
+            [
+                'id'        => CarrierUtility::FEDEX,
+                'name'      => 'FedEx',
+                'symbol'    => 'FEDEX',
+            ],
         ];
     }
 }
