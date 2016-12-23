@@ -17,19 +17,15 @@ class CreateClientIntegrationTable extends Migration
         {
             $table->increments('id')->unsigned();
 
-            $table->integer('clientId')->unsigned()->index();
-            $table->foreign('clientId')->references('id')->on('Client');
+            $table->integer('clientIntegrationTypId')->unsigned()->index();
+
+
 
             $table->integer('integrationId')->unsigned()->index();
             $table->foreign('integrationId')->references('id')->on('Integration');
 
-            $table->string('symbol')->index();
-
-
-
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
-            $table->unique(['clientId', 'symbol']);
         });
 
 

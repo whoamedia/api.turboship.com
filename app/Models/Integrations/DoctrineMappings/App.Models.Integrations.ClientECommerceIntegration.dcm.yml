@@ -1,0 +1,22 @@
+App\Models\Integrations\ClientECommerceIntegration:
+  type:               entity
+  table:              ClientECommerceIntegration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ClientECommerceIntegrationRepository
+
+  fields:
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      options:
+        comment:      "ClientECommerceIntegration symbol"
+
+  manyToOne:
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     eCommerceIntegrations
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id

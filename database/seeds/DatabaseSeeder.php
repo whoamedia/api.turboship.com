@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         /**
          * Organizations
          */
-        //  $this->call(WhoaMediaSeeder::class);
+        $this->call(WhoaMediaSeeder::class);
         $this->call(NicheLogisticsSeeder::class);
     }
 }

@@ -5,6 +5,8 @@ use \App\Models\CMS\User;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 use App\Utilities\IntegrationCredentialUtility;
 use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\ClientECommerceIntegration;
+use App\Models\Integrations\ClientShippingIntegration;
 use App\Utilities\IntegrationUtility;
 
 class WhoaMediaSeeder extends Seeder
@@ -51,6 +53,21 @@ class WhoaMediaSeeder extends Seeder
      */
     private $clientIntegrationRepo;
 
+    /**
+     * @var \App\Repositories\Doctrine\Integrations\ECommerceIntegrationRepository
+     */
+    private $eCommerceIntegrationRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\Integrations\ShippingIntegrationRepository
+     */
+    private $shippingIntegrationRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\Integrations\ClientECommerceIntegrationRepository
+     */
+    private $clientECommerceIntegrationRepo;
+
     public function run()
     {
         $this->clientRepo       = EntityManager::getRepository('App\Models\CMS\Client');
@@ -59,11 +76,13 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo         = EntityManager::getRepository('App\Models\CMS\User');
         $this->organizationRepo = EntityManager::getRepository('App\Models\CMS\Organization');
         $this->clientIntegrationRepo    = EntityManager::getRepository('App\Models\Integrations\ClientIntegration');
-
+        $this->eCommerceIntegrationRepo = EntityManager::getRepository('App\Models\Integrations\ECommerceIntegration');
+        $this->shippingIntegrationRepo  = EntityManager::getRepository('App\Models\Integrations\ShippingIntegration');
+        $this->clientECommerceIntegrationRepo = EntityManager::getRepository('App\Models\Integrations\ClientECommerceIntegration');
         $this->organization();
         $this->users();
         $this->clients();
-        $this->shopifyCredentials();
+        $this->shopify();
         $this->easyPost();
     }
 
@@ -108,9 +127,9 @@ class WhoaMediaSeeder extends Seeder
         $this->client           = $client;
     }
 
-    private function shopifyCredentials ()
+    private function shopify ()
     {
-        $clientIntegration      = new ClientIntegration();
+        $clientIntegration      = new ClientECommerceIntegration();
         $clientIntegration->setSymbol('WHOA_MEDIA_SHOPIFY');
         $clientIntegration->setClient($this->client);
 
@@ -151,13 +170,13 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setValue('1a59ea54bddd0635cdaf9662e5a1235c');
         $clientIntegration->addCredential($clientCredential);
 
-        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+        $this->clientRepo->saveAndCommit($clientIntegration);
     }
 
 
     private function easyPost ()
     {
-        $clientIntegration      = new ClientIntegration();
+        $clientIntegration      = new ClientShippingIntegration();
         $clientIntegration->setSymbol('WHOA_MEDIA_EASYPOST');
         $clientIntegration->setClient($this->client);
 
@@ -172,6 +191,6 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setValue('9ryULR9axDntXQZzHQ6zOQ');
         $clientIntegration->addCredential($clientCredential);
 
-        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+        $this->clientRepo->saveAndCommit($clientIntegration);
     }
 }
