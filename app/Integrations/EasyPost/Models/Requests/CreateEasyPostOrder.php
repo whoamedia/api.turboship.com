@@ -3,43 +3,40 @@
 namespace App\Integrations\EasyPost\Models\Requests;
 
 
-use App\Integrations\EasyPost\Models\Responses\EasyPostOptions;
 use App\Integrations\EasyPost\Traits\SimpleSerialize;
 
-class CreateEasyPostShipment implements \JsonSerializable
+class CreateEasyPostOrder implements \JsonSerializable
 {
 
     use SimpleSerialize;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $reference;
 
     /**
-     * @var CreateEasyPostAddress
+     * @var CreateEasyPostAddress|string
      */
     protected $to_address;
 
     /**
-     * @var CreateEasyPostAddress
+     * @var CreateEasyPostAddress|string
      */
     protected $from_address;
 
     /**
-     * @var CreateEasyPostParcel
+     * Shipment ids comma separated
+     * @var string
      */
-    protected $parcel;
+    protected $shipments;
 
     /**
-     * @var string|null
+     * Carrier account ids comma separated
+     * @var string
      */
     protected $carrier_accounts;
 
-    /**
-     * @var EasyPostOptions|null
-     */
-    protected $options;
 
     /**
      * @return array
@@ -50,7 +47,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getReference()
     {
@@ -58,7 +55,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @param null|string $reference
+     * @param string $reference
      */
     public function setReference($reference)
     {
@@ -66,7 +63,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @return CreateEasyPostAddress
+     * @return CreateEasyPostAddress|string
      */
     public function getToAddress()
     {
@@ -74,7 +71,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @param CreateEasyPostAddress $to_address
+     * @param CreateEasyPostAddress|string $to_address
      */
     public function setToAddress($to_address)
     {
@@ -82,7 +79,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @return CreateEasyPostAddress
+     * @return CreateEasyPostAddress|string
      */
     public function getFromAddress()
     {
@@ -90,7 +87,7 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @param CreateEasyPostAddress $from_address
+     * @param CreateEasyPostAddress|string $from_address
      */
     public function setFromAddress($from_address)
     {
@@ -98,23 +95,23 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @return CreateEasyPostParcel
+     * @return string
      */
-    public function getParcel()
+    public function getShipments()
     {
-        return $this->parcel;
+        return $this->shipments;
     }
 
     /**
-     * @param CreateEasyPostParcel $parcel
+     * @param string $shipments
      */
-    public function setParcel($parcel)
+    public function setShipments($shipments)
     {
-        $this->parcel = $parcel;
+        $this->shipments = $shipments;
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getCarrierAccounts()
     {
@@ -122,27 +119,11 @@ class CreateEasyPostShipment implements \JsonSerializable
     }
 
     /**
-     * @param null|string $carrier_accounts
+     * @param string $carrier_accounts
      */
     public function setCarrierAccounts($carrier_accounts)
     {
         $this->carrier_accounts = $carrier_accounts;
-    }
-
-    /**
-     * @return EasyPostOptions|null
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param EasyPostOptions|null $options
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
     }
 
 }

@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#orders
  * Class Order
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostOrder
 {
+
+    use SimpleSerialize;
 
     /**
      * Unique, begins with "order_"
@@ -93,5 +98,13 @@ class EasyPostOrder
      */
     protected $updated_at;
 
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }

@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#tracking-detail-object
  * Class TrackingDetail
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostTrackingDetail
 {
+
+    use SimpleSerialize;
 
     /**
      * "TrackingDetail"
@@ -48,5 +53,124 @@ class EasyPostTrackingDetail
      */
     protected $tracking_location;
 
+
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->object                   = AU::get($data['object']);
+        $this->message                  = AU::get($data['message']);
+        $this->status                   = AU::get($data['status']);
+        $this->datetime                 = AU::get($data['datetime']);
+        $this->source                   = AU::get($data['source']);
+        $this->tracking_location        = AU::get($data['tracking_location']);
+        if (!is_null($this->tracking_location))
+            $this->tracking_location    = new EasyPostTrackingLocation($this->tracking_location);
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
+
+    /**
+     * @return string
+     */
+    public function getObject()
+    {
+        return $this->object;
+    }
+
+    /**
+     * @param string $object
+     */
+    public function setObject($object)
+    {
+        $this->object = $object;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDatetime()
+    {
+        return $this->datetime;
+    }
+
+    /**
+     * @param string $datetime
+     */
+    public function setDatetime($datetime)
+    {
+        $this->datetime = $datetime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param string $source
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+    }
+
+    /**
+     * @return EasyPostTrackingLocation
+     */
+    public function getTrackingLocation()
+    {
+        return $this->tracking_location;
+    }
+
+    /**
+     * @param EasyPostTrackingLocation $tracking_location
+     */
+    public function setTrackingLocation($tracking_location)
+    {
+        $this->tracking_location = $tracking_location;
+    }
 
 }

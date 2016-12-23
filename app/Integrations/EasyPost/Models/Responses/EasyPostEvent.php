@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#events
  * Class Event
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostEvent
 {
+
+    use SimpleSerialize;
 
     /**
      * Unique identifier, begins with "evt_"
@@ -77,5 +82,12 @@ class EasyPostEvent
      */
     protected $updated_at;
 
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }

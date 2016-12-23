@@ -6,6 +6,8 @@ namespace App\Console\Commands;
 use App\Integrations\EasyPost\EasyPostConfiguration;
 use App\Integrations\EasyPost\EasyPostIntegration;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostAddress;
+use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
+use App\Integrations\EasyPost\Models\Requests\GetEasyPostShipments;
 use App\Models\Integrations\Validation\ClientIntegrationValidation;
 use App\Utilities\CredentialUtility;
 use Illuminate\Console\Command;
@@ -58,7 +60,12 @@ class TestJunkCommand extends Command
         $createEasyPostAddress->setCountry('US');
 
         //  $easyPostIntegration->addressApi->create($createEasyPostAddress);
-        $easyPostIntegration->addressApi->show('adr_d07f7a41fe1642ccbc2750c07cad770b');
+        //  $easyPostIntegration->addressApi->show('adr_d07f7a41fe1642ccbc2750c07cad770b');
+        $createEasyPostShipment     = new CreateEasyPostShipment();
+        $createEasyPostShipment->setToAddress($createEasyPostAddress);
+
+        $getEasyPostShipments       = new GetEasyPostShipments();
+        $easyPostIntegration->shipmentApi->get($getEasyPostShipments);
     }
 
 }

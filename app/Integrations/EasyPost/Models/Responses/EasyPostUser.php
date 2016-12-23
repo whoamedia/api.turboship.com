@@ -3,8 +3,13 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 class EasyPostUser
 {
+
+    use SimpleSerialize;
 
     /**
      * Unique, begins with "user_"
@@ -72,5 +77,13 @@ class EasyPostUser
      */
     protected $children;
 
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }
