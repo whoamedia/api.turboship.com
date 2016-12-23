@@ -117,9 +117,8 @@ class ClientIntegrationController extends Controller
             $clientWebHook->setIntegrationWebHook($integrationWebHook);
             $shopifyWebHookRepository->createWebHook($clientWebHook);
             $clientIntegration->addWebHook($clientWebHook);
+            $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
         }
-
-        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
 
         return response($clientIntegration->getWebHooks(), 201);
     }

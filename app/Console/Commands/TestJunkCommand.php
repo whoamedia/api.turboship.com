@@ -9,7 +9,7 @@ use App\Integrations\EasyPost\Models\Requests\CreateEasyPostAddress;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
 use App\Integrations\EasyPost\Models\Requests\GetEasyPostShipments;
 use App\Models\Integrations\Validation\ClientIntegrationValidation;
-use App\Utilities\CredentialUtility;
+use App\Services\CredentialService;
 use Illuminate\Console\Command;
 
 class TestJunkCommand extends Command
@@ -43,9 +43,9 @@ class TestJunkCommand extends Command
     public function handle()
     {
         $clientIntegration          = $this->clientIntegrationValidation->idExists(2);
-        $credentialUtility          = new CredentialUtility($clientIntegration);
+        $credentialService          = new CredentialService($clientIntegration);
 
-        $easyPostApiKey             = $credentialUtility->getEasyPostApiKey();
+        $easyPostApiKey             = $credentialService->getEasyPostApiKey();
 
         $easyPostConfiguration      = new EasyPostConfiguration();
         $easyPostConfiguration->setApiKey($easyPostApiKey->getValue());

@@ -3,11 +3,10 @@
 namespace App\Models\Logs;
 
 
-use App\Models\Integrations\ClientIntegration;
-use App\Models\Integrations\IntegrationWebHook;
+use App\Models\Integrations\ClientECommerceIntegration;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class WebHookLog
+class ShopifyWebHookLog
 {
 
     /**
@@ -16,14 +15,14 @@ class WebHookLog
     protected $id;
 
     /**
-     * @var ClientIntegration
+     * @var ClientECommerceIntegration
      */
-    protected $clientIntegration;
+    protected $clientECommerceIntegration;
 
     /**
-     * @var IntegrationWebHook
+     * @var string
      */
-    protected $integrationWebHook;
+    protected $topic;
 
     /**
      * @var string
@@ -69,8 +68,8 @@ class WebHookLog
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
-        $this->clientIntegration        = AU::get($data['clientIntegration']);
-        $this->integrationWebHook       = AU::get($data['integrationWebHook']);
+        $this->clientECommerceIntegration= AU::get($data['clientECommerceIntegration']);
+        $this->topic                    = AU::get($data['topic']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
         $this->errorMessage             = AU::get($data['errorMessage']);
         $this->verified                 = AU::get($data['verified']);
@@ -97,35 +96,35 @@ class WebHookLog
     }
 
     /**
-     * @return ClientIntegration
+     * @return ClientECommerceIntegration
      */
-    public function getClientIntegration()
+    public function getClientECommerceIntegration()
     {
-        return $this->clientIntegration;
+        return $this->clientECommerceIntegration;
     }
 
     /**
-     * @param ClientIntegration $clientIntegration
+     * @param ClientECommerceIntegration $clientECommerceIntegration
      */
-    public function setClientIntegration($clientIntegration)
+    public function setClientECommerceIntegration($clientECommerceIntegration)
     {
-        $this->clientIntegration = $clientIntegration;
+        $this->clientECommerceIntegration = $clientECommerceIntegration;
     }
 
     /**
-     * @return IntegrationWebHook
+     * @return string
      */
-    public function getIntegrationWebHook()
+    public function getTopic()
     {
-        return $this->integrationWebHook;
+        return $this->topic;
     }
 
     /**
-     * @param IntegrationWebHook $integrationWebHook
+     * @param string $topic
      */
-    public function setIntegrationWebHook($integrationWebHook)
+    public function setTopic($topic)
     {
-        $this->integrationWebHook = $integrationWebHook;
+        $this->topic = $topic;
     }
 
     /**
@@ -157,11 +156,6 @@ class WebHookLog
      */
     public function setErrorMessage($errorMessage)
     {
-        $this->setSuccess(false);
-
-        if (is_array($errorMessage))
-            $errorMessage       = json_encode($errorMessage, true);
-
         $this->errorMessage = $errorMessage;
     }
 
@@ -229,6 +223,14 @@ class WebHookLog
         $this->externalId = $externalId;
     }
 
+    /**
+     * @return null|string
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
     public function addNote ($note)
     {
         if (is_null($this->notes))
@@ -238,11 +240,19 @@ class WebHookLog
     }
 
     /**
-     * @return null|string
+     * @return \DateTime
      */
-    public function getNotes()
+    public function getCreatedAt()
     {
-        return $this->notes;
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
     }
 
 }

@@ -4,7 +4,6 @@ use Illuminate\Database\Seeder;
 use \App\Models\CMS\User;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 use App\Utilities\IntegrationCredentialUtility;
-use App\Models\Integrations\ClientIntegration;
 use App\Models\Integrations\ClientECommerceIntegration;
 use App\Models\Integrations\ClientShippingIntegration;
 use App\Utilities\IntegrationUtility;

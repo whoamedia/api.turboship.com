@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Utilities;
+namespace App\Services;
 
 
-use App\Models\CMS\Client;
 use App\Models\Integrations\ClientCredential;
 use App\Models\Integrations\ClientIntegration;
 use App\Repositories\Doctrine\Integrations\ClientCredentialRepository;
+use App\Utilities\IntegrationCredentialUtility;
 use EntityManager;
 
-class CredentialUtility
+class CredentialService
 {
 
     /**

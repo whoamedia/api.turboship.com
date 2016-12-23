@@ -164,7 +164,7 @@ class Client extends BaseModel
     }
 
     /**
-     * @return ClientShippingIntegration
+     * @return ClientShippingIntegration[]
      */
     public function getShippingIntegrations()
     {

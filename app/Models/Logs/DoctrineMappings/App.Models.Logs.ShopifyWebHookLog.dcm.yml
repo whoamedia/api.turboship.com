@@ -1,7 +1,7 @@
-App\Models\Logs\WebHookLog:
+App\Models\Logs\ShopifyWebHookLog:
   type:               entity
-  table:              WebHookLog
-  repositoryClass:    App\Repositories\Doctrine\Logs\WebHookLogRepository
+  table:              ShopifyWebHookLog
+  repositoryClass:    App\Repositories\Doctrine\Logs\ShopifyWebHookLogRepository
 
   id:
     id:
@@ -10,19 +10,26 @@ App\Models\Logs\WebHookLog:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'WebHookLog id'
+        comment:      'ShopifyWebHookLog id'
       id:             true
       generator:
         strategy:     IDENTITY
 
   fields:
+    topic:
+      column:         topic
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "ShopifyWebHookLog topic"
     incomingMessage:
       column:         incomingMessage
       type:           string
       nullable:       false
       options:
         fixed:        false
-        comment:      "WebHookLog incomingMessage"
+        comment:      "ShopifyWebHookLog incomingMessage"
     errorMessage:
       column:         errorMessage
       type:           string
@@ -70,17 +77,9 @@ App\Models\Logs\WebHookLog:
         default:      CURRENT_datetime
 
   manyToOne:
-    clientIntegration:
-      targetEntity:   App\Models\Integrations\ClientIntegration
+    clientECommerceIntegration:
+      targetEntity:   App\Models\Integrations\ClientECommerceIntegration
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         clientIntegrationId
-        referencedColumnName: id
-    integrationWebHook:
-      targetEntity:   App\Models\Integrations\IntegrationWebHook
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         integrationWebHookId
-        referencedColumnName: id
+        name:         clientECommerceIntegrationId

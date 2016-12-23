@@ -9,7 +9,7 @@ use App\Models\Integrations\ClientIntegration;
 use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Integrations\Shopify\ShopifyConfiguration;
 use App\Integrations\Shopify\ShopifyIntegration;
-use App\Utilities\CredentialUtility;
+use App\Services\CredentialService;
 use EntityManager;
 
 class BaseShopifyRepository
@@ -52,10 +52,10 @@ class BaseShopifyRepository
             $this->shopifyIntegration   = $shopifyIntegration;
         else
         {
-            $credentialUtility          = new CredentialUtility($this->clientIntegration);
-            $apiKey                     = $credentialUtility->getShopifyApiKey()->getValue();
-            $password                   = $credentialUtility->getShopifyPassword()->getValue();
-            $hostName                   = $credentialUtility->getShopifyHostName()->getValue();
+            $credentialService          = new CredentialService($this->clientIntegration);
+            $apiKey                     = $credentialService->getShopifyApiKey()->getValue();
+            $password                   = $credentialService->getShopifyPassword()->getValue();
+            $hostName                   = $credentialService->getShopifyHostName()->getValue();
 
             $shopifyConfiguration       = new ShopifyConfiguration();
             $shopifyConfiguration->setApiKey($apiKey);

@@ -38,12 +38,12 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->webHookLog->setExternalId($shopifyOrder->getId());
+            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
             {
-                $this->webHookLog->addNote('shouldImportOrder was false');
-                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
+                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                 return response('', 200);
             }
 
@@ -54,13 +54,13 @@ class ShopifyOrderController extends BaseShopifyController
 
             $this->orderRepo->saveAndCommit($order);
 
-            $this->webHookLog->setEntityId($order->getId());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setEntityId($order->getId());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -72,15 +72,15 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $this->webHookLog->setExternalId($shopifyOrder->getId());
-            $this->webHookLog->addNote('No action taken to cancel order');
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
+            $this->shopifyWebHookLog->addNote('No action taken to cancel order');
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
 
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -92,14 +92,14 @@ class ShopifyOrderController extends BaseShopifyController
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $this->webHookLog->setExternalId($shopifyOrder->getId());
-            $this->webHookLog->addNote('No action taken to delete order');
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
+            $this->shopifyWebHookLog->addNote('No action taken to delete order');
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -110,12 +110,12 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->webHookLog->setExternalId($shopifyOrder->getId());
+            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
             {
-                $this->webHookLog->addNote('shouldImportOrder was false');
-                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
+                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                 return response('', 200);
             }
 
@@ -123,11 +123,11 @@ class ShopifyOrderController extends BaseShopifyController
 
             if (!is_null($order->getId()))
             {
-                $this->webHookLog->setEntityId($order->getId());
+                $this->shopifyWebHookLog->setEntityId($order->getId());
                 if (!$order->canUpdate())
                 {
-                    $this->webHookLog->addNote('$order->canUpdate was false');
-                    $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                    $this->shopifyWebHookLog->addNote('$order->canUpdate was false');
+                    $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
                 }
@@ -141,13 +141,13 @@ class ShopifyOrderController extends BaseShopifyController
 
             $this->orderRepo->saveAndCommit($order);
 
-            $this->webHookLog->setEntityId($order->getId());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setEntityId($order->getId());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -158,12 +158,12 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->webHookLog->setExternalId($shopifyOrder->getId());
+            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
             if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
             {
-                $this->webHookLog->addNote('shouldImportOrder was false');
-                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
+                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                 return response('', 200);
             }
 
@@ -171,11 +171,11 @@ class ShopifyOrderController extends BaseShopifyController
 
             if (!is_null($order->getId()))
             {
-                $this->webHookLog->setEntityId($order->getId());
+                $this->shopifyWebHookLog->setEntityId($order->getId());
                 if (!$order->canUpdate())
                 {
-                    $this->webHookLog->addNote('order->canUpdate was false');
-                    $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                    $this->shopifyWebHookLog->addNote('order->canUpdate was false');
+                    $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                     // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
                     return response('', 200);
                 }
@@ -189,14 +189,14 @@ class ShopifyOrderController extends BaseShopifyController
 
             $this->orderRepo->saveAndCommit($order);
 
-            $this->webHookLog->setEntityId($order->getId());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setEntityId($order->getId());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
 
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);

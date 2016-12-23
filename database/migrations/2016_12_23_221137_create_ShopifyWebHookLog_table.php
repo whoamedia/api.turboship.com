@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWebHookLogTable extends Migration
+class CreateShopifyWebHookLogTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreateWebHookLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('WebHookLog', function (Blueprint $table)
+        Schema::create('ShopifyWebHookLog', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
 
-            $table->integer('clientIntegrationId')->unsigned()->index();
-            $table->foreign('clientIntegrationId')->references('id')->on('ClientIntegration');
+            $table->integer('clientECommerceIntegrationId')->unsigned()->index();
+            $table->foreign('clientECommerceIntegrationId')->references('id')->on('ClientECommerceIntegration');
 
-            $table->integer('integrationWebHookId')->unsigned()->index();
-            $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');
+            //  $table->integer('integrationWebHookId')->unsigned()->index();
+            //  $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');
+
+            $table->string('topic', 20)->index();
 
             $table->boolean('verified')->index();
             $table->boolean('success')->index();
@@ -42,6 +44,6 @@ class CreateWebHookLogTable extends Migration
      */
     public function down()
     {
-        Schema::drop('WebHookLog');
+        Schema::drop('ShopifyWebHookLog');
     }
 }
