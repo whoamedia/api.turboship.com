@@ -66,13 +66,13 @@ class EasyPostCarrierAccount
 
     /**
      * Unlike the "credentials" object contained in "fields", this nullable object contains just raw credential pairs for client library consumption
-     * @var	object
+     * @var	array|null
      */
     protected $credentials;
 
     /**
      * Unlike the "test_credentials" object contained in "fields", this nullable object contains just raw test_credential pairs for client library consumption
-     * @var	object
+     * @var	array|null
      */
     protected $test_credentials;
 
@@ -87,6 +87,28 @@ class EasyPostCarrierAccount
     protected $updated_at;
 
 
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->id                       = AU::get($data['id']);
+        $this->object                   = AU::get($data['object']);
+        $this->type                     = AU::get($data['type']);
+
+        $this->fields                   = AU::get($data['fields']);
+        if (!is_null($this->fields))
+            $this->fields               = new EasyPostFields($this->fields);
+
+        $this->clone                    = AU::get($data['clone']);
+        $this->description              = AU::get($data['description']);
+        $this->reference                = AU::get($data['reference']);
+        $this->readable                 = AU::get($data['readable']);
+        $this->credentials              = AU::get($data['credentials']);
+        $this->test_credentials         = AU::get($data['test_credentials']);
+        $this->created_at               = AU::get($data['created_at']);
+        $this->updated_at               = AU::get($data['updated_at']);
+    }
 
     /**
      * @return array
@@ -225,7 +247,7 @@ class EasyPostCarrierAccount
     }
 
     /**
-     * @return object
+     * @return array|null
      */
     public function getCredentials()
     {
@@ -233,7 +255,7 @@ class EasyPostCarrierAccount
     }
 
     /**
-     * @param object $credentials
+     * @param array|null $credentials
      */
     public function setCredentials($credentials)
     {
@@ -241,7 +263,7 @@ class EasyPostCarrierAccount
     }
 
     /**
-     * @return object
+     * @return array|null
      */
     public function getTestCredentials()
     {
@@ -249,7 +271,7 @@ class EasyPostCarrierAccount
     }
 
     /**
-     * @param object $test_credentials
+     * @param array|null $test_credentials
      */
     public function setTestCredentials($test_credentials)
     {
@@ -287,5 +309,7 @@ class EasyPostCarrierAccount
     {
         $this->updated_at = $updated_at;
     }
+
+
 
 }
