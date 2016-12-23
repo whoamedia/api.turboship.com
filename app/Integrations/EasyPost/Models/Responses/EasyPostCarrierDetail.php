@@ -3,8 +3,13 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 class EasyPostCarrierDetail
 {
+
+    use SimpleSerialize;
 
     /**
      * "CarrierDetail"
@@ -36,5 +41,12 @@ class EasyPostCarrierDetail
      */
     protected $est_delivery_time_local;
 
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }

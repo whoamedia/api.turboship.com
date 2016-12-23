@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#fee-object
  * Class Fee
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostFee
 {
+
+    use SimpleSerialize;
 
     /**
      * "Fee"
@@ -41,5 +46,12 @@ class EasyPostFee
      */
     protected $refunded;
 
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }

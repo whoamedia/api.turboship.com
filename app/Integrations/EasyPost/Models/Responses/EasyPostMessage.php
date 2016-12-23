@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#message-object
  * Class Message
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostMessage
 {
+
+    use SimpleSerialize;
 
     /**
      * 	the name of the carrier generating the error, e.g. "UPS"
@@ -28,4 +33,13 @@ class EasyPostMessage
      * @var string
      */
     protected $message;
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
+
 }

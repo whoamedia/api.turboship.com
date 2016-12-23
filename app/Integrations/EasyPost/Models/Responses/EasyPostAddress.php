@@ -3,6 +3,7 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 /**
@@ -12,6 +13,8 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
  */
 class EasyPostAddress
 {
+
+    use SimpleSerialize;
 
     /**
      * Unique identifier, begins with "adr_"
@@ -138,6 +141,14 @@ class EasyPostAddress
 
         $this->verifications            = AU::get($data['verifications'], []);
         $this->verifications            = !empty($this->verifications) ? new EasyPostVerifications($this->verifications) : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
     }
 
     /**

@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#addresses
  * Class Verification
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostVerification
 {
+
+    use SimpleSerialize;
 
     /**
      * The success of the verification
@@ -27,4 +32,13 @@ class EasyPostVerification
      * @var EasyPostVerificationDetails
      */
     protected $details;
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
+
 }

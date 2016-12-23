@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#api-keys
  * Class ApiKeys
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostApiKeys
 {
+
+    use SimpleSerialize;
 
     /**
      * The User id of the authenticated User making the API Key request
@@ -29,5 +34,13 @@ class EasyPostApiKeys
      */
     protected $keys;
 
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }

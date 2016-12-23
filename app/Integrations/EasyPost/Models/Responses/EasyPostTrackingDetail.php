@@ -3,6 +3,9 @@
 namespace App\Integrations\EasyPost\Models\Responses;
 
 
+use App\Integrations\EasyPost\Traits\SimpleSerialize;
+use jamesvweston\Utilities\ArrayUtil AS AU;
+
 /**
  * @see https://www.easypost.com/docs/api.html#tracking-detail-object
  * Class TrackingDetail
@@ -10,6 +13,8 @@ namespace App\Integrations\EasyPost\Models\Responses;
  */
 class EasyPostTrackingDetail
 {
+
+    use SimpleSerialize;
 
     /**
      * "TrackingDetail"
@@ -48,5 +53,13 @@ class EasyPostTrackingDetail
      */
     protected $tracking_location;
 
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->simpleSerialize();
+    }
 
 }
