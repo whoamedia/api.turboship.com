@@ -29,6 +29,14 @@ class IntegrationWebHook implements \JsonSerializable
     protected $isActive;
 
 
+    public function __construct($data = [])
+    {
+        $this->topic                    = AU::get($data['topic']);
+        $this->isActive                 = AU::get($data['isActive']);
+        $this->integration              = AU::get($data['integration']);
+    }
+
+
     /**
      * @return array
      */

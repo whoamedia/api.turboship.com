@@ -33,9 +33,8 @@ class DatabaseSeeder extends Seeder
         /**
          * Integrations
          */
-        $this->call(IntegrationSeeder::class);
-        $this->call(IntegrationCredentialSeeder::class);
-        $this->call(IntegrationWebHookSeeder::class);
+        $this->call(ECommerceIntegrationSeeder::class);
+        $this->call(ShippingIntegrationSeeder::class);
 
 
         /**

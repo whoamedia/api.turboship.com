@@ -50,3 +50,11 @@ App\Models\CMS\Client:
       targetEntity:   App\Models\Integrations\ClientIntegration
       mappedBy:       client
       cascade:        ["persist", "remove"]
+    eCommerceIntegrations:
+      targetEntity:   App\Models\Integrations\ECommerceIntegration
+      mappedBy:       client
+      cascade:        ["persist", "remove"]
+    shippingIntegrations:
+      targetEntity:   App\Models\Integrations\ShippingIntegration
+      mappedBy:       client
+      cascade:        ["persist", "remove"]

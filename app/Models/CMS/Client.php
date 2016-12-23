@@ -39,6 +39,16 @@ class Client extends BaseModel
     protected $integrations;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $eCommerceIntegrations;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $shippingIntegrations;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -53,6 +63,8 @@ class Client extends BaseModel
         $this->createdAt                = new \DateTime();
         $this->products                 = new ArrayCollection();
         $this->integrations             = new ArrayCollection();
+        $this->eCommerceIntegrations    = new ArrayCollection();
+        $this->shippingIntegrations     = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);

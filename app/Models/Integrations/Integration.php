@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Models\Integrations;
-use Doctrine\Common\Collections\ArrayCollection;
 
+
+use Doctrine\Common\Collections\ArrayCollection;
+use jamesvweston\Utilities\ArrayUtil AS AU;
 
 /**
  * @SWG\Definition(@SWG\Xml())
  */
-class Integration implements \JsonSerializable
+abstract class Integration implements \JsonSerializable
 {
 
     /**
@@ -32,6 +34,14 @@ class Integration implements \JsonSerializable
      */
     protected $webHooks;
 
+
+    public function __construct($data = [])
+    {
+        $this->integrationCredentials   = new ArrayCollection();
+        $this->webHooks                 = new ArrayCollection();
+
+        $this->name                     = AU::get($data['name']);
+    }
 
     /**
      * @return array
@@ -61,11 +71,28 @@ class Integration implements \JsonSerializable
     }
 
     /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return IntegrationCredential[]
      */
     public function getIntegrationCredentials ()
     {
         return $this->integrationCredentials->toArray();
+    }
+
+    /**
+     * @param   IntegrationCredential $integrationCredential
+     */
+    public function addIntegrationCredential (IntegrationCredential $integrationCredential)
+    {
+        $integrationCredential->setIntegration($this);
+        $this->integrationCredentials->add($integrationCredential);
     }
 
     /**
@@ -93,5 +120,19 @@ class Integration implements \JsonSerializable
     {
         return $this->webHooks->contains($integrationWebHook);
     }
+
+    /**
+     * @param   IntegrationWebHook $integrationWebHook
+     */
+    public function addIntegrationWebHook (IntegrationWebHook $integrationWebHook)
+    {
+        $integrationWebHook->setIntegration($this);
+        $this->webHooks->add($integrationWebHook);
+    }
+
+    /**
+     * @return string
+     */
+    abstract function getObject ();
 
 }
