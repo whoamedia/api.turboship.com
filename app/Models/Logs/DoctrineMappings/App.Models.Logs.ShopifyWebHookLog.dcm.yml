@@ -55,6 +55,13 @@ App\Models\Logs\ShopifyWebHookLog:
       nullable:       true
       options:
         unsigned:     true
+    entityCreated:
+      column:         entityCreated
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If a new entity was created"
+        default:      false
     externalId:
       column:         externalId
       type:           string

@@ -45,7 +45,7 @@ class BaseShopifyController extends Controller
     public function __construct (Request $request)
     {
         $this->clientECommerceIntegrationRepo = EntityManager::getRepository('App\Models\Integrations\ClientECommerceIntegration');
-        $this->shopifyWebHookLogRepo    = EntityManager::getRepository('App\Models\Logs\WebHookLog');
+        $this->shopifyWebHookLogRepo    = EntityManager::getRepository('App\Models\Logs\ShopifyWebHookLog');
 
         $clientECommerceIntegrationId   = $request->route('id');
         $this->clientECommerceIntegration= $this->clientECommerceIntegrationRepo->getOneById($clientECommerceIntegrationId);
@@ -53,7 +53,6 @@ class BaseShopifyController extends Controller
 
         $credentialService              = new CredentialService($this->clientECommerceIntegration);
         $shopifySharedSecret            = $credentialService->getShopifySharedSecret()->getValue();
-
 
         $topic                          = str_replace('webhooks/shopify/' . $request->route('id') . '/', '', $request->path());
 

@@ -28,10 +28,12 @@ class CreateShopifyWebHookLogTable extends Migration
             $table->boolean('verified')->index();
             $table->boolean('success')->index();
             $table->integer('entityId')->unsigned()->index()->nullable()->default(null);
-            $table->string('externalId')->nullable()->default(null);
+            $table->string('externalId')->index()->nullable()->default(null);
+            $table->boolean('entityCreated')->index()->nullable()->default(false);
             $table->text('notes')->nullable()->default(null);
             $table->text('errorMessage')->nullable()->default(null);
             $table->text('incomingMessage');
+            $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 
 

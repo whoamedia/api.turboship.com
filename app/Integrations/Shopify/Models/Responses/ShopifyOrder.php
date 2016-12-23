@@ -397,7 +397,7 @@ class ShopifyOrder implements \JsonSerializable
         $this->financial_status         = AU::get($data['financial_status']);
 
         $this->fulfillments             = [];
-        $fulfillments                   = AU::get($data['fulfillments']);
+        $fulfillments                   = AU::get($data['fulfillments'], []);
         if (!is_null($fulfillments))
         {
             foreach ($fulfillments AS $item)
@@ -409,7 +409,7 @@ class ShopifyOrder implements \JsonSerializable
         $this->landing_site             = AU::get($data['landing_site']);
 
         $this->line_items               = [];
-        $line_items                     = AU::get($data['line_items']);
+        $line_items                     = AU::get($data['line_items'], []);
         foreach ($line_items AS $item)
         {
             $this->line_items[]         = new ShopifyOrderLineItem($item);
@@ -432,7 +432,7 @@ class ShopifyOrder implements \JsonSerializable
             $this->shipping_address     = new ShopifyAddress($this->shipping_address);
 
         $this->shipping_lines           = [];
-        $shipping_lines                 = AU::get($data['shipping_lines']);
+        $shipping_lines                 = AU::get($data['shipping_lines'], []);
         foreach ($shipping_lines AS $item)
         {
             $this->shipping_lines[]     = new ShopifyShippingLine($item);
@@ -442,7 +442,7 @@ class ShopifyOrder implements \JsonSerializable
         $this->subtotal_price           = AU::get($data['subtotal_price']);
 
         $this->tax_lines                = [];
-        $tax_lines                      = AU::get($data['tax_lines']);
+        $tax_lines                      = AU::get($data['tax_lines'], []);
         foreach ($tax_lines AS $item)
         {
             $this->tax_lines[]          = new ShopifyTaxLine($item);

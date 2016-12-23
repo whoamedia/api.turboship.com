@@ -55,6 +55,11 @@ class ShopifyWebHookLog
     protected $externalId;
 
     /**
+     * @var bool
+     */
+    protected $entityCreated;
+
+    /**
      * @var string|null
      */
     protected $notes;
@@ -75,6 +80,7 @@ class ShopifyWebHookLog
         $this->verified                 = AU::get($data['verified']);
         $this->success                  = AU::get($data['success']);
         $this->entityId                 = AU::get($data['entityId']);
+        $this->entityCreated            = AU::get($data['entityCreated'], false);
         $this->externalId               = AU::get($data['externalId']);
         $this->notes                    = AU::get($data['notes']);
     }
@@ -205,6 +211,22 @@ class ShopifyWebHookLog
     public function setEntityId($entityId)
     {
         $this->entityId = $entityId;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEntityCreated()
+    {
+        return $this->entityCreated;
+    }
+
+    /**
+     * @param boolean $entityCreated
+     */
+    public function setEntityCreated($entityCreated)
+    {
+        $this->entityCreated = $entityCreated;
     }
 
     /**

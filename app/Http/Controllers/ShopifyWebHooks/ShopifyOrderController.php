@@ -49,6 +49,9 @@ class ShopifyOrderController extends BaseShopifyController
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
 
+            $entityCreated                  = is_null($order->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             $orderApprovalService           = new OrderApprovalService();
             $orderApprovalService->processOrder($order);
 
@@ -121,6 +124,9 @@ class ShopifyOrderController extends BaseShopifyController
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
 
+            $entityCreated                  = is_null($order->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             if (!is_null($order->getId()))
             {
                 $this->shopifyWebHookLog->setEntityId($order->getId());
@@ -168,6 +174,9 @@ class ShopifyOrderController extends BaseShopifyController
             }
 
             $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
+
+            $entityCreated                  = is_null($order->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 
             if (!is_null($order->getId()))
             {

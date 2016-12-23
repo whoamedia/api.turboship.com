@@ -48,6 +48,10 @@ class ShopifyProductController extends BaseShopifyController
             }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+
+            $entityCreated                  = is_null($product->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             $this->productRepo->saveAndCommit($product);
 
             $this->shopifyWebHookLog->setEntityId($product->getId());
@@ -100,6 +104,10 @@ class ShopifyProductController extends BaseShopifyController
             }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+
+            $entityCreated                  = is_null($product->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             $this->productRepo->saveAndCommit($product);
 
             $this->shopifyWebHookLog->setEntityId($product->getId());
