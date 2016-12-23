@@ -29,6 +29,7 @@ class AddressApi extends BaseApi
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-address
      * @param   string  $id
      * @return  EasyPostAddress
      */

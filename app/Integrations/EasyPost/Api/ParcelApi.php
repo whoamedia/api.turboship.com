@@ -17,7 +17,7 @@ class ParcelApi extends BaseApi
 
 
     /**
-     * @see https://www.easypost.com/docs/api.html#parcels
+     * @see https://www.easypost.com/docs/api.html#create-a-parcel
      * @param   CreateEasyPostParcel|array     $request
      * @return  EasyPostParcel
      */
@@ -30,6 +30,7 @@ class ParcelApi extends BaseApi
     }
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-a-parcel
      * @param   string  $id
      * @return  EasyPostParcel
      */

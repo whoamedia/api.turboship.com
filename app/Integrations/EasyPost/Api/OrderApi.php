@@ -16,6 +16,17 @@ class OrderApi extends BaseApi
 
 
     /**
+     * @see https://www.easypost.com/docs/api.html#retrieve-an-order
+     * @param   string  $id
+     * @return  EasyPostOrder
+     */
+    public function show ($id)
+    {
+        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id);
+        return new EasyPostOrder($response);
+    }
+
+    /**
      * @see https://www.easypost.com/docs/api.html#create-an-order
      * @param   CreateEasyPostOrder|array     $request
      * @return  EasyPostOrder
@@ -25,17 +36,6 @@ class OrderApi extends BaseApi
         $request                        = $request instanceof CreateEasyPostOrder ? $request : new CreateEasyPostOrder($request);
         $response                       = parent::makeHttpRequest('post', $this->path, $request->jsonSerialize());
 
-        return new EasyPostOrder($response);
-    }
-
-    /**
-     * @see https://www.easypost.com/docs/api.html#retrieve-an-order
-     * @param   string  $id
-     * @return  EasyPostOrder
-     */
-    public function show ($id)
-    {
-        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id);
         return new EasyPostOrder($response);
     }
 
