@@ -157,7 +157,7 @@ class EasyPostOptions
 
     /**
      * Additional cost to be added to the invoice of this shipment. Only applies to UPS currently.
-     * @var	double
+     * @var	float
      */
     protected $freight_charge;
 
@@ -274,6 +274,46 @@ class EasyPostOptions
      */
     protected $print_custom_1_code;
 
+
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->additional_handling          = AU::get($data['additional_handling']);
+        $this->address_validation_level     = AU::get($data['address_validation_level']);
+        $this->alcohol                      = AU::get($data['alcohol']);
+        $this->bill_receiver_account        = AU::get($data['bill_receiver_account']);
+        $this->bill_receiver_postal_code    = AU::get($data['bill_receiver_postal_code']);
+        $this->bill_third_party_account     = AU::get($data['bill_third_party_account']);
+        $this->bill_third_party_country     = AU::get($data['bill_third_party_country']);
+        $this->bill_third_party_postal_code = AU::get($data['bill_third_party_postal_code']);
+        $this->by_drone                     = AU::get($data['by_drone']);
+        $this->carbon_neutral               = AU::get($data['carbon_neutral']);
+        $this->cod_amount                   = AU::get($data['cod_amount']);
+        $this->cod_method                   = AU::get($data['cod_method']);
+        $this->currency                     = AU::get($data['currency']);
+        $this->delivery_confirmation        = AU::get($data['delivery_confirmation']);
+        $this->dry_ice                      = AU::get($data['dry_ice']);
+        $this->cod_amount                   = AU::get($data['cod_amount']);
+        $this->dry_ice_medical              = AU::get($data['dry_ice_medical']);
+        $this->dry_ice_weight               = AU::get($data['dry_ice_weight']);
+        $this->endorsement                  = AU::get($data['endorsement']);
+        $this->freight_charge               = AU::get($data['freight_charge']);
+        $this->hazmat                       = AU::get($data['hazmat']);
+        $this->hold_for_pickup              = AU::get($data['hold_for_pickup']);
+        $this->invoice_number               = AU::get($data['invoice_number']);
+        $this->label_date                   = AU::get($data['label_date']);
+        $this->label_format                 = AU::get($data['label_format']);
+        $this->machinable                   = AU::get($data['machinable']);
+        $this->print_custom_1               = AU::get($data['print_custom_1']);
+        $this->print_custom_2               = AU::get($data['print_custom_2']);
+        $this->print_custom_3               = AU::get($data['print_custom_3']);
+        $this->print_custom_1_barcode       = AU::get($data['print_custom_1_barcode']);
+        $this->print_custom_2_barcode       = AU::get($data['print_custom_2_barcode']);
+        $this->print_custom_3_barcode       = AU::get($data['print_custom_3_barcode']);
+        $this->print_custom_1_code          = AU::get($data['print_custom_1_code']);
+    }
 
     /**
      * @return array

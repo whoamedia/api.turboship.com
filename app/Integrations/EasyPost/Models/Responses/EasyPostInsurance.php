@@ -21,12 +21,37 @@ class EasyPostInsurance
      */
     protected $amount;
 
+
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->amount                   = AU::get($data['amount']);
+    }
+
     /**
      * @return array
      */
     public function jsonSerialize()
     {
         return $this->simpleSerialize();
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
     }
 
 }

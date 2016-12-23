@@ -23,6 +23,20 @@ class EasyPostVerifications
 
 
     /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->zip4                     = AU::get($data['zip4']);
+        if (!is_null($this->zip4))
+            $this->zip4                 = new EasyPostVerification($this->zip4);
+
+        $this->delivery                 = AU::get($data['delivery']);
+        if (!is_null($this->delivery))
+            $this->delivery             = new EasyPostVerification($this->delivery);
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()

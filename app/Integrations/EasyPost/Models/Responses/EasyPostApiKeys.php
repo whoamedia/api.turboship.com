@@ -24,7 +24,7 @@ class EasyPostApiKeys
 
     /**
      * A list of all Child Users presented with ONLY id, children, and key array structures.
-     * @var	array of API Key response structures
+     * @var	array
      */
     protected $children;
 
@@ -36,11 +36,74 @@ class EasyPostApiKeys
 
 
     /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->id                       = AU::get($data['id']);
+        $this->children                 = AU::get($data['children'], []);
+
+        $this->keys                     = [];
+        $keys                           = AU::get($data['keys']);
+        foreach ($keys AS $item)
+            $this->keys[]               = new EasyPostApiKey($item);
+
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
     {
         return $this->simpleSerialize();
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return array
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param array $children
+     */
+    public function setChildren($children)
+    {
+        $this->children = $children;
+    }
+
+    /**
+     * @return EasyPostApiKey[]
+     */
+    public function getKeys()
+    {
+        return $this->keys;
+    }
+
+    /**
+     * @param EasyPostApiKey[] $keys
+     */
+    public function setKeys($keys)
+    {
+        $this->keys = $keys;
     }
 
 }

@@ -26,6 +26,16 @@ class EasyPostVerificationDetails
      */
     protected $longitude;
 
+
+    /**
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        $this->latitude                 = AU::get($data['latitude']);
+        $this->longitude                = AU::get($data['longitude']);
+    }
+
     /**
      * @return array
      */
