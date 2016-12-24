@@ -140,7 +140,7 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setIntegrationCredential($shopifyApiKey);
 
         //  (test)95fc4807a02d76f0e1251be499079371      (production)e9629539a4e9ef0e1147164e11ce6794
-        $clientCredential->setValue('e9629539a4e9ef0e1147164e11ce6794');
+        $clientCredential->setValue('95fc4807a02d76f0e1251be499079371');
         $clientIntegration->addCredential($clientCredential);
 
 
@@ -149,7 +149,7 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setIntegrationCredential($shopifyPassword);
 
         //  (test)ffca6bc8c3af8ae6e7077a9644d5d294      (production)67794b72c5dd4f3f085354f8df36f36c
-        $clientCredential->setValue('67794b72c5dd4f3f085354f8df36f36c');
+        $clientCredential->setValue('ffca6bc8c3af8ae6e7077a9644d5d294');
         $clientIntegration->addCredential($clientCredential);
 
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID);
@@ -157,7 +157,7 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setIntegrationCredential($shopifyPassword);
 
         //  (test)ship-test     (production)cheapundies
-        $clientCredential->setValue('cheapundies');
+        $clientCredential->setValue('ship-test');
         $clientIntegration->addCredential($clientCredential);
 
 
@@ -166,7 +166,7 @@ class WhoaMediaSeeder extends Seeder
         $clientCredential->setIntegrationCredential($shopifySharedSecret);
 
         //  (test)1a59ea54bddd0635cdaf9662e5a1235c      (production)1a7b27523fc4bb310f3f3506c7e90a88
-        $clientCredential->setValue('1a7b27523fc4bb310f3f3506c7e90a88');
+        $clientCredential->setValue('1a59ea54bddd0635cdaf9662e5a1235c');
         $clientIntegration->addCredential($clientCredential);
 
         $this->clientRepo->saveAndCommit($clientIntegration);
