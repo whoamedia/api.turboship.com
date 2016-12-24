@@ -23,8 +23,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
     Route::post('/clients', 'ClientController@store');
-    Route::get('/clients/{id}/integrations', 'ClientController@getIntegrations');
-    Route::post('/clients/{id}/integrations', 'ClientController@createIntegration');
+    Route::get('/clients/{id}/integrations/shipping', 'ClientController@getShippingIntegrations');
+    Route::post('/clients/{id}/integrations/shipping', 'ClientController@createShippingIntegration');
+
+    Route::get('/clients/{id}/integrations/eCommerce', 'ClientController@getECommerceIntegrations');
+    Route::post('/clients/{id}/integrations/eCommerce', 'ClientController@createECommerceIntegration');
+
 
 
     //  ClientIntegration Operations

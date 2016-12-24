@@ -2,6 +2,13 @@ App\Models\Integrations\ClientIntegration:
   type:               entity
   table:              ClientIntegration
   repositoryClass:    App\Repositories\Doctrine\Integrations\ClientIntegrationRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           clientIntegrationTypId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\Integrations\ClientECommerceIntegration
+      2:              App\Models\Integrations\ClientShippingIntegration
 
   id:
     id:
@@ -16,12 +23,6 @@ App\Models\Integrations\ClientIntegration:
         strategy:     IDENTITY
 
   fields:
-    symbol:
-      column:         symbol
-      type:           string
-      nullable:       false
-      options:
-        comment:      "ClientIntegration symbol"
     createdAt:
       column:         createdAt
       type:           datetime
@@ -31,14 +32,6 @@ App\Models\Integrations\ClientIntegration:
         default:      CURRENT_datetime
 
   manyToOne:
-    client:
-      targetEntity:   App\Models\CMS\Client
-      nullable:       false
-      fetch:          EAGER
-      inversedBy:     integrations
-      joinColumn:
-        name:         clientId
-        referencedColumnName: id
     integration:
       targetEntity:   Integration
       nullable:       false
@@ -46,6 +39,7 @@ App\Models\Integrations\ClientIntegration:
       joinColumn:
         name:         integrationId
         referencedColumnName: id
+
 
   oneToMany:
     credentials:

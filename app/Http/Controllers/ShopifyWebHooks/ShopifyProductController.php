@@ -38,25 +38,29 @@ class ShopifyProductController extends BaseShopifyController
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $this->webHookLog->setExternalId($shopifyProduct->getId());
+            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
 
             if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
             {
-                $this->webHookLog->addNote('shouldImport was false');
-                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                $this->shopifyWebHookLog->addNote('shouldImport was false');
+                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                 return response('', 200);
             }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+
+            $entityCreated                  = is_null($product->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             $this->productRepo->saveAndCommit($product);
 
-            $this->webHookLog->setEntityId($product->getId());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setEntityId($product->getId());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -69,15 +73,15 @@ class ShopifyProductController extends BaseShopifyController
             //  TODO: Figure out deletion
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $this->webHookLog->setExternalId($shopifyProduct->getId());
-            $this->webHookLog->addNote('No action taken to delete product');
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
+            $this->shopifyWebHookLog->addNote('No action taken to delete product');
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
 
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);
@@ -89,26 +93,30 @@ class ShopifyProductController extends BaseShopifyController
         {
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $this->webHookLog->setExternalId($shopifyProduct->getId());
+            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
 
             //  TODO: The product may exist in turboShip and may need to be set it inactive
             if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
             {
-                $this->webHookLog->addNote('shouldImport was false');
-                $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+                $this->shopifyWebHookLog->addNote('shouldImport was false');
+                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
                 return response('', 200);
             }
 
             $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
+
+            $entityCreated                  = is_null($product->getId()) ? true : false;
+            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
+
             $this->productRepo->saveAndCommit($product);
 
-            $this->webHookLog->setEntityId($product->getId());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setEntityId($product->getId());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
         catch (\Exception $exception)
         {
-            $this->webHookLog->setErrorMessage($exception->getMessage());
-            $this->webHookLogRepo->saveAndCommit($this->webHookLog);
+            $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
+            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
 
         return response('', 200);

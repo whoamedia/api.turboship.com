@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Doctrine\Shipping;
+namespace App\Repositories\Doctrine\Shipments;
 
 
 use App\Models\Shipments\Carrier;

@@ -9,18 +9,13 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializable
+abstract class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
      * @var int
      */
     protected $id;
-
-    /**
-     * @var int
-     */
-    protected $integrationId;
 
     /**
      * @var string
@@ -36,7 +31,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
-        $this->integrationId            = AU::get($data['integrationId']);
         $this->symbol                   = AU::get($data['symbol']);
 
         $this->credentials              = [];
@@ -56,9 +50,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
         if (is_null($this->id))
             throw new BadRequestHttpException('id is required');
 
-        if (is_null($this->integrationId))
-            throw new BadRequestHttpException('integrationId is required');
-
         if (is_null($this->symbol))
             throw new BadRequestHttpException('symbol is required');
 
@@ -68,9 +59,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
 
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
-
-        if (is_null(InputUtil::getInt($this->integrationId)))
-            throw new BadRequestHttpException('integrationId must be integer');
 
         if (empty(trim($this->symbol)))
             throw new BadRequestHttpException('symbol must be string');
@@ -84,7 +72,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
     public function clean ()
     {
         $this->id                       = InputUtil::getInt($this->id);
-        $this->integrationId            = InputUtil::getInt($this->integrationId);
         foreach ($this->credentials AS $credential)
             $credential->clean();
     }
@@ -95,7 +82,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
     public function jsonSerialize ()
     {
         $object['id']                   = $this->id;
-        $object['integrationId']        = $this->integrationId;
         $object['symbol']               = $this->symbol;
         $object['credentials']          = [];
         foreach ($this->credentials AS $credential)
@@ -118,22 +104,6 @@ class CreateClientIntegration implements Cleanable, Validatable, \JsonSerializab
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIntegrationId()
-    {
-        return $this->integrationId;
-    }
-
-    /**
-     * @param int $integrationId
-     */
-    public function setIntegrationId($integrationId)
-    {
-        $this->integrationId = $integrationId;
     }
 
     /**

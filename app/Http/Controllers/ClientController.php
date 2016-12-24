@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Clients\CreateClientRequest;
+use App\Http\Requests\Integrations\CreateClientECommerceIntegration;
 use App\Http\Requests\Integrations\CreateClientIntegration;
+use App\Http\Requests\Integrations\CreateClientShippingIntegration;
 use App\Http\Requests\Integrations\GetClientIntegrations;
 use App\Http\Requests\Clients\GetClientsRequest;
 use App\Http\Requests\Clients\ShowClientRequest;
@@ -12,7 +14,9 @@ use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Integrations\ClientCredential;
+use App\Models\Integrations\ClientECommerceIntegration;
 use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\ClientShippingIntegration;
 use App\Models\Integrations\Validation\IntegrationCredentialValidation;
 use App\Models\Integrations\Validation\IntegrationValidation;
 use Illuminate\Http\Request;
@@ -135,9 +139,9 @@ class ClientController extends Controller
 
     /**
      * @param   Request $request
-     * @return  ClientIntegration[]
+     * @return  ClientShippingIntegration[]
      */
-    public function getIntegrations (Request $request)
+    public function getShippingIntegrations (Request $request)
     {
         $getClientIntegrations          = new GetClientIntegrations();
         $getClientIntegrations->setId($request->route('id'));
@@ -145,34 +149,34 @@ class ClientController extends Controller
         $getClientIntegrations->clean();
 
         $client                         = $this->clientValidation->idExists($getClientIntegrations->getId(), true);
-        return response ($client->getIntegrations());
+        return response ($client->getShippingIntegrations());
     }
 
     /**
      * @param   Request $request
      * @return  ClientIntegration
      */
-    public function createIntegration (Request $request)
+    public function createShippingIntegration (Request $request)
     {
-        $createClientIntegration        = new CreateClientIntegration($request->input());
+        $createClientIntegration        = new CreateClientShippingIntegration($request->input());
         $createClientIntegration->setId($request->route('id'));
         $createClientIntegration->validate();
         $createClientIntegration->clean();
 
         $client                         = $this->clientValidation->idExists($createClientIntegration->getId());
 
-        foreach ($client->getIntegrations() AS $integration)
+        foreach ($client->getShippingIntegrations() AS $clientShippingIntegration)
         {
-            if ($integration->getSymbol() == $createClientIntegration->getSymbol())
+            if ($clientShippingIntegration->getSymbol() == $createClientIntegration->getSymbol())
                 throw new BadRequestHttpException('symbol already exists');
         }
 
-        $clientIntegration              = new ClientIntegration();
+        $clientIntegration              = new ClientShippingIntegration();
         $clientIntegration->setClient($client);
         $clientIntegration->setSymbol($createClientIntegration->getSymbol());
 
         $integrationValidation          = new IntegrationValidation();
-        $integration                    = $integrationValidation->idExists($createClientIntegration->getIntegrationId());
+        $integration                    = $integrationValidation->idExists($createClientIntegration->getShippingIntegrationId());
         $clientIntegration->setIntegration($integration);
 
         $integrationCredentialValidation= new IntegrationCredentialValidation();
@@ -189,7 +193,70 @@ class ClientController extends Controller
             $clientIntegration->addCredential($clientCredential);
         }
 
-        $client->addIntegration($clientIntegration);
+        $client->addClientShippingIntegration($clientIntegration);
+        $this->clientRepo->saveAndCommit($client);
+
+        return response ($clientIntegration, 201);
+    }
+
+    /**
+     * @param   Request $request
+     * @return  ClientECommerceIntegration[]
+     */
+    public function getECommerceIntegrations (Request $request)
+    {
+        $getClientIntegrations          = new GetClientIntegrations();
+        $getClientIntegrations->setId($request->route('id'));
+        $getClientIntegrations->validate();
+        $getClientIntegrations->clean();
+
+        $client                         = $this->clientValidation->idExists($getClientIntegrations->getId(), true);
+        return response ($client->getECommerceIntegrations());
+    }
+
+
+    /**
+     * @param   Request $request
+     * @return  ClientECommerceIntegration[]
+     */
+    public function createECommerceIntegration (Request $request)
+    {
+        $createClientIntegration        = new CreateClientECommerceIntegration($request->input());
+        $createClientIntegration->setId($request->route('id'));
+        $createClientIntegration->validate();
+        $createClientIntegration->clean();
+
+        $client                         = $this->clientValidation->idExists($createClientIntegration->getId());
+
+        foreach ($client->getECommerceIntegrations() AS $clientECommerceIntegrations)
+        {
+            if ($clientECommerceIntegrations->getSymbol() == $createClientIntegration->getSymbol())
+                throw new BadRequestHttpException('symbol already exists');
+        }
+
+        $clientIntegration              = new ClientECommerceIntegration();
+        $clientIntegration->setClient($client);
+        $clientIntegration->setSymbol($createClientIntegration->getSymbol());
+
+        $integrationValidation          = new IntegrationValidation();
+        $integration                    = $integrationValidation->idExists($createClientIntegration->getECommerceIntegrationId());
+        $clientIntegration->setIntegration($integration);
+
+        $integrationCredentialValidation= new IntegrationCredentialValidation();
+        foreach ($createClientIntegration->getCredentials() AS $createClientCredential)
+        {
+            $clientCredential           = new ClientCredential();
+            $integrationCredential      = $integrationCredentialValidation->idExists($createClientCredential->getIntegrationCredentialId());
+
+            if ($integration->hasIntegrationCredential($integrationCredential) == false)
+                throw new BadRequestHttpException('integrationCredential does not belong to integration');
+
+            $clientCredential->setIntegrationCredential($integrationCredential);
+            $clientCredential->setValue($createClientCredential->getValue());
+            $clientIntegration->addCredential($clientCredential);
+        }
+
+        $client->addECommerceIntegration($clientIntegration);
         $this->clientRepo->saveAndCommit($client);
 
         return response ($clientIntegration, 201);

@@ -7,7 +7,7 @@ use App\Models\CMS\Client;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ClientIntegration implements \JsonSerializable
+abstract class ClientIntegration implements \JsonSerializable
 {
 
     /**

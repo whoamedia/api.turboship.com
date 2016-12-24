@@ -7,7 +7,7 @@ use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
 use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
-use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\ClientECommerceIntegration;
 use App\Models\OMS\ProductAlias;
 use App\Models\OMS\Variant;
 use App\Models\Support\Image;
@@ -28,9 +28,9 @@ class ShopifyProductService
     private $client;
 
     /**
-     * @var ClientIntegration
+     * @var ClientECommerceIntegration
      */
-    private $clientIntegration;
+    private $clientECommerceIntegration;
 
     /**
      * @var ProductRepository
@@ -58,16 +58,16 @@ class ShopifyProductService
     private $imageRepo;
 
 
-    public function __construct(ClientIntegration $clientIntegration)
+    public function __construct(ClientECommerceIntegration $clientECommerceIntegration)
     {
-        $this->clientIntegration        = $clientIntegration;
-        $this->client                   = $clientIntegration->getClient();
+        $this->clientECommerceIntegration=$clientECommerceIntegration;
+        $this->client                   = $clientECommerceIntegration->getClient();
         $this->productRepo              = EntityManager::getRepository('App\Models\OMS\Product');
         $this->productAliasRepo         = EntityManager::getRepository('App\Models\OMS\ProductAlias');
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
         $this->imageRepo                = EntityManager::getRepository('App\Models\Support\Image');
         $this->shopifyMappingService    = new ShopifyMappingService();
-        $this->shopifyProductRepo       = new ShopifyProductRepository($this->clientIntegration);
+        $this->shopifyProductRepo       = new ShopifyProductRepository($this->clientECommerceIntegration);
     }
 
 

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIntegrationTable extends Migration
+class CreateClientShippingIntegrationTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,16 @@ class CreateIntegrationTable extends Migration
      */
     public function up()
     {
-        Schema::create('Integration', function (Blueprint $table)
+        Schema::create('ClientShippingIntegration', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->integer('integrationTypeId')->unsigned()->index();
-            $table->string('name', 100)->unique();
+
+            $table->integer('clientId')->unsigned()->index();
+            $table->foreign('clientId')->references('id')->on('Client');
+
+            $table->string('symbol')->index();
+
+            $table->unique(['clientId', 'symbol']);
         });
     }
 
@@ -28,6 +33,6 @@ class CreateIntegrationTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Integration');
+        Schema::drop('ClientShippingIntegration');
     }
 }

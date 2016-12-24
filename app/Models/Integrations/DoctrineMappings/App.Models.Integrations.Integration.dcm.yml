@@ -2,6 +2,13 @@ App\Models\Integrations\Integration:
   type:               entity
   table:              Integration
   repositoryClass:    App\Repositories\Doctrine\Integrations\IntegrationRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           integrationTypeId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\Integrations\ECommerceIntegration
+      2:              App\Models\Integrations\ShippingIntegration
 
   id:
     id:

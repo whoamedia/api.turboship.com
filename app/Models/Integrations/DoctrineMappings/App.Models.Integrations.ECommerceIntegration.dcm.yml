@@ -1,0 +1,4 @@
+App\Models\Integrations\ECommerceIntegration:
+  type:               entity
+  table:              ECommerceIntegration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ECommerceIntegrationRepository

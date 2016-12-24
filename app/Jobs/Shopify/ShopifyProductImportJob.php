@@ -27,7 +27,7 @@ class ShopifyProductImportJob implements ShouldQueue
 
 
     /**
-     * ShopifyOrderImportJob constructor.
+     * ShopifyProductImportJob constructor.
      * @param   int     $clientIntegrationId
      */
     public function __construct($clientIntegrationId)

@@ -48,11 +48,27 @@ class IntegrationCredential
     }
 
     /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * @return string
      */
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -64,6 +80,14 @@ class IntegrationCredential
     }
 
     /**
+     * @param boolean $isRequired
+     */
+    public function setIsRequired($isRequired)
+    {
+        $this->isRequired = $isRequired;
+    }
+
+    /**
      * @return Integration
      */
     public function getIntegration()
@@ -71,5 +95,12 @@ class IntegrationCredential
         return $this->integration;
     }
 
+    /**
+     * @param Integration $integration
+     */
+    public function setIntegration($integration)
+    {
+        $this->integration = $integration;
+    }
 
 }

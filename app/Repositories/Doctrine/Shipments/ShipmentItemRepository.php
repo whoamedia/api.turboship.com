@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Repositories\Doctrine\Shipping;
+namespace App\Repositories\Doctrine\Shipments;
 
 
-use App\Models\Shipments\Postage;
+use App\Models\Shipments\ShipmentItem;
 use App\Repositories\Doctrine\BaseRepository;
 
-class PostageRepository extends BaseRepository
+class ShipmentItemRepository extends BaseRepository
 {
 
 
     /**
      * @param   int         $id
-     * @return  Postage|null
+     * @return  ShipmentItem|null
      */
     public function getOneById($id)
     {
