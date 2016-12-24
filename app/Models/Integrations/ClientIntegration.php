@@ -3,7 +3,6 @@
 namespace App\Models\Integrations;
 
 
-use App\Models\CMS\Client;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -14,11 +13,6 @@ abstract class ClientIntegration implements \JsonSerializable
      * @var int
      */
     protected $id;
-
-    /**
-     * @var Client
-     */
-    protected $client;
 
     /**
      * @var Integration
@@ -67,7 +61,6 @@ abstract class ClientIntegration implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['client']               = $this->client->jsonSerialize();
         $object['integration']          = $this->integration->jsonSerialize();
         $object['symbol']               = $this->symbol;
         $object['createdAt']            = $this->createdAt;
@@ -95,22 +88,6 @@ abstract class ClientIntegration implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return Client
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
-     * @param Client $client
-     */
-    public function setClient($client)
-    {
-        $this->client = $client;
     }
 
     /**
