@@ -49,6 +49,11 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
      * @var Organization
      */
     protected $organization;
+
+    /**
+     * @var Client|null
+     */
+    protected $client;
     
     /**
      * @SWG\Property(ref="#/definitions/DateTime")
@@ -72,6 +77,7 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
             $this->email                = AU::get($data['email']);
             $this->password             = AU::get($data['password']);
             $this->organization         = AU::get($data['organization']);
+            $this->client               = AU::get($data['client']);
         }
     }
 
@@ -90,6 +96,7 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
         $object['lastName']             = $this->getLastName();
         $object['email']                = $this->getEmail();
         $object['organization']         = $this->organization->jsonSerialize();
+        $object['client']               = is_null($this->client) ? null : $this->client->jsonSerialize();
         
         return $object;
     }
@@ -189,6 +196,22 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return Client|null
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param Client|null $client
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
     }
 
     /**

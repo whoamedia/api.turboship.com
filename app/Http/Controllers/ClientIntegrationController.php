@@ -16,6 +16,7 @@ use App\Utilities\IntegrationUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ClientIntegrationController extends Controller
 {
@@ -49,6 +50,10 @@ class ClientIntegrationController extends Controller
         $getClientIntegrationWebHooks->clean();
 
         $clientIntegration              = $this->clientIntegrationValidation->idExists($getClientIntegrationWebHooks->getId());
+
+        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('ClientIntegration not found');
+
         return response ($clientIntegration->getWebHooks());
     }
 
@@ -65,6 +70,9 @@ class ClientIntegrationController extends Controller
         $getClientIntegrationWebHooks->clean();
 
         $clientIntegration              = $this->clientIntegrationValidation->idExists($getClientIntegrationWebHooks->getId());
+
+        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('ClientIntegration not found');
 
         $integrationWebHooks            = $clientIntegration->getIntegration()->getWebHooks();
 
@@ -90,6 +98,9 @@ class ClientIntegrationController extends Controller
         $createWebHook->clean();
 
         $clientIntegration              = $this->clientIntegrationValidation->idExists($createWebHook->getId());
+
+        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('ClientIntegration not found');
 
         if ($clientIntegration->getIntegration()->getId() != IntegrationUtility::SHOPIFY_ID)
             throw new BadRequestHttpException('WebHooks are currently only enabled for Shopify');
@@ -136,6 +147,9 @@ class ClientIntegrationController extends Controller
         $deleteClientIntegrationWebHook->clean();
 
         $clientIntegration              = $this->clientIntegrationValidation->idExists($deleteClientIntegrationWebHook->getId());
+
+        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('ClientIntegration not found');
 
         $providedWebHook                = null;
         foreach ($clientIntegration->getWebHooks() AS $clientWebHook)

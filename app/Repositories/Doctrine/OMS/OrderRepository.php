@@ -49,6 +49,7 @@ class OrderRepository extends BaseRepository
             ->join('orders.items', 'items', Query\Expr\Join::ON)
             ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
+            ->join('client.organization', 'organization', Query\Expr\Join::ON)
             ->join('orders.status', 'status', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
@@ -62,6 +63,9 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['organizationIds'])))
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));

@@ -24,6 +24,11 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     /**
      * @var string|null
      */
+    protected $organizationIds;
+
+    /**
+     * @var string|null
+     */
     protected $aliasIds;
 
     /**
@@ -46,6 +51,7 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     {
         $this->ids                      = AU::get($data['ids']);
         $this->clientIds                = AU::get($data['clientIds']);
+        $this->organizationIds          = AU::get($data['organizationIds']);
         $this->aliasIds                 = AU::get($data['aliasIds']);
         $this->variantIds               = AU::get($data['variantIds']);
         $this->variantSkus              = AU::get($data['variantSkus']);
@@ -56,6 +62,7 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     {
         $this->ids                      = $this->validateIds($this->ids, 'ids');
         $this->clientIds                = $this->validateIds($this->clientIds, 'clientIds');
+        $this->organizationIds          = $this->validateIds($this->organizationIds, 'organizationIds');
         $this->aliasIds                 = $this->validateIds($this->aliasIds, 'aliasIds');
         $this->variantIds               = $this->validateIds($this->variantIds, 'variantIds');
     }
@@ -67,6 +74,7 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     {
         $object['ids']                  = $this->ids;
         $object['clientIds']            = $this->clientIds;
+        $object['organizationIds']      = $this->organizationIds;
         $object['aliasIds']             = $this->aliasIds;
         $object['variantIds']           = $this->variantIds;
         $object['variantSkus']          = $this->variantSkus;
@@ -100,6 +108,22 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     /**
      * @return null|string
      */
+    public function getAliasIds()
+    {
+        return $this->aliasIds;
+    }
+
+    /**
+     * @param null|string $aliasIds
+     */
+    public function setAliasIds($aliasIds)
+    {
+        $this->aliasIds = $aliasIds;
+    }
+
+    /**
+     * @return null|string
+     */
     public function getClientIds()
     {
         return $this->clientIds;
@@ -111,6 +135,22 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     public function setClientIds($clientIds)
     {
         $this->clientIds = $clientIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOrganizationIds()
+    {
+        return $this->organizationIds;
+    }
+
+    /**
+     * @param null|string $organizationIds
+     */
+    public function setOrganizationIds($organizationIds)
+    {
+        $this->organizationIds = $organizationIds;
     }
 
     /**
