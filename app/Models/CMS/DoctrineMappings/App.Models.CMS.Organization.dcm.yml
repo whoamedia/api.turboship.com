@@ -44,3 +44,11 @@ App\Models\CMS\Organization:
       targetEntity:   App\Models\WMS\Printer
       mappedBy:       organization
       cascade:        ["persist", "remove"]
+    shippingContainers:
+      targetEntity:   App\Models\Shipments\ShippingContainer
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]
+    shippers:
+      targetEntity:   App\Models\Shipments\Shipper
+      mappedBy:       organization
+      cascade:        ["persist", "remove"]

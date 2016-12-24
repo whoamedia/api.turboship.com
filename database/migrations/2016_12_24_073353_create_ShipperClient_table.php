@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddClientIdToUserTable extends Migration
+class CreateShipperClientTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class AddClientIdToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('User', function (Blueprint $table)
+        Schema::create('ShipperClient', function (Blueprint $table)
         {
-            $table->integer('clientId')
-                ->unsigned()->index()
-                ->nullable()->default(NULL)
-                ->after('organizationId');
+            $table->integer('shipperId')->unsigned()->index();
+            $table->foreign('shipperId')->references('id')->on('Shipper');
 
+            $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
+
+
+            $table->unique(['shipperId', 'clientId']);
         });
     }
 
@@ -31,10 +33,6 @@ class AddClientIdToUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('User', function (Blueprint $table)
-        {
-            $table->dropForeign('user_clientid_foreign');
-            $table->dropColumn('clientId');
-        });
+        Schema::drop('ShipperClient');
     }
 }

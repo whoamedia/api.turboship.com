@@ -4,6 +4,8 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
+use App\Models\Shipments\Shipper;
+use App\Models\Shipments\ShippingContainer;
 use App\Models\WMS\Printer;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -40,7 +42,17 @@ class Organization extends BaseModel
      * @var ArrayCollection
      */
     protected $users;
-    
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $shippingContainers;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $shippers;
+
     /**
      * @var \DateTime
      */
@@ -57,6 +69,8 @@ class Organization extends BaseModel
         $this->clients                  = new ArrayCollection();
         $this->printers                 = new ArrayCollection();
         $this->users                    = new ArrayCollection();
+        $this->shippingContainers       = new ArrayCollection();
+        $this->shippers                 = new ArrayCollection();
         
         if (is_array($data))
         {
@@ -161,6 +175,40 @@ class Organization extends BaseModel
     public function getPrinters ()
     {
         return $this->printers->toArray();
+    }
+
+    /**
+     * @return ShippingContainer[]
+     */
+    public function getShippingContainers ()
+    {
+        return $this->shippingContainers->toArray();
+    }
+
+    /**
+     * @param ShippingContainer $shippingContainer
+     */
+    public function addShippingContainer (ShippingContainer $shippingContainer)
+    {
+        $shippingContainer->setOrganization($this);
+        $this->shippingContainers->add($shippingContainer);
+    }
+
+    /**
+     * @return Shipper[]
+     */
+    public function getShippers ()
+    {
+        return $this->shippers->toArray();
+    }
+
+    /**
+     * @param Shipper $shipper
+     */
+    public function addShipper (Shipper $shipper)
+    {
+        $shipper->setOrganization($this);
+        $this->shippers->add($shipper);
     }
 
 }

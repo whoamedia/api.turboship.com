@@ -1,0 +1,66 @@
+App\Models\Shipments\Shipper:
+  type:               entity
+  table:              Shipper
+  repositoryClass:    App\Repositories\Doctrine\Shipments\ShipperRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Shipper id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Shipper name"
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     shippers
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
+    address:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      cascade:        ["persist", "remove"]
+      joinColumn:
+        name:         addressId
+        referencedColumnName: id
+    returnAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      cascade:        ["persist", "remove"]
+      joinColumn:
+        name:         returnAddressId
+        referencedColumnName: id
+
+  manyToMany:
+    clients:
+      fetch:          LAZY
+      targetEntity:   App\Models\CMS\Client
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         ShipperClient
+        joinColumns:
+          shipperId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          clientId:
+            referencedColumnName: id

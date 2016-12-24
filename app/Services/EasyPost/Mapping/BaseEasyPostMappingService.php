@@ -6,8 +6,6 @@ namespace App\Services\EasyPost\Mapping;
 class BaseEasyPostMappingService
 {
 
-
-
     /**
      * @param   string|null     $easyPostDate
      * @return  \DateTime|null
