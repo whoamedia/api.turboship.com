@@ -139,16 +139,16 @@ abstract class ClientIntegration implements \JsonSerializable
     }
 
     /**
-     * @param ClientCredential $credential
+     * @param Credential $credential
      */
-    public function addCredential (ClientCredential $credential)
+    public function addCredential (Credential $credential)
     {
         $credential->setClientIntegration($this);
         $this->credentials->add($credential);
     }
 
     /**
-     * @return ClientCredential[]
+     * @return Credential[]
      */
     public function getCredentials ()
     {

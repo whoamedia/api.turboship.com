@@ -43,7 +43,7 @@ App\Models\Integrations\ClientIntegration:
 
   oneToMany:
     credentials:
-      targetEntity:   ClientCredential
+      targetEntity:   Credential
       mappedBy:       clientIntegration
       cascade:        ["persist", "remove"]
     webHooks:

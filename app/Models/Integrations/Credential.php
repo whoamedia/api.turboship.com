@@ -6,7 +6,7 @@ namespace App\Models\Integrations;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Crypt;
 
-class ClientCredential
+class Credential
 {
 
     /**

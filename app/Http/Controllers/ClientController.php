@@ -7,7 +7,6 @@ use App\Http\Requests\Clients\CreateClientRequest;
 use App\Http\Requests\Clients\CreateClientServices;
 use App\Http\Requests\Clients\DeleteClientService;
 use App\Http\Requests\Integrations\CreateClientECommerceIntegration;
-use App\Http\Requests\Integrations\CreateClientIntegration;
 use App\Http\Requests\Integrations\CreateClientShippingIntegration;
 use App\Http\Requests\Integrations\GetClientIntegrations;
 use App\Http\Requests\Clients\GetClientsRequest;
@@ -15,7 +14,7 @@ use App\Http\Requests\Clients\ShowClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
-use App\Models\Integrations\ClientCredential;
+use App\Models\Integrations\Credential;
 use App\Models\Integrations\ClientECommerceIntegration;
 use App\Models\Integrations\ClientIntegration;
 use App\Models\Integrations\ClientShippingIntegration;
@@ -185,16 +184,16 @@ class ClientController extends Controller
         $clientIntegration->setIntegration($integration);
 
         $integrationCredentialValidation= new IntegrationCredentialValidation();
-        foreach ($createClientIntegration->getCredentials() AS $createClientCredential)
+        foreach ($createClientIntegration->getCredentials() AS $createCredential)
         {
-            $clientCredential           = new ClientCredential();
-            $integrationCredential      = $integrationCredentialValidation->idExists($createClientCredential->getIntegrationCredentialId());
+            $clientCredential           = new Credential();
+            $integrationCredential      = $integrationCredentialValidation->idExists($createCredential->getIntegrationCredentialId());
 
             if ($integration->hasIntegrationCredential($integrationCredential) == false)
                 throw new BadRequestHttpException('integrationCredential does not belong to integration');
 
             $clientCredential->setIntegrationCredential($integrationCredential);
-            $clientCredential->setValue($createClientCredential->getValue());
+            $clientCredential->setValue($createCredential->getValue());
             $clientIntegration->addCredential($clientCredential);
         }
 
@@ -248,16 +247,16 @@ class ClientController extends Controller
         $clientIntegration->setIntegration($integration);
 
         $integrationCredentialValidation= new IntegrationCredentialValidation();
-        foreach ($createClientIntegration->getCredentials() AS $createClientCredential)
+        foreach ($createClientIntegration->getCredentials() AS $createCredential)
         {
-            $clientCredential           = new ClientCredential();
-            $integrationCredential      = $integrationCredentialValidation->idExists($createClientCredential->getIntegrationCredentialId());
+            $clientCredential           = new Credential();
+            $integrationCredential      = $integrationCredentialValidation->idExists($createCredential->getIntegrationCredentialId());
 
             if ($integration->hasIntegrationCredential($integrationCredential) == false)
                 throw new BadRequestHttpException('integrationCredential does not belong to integration');
 
             $clientCredential->setIntegrationCredential($integrationCredential);
-            $clientCredential->setValue($createClientCredential->getValue());
+            $clientCredential->setValue($createCredential->getValue());
             $clientIntegration->addCredential($clientCredential);
         }
 

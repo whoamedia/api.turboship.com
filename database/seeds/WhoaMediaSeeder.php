@@ -139,7 +139,7 @@ class WhoaMediaSeeder extends Seeder
         $clientIntegration->setIntegration($shopifyIntegration);
 
         $shopifyApiKey          = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_API_KEY_ID);
-        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential       = new \App\Models\Integrations\Credential();
         $clientCredential->setIntegrationCredential($shopifyApiKey);
 
         //  (test)95fc4807a02d76f0e1251be499079371      (production)e9629539a4e9ef0e1147164e11ce6794
@@ -148,7 +148,7 @@ class WhoaMediaSeeder extends Seeder
 
 
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID);
-        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential       = new \App\Models\Integrations\Credential();
         $clientCredential->setIntegrationCredential($shopifyPassword);
 
         //  (test)ffca6bc8c3af8ae6e7077a9644d5d294      (production)67794b72c5dd4f3f085354f8df36f36c
@@ -156,7 +156,7 @@ class WhoaMediaSeeder extends Seeder
         $clientIntegration->addCredential($clientCredential);
 
         $shopifyPassword        = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID);
-        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential       = new \App\Models\Integrations\Credential();
         $clientCredential->setIntegrationCredential($shopifyPassword);
 
         //  (test)ship-test     (production)cheapundies
@@ -165,7 +165,7 @@ class WhoaMediaSeeder extends Seeder
 
 
         $shopifySharedSecret    = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID);
-        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential       = new \App\Models\Integrations\Credential();
         $clientCredential->setIntegrationCredential($shopifySharedSecret);
 
         //  (test)1a59ea54bddd0635cdaf9662e5a1235c      (production)1a7b27523fc4bb310f3f3506c7e90a88
@@ -186,7 +186,7 @@ class WhoaMediaSeeder extends Seeder
         $clientIntegration->setIntegration($easyPostIntegration);
 
         $easyPostApiKey         = $this->integrationCredentialRepo->getOneById(IntegrationCredentialUtility::EASYPOST_API_KEY_ID);
-        $clientCredential       = new \App\Models\Integrations\ClientCredential();
+        $clientCredential       = new \App\Models\Integrations\Credential();
         $clientCredential->setIntegrationCredential($easyPostApiKey);
 
         //  (test)9ryULR9axDntXQZzHQ6zOQ

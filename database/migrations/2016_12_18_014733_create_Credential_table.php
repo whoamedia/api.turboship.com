@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClientCredentialTable extends Migration
+class CreateCredentialTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateClientCredentialTable extends Migration
      */
     public function up()
     {
-        Schema::create('ClientCredential', function (Blueprint $table)
+        Schema::create('Credential', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
             $table->string('value', 500);
@@ -40,7 +40,7 @@ class CreateClientCredentialTable extends Migration
      */
     public function down()
     {
-        Schema::drop('ClientCredential');
+        Schema::drop('Credential');
     }
 
 }

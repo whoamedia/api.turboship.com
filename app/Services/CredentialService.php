@@ -3,9 +3,9 @@
 namespace App\Services;
 
 
-use App\Models\Integrations\ClientCredential;
+use App\Models\Integrations\Credential;
 use App\Models\Integrations\ClientIntegration;
-use App\Repositories\Doctrine\Integrations\ClientCredentialRepository;
+use App\Repositories\Doctrine\Integrations\CredentialRepository;
 use App\Utilities\IntegrationCredentialUtility;
 use EntityManager;
 
@@ -18,18 +18,18 @@ class CredentialService
     private $clientIntegration;
 
     /**
-     * @var ClientCredentialRepository
+     * @var CredentialRepository
      */
     private $clientCredentialRepo;
 
     public function __construct(ClientIntegration $clientIntegration)
     {
         $this->clientIntegration        = $clientIntegration;
-        $this->clientCredentialRepo     = EntityManager::getRepository('App\Models\Integrations\ClientCredential');
+        $this->clientCredentialRepo     = EntityManager::getRepository('App\Models\Integrations\Credential');
     }
 
     /**
-     * @return  ClientCredential
+     * @return  Credential
      */
     public function getShopifyApiKey ()
     {
@@ -44,7 +44,7 @@ class CredentialService
     }
 
     /**
-     * @return  ClientCredential
+     * @return  Credential
      */
     public function getShopifyPassword ()
     {
@@ -59,7 +59,7 @@ class CredentialService
     }
 
     /**
-     * @return  ClientCredential
+     * @return  Credential
      */
     public function getShopifyHostName ()
     {
@@ -74,7 +74,7 @@ class CredentialService
     }
 
     /**
-     * @return  ClientCredential
+     * @return  Credential
      */
     public function getShopifySharedSecret ()
     {
@@ -90,7 +90,7 @@ class CredentialService
 
 
     /**
-     * @return  ClientCredential
+     * @return  Credential
      */
     public function getEasyPostApiKey ()
     {

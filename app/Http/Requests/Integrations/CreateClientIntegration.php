@@ -23,7 +23,7 @@ abstract class CreateClientIntegration implements Cleanable, Validatable, \JsonS
     protected $symbol;
 
     /**
-     * @var CreateClientCredential[]
+     * @var CreateCredential[]
      */
     protected $credentials;
 
@@ -40,7 +40,7 @@ abstract class CreateClientIntegration implements Cleanable, Validatable, \JsonS
         {
             foreach ($credentials AS $item)
             {
-                $this->credentials[]    = new CreateClientCredential($item);
+                $this->credentials[]    = new CreateCredential($item);
             }
         }
     }
@@ -123,7 +123,7 @@ abstract class CreateClientIntegration implements Cleanable, Validatable, \JsonS
     }
 
     /**
-     * @return CreateClientCredential[]
+     * @return CreateCredential[]
      */
     public function getCredentials()
     {
@@ -131,7 +131,7 @@ abstract class CreateClientIntegration implements Cleanable, Validatable, \JsonS
     }
 
     /**
-     * @param CreateClientCredential[] $credentials
+     * @param CreateCredential[] $credentials
      */
     public function setCredentials($credentials)
     {
