@@ -54,10 +54,12 @@ class ClientController extends Controller
      */
     public function index (Request $request)
     {
-        $authUser                       = \Auth::getUser();
-
         $getClientsRequest              = new GetClientsRequest($request->input());
-        $getClientsRequest->setOrganizationIds($authUser->getOrganization()->getId());
+        $getClientsRequest->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+
+        if (!is_null(\Auth::getUser()->getClient()))
+            $getClientsRequest->setIds(\Auth::getUser()->getClient()->getId());
+
         $getClientsRequest->validate();
         $getClientsRequest->clean();
 
