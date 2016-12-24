@@ -1,8 +1,7 @@
 SELECT
-  webHookLog.id AS 'WebHookLog id',
+  webHookLog.id,
   organization.name AS 'Organization',
   client.name AS 'Client',
-  integration.name AS 'Integration',
   webHookLog.topic,
   webHookLog.verified,
   webHookLog.success,
@@ -17,5 +16,7 @@ FROM
   JOIN ClientECommerceIntegration clientECommerceIntegration ON clientECommerceIntegration.id = webHookLog.clientECommerceIntegrationId
   JOIN ClientIntegration clientIntegration ON clientIntegration.id = clientECommerceIntegration.id
   JOIN Client client ON client.id = clientECommerceIntegration.clientId
-  JOIN Organization organization ON organization.id = client.organizationId
-  JOIN Integration integration ON integration.id = clientIntegration.integrationId;
+  JOIN Organization organization ON organization.id = client.organizationId;
+
+
+select id, clientECommerceIntegrationId, topic, verified, success, entityId, externalId, entityCreated, notes, errorMessage, createdAt from ShopifyWebHookLog;
