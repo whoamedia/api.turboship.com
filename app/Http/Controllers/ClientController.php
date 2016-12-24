@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Clients\CreateClientRequest;
+use App\Http\Requests\Clients\CreateClientServices;
+use App\Http\Requests\Clients\DeleteClientService;
 use App\Http\Requests\Integrations\CreateClientECommerceIntegration;
 use App\Http\Requests\Integrations\CreateClientIntegration;
 use App\Http\Requests\Integrations\CreateClientShippingIntegration;
@@ -19,6 +21,7 @@ use App\Models\Integrations\ClientIntegration;
 use App\Models\Integrations\ClientShippingIntegration;
 use App\Models\Integrations\Validation\IntegrationCredentialValidation;
 use App\Models\Integrations\Validation\IntegrationValidation;
+use App\Models\Shipments\Validation\ServiceValidation;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -262,5 +265,66 @@ class ClientController extends Controller
         $this->clientRepo->saveAndCommit($client);
 
         return response ($clientIntegration, 201);
+    }
+
+
+    public function getServices (Request $request)
+    {
+        $showClientRequest              = new ShowClientRequest();
+        $showClientRequest->setId($request->route('id'));
+        $showClientRequest->validate();
+        $showClientRequest->clean();
+
+        $client                         = $this->clientValidation->idExists($showClientRequest->getId(), true);
+
+        return response($client->getServices());
+    }
+
+
+    public function addService (Request $request)
+    {
+        $createClientServices           = new CreateClientServices();
+        $createClientServices->setId($request->route('id'));
+        $createClientServices->setServiceIds($request->input('serviceIds'));
+        $createClientServices->validate();
+        $createClientServices->clean();
+
+        $client                         = $this->clientValidation->idExists($createClientServices->getId(), true);
+
+        $serviceValidation              = new ServiceValidation();
+        $serviceIds                     = explode(',', $createClientServices->getServiceIds());
+        foreach ($serviceIds AS $id)
+        {
+            $service                    = $serviceValidation->idExists($id);
+            if (!$client->hasService($service))
+                $client->addService($service);
+        }
+
+        $this->clientRepo->saveAndCommit($client);
+
+        return response($client->getServices());
+    }
+
+
+    public function removeService (Request $request)
+    {
+        $deleteClientService            = new DeleteClientService();
+        $deleteClientService->setId($request->route('id'));
+        $deleteClientService->setServiceId($request->route('serviceId'));
+        $deleteClientService->validate();
+        $deleteClientService->clean();
+
+        $client                         = $this->clientValidation->idExists($deleteClientService->getId(), true);
+
+        $serviceValidation              = new ServiceValidation();
+        $service                        = $serviceValidation->idExists($deleteClientService->getServiceId());
+
+        if ($client->hasService($service))
+        {
+            $client->removeService($service);
+            $this->clientRepo->saveAndCommit($client);
+        }
+
+        return response('', 204);
     }
 }

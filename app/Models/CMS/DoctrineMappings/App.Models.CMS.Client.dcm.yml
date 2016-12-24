@@ -54,3 +54,17 @@ App\Models\CMS\Client:
       targetEntity:   App\Models\Integrations\ClientShippingIntegration
       mappedBy:       client
       cascade:        ["persist", "remove"]
+
+  manyToMany:
+    services:
+      fetch:          LAZY
+      targetEntity:   App\Models\Shipments\Service
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         ClientService
+        joinColumns:
+          clientId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          serviceId:
+            referencedColumnName: id

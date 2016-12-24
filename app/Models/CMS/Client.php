@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\Integrations\ClientECommerceIntegration;
 use App\Models\Integrations\ClientShippingIntegration;
 use App\Models\OMS\Product;
+use App\Models\Shipments\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -44,6 +45,11 @@ class Client extends BaseModel
     protected $shippingIntegrations;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $services;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -59,6 +65,7 @@ class Client extends BaseModel
         $this->products                 = new ArrayCollection();
         $this->eCommerceIntegrations    = new ArrayCollection();
         $this->shippingIntegrations     = new ArrayCollection();
+        $this->services                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -178,6 +185,39 @@ class Client extends BaseModel
     {
         $clientShippingIntegration->setClient($this);
         $this->shippingIntegrations->add($clientShippingIntegration);
+    }
+
+    /**
+     * @return Service[]
+     */
+    public function getServices ()
+    {
+        return $this->services->toArray();
+    }
+
+    /**
+     * @param Service $service
+     */
+    public function addService (Service $service)
+    {
+        $this->services->add($service);
+    }
+
+    /**
+     * @param   Service $service
+     * @return  bool
+     */
+    public function hasService (Service $service)
+    {
+        return $this->services->contains($service);
+    }
+
+    /**
+     * @param Service $service
+     */
+    public function removeService (Service $service)
+    {
+        $this->services->removeElement($service);
     }
 
 }
