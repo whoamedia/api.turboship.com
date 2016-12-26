@@ -390,6 +390,17 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getRemainingQuantityToFulfill ()
+    {
+        $shipmentQuantity               = 0;
+        foreach ($this->getShipmentItems() AS $shipmentItem)
+            $shipmentQuantity           += $shipmentItem->getQuantity();
+
+        return $shipmentQuantity;
+    }
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -409,8 +420,8 @@ class OrderItem implements \JsonSerializable
             return false;
         else if ($this->order->getStatus()->getId() != OrderStatusUtility::PENDING_FULFILLMENT_ID)
             return false;
-
-
+        else if ($this->getRemainingQuantityToFulfill() >= $this->getQuantityToFulfill())
+            return false;
 
 
         return true;
