@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Jobs\Shopify\ShopifyImportProductJob;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use Illuminate\Http\Request;
@@ -38,25 +39,8 @@ class ShopifyProductController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
-
-            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
-
-            if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImport was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
-
-            $entityCreated                  = is_null($product->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            $this->productRepo->saveAndCommit($product);
-
-            $this->shopifyWebHookLog->setEntityId($product->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyImportProductJob($shopifyProduct, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
@@ -95,28 +79,8 @@ class ShopifyProductController extends BaseShopifyController
         try
         {
             parent::handleRequest($request);
-            $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
-            $shopifyProduct                 = new ShopifyProduct($request->input());
-
-            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
-
-            //  TODO: The product may exist in turboShip and may need to be set it inactive
-            if (!$this->shopifyProductMappingService->shouldImport($shopifyProduct))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImport was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $product                        = $this->shopifyProductMappingService->handleMapping($shopifyProduct);
-
-            $entityCreated                  = is_null($product->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            $this->productRepo->saveAndCommit($product);
-
-            $this->shopifyWebHookLog->setEntityId($product->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyImportProductJob($shopifyProduct, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
