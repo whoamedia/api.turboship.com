@@ -21,7 +21,7 @@ class ShipmentAlgorithmSeeder extends Seeder
     {
         return [
             [
-                'id'    => 1,
+                'id'    => \App\Utilities\ShipmentAlgorithmUtility::ONE_SHIPMENT_PER_ORDER,
                 'name'  => 'One Shipment Per Order'
             ]
         ];

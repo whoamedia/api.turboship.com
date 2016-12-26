@@ -32,12 +32,12 @@ class Shipment implements \JsonSerializable
     protected $returnAddress;
 
     /**
-     * @var Service
+     * @var Service|null
      */
     protected $service;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $weight;
 
@@ -85,7 +85,7 @@ class Shipment implements \JsonSerializable
         $object['fromAddress']          = $this->fromAddress->jsonSerialize();
         $object['toAddress']            = $this->toAddress->jsonSerialize();
         $object['returnAddress']        = $this->returnAddress->jsonSerialize();
-        $object['service']              = $this->service->jsonSerialize();
+        $object['service']              = !is_null($this->service) ? $this->service->jsonSerialize() : null;
         $object['weight']               = $this->weight;
         $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
@@ -159,7 +159,7 @@ class Shipment implements \JsonSerializable
     }
 
     /**
-     * @return Service
+     * @return Service|null
      */
     public function getService()
     {
@@ -167,7 +167,7 @@ class Shipment implements \JsonSerializable
     }
 
     /**
-     * @param Service $service
+     * @param Service|null $service
      */
     public function setService($service)
     {
@@ -175,7 +175,7 @@ class Shipment implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getWeight()
     {
@@ -183,7 +183,7 @@ class Shipment implements \JsonSerializable
     }
 
     /**
-     * @param float $weight
+     * @param float|null $weight
      */
     public function setWeight($weight)
     {

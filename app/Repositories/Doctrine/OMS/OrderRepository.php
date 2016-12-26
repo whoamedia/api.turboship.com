@@ -46,7 +46,7 @@ class OrderRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\Order', 'orders')
-            ->join('orders.items', 'items', Query\Expr\Join::ON)
+            ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
             ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)

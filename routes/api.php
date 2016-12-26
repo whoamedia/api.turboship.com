@@ -63,6 +63,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products', 'ProductController@index');
 
 
+    //  Shipment Operations
+    Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
+
+
     //  Shipper Operations
     Route::get('/shippers', 'ShipperController@index');
     Route::get('/shippers/{id}', 'ShipperController@show');

@@ -118,3 +118,9 @@ App\Models\OMS\OrderItem:
       joinColumn:
         name:         statusId
         referencedColumnName: id
+
+  oneToMany:
+    shipmentItems:
+      targetEntity:   App\Models\Shipments\ShipmentItem
+      mappedBy:       orderItem
+      cascade:        ["persist", "remove"]

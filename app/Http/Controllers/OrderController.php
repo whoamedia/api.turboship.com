@@ -21,9 +21,6 @@ class OrderController extends Controller
     private $orderRepo;
 
 
-    /**
-     * ClientController constructor.
-     */
     public function __construct ()
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
