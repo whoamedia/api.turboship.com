@@ -102,7 +102,7 @@ class ShopifyController extends BaseIntegratedServiceController
         {
             $total                      = $shopifyProductRepo->getImportCandidatesCount();
             $totalPages                 = (int)ceil($total / 250);
-            dd($totalPages);
+
             for ($currentPage = 1; $currentPage < $totalPages; $currentPage++)
             {
                 set_time_limit(30);
