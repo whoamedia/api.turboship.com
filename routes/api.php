@@ -78,6 +78,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
     Route::delete('/shippers/{id}/clients/{clientId}', 'ShipperController@removeClient');
 
+
+    //  Shopify Operations
+    Route::post('/shopify/{id}/orders/download', 'ShopifyController@downloadOrders');
+
+
     //  Subdivision Operations
     Route::get('/subdivisions', 'SubdivisionController@index');
     Route::get('/subdivisions/{id}', 'SubdivisionController@show');
