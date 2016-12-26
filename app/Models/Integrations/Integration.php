@@ -50,6 +50,7 @@ abstract class Integration implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
+        $object['object']               = $this->getObject();
 
         return $object;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Clients;
+namespace App\Http\Requests\IntegratedShoppingCarts;
 
 
 use App\Http\Requests\_Contracts\Cleanable;
@@ -9,7 +9,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class GetIntegratedShoppingCarts implements Cleanable, Validatable, \JsonSerializable
+class ShowIntegratedShoppingCart implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

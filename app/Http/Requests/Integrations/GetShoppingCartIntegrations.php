@@ -5,11 +5,10 @@ namespace App\Http\Requests\Integrations;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
+use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
-use jamesvweston\Utilities\InputUtil;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class GetIntegrations implements Cleanable, Validatable, \JsonSerializable
+class GetShoppingCartIntegrations extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -25,12 +24,7 @@ class GetIntegrations implements Cleanable, Validatable, \JsonSerializable
 
     public function validate()
     {
-
-    }
-
-    public function clean ()
-    {
-        $this->ids                      = InputUtil::getIdsString($this->ids);
+        $this->ids                      = $this->validateIds($this->ids, 'ids');
     }
 
     /**
@@ -43,20 +37,9 @@ class GetIntegrations implements Cleanable, Validatable, \JsonSerializable
         return $object;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getIds()
+    public function clean ()
     {
-        return $this->ids;
-    }
 
-    /**
-     * @param null|string $ids
-     */
-    public function setIds($ids)
-    {
-        $this->ids = $ids;
     }
 
 }

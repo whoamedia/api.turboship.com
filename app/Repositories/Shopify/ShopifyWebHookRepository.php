@@ -23,7 +23,7 @@ class ShopifyWebHookRepository extends BaseShopifyRepository
         $createShopifyWebHook->setTopic($topic);
 
         //  config('app.url')       'https://dev-api.turboship.com'
-        $address    = config('app.url') . '/webhooks/shopify/' . $this->clientIntegration->getId() . '/' . $topic;
+        $address    = config('app.url') . '/webhooks/shopify/' . $this->integratedShoppingCart->getId() . '/' . $topic;
         $createShopifyWebHook->setAddress($address);
 
         $response                       = $this->shopifyIntegration->webHookApi->create($createShopifyWebHook);

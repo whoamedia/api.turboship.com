@@ -39,6 +39,20 @@ class ShippingApiIntegration extends Integration
         $this->shippingApiIntegrationCarriers->add($shippingApiIntegrationCarrier);
     }
 
+    /**
+     * @return ShippingApiIntegrationService[]
+     */
+    public function getShippingApiIntegrationServices ()
+    {
+        $services                       = [];
+        foreach ($this->getShippingApiIntegrationCarriers() AS $shippingApiIntegrationCarrier)
+        {
+            foreach ($shippingApiIntegrationCarrier->getShippingApiIntegrationServices() AS $shippingApiIntegrationService)
+                $services[]             = $shippingApiIntegrationService->jsonSerialize();
+        }
+
+        return $services;
+    }
 
 
 

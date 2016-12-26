@@ -23,18 +23,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
     Route::post('/clients', 'ClientController@store');
-    Route::get('/clients/{id}/integratedShoppingCarts', 'ClientController@getIntegratedShoppingCarts');
-    Route::post('/clients/{id}/integratedShoppingCarts', 'ClientController@createIntegratedShoppingCart');
     Route::get('/clients/{id}/services', 'ClientController@getServices');
     Route::post('/clients/{id}/services', 'ClientController@addService');
     Route::delete('/clients/{id}/services/{serviceId}', 'ClientController@removeService');
-
-
-    //  ClientIntegration Operations
-    Route::get('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@getWebHooks');
-    Route::get('/clientIntegrations/{id}/availableWebHooks', 'ClientIntegrationController@getAvailableWebHooks');
-    Route::post('/clientIntegrations/{id}/webHooks', 'ClientIntegrationController@createWebHook');
-    Route::delete('/clientIntegrations/{id}/webHooks/{clientWebHookId}', 'ClientIntegrationController@deleteWebHook');
 
 
     //  Country Operations
@@ -43,11 +34,23 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/countries/{id}/subdivisions', 'CountryController@getCountrySubdivisions');
 
 
+    //  IntegratedShoppingCart Operations
+    Route::get('/integratedShoppingCarts', 'IntegratedShoppingCartController@index');
+    Route::get('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@show');
+    Route::get('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@getWebHooks');
+    Route::get('/integratedShoppingCarts/{id}/webHooks/available', 'IntegratedShoppingCartController@getAvailableWebHooks');
+    Route::post('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@createWebHook');
+    Route::delete('/integratedShoppingCarts/{id}/webHooks/{integratedWebHookId}', 'IntegratedShoppingCartController@deleteIntegratedWebHook');
+
+
     //  Integration Operations
-    Route::get('/integrations', 'IntegrationController@index');
+    Route::get('/integrations/shippingApis', 'IntegrationController@getShippingApis');
+    Route::get('/integrations/shoppingCarts', 'IntegrationController@getShoppingCarts');
     Route::get('/integrations/{id}', 'IntegrationController@show');
     Route::get('/integrations/{id}/credentials', 'IntegrationController@showIntegrationCredentials');
     Route::get('/integrations/{id}/webHooks', 'IntegrationController@getWebHooks');
+    Route::get('/integrations/shippingApis/{id}/carriers', 'IntegrationController@getShippingApiCarriers');
+    Route::get('/integrations/shippingApis/{id}/services', 'IntegrationController@getShippingApiServices');
 
 
     //  Order Operations

@@ -6,7 +6,7 @@ namespace App\Models\Integrations;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Crypt;
 
-class Credential
+class Credential implements \JsonSerializable
 {
 
     /**

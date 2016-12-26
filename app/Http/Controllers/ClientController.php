@@ -6,22 +6,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Clients\CreateClientRequest;
 use App\Http\Requests\Clients\CreateClientServices;
 use App\Http\Requests\Clients\DeleteClientService;
-use App\Http\Requests\Clients\GetIntegratedShoppingCarts;
-use App\Http\Requests\Integrations\CreateIntegratedShoppingCart;
 use App\Http\Requests\Clients\GetClientsRequest;
 use App\Http\Requests\Clients\ShowClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
-use App\Models\Integrations\Credential;
-use App\Models\Integrations\IntegratedShoppingCart;
-use App\Models\Integrations\Validation\IntegrationCredentialValidation;
-use App\Models\Integrations\Validation\IntegrationValidation;
 use App\Models\Shipments\Validation\ServiceValidation;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ClientController extends BaseAuthController
 {
@@ -105,7 +98,6 @@ class ClientController extends BaseAuthController
         {
             if ($updateClientRequest->getName() != $client->getName())
             {
-                $this->clientValidation->uniqueOrganizationAndName($client->getOrganization(), $updateClientRequest->getName());
                 $client->setName($updateClientRequest->getName());
             }
         }
@@ -132,64 +124,6 @@ class ClientController extends BaseAuthController
 
         return response($client, 201);
     }
-
-    /**
-     * @param   Request $request
-     * @return  IntegratedShoppingCart[]
-     */
-    public function getIntegratedShoppingCarts (Request $request)
-    {
-        $getGetIntegratedShoppingCarts  = new GetIntegratedShoppingCarts();
-        $getGetIntegratedShoppingCarts->setId($request->route('id'));
-        $getGetIntegratedShoppingCarts->validate();
-        $getGetIntegratedShoppingCarts->clean();
-
-        $client                         = $this->clientValidation->idExists($getGetIntegratedShoppingCarts->getId(), true);
-        return response ($client->getIntegratedShoppingCarts());
-    }
-
-
-    /**
-     * @param   Request $request
-     * @return  IntegratedShoppingCart[]
-     */
-    public function createIntegratedShoppingCart (Request $request)
-    {
-        $createIntegratedService        = new CreateIntegratedShoppingCart($request->input());
-        $createIntegratedService->setId($request->route('id'));
-        $createIntegratedService->validate();
-        $createIntegratedService->clean();
-
-        $client                         = $this->clientValidation->idExists($createIntegratedService->getId());
-
-        $clientIntegration              = new IntegratedShoppingCart();
-        $clientIntegration->setClient($client);
-        $clientIntegration->setName($createIntegratedService->getName());
-
-        $integrationValidation          = new IntegrationValidation();
-        $integration                    = $integrationValidation->idExists($createIntegratedService->getECommerceIntegrationId());
-        $clientIntegration->setIntegration($integration);
-
-        $integrationCredentialValidation= new IntegrationCredentialValidation();
-        foreach ($createIntegratedService->getCredentials() AS $createCredential)
-        {
-            $clientCredential           = new Credential();
-            $integrationCredential      = $integrationCredentialValidation->idExists($createCredential->getIntegrationCredentialId());
-
-            if ($integration->hasIntegrationCredential($integrationCredential) == false)
-                throw new BadRequestHttpException('integrationCredential does not belong to integration');
-
-            $clientCredential->setIntegrationCredential($integrationCredential);
-            $clientCredential->setValue($createCredential->getValue());
-            $clientIntegration->addCredential($clientCredential);
-        }
-
-        $client->addIntegratedShoppingCart($clientIntegration);
-        $this->clientRepo->saveAndCommit($client);
-
-        return response ($clientIntegration, 201);
-    }
-
 
     public function getServices (Request $request)
     {

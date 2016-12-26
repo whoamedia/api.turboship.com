@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Integrations;
+namespace App\Http\Requests\IntegratedShoppingCarts;
 
 
 use App\Http\Requests\_Contracts\Cleanable;

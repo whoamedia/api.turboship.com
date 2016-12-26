@@ -4,7 +4,7 @@ namespace App\Services;
 
 
 use App\Models\Integrations\Credential;
-use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\IntegratedService;
 use App\Repositories\Doctrine\Integrations\CredentialRepository;
 use App\Utilities\IntegrationCredentialUtility;
 use EntityManager;
@@ -13,18 +13,18 @@ class CredentialService
 {
 
     /**
-     * @var ClientIntegration
+     * @var IntegratedService
      */
-    private $clientIntegration;
+    private $integratedService;
 
     /**
      * @var CredentialRepository
      */
     private $clientCredentialRepo;
 
-    public function __construct(ClientIntegration $clientIntegration)
+    public function __construct(IntegratedService $integratedService)
     {
-        $this->clientIntegration        = $clientIntegration;
+        $this->integratedService        = $integratedService;
         $this->clientCredentialRepo     = EntityManager::getRepository('App\Models\Integrations\Credential');
     }
 
@@ -34,7 +34,7 @@ class CredentialService
     public function getShopifyApiKey ()
     {
         $query      = [
-            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integratedServiceIds'      => $this->integratedService->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_API_KEY_ID
         ];
 
@@ -49,7 +49,7 @@ class CredentialService
     public function getShopifyPassword ()
     {
         $query      = [
-            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integratedServiceIds'      => $this->integratedService->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID
         ];
 
@@ -64,7 +64,7 @@ class CredentialService
     public function getShopifyHostName ()
     {
         $query      = [
-            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integratedServiceIds'      => $this->integratedService->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID
         ];
 
@@ -79,7 +79,7 @@ class CredentialService
     public function getShopifySharedSecret ()
     {
         $query      = [
-            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integratedServiceIds'      => $this->integratedService->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID
         ];
 
@@ -95,7 +95,7 @@ class CredentialService
     public function getEasyPostApiKey ()
     {
         $query      = [
-            'clientIntegrationIds'      => $this->clientIntegration->getId(),
+            'integratedServiceIds'      => $this->integratedService->getId(),
             'integrationCredentialIds'  => IntegrationCredentialUtility::EASYPOST_API_KEY_ID
         ];
 

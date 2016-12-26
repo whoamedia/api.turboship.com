@@ -5,7 +5,6 @@ namespace App\Repositories\Shopify;
 
 use App\Integrations\Shopify\Models\Requests\GetShopifyProductCount;
 use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
 
 class ShopifyProductRepository extends BaseShopifyRepository
 {

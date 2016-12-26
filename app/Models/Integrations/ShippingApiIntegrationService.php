@@ -34,7 +34,7 @@ class ShippingApiIntegrationService implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->name                         = AU::get($data['name']);
-        $this->shippingApiIntegrationCarrier   = AU::get($data['shippingApiIntegrationCarrier']);
+        $this->shippingApiIntegrationCarrier= AU::get($data['shippingApiIntegrationCarrier']);
         $this->service                      = AU::get($data['service']);
     }
 
@@ -45,7 +45,7 @@ class ShippingApiIntegrationService implements \JsonSerializable
     {
         $object['id']                       = $this->id;
         $object['name']                     = $this->name;
-        $object['shippingApiIntegrationCarrier']= $this->shippingApiIntegrationCarrier->jsonSerialize();
+        $object['shippingApiIntegrationCarrier']    = $this->shippingApiIntegrationCarrier->jsonSerialize();
         $object['service']                  = $this->service->jsonSerialize();
 
         return $object;

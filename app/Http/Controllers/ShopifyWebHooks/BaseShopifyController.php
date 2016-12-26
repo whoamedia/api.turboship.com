@@ -24,7 +24,7 @@ class BaseShopifyController extends Controller
     /**
      * @var IntegratedShoppingCartRepository
      */
-    protected $integrationShoppingCartRepo;
+    protected $integratedShoppingCartCartRepo;
 
     /**
      * @var ShopifyWebHookLogRepository
@@ -34,7 +34,7 @@ class BaseShopifyController extends Controller
     /**
      * @var IntegratedShoppingCart
      */
-    protected $integrationShoppingCart;
+    protected $integratedShoppingCartCart;
 
     /**
      * @var ShopifyWebHookLog
@@ -44,14 +44,14 @@ class BaseShopifyController extends Controller
 
     public function __construct (Request $request)
     {
-        $this->integrationShoppingCartRepo = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
+        $this->integratedShoppingCartCartRepo = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
         $this->shopifyWebHookLogRepo    = EntityManager::getRepository('App\Models\Logs\ShopifyWebHookLog');
 
-        $integrationShoppingCartId   = $request->route('id');
-        $this->integrationShoppingCart= $this->integrationShoppingCartRepo->getOneById($integrationShoppingCartId);
-        $this->client                   = $this->integrationShoppingCart->getClient();
+        $integratedShoppingCartCartId   = $request->route('id');
+        $this->integratedShoppingCartCart= $this->integratedShoppingCartCartRepo->getOneById($integratedShoppingCartCartId);
+        $this->client                   = $this->integratedShoppingCartCart->getClient();
 
-        $credentialService              = new CredentialService($this->integrationShoppingCart);
+        $credentialService              = new CredentialService($this->integratedShoppingCartCart);
         $shopifySharedSecret            = $credentialService->getShopifySharedSecret()->getValue();
 
         $topic                          = str_replace('webhooks/shopify/' . $request->route('id') . '/', '', $request->path());
@@ -60,7 +60,7 @@ class BaseShopifyController extends Controller
         $this->shopifyWebHookLog->setTopic($topic);
         $verified                       = $this->verifyWebHook($request, $shopifySharedSecret);
         $this->shopifyWebHookLog->setVerified($verified);
-        $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integrationShoppingCart);
+        $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integratedShoppingCartCart);
         $this->shopifyWebHookLog->setIncomingMessage(json_encode($request->input(), true));
         $this->shopifyWebHookLog->setSuccess(true);
 

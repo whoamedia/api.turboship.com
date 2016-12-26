@@ -3,7 +3,7 @@
 namespace App\Repositories\Doctrine\Integrations;
 
 
-use App\Models\Integrations\ShippingApiIntegration;
+use App\Models\Integrations\IntegratedShippingApi;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class ShippingApiIntegrationRepository extends BaseRepository
+class IntegratedShippingApiRepository extends BaseRepository
 {
 
     use Paginatable;
@@ -22,14 +22,14 @@ class ShippingApiIntegrationRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      ShippingApiIntegration[]|LengthAwarePaginator
+     * @return      IntegratedShippingApi[]|LengthAwarePaginator
      */
     public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shippingApiIntegration']);
+        $qb->select(['integratedShippingApi']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,19 +45,31 @@ class ShippingApiIntegrationRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\Integrations\ShippingApiIntegration', 'shippingApiIntegration');
+        $qb->from('App\Models\Integrations\IntegratedShippingApi', 'integratedShippingApi')
+            ->join('integratedShippingApi.integration', 'integration', Query\Expr\Join::ON)
+            ->join('integratedShippingApi.shipper', 'shipper', Query\Expr\Join::ON)
+            ->join('shipper.organization', 'organization', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('shippingApiIntegration.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('integratedShippingApi.id', $query['ids']));
+
+        if (!is_null(AU::get($query['integrationIds'])))
+            $qb->andWhere($qb->expr()->in('integration.id', $query['integrationIds']));
+
+        if (!is_null(AU::get($query['shipperIds'])))
+            $qb->andWhere($qb->expr()->in('shipper.id', $query['shipperIds']));
+
+        if (!is_null(AU::get($query['organizationIds'])))
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
 
-        $qb->orderBy('shippingApiIntegration.id', 'ASC');
+        $qb->orderBy('integratedShippingApi.id', 'ASC');
         return $qb;
     }
 
     /**
      * @param   int     $id
-     * @return  ShippingApiIntegration|null
+     * @return  IntegratedShippingApi|null
      */
     public function getOneById($id)
     {

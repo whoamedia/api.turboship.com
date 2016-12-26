@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetIntegrationWebHooks;
+use App\Http\Requests\Integrations\GetShippingApiIntegrations;
+use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
 use App\Http\Requests\Integrations\ShowIntegration;
 use App\Http\Requests\Integrations\ShowIntegrationCredentials;
 use App\Models\Integrations\IntegrationWebHook;
 use App\Models\Integrations\Validation\IntegrationValidation;
+use App\Models\Integrations\Validation\ShippingApiIntegrationValidation;
 use App\Repositories\Doctrine\Integrations\IntegrationRepository;
+use App\Repositories\Doctrine\Integrations\ShippingApiIntegrationRepository;
+use App\Repositories\Doctrine\Integrations\ShoppingCartIntegrationRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -22,6 +27,16 @@ class IntegrationController
     private $integrationRepo;
 
     /**
+     * @var ShippingApiIntegrationRepository
+     */
+    private $shippingApiIntegrationRepo;
+
+    /**
+     * @var ShoppingCartIntegrationRepository
+     */
+    private $shoppingCartIntegrationRepo;
+
+    /**
      * @var IntegrationValidation
      */
     private $integrationValidation;
@@ -30,21 +45,32 @@ class IntegrationController
     public function __construct()
     {
         $this->integrationRepo          = EntityManager::getRepository('App\Models\Integrations\Integration');
+        $this->shippingApiIntegrationRepo=EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
+        $this->shoppingCartIntegrationRepo=EntityManager::getRepository('App\Models\Integrations\ShoppingCartIntegration');
         $this->integrationValidation    = new IntegrationValidation();
     }
 
-    public function index (Request $request)
+    public function getShippingApis (Request $request)
     {
-        $getIntegrations                = new GetIntegrations($request->input());
-        $getIntegrations->validate();
-        $getIntegrations->clean();
+        $getShippingApiIntegrations     = new GetShippingApiIntegrations($request->input());
+        $getShippingApiIntegrations->validate();
+        $getShippingApiIntegrations->clean();
 
-        $query                          = $getIntegrations->jsonSerialize();
-
-        $results                        = $this->integrationRepo->where($query);
+        $query                          = $getShippingApiIntegrations->jsonSerialize();
+        $results                        = $this->shippingApiIntegrationRepo->where($query);
         return response($results);
     }
 
+    public function getShoppingCarts (Request $request)
+    {
+        $getShoppingCartIntegrations    = new GetShoppingCartIntegrations($request->input());
+        $getShoppingCartIntegrations->validate();
+        $getShoppingCartIntegrations->clean();
+
+        $query                          = $getShoppingCartIntegrations->jsonSerialize();
+        $results                        = $this->shoppingCartIntegrationRepo->where($query);
+        return response($results);
+    }
 
     public function show (Request $request)
     {
@@ -92,5 +118,32 @@ class IntegrationController
         }
 
         return response($integrationWebHooks);
+    }
+
+
+    public function getShippingApiCarriers (Request $request)
+    {
+        $showIntegration                = new ShowIntegration();
+        $showIntegration->setId($request->route('id'));
+        $showIntegration->validate();
+        $showIntegration->clean();
+
+        $shippingApiValidation          = new ShippingApiIntegrationValidation();
+        $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
+
+        return response($shippingApiIntegration->getShippingApiIntegrationCarriers());
+    }
+
+    public function getShippingApiServices (Request $request)
+    {
+        $showIntegration                = new ShowIntegration();
+        $showIntegration->setId($request->route('id'));
+        $showIntegration->validate();
+        $showIntegration->clean();
+
+        $shippingApiValidation          = new ShippingApiIntegrationValidation();
+        $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
+
+        return response($shippingApiIntegration->getShippingApiIntegrationServices());
     }
 }

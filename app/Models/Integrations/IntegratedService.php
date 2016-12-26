@@ -64,12 +64,6 @@ abstract class IntegratedService implements \JsonSerializable
         $object['integration']          = $this->integration->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
 
-        $object['credentials']          = [];
-        foreach ($this->getCredentials() AS $credential)
-        {
-            $object['credentials'][]    = $credential->jsonSerialize();
-        }
-
         return $object;
     }
 
@@ -160,6 +154,24 @@ abstract class IntegratedService implements \JsonSerializable
     public function getIntegratedWebHooks ()
     {
         return $this->integratedWebHooks->toArray();
+    }
+
+    /**
+     * @return IntegrationWebHook[]
+     */
+    public function getAvailableIntegratedWebHooks ()
+    {
+        $available                  = [];
+        foreach ($this->getIntegration()->getIntegrationWebHooks() AS $integrationWebHook)
+        {
+            if (!$integrationWebHook->isActive())
+                continue;
+
+            if (!$this->hasIntegrationWebHook($integrationWebHook))
+                $available[]        = $integrationWebHook;
+        }
+
+        return $available;
     }
 
     /**
