@@ -99,7 +99,7 @@ class CreateShipmentsService
     {
         $orderQuery     = [
             'clientIds'                 => $this->client->getId(),
-            //  'statusIds'                 => OrderStatusUtility::PENDING_FULFILLMENT_ID
+            'statusIds'                 => OrderStatusUtility::PENDING_FULFILLMENT_ID
         ];
 
         return $this->orderRepo->where($orderQuery);
