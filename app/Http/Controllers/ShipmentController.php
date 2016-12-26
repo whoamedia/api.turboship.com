@@ -6,11 +6,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Shipments\CreateShipmentsJob;
 use App\Http\Requests\Shipments\GetShipments;
 use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Shipments\Shipment;
+use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\Shipments\CreateShipmentsService;
 use Illuminate\Http\Request;
 use EntityManager;
+use jamesvweston\Utilities\InputUtil;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ShipmentController extends BaseAuthController
 {
@@ -51,6 +55,11 @@ class ShipmentController extends BaseAuthController
         return response($shipments);
     }
 
+    public function show (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+        return response($shipment);
+    }
 
 
 
@@ -70,5 +79,22 @@ class ShipmentController extends BaseAuthController
             $this->shipmentRepo->saveAndCommit($shipment);
 
         return response ($shipments, 201);
+    }
+
+    /**
+     * @param   int         $id
+     * @return  Shipment
+     */
+    private function getShipment ($id)
+    {
+        if (is_null($id))
+            throw new BadRequestHttpException('id is required');
+        else if (is_null(InputUtil::getInt($id)))
+            throw new BadRequestHttpException('id must be integer');
+
+        $shipmentValidation             = new ShipmentValidation();
+
+        $shipment                       = $shipmentValidation->idExists($id);
+        return $shipment;
     }
 }
