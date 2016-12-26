@@ -80,7 +80,7 @@ class ShopifyController extends BaseIntegratedServiceController
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
             $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
-            $maxIds                     = 10;
+            $maxIds                     = 20;
             for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
             {
                 set_time_limit(5);
