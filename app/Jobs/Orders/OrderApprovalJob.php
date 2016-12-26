@@ -43,6 +43,7 @@ class OrderApprovalJob implements ShouldQueue
     public function handle()
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $order                          = $this->orderRepo->getOneById($this->orderId);
         $this->orderApprovalService     = new OrderApprovalService();
         $this->orderApprovalService->processOrder($order);
         $this->orderRepo->saveAndCommit($order);

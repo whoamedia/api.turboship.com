@@ -3,11 +3,12 @@
 namespace App\Jobs\Shopify;
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Jobs\Orders\OrderApprovalJob;
 use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Services\Order\OrderApprovalService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,7 +16,7 @@ use EntityManager;
 
 class ShopifyImportOrderJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue, Queueable, SerializesModels, DispatchesJobs;
 
 
     /**
@@ -60,8 +61,8 @@ class ShopifyImportOrderJob implements ShouldQueue
             return;
 
         $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
-        $orderApprovalService           = new OrderApprovalService();
-        $orderApprovalService->processOrder($order);
         $this->orderRepo->saveAndCommit($order);
+        $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
+        $this->dispatch($job);
     }
 }
