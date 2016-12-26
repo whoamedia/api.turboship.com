@@ -79,6 +79,8 @@ class ShopifyProductController extends BaseShopifyController
         try
         {
             parent::handleRequest($request);
+            $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
+            $shopifyProduct                 = new ShopifyProduct($request->input());
             $job                            = (new ShopifyImportProductJob($shopifyProduct, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }

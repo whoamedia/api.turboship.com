@@ -6,7 +6,6 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Shopify\ShopifyImportOrderJob;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Services\Order\OrderApprovalService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Http\Request;
 use EntityManager;
