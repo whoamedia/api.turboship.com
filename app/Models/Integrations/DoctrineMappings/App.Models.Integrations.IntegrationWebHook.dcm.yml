@@ -36,7 +36,7 @@ App\Models\Integrations\IntegrationWebHook:
       targetEntity:   Integration
       nullable:       false
       fetch:          EAGER
-      inversedBy:     webHooks
+      inversedBy:     integrationWebHooks
       joinColumn:
         name:         integrationId
         referencedColumnName: id

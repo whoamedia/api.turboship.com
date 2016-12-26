@@ -46,17 +46,4 @@ class ClientValidation
         return $client;
     }
 
-
-    public function uniqueOrganizationAndName (Organization $organization, $name)
-    {
-        $query      = [
-            'organizationIds'           => $organization->getId(),
-            'names'                     => $name
-        ];
-
-        $result                         = $this->clientRepo->where($query);
-        if (sizeof($result) != 0)
-            throw new BadRequestHttpException('Client name already exists');
-    }
-
 }

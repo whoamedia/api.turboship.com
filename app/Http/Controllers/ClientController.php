@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Clients\CreateClientRequest;
 use App\Http\Requests\Clients\CreateClientServices;
 use App\Http\Requests\Clients\DeleteClientService;
+use App\Http\Requests\Clients\GetIntegratedShoppingCarts;
 use App\Http\Requests\Integrations\CreateIntegratedShoppingCart;
-use App\Http\Requests\Integrations\GetIntegratedServices;
 use App\Http\Requests\Clients\GetClientsRequest;
 use App\Http\Requests\Clients\ShowClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
@@ -23,7 +23,7 @@ use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ClientController extends Controller
+class ClientController extends BaseAuthController
 {
 
     /**
@@ -54,7 +54,7 @@ class ClientController extends Controller
     public function index (Request $request)
     {
         $getClientsRequest              = new GetClientsRequest($request->input());
-        $getClientsRequest->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getClientsRequest->setOrganizationIds($this->getAuthUserOrganization()->getId());
 
         if (!is_null(\Auth::getUser()->getClient()))
             $getClientsRequest->setIds(\Auth::getUser()->getClient()->getId());
@@ -123,15 +123,10 @@ class ClientController extends Controller
         $createClientRequest            = new CreateClientRequest($request->input());
         $createClientRequest->validate();
 
-        $authUser                       = \Auth::getUser();
-
         $client                         = new Client();
         $client->setName($createClientRequest->getName());
-        $client->setOrganization($authUser->getOrganization());
+        $client->setOrganization($this->getAuthUserOrganization());
         $client->validate();
-
-        //  TODO: Move this to Client Model
-        $this->clientValidation->uniqueOrganizationAndName($client->getOrganization(), $client->getName());
 
         $this->clientRepo->saveAndCommit($client);
 
@@ -144,12 +139,12 @@ class ClientController extends Controller
      */
     public function getIntegratedShoppingCarts (Request $request)
     {
-        $getIntegratedServices          = new GetIntegratedServices();
-        $getIntegratedServices->setId($request->route('id'));
-        $getIntegratedServices->validate();
-        $getIntegratedServices->clean();
+        $getGetIntegratedShoppingCarts  = new GetIntegratedShoppingCarts();
+        $getGetIntegratedShoppingCarts->setId($request->route('id'));
+        $getGetIntegratedShoppingCarts->validate();
+        $getGetIntegratedShoppingCarts->clean();
 
-        $client                         = $this->clientValidation->idExists($getIntegratedServices->getId(), true);
+        $client                         = $this->clientValidation->idExists($getGetIntegratedShoppingCarts->getId(), true);
         return response ($client->getIntegratedShoppingCarts());
     }
 
@@ -167,15 +162,9 @@ class ClientController extends Controller
 
         $client                         = $this->clientValidation->idExists($createIntegratedService->getId());
 
-        foreach ($client->getIntegratedShoppingCarts() AS $integratedShoppingCart)
-        {
-            if ($integratedShoppingCart->getSymbol() == $createIntegratedService->getSymbol())
-                throw new BadRequestHttpException('symbol already exists');
-        }
-
         $clientIntegration              = new IntegratedShoppingCart();
         $clientIntegration->setClient($client);
-        $clientIntegration->setSymbol($createIntegratedService->getSymbol());
+        $clientIntegration->setName($createIntegratedService->getName());
 
         $integrationValidation          = new IntegrationValidation();
         $integration                    = $integrationValidation->idExists($createIntegratedService->getECommerceIntegrationId());

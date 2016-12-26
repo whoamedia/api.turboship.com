@@ -47,7 +47,7 @@ class CredentialRepository extends BaseRepository
     {
         $qb->from('App\Models\Integrations\Credential', 'credential')
             ->join('credential.integrationCredential', 'integrationCredential', Query\Expr\Join::ON)
-            ->join('credential.clientIntegration', 'clientIntegration', Query\Expr\Join::ON);
+            ->join('credential.integratedService', 'integratedService', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('credential.id', $query['ids']));
@@ -55,8 +55,8 @@ class CredentialRepository extends BaseRepository
         if (!is_null(AU::get($query['integrationCredentialIds'])))
             $qb->andWhere($qb->expr()->in('integrationCredential.id', $query['integrationCredentialIds']));
 
-        if (!is_null(AU::get($query['clientIntegrationIds'])))
-            $qb->andWhere($qb->expr()->in('clientIntegration.id', $query['clientIntegrationIds']));
+        if (!is_null(AU::get($query['integratedServiceIds'])))
+            $qb->andWhere($qb->expr()->in('integratedService.id', $query['integratedServiceIds']));
 
 
         $qb->orderBy('credential.id', 'ASC');

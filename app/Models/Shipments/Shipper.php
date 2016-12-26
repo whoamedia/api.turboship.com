@@ -53,7 +53,7 @@ class Shipper implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->clients                  = new ArrayCollection();
-        $this->integratedShippingApis      = new ArrayCollection();
+        $this->integratedShippingApis   = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -68,8 +68,6 @@ class Shipper implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
-        $object['address']              = $this->address->jsonSerialize();
-        $object['returnAddress']        = $this->returnAddress->jsonSerialize();
 
         return $object;
     }

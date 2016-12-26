@@ -46,14 +46,10 @@ class IntegratedServiceRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Integrations\IntegratedService', 'integratedService')
-            ->join('integratedService.client', 'client', Query\Expr\Join::ON)
             ->join('integratedService.integration', 'integration', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('integratedService.id', $query['ids']));
-
-        if (!is_null(AU::get($query['clientIds'])))
-            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
 
         if (!is_null(AU::get($query['integrationIds'])))
             $qb->andWhere($qb->expr()->in('integration.id', $query['integrationIds']));

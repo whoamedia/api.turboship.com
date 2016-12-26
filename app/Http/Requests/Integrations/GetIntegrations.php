@@ -13,28 +13,24 @@ class GetIntegrations implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
-     * @var int
+     * @var string|null
      */
-    protected $id;
+    protected $ids;
 
 
     public function __construct($data = [])
     {
-        $this->id                       = AU::get($data['id']);
+        $this->ids                      = AU::get($data['ids']);
     }
 
     public function validate()
     {
-        if (is_null($this->id))
-            throw new BadRequestHttpException('id is required');
 
-        if (is_null(InputUtil::getInt($this->id)))
-            throw new BadRequestHttpException('id must be integer');
     }
 
     public function clean ()
     {
-        $this->id                       = InputUtil::getInt($this->id);
+        $this->ids                      = InputUtil::getIdsString($this->ids);
     }
 
     /**
@@ -42,25 +38,25 @@ class GetIntegrations implements Cleanable, Validatable, \JsonSerializable
      */
     public function jsonSerialize ()
     {
-        $object['id']                   = $this->id;
+        $object['ids']                  = $this->ids;
 
         return $object;
     }
 
     /**
-     * @return int
+     * @return null|string
      */
-    public function getId()
+    public function getIds()
     {
-        return $this->id;
+        return $this->ids;
     }
 
     /**
-     * @param int $id
+     * @param null|string $ids
      */
-    public function setId($id)
+    public function setIds($ids)
     {
-        $this->id = $id;
+        $this->ids = $ids;
     }
 
 }

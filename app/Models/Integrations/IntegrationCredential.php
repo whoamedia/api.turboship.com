@@ -3,7 +3,7 @@
 namespace App\Models\Integrations;
 
 
-class IntegrationCredential
+class IntegrationCredential implements \JsonSerializable
 {
 
     /**

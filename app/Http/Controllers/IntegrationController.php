@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetIntegrationWebHooks;
+use App\Http\Requests\Integrations\ShowIntegration;
+use App\Http\Requests\Integrations\ShowIntegrationCredentials;
 use App\Models\Integrations\IntegrationWebHook;
 use App\Models\Integrations\Validation\IntegrationValidation;
-use App\Repositories\Doctrine\Integrations\IntegrationWebHookRepository;
+use App\Repositories\Doctrine\Integrations\IntegrationRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -14,20 +17,58 @@ class IntegrationController
 {
 
     /**
+     * @var IntegrationRepository
+     */
+    private $integrationRepo;
+
+    /**
      * @var IntegrationValidation
      */
     private $integrationValidation;
 
-    /**
-     * @var IntegrationWebHookRepository
-     */
-    private $integrationWebHookRepo;
-
 
     public function __construct()
     {
+        $this->integrationRepo          = EntityManager::getRepository('App\Models\Integrations\Integration');
         $this->integrationValidation    = new IntegrationValidation();
-        $this->integrationWebHookRepo   = EntityManager::getRepository('App\Models\Integrations\IntegrationWebHook');
+    }
+
+    public function index (Request $request)
+    {
+        $getIntegrations                = new GetIntegrations($request->input());
+        $getIntegrations->validate();
+        $getIntegrations->clean();
+
+        $query                          = $getIntegrations->jsonSerialize();
+
+        $results                        = $this->integrationRepo->where($query);
+        return response($results);
+    }
+
+
+    public function show (Request $request)
+    {
+        $showIntegration                = new ShowIntegration();
+        $showIntegration->setId($request->route('id'));
+        $showIntegration->validate();
+        $showIntegration->clean();
+
+        $integration                    = $this->integrationValidation->idExists($showIntegration->getId());
+
+        return response ($integration);
+    }
+
+
+    public function showIntegrationCredentials (Request $request)
+    {
+        $showIntegrationCredentials     = new ShowIntegrationCredentials();
+        $showIntegrationCredentials->setId($request->route('id'));
+        $showIntegrationCredentials->validate();
+        $showIntegrationCredentials->clean();
+
+        $integration                    = $this->integrationValidation->idExists($showIntegrationCredentials->getId());
+
+        return response($integration->getIntegrationCredentials());
     }
 
     /**
@@ -43,13 +84,13 @@ class IntegrationController
 
         $integration                    = $this->integrationValidation->idExists($getIntegrationWebHooks->getId());
 
-        $query  = [
-            'integrationIds'    => $integration->getId(),
-            'isActive'          => true,
-        ];
+        $integrationWebHooks            = [];
+        foreach ($integration->getIntegrationWebHooks() AS $integrationWebHook)
+        {
+            if ($integrationWebHook->isActive())
+                $integrationWebHooks[]      = $integrationWebHook;
+        }
 
-        $results                        = $this->integrationWebHookRepo->where($query);
-
-        return response($results);
+        return response($integrationWebHooks);
     }
 }

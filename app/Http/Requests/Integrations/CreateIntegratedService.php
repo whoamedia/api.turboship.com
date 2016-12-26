@@ -20,7 +20,7 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     /**
      * @var string
      */
-    protected $symbol;
+    protected $name;
 
     /**
      * @var CreateCredential[]
@@ -31,7 +31,7 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
-        $this->symbol                   = AU::get($data['symbol']);
+        $this->name                     = AU::get($data['name']);
 
         $this->credentials              = [];
         $credentials                    = AU::get($data['credentials'], []);
@@ -50,8 +50,8 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
         if (is_null($this->id))
             throw new BadRequestHttpException('id is required');
 
-        if (is_null($this->symbol))
-            throw new BadRequestHttpException('symbol is required');
+        if (is_null($this->name))
+            throw new BadRequestHttpException('name is required');
 
         if (is_null($this->credentials))
             throw new BadRequestHttpException('credentials is required');
@@ -60,8 +60,8 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
 
-        if (empty(trim($this->symbol)))
-            throw new BadRequestHttpException('symbol must be string');
+        if (empty(trim($this->name)))
+            throw new BadRequestHttpException('name must be string');
         if (empty($this->credentials))
             throw new BadRequestHttpException('credentials is required');
 
@@ -82,7 +82,7 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     public function jsonSerialize ()
     {
         $object['id']                   = $this->id;
-        $object['symbol']               = $this->symbol;
+        $object['name']               = $this->name;
         $object['credentials']          = [];
         foreach ($this->credentials AS $credential)
             $object['credentials']      = $credential->jsonSerialize();
@@ -109,17 +109,17 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     /**
      * @return string
      */
-    public function getSymbol()
+    public function getName()
     {
-        return $this->symbol;
+        return $this->name;
     }
 
     /**
-     * @param string $symbol
+     * @param string $name
      */
-    public function setSymbol($symbol)
+    public function setName($name)
     {
-        $this->symbol = $symbol;
+        $this->name = $name;
     }
 
     /**

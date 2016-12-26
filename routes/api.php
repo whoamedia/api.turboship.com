@@ -23,8 +23,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
     Route::post('/clients', 'ClientController@store');
-    Route::get('/clients/{id}/integrations/shoppingCart', 'ClientController@getIntegratedShoppingCarts');
-    Route::post('/clients/{id}/integrations/shoppingCart', 'ClientController@createIntegratedShoppingCart');
+    Route::get('/clients/{id}/integratedShoppingCarts', 'ClientController@getIntegratedShoppingCarts');
+    Route::post('/clients/{id}/integratedShoppingCarts', 'ClientController@createIntegratedShoppingCart');
     Route::get('/clients/{id}/services', 'ClientController@getServices');
     Route::post('/clients/{id}/services', 'ClientController@addService');
     Route::delete('/clients/{id}/services/{serviceId}', 'ClientController@removeService');
@@ -45,6 +45,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Integration Operations
     Route::get('/integrations', 'IntegrationController@index');
+    Route::get('/integrations/{id}', 'IntegrationController@show');
+    Route::get('/integrations/{id}/credentials', 'IntegrationController@showIntegrationCredentials');
     Route::get('/integrations/{id}/webHooks', 'IntegrationController@getWebHooks');
 
 
@@ -56,6 +58,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Product Operations
     Route::get('/products', 'ProductController@index');
+
+
+    //  Shipper Operations
+    Route::get('/shippers', 'ShipperController@index');
+    Route::get('/shippers/{id}', 'ShipperController@show');
+    Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
+    Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
 
 
     //  Subdivision Operations
