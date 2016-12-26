@@ -25,12 +25,11 @@ class ShopifyOrderController extends BaseShopifyController
     protected $shopifyOrderMappingService;
 
 
-    public function __construct (Request $request)
+    public function __construct ()
     {
-        parent::__construct($request);
+        parent::__construct();
 
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
-        $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
     }
 
 
@@ -38,6 +37,8 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
             $job                            = (new ShopifyImportOrderJob($shopifyOrder, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
@@ -55,6 +56,8 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
             $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
@@ -75,6 +78,8 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
             $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
@@ -94,6 +99,8 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
             $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
@@ -145,6 +152,8 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
             $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 

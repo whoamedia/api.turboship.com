@@ -42,11 +42,14 @@ class BaseShopifyController extends Controller
     protected $shopifyWebHookLog;
 
 
-    public function __construct (Request $request)
+    public function __construct ()
     {
         $this->integratedShoppingCartCartRepo = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
         $this->shopifyWebHookLogRepo    = EntityManager::getRepository('App\Models\Logs\ShopifyWebHookLog');
+    }
 
+    public function handleRequest (Request $request)
+    {
         $integratedShoppingCartCartId   = $request->route('id');
         $this->integratedShoppingCartCart= $this->integratedShoppingCartCartRepo->getOneById($integratedShoppingCartCartId);
         $this->client                   = $this->integratedShoppingCartCart->getClient();
@@ -73,7 +76,7 @@ class BaseShopifyController extends Controller
      * @param   string  $shopifySharedSecret
      * @return  bool
      */
-    private function verifyWebHook (Request $request, $shopifySharedSecret)
+    protected function verifyWebHook (Request $request, $shopifySharedSecret)
     {
         $data                           = file_get_contents('php://input');
 

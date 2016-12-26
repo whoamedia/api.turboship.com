@@ -25,9 +25,8 @@ class ShopifyProductController extends BaseShopifyController
 
     public function __construct (Request $request)
     {
-        parent::__construct($request);
+        parent::__construct();
 
-        $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
         $this->productRepo                  = EntityManager::getRepository('App\Models\OMS\Product');
     }
 
@@ -36,6 +35,8 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
             $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
@@ -70,6 +71,8 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             //  TODO: Figure out deletion
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
@@ -91,6 +94,8 @@ class ShopifyProductController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
             $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
