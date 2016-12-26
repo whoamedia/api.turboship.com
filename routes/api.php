@@ -81,6 +81,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Shopify Operations
     Route::post('/shopify/{id}/orders/download', 'ShopifyController@downloadOrders');
+    Route::post('/shopify/{id}/products/download', 'ShopifyController@downloadProducts');
 
 
     //  Subdivision Operations
