@@ -6,11 +6,10 @@ namespace App\Http\Requests\Shopify;
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
 use App\Http\Requests\BaseRequest;
-use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\BooleanUtil AS BU;
 
-class DownloadShopifyProducts extends GetShopifyProducts implements Cleanable, Validatable, \JsonSerializable
+class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -21,8 +20,6 @@ class DownloadShopifyProducts extends GetShopifyProducts implements Cleanable, V
 
     public function __construct($data = [])
     {
-        parent::__construct($data);
-
         $this->pendingSku               = AU::get($data['pendingSku']);
     }
 
@@ -37,7 +34,8 @@ class DownloadShopifyProducts extends GetShopifyProducts implements Cleanable, V
 
     public function jsonSerialize()
     {
-        $object                         = parent::jsonSerialize();
+        $object['pendingSku']           = $this->pendingSku;
+
         return $object;
     }
 

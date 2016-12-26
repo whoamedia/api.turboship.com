@@ -10,15 +10,17 @@ class ShopifyProductRepository extends BaseShopifyRepository
 {
 
     /**
-     * @param   int $page
-     * @param   int $limit
-     * @param   GetShopifyProducts|null     $getShopifyProducts
+     * @param   int             $page
+     * @param   int             $limit
+     * @param   string|null     $ids
      * @return  \App\Integrations\Shopify\Models\Responses\ShopifyProduct[]
      */
-    public function getImportCandidates ($page = 1, $limit = 250, $getShopifyProducts = null)
+    public function getImportCandidates ($page = 1, $limit = 250, $ids = null)
     {
-        if (is_null($getShopifyProducts))
-            $getShopifyProducts             = new GetShopifyProducts();
+        $getShopifyProducts             = new GetShopifyProducts();
+
+        if (!is_null($ids))
+            $getShopifyProducts->setIds($ids);
 
         $getShopifyProducts->setPage($page);
         $getShopifyProducts->setLimit($limit);

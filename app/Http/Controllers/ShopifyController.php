@@ -76,15 +76,15 @@ class ShopifyController extends BaseIntegratedServiceController
         $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
         $shopifyProductMappingService   = new ShopifyProductMappingService($shoppingCartIntegration->getClient());
         $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
-
+        $externalIds                    = null;
 
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
             $externalIds                = $this->orderItemRepo->getPendingExternalIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
-            $downloadShopifyProducts->setIds(implode(',', $externalIds));
+            $externalIds                = empty($externalIds) ? null : implode(',', $externalIds);
         }
 
-        $shopifyProductsResponse        = $shopifyProductRepo->getImportCandidates(1, 250, $downloadShopifyProducts);
+        $shopifyProductsResponse        = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
         foreach ($shopifyProductsResponse AS $shopifyProduct)
         {
             if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
