@@ -178,6 +178,14 @@ class Shipper implements \JsonSerializable
     }
 
     /**
+     * @param Client $client
+     */
+    public function removeClient (Client $client)
+    {
+        $this->clients->removeElement($client);
+    }
+
+    /**
      * @return IntegratedShippingApi[]
      */
     public function getIntegratedShippingApis ()
