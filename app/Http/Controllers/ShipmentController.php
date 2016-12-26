@@ -37,6 +37,11 @@ class ShipmentController
         $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
     }
 
+
+
+
+
+
     public function createShipmentsJob (Request $request)
     {
         $createShipmentsJob             = new CreateShipmentsJob($request->input());
