@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Shipments\CreateShipmentsJob;
+use App\Http\Requests\Shipments\GetShipments;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -11,7 +12,7 @@ use App\Services\Shipments\CreateShipmentsService;
 use Illuminate\Http\Request;
 use EntityManager;
 
-class ShipmentController
+class ShipmentController extends BaseAuthController
 {
 
     /**
@@ -38,6 +39,15 @@ class ShipmentController
     }
 
 
+    public function index (Request $request)
+    {
+        $getShipments                   = new GetShipments($request->input());
+        $getShipments->setOrganizationIds($this->getAuthUserOrganization()->getId());
+
+        $query                          = $getShipments->jsonSerialize();
+        $shipments                      = $this->shipmentRepo->where($query, false);
+        return response($shipments);
+    }
 
 
 
