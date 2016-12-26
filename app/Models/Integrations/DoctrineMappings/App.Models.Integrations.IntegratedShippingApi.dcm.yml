@@ -1,0 +1,14 @@
+App\Models\Integrations\IntegratedShippingApi:
+  type:               entity
+  table:              IntegratedShippingApi
+  repositoryClass:    App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository
+
+  manyToOne:
+    shipper:
+      targetEntity:   App\Models\Shipments\Shipper
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     integratedShippingApis
+      joinColumn:
+        name:         shipperId
+        referencedColumnName: id

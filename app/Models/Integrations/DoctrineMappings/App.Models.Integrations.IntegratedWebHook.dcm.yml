@@ -1,0 +1,42 @@
+App\Models\Integrations\IntegratedWebHook:
+  type:               entity
+  table:              IntegratedWebHook
+  repositoryClass:    App\Repositories\Doctrine\Integrations\IntegratedWebHookRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'IntegratedWebHook id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       true
+      options:
+        fixed:        false
+        comment:      "IntegratedWebHook externalId"
+
+  manyToOne:
+    integratedService:
+      targetEntity:   IntegratedService
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     integratedWebHooks
+      joinColumn:
+        name:         integratedServiceId
+        referencedColumnName: id
+    integrationWebHook:
+      targetEntity:   IntegrationWebHook
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         integrationWebHookId
+        referencedColumnName: id

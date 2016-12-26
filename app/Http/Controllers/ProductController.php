@@ -26,6 +26,7 @@ class ProductController extends Controller
     public function index (Request $request)
     {
         $getProducts                    = new GetProducts($request->input());
+        $getProducts->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
         $getProducts->validate();
         $getProducts->clean();
 

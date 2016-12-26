@@ -7,8 +7,8 @@ App\Models\Integrations\Integration:
       name:           integrationTypeId
       type:           integer
   discriminatorMap:
-      1:              App\Models\Integrations\ECommerceIntegration
-      2:              App\Models\Integrations\ShippingIntegration
+      1:              App\Models\Integrations\ShoppingCartIntegration
+      2:              App\Models\Integrations\ShippingApiIntegration
 
   id:
     id:
@@ -37,7 +37,7 @@ App\Models\Integrations\Integration:
       targetEntity:   IntegrationCredential
       mappedBy:       integration
       cascade:        ["persist", "remove"]
-    webHooks:
+    integrationWebHooks:
       targetEntity:   IntegrationWebHook
       mappedBy:       integration
       cascade:        ["persist", "remove"]

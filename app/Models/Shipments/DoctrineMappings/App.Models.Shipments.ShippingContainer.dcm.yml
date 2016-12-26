@@ -1,0 +1,71 @@
+App\Models\Shipments\ShippingContainer:
+  type:               entity
+  table:              ShippingContainer
+  repositoryClass:    App\Repositories\Doctrine\Shipments\ShippingContainerRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ShippingContainer id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "ShippingContainer name"
+    length:
+      column:         length
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    width:
+      column:         width
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    height:
+      column:         height
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    weight:
+      column:         weight
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     shippingContainers
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

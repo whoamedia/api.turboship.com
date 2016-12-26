@@ -47,6 +47,7 @@ class ProductRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Product', 'product')
             ->join('product.client', 'client', Query\Expr\Join::ON)
+            ->join('client.organization', 'organization', Query\Expr\Join::ON)
             ->join('product.variants', 'variants', Query\Expr\Join::ON)
             ->join('product.aliases', 'aliases', Query\Expr\Join::ON);
 
@@ -55,6 +56,9 @@ class ProductRepository extends BaseRepository
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['organizationIds'])))
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
         if (!is_null(AU::get($query['variantIds'])))
             $qb->andWhere($qb->expr()->in('variants.id', $query['variantIds']));

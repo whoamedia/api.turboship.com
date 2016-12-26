@@ -84,9 +84,9 @@ App\Models\Logs\ShopifyWebHookLog:
         default:      CURRENT_datetime
 
   manyToOne:
-    clientECommerceIntegration:
-      targetEntity:   App\Models\Integrations\ClientECommerceIntegration
+    integratedShoppingCart:
+      targetEntity:   App\Models\Integrations\IntegratedShoppingCart
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         clientECommerceIntegrationId
+        name:         integratedShoppingCartId

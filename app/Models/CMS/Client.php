@@ -4,9 +4,9 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
-use App\Models\Integrations\ClientECommerceIntegration;
-use App\Models\Integrations\ClientShippingIntegration;
+use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\OMS\Product;
+use App\Models\Shipments\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -36,12 +36,12 @@ class Client extends BaseModel
     /**
      * @var ArrayCollection
      */
-    protected $eCommerceIntegrations;
+    protected $integratedShoppingCarts;
 
     /**
      * @var ArrayCollection
      */
-    protected $shippingIntegrations;
+    protected $services;
 
     /**
      * @var \DateTime
@@ -57,8 +57,8 @@ class Client extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->products                 = new ArrayCollection();
-        $this->eCommerceIntegrations    = new ArrayCollection();
-        $this->shippingIntegrations     = new ArrayCollection();
+        $this->integratedShoppingCarts  = new ArrayCollection();
+        $this->services                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -147,37 +147,53 @@ class Client extends BaseModel
     }
 
     /**
-     * @return ClientECommerceIntegration[]
+     * @return IntegratedShoppingCart[]
      */
-    public function getECommerceIntegrations()
+    public function getIntegratedShoppingCarts()
     {
-        return $this->eCommerceIntegrations->toArray();
+        return $this->integratedShoppingCarts->toArray();
     }
 
     /**
-     * @param ClientECommerceIntegration $clientECommerceIntegration
+     * @param IntegratedShoppingCart $integratedShoppingCart
      */
-    public function addECommerceIntegration(ClientECommerceIntegration $clientECommerceIntegration)
+    public function addIntegratedShoppingCart(IntegratedShoppingCart $integratedShoppingCart)
     {
-        $clientECommerceIntegration->setClient($this);
-        $this->eCommerceIntegrations->add($clientECommerceIntegration);
+        $integratedShoppingCart->setClient($this);
+        $this->integratedShoppingCarts->add($integratedShoppingCart);
     }
 
     /**
-     * @return ClientShippingIntegration[]
+     * @return Service[]
      */
-    public function getShippingIntegrations()
+    public function getServices ()
     {
-        return $this->shippingIntegrations->toArray();
+        return $this->services->toArray();
     }
 
     /**
-     * @param ClientShippingIntegration $clientShippingIntegration
+     * @param Service $service
      */
-    public function addClientShippingIntegration (ClientShippingIntegration $clientShippingIntegration)
+    public function addService (Service $service)
     {
-        $clientShippingIntegration->setClient($this);
-        $this->shippingIntegrations->add($clientShippingIntegration);
+        $this->services->add($service);
+    }
+
+    /**
+     * @param   Service $service
+     * @return  bool
+     */
+    public function hasService (Service $service)
+    {
+        return $this->services->contains($service);
+    }
+
+    /**
+     * @param Service $service
+     */
+    public function removeService (Service $service)
+    {
+        $this->services->removeElement($service);
     }
 
 }

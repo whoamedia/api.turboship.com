@@ -1,0 +1,14 @@
+App\Models\Integrations\IntegratedShoppingCart:
+  type:               entity
+  table:              IntegratedShoppingCart
+  repositoryClass:    App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository
+
+  manyToOne:
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     integratedShoppingCarts
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id

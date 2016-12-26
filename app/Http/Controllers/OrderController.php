@@ -33,6 +33,7 @@ class OrderController extends Controller
     public function index (Request $request)
     {
         $getOrders                      = new GetOrders($request->input());
+        $getOrders->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
         $getOrders->validate();
         $getOrders->clean();
 

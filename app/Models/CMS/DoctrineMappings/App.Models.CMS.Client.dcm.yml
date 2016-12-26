@@ -46,11 +46,21 @@ App\Models\CMS\Client:
       targetEntity:   App\Models\OMS\Product
       mappedBy:       client
       cascade:        ["persist", "remove"]
-    eCommerceIntegrations:
-      targetEntity:   App\Models\Integrations\ClientECommerceIntegration
+    integratedShoppingCarts:
+      targetEntity:   App\Models\Integrations\IntegratedShoppingCart
       mappedBy:       client
       cascade:        ["persist", "remove"]
-    shippingIntegrations:
-      targetEntity:   App\Models\Integrations\ClientShippingIntegration
-      mappedBy:       client
+
+  manyToMany:
+    services:
+      fetch:          LAZY
+      targetEntity:   App\Models\Shipments\Service
       cascade:        ["persist", "remove"]
+      joinTable:
+        name:         ClientService
+        joinColumns:
+          clientId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          serviceId:
+            referencedColumnName: id

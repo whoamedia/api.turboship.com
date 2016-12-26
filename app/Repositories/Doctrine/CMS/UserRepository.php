@@ -46,13 +46,17 @@ class UserRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\CMS\User', 'user')
-            ->join('user.organization', 'organization', Query\Expr\Join::ON);
+            ->join('user.organization', 'organization', Query\Expr\Join::ON)
+            ->leftJoin('user.client', 'client', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('user.id', $query['ids']));
 
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
+
+        if (!is_null(AU::get($query['clientIds'])))
+            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
 
         if (!is_null(AU::get($query['firstNames'])))
         {

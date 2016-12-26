@@ -32,13 +32,13 @@ abstract class Integration implements \JsonSerializable
     /**
      * @var ArrayCollection
      */
-    protected $webHooks;
+    protected $integrationWebHooks;
 
 
     public function __construct($data = [])
     {
         $this->integrationCredentials   = new ArrayCollection();
-        $this->webHooks                 = new ArrayCollection();
+        $this->integrationWebHooks      = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
     }
@@ -50,6 +50,7 @@ abstract class Integration implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
+        $object['object']               = $this->getObject();
 
         return $object;
     }
@@ -107,18 +108,18 @@ abstract class Integration implements \JsonSerializable
     /**
      * @return IntegrationWebHook[]
      */
-    public function getWebHooks ()
+    public function getIntegrationWebHooks ()
     {
-        return $this->webHooks->toArray();
+        return $this->integrationWebHooks->toArray();
     }
 
     /**
      * @param   IntegrationWebHook $integrationWebHook
      * @return  bool
      */
-    public function hasWebHook (IntegrationWebHook $integrationWebHook)
+    public function hasIntegrationWebHook (IntegrationWebHook $integrationWebHook)
     {
-        return $this->webHooks->contains($integrationWebHook);
+        return $this->integrationWebHooks->contains($integrationWebHook);
     }
 
     /**
@@ -127,7 +128,7 @@ abstract class Integration implements \JsonSerializable
     public function addIntegrationWebHook (IntegrationWebHook $integrationWebHook)
     {
         $integrationWebHook->setIntegration($this);
-        $this->webHooks->add($integrationWebHook);
+        $this->integrationWebHooks->add($integrationWebHook);
     }
 
     /**

@@ -47,6 +47,13 @@ App\Models\Shipments\Shipment:
       joinColumn:
         name:         toAddressId
         referencedColumnName: id
+    returnAddress:
+      targetEntity:   App\Models\Locations\Address
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         returnAddressId
+        referencedColumnName: id
     service:
       targetEntity:   Service
       nullable:       false
@@ -60,6 +67,13 @@ App\Models\Shipments\Shipment:
       fetch:          EAGER
       joinColumn:
         name:         postageId
+        referencedColumnName: id
+    shippingContainer:
+      targetEntity:   ShippingContainer
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         shippingContainerId
         referencedColumnName: id
 
   oneToMany:

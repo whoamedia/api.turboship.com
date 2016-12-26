@@ -3,17 +3,17 @@
 
 use Illuminate\Database\Seeder;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
-use App\Models\Integrations\ShippingIntegration;
+use App\Models\Integrations\ShippingApiIntegration;
 use App\Models\Integrations\IntegrationCredential;
-use App\Models\Integrations\ShippingIntegrationCarrier;
+use App\Models\Integrations\ShippingApiIntegrationCarrier;
 use App\Utilities\CarrierUtility;
 use App\Utilities\ServiceUtility;
-use App\Models\Integrations\ShippingIntegrationService;
+use App\Models\Integrations\ShippingApiIntegrationService;
 
 
 /**
  * @see https://www.easypost.com/service-levels-and-parcels.html
- * Class EasyPostServiceSeeder
+ * Class EasyPostShippingApiIntegrationSeeder
  */
 class EasyPostShippingIntegrationSeeder extends Seeder
 {
@@ -29,29 +29,29 @@ class EasyPostShippingIntegrationSeeder extends Seeder
     private $serviceRepo;
 
     /**
-     * @var \App\Repositories\Doctrine\Integrations\ShippingIntegrationRepository
+     * @var \App\Repositories\Doctrine\Integrations\ShippingApiIntegrationRepository
      */
     private $shippingIntegrationRepo;
 
     /**
-     * @var ShippingIntegration
+     * @var ShippingApiIntegration
      */
-    private $easyPostShippingIntegration;
+    private $easyPostShippingApiIntegration;
 
     public function run()
     {
         $this->carrierRepo                  = EntityManager::getRepository('App\Models\Shipments\Carrier');
         $this->serviceRepo                  = EntityManager::getRepository('App\Models\Shipments\Service');
-        $this->shippingIntegrationRepo      = EntityManager::getRepository('App\Models\Integrations\ShippingIntegration');
+        $this->shippingIntegrationRepo      = EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
 
-        $this->easyPostShippingIntegration  = new ShippingIntegration();
-        $this->easyPostShippingIntegration->setName('EasyPost');
+        $this->easyPostShippingApiIntegration  = new ShippingApiIntegration();
+        $this->easyPostShippingApiIntegration->setName('EasyPost');
 
 
         $easyPostApiKey                     = new IntegrationCredential();
         $easyPostApiKey->setName('apiKey');
         $easyPostApiKey->setIsRequired(true);
-        $this->easyPostShippingIntegration->addIntegrationCredential($easyPostApiKey);
+        $this->easyPostShippingApiIntegration->addIntegrationCredential($easyPostApiKey);
 
         $this->easyPostUSPS();
         $this->easyPostUPS();
@@ -59,7 +59,7 @@ class EasyPostShippingIntegrationSeeder extends Seeder
         $this->easyPostDHLGlobalMail();
         $this->easyPostFedEx();
 
-        $this->shippingIntegrationRepo->saveAndCommit($this->easyPostShippingIntegration);
+        $this->shippingIntegrationRepo->saveAndCommit($this->easyPostShippingApiIntegration);
     }
 
 
@@ -68,12 +68,12 @@ class EasyPostShippingIntegrationSeeder extends Seeder
         /**
          * USPS
          */
-        $easyPostUSPS                       = new ShippingIntegrationCarrier();
+        $easyPostUSPS                       = new ShippingApiIntegrationCarrier();
         $easyPostUSPS->setName('USPS');
         $easyPostUSPS->setCarrier($this->carrierRepo->getOneById(CarrierUtility::USPS));
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_FIRST_CLASS),
                     'name'          => 'First',
@@ -81,8 +81,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_PRIORITY_MAIL),
                     'name'          => 'Priority',
@@ -90,8 +90,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_PRIORITY_MAIL_EXPRESS),
                     'name'          => 'Express',
@@ -99,8 +99,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_PARCEL_SELECT),
                     'name'          => 'ParcelSelect',
@@ -108,8 +108,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_LIBRARY_MAIL),
                     'name'          => 'LibraryMail',
@@ -117,8 +117,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_MEDIA_MAIL),
                     'name'          => 'MediaMail',
@@ -126,8 +126,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_CRITICAL_MAIL),
                     'name'          => 'CriticalMail',
@@ -135,8 +135,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_FIRST_CLASS_INTERNATIONAL),
                     'name'          => 'FirstClassMailInternational',
@@ -144,8 +144,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_FIRST_CLASS_PACKAGE_INTERNATIONAL),
                     'name'          => 'FirstClassPackageInternationalService',
@@ -153,8 +153,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_PRIORITY_MAIL_INTERNATIONAL),
                     'name'          => 'PriorityMailInternational',
@@ -162,8 +162,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUSPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUSPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::USPS_EXPRESS_MAIL_INTERNATIONAL),
                     'name'          => 'ExpressMailInternational',
@@ -171,105 +171,105 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $this->easyPostShippingIntegration->addShippingIntegrationCarrier($easyPostUSPS);
+        $this->easyPostShippingApiIntegration->addShippingApiIntegrationCarrier($easyPostUSPS);
     }
 
     private function easyPostUPS ()
     {
-        $easyPostUPS                        = new ShippingIntegrationCarrier();
+        $easyPostUPS                        = new ShippingApiIntegrationCarrier();
         $easyPostUPS->setName('UPS');
         $easyPostUPS->setCarrier($this->carrierRepo->getOneById(CarrierUtility::UPS));
 
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_GROUND),
                     'name'          => 'Ground',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_UPS_STANDARD),
                     'name'          => 'UPSStandard',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_UPS_SAVER),
                     'name'          => 'UPSSaver',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_EXPRESS),
                     'name'          => 'Express',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_EXPRESS_PLUS),
                     'name'          => 'ExpressPlus',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_EXPEDITED),
                     'name'          => 'Expedited',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_NEXT_DAY_AIR),
                     'name'          => 'NextDayAir',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_NEXT_DAY_AIR_SAVER),
                     'name'          => 'NextDayAirSaver',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_NEXT_DAY_AIR_EARLY_AM),
                     'name'          => 'NextDayAirEarlyAM',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_2ND_DAY_AIR),
                     'name'          => '2ndDayAir',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_2ND_DAY_AIR_AM),
                     'name'          => '2ndDayAirAM',
                 ]
             )
         );
-        $easyPostUPS->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPS->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_3_DAY_SELECT),
                     'name'          => '3DaySelect',
@@ -277,17 +277,17 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $this->easyPostShippingIntegration->addShippingIntegrationCarrier($easyPostUPS);
+        $this->easyPostShippingApiIntegration->addShippingApiIntegrationCarrier($easyPostUPS);
     }
 
     private function easyPostUPSMailInnovations ()
     {
-        $easyPostUPSMailInnovations = new ShippingIntegrationCarrier();
+        $easyPostUPSMailInnovations = new ShippingApiIntegrationCarrier();
         $easyPostUPSMailInnovations->setName('UPS Mail Innovations');
         $easyPostUPSMailInnovations->setCarrier($this->carrierRepo->getOneById(CarrierUtility::UPS_MAIL_INNOVATIONS));
 
-        $easyPostUPSMailInnovations->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPSMailInnovations->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_MAIL_INNOVATIONS_FIRST),
                     'name'          => 'First',
@@ -295,8 +295,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUPSMailInnovations->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPSMailInnovations->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_MAIL_INNOVATIONS_PRIORITY),
                     'name'          => 'Priority',
@@ -304,8 +304,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUPSMailInnovations->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPSMailInnovations->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_MAIL_INNOVATIONS_EXPEDITED_MAIL_INNOVATIONS),
                     'name'          => 'ExpeditedMailInnovations',
@@ -313,8 +313,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUPSMailInnovations->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPSMailInnovations->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_MAIL_INNOVATIONS_PRIORITY_MAIL_INNOVATIONS),
                     'name'          => 'PriorityMailInnovations',
@@ -322,8 +322,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostUPSMailInnovations->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostUPSMailInnovations->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::UPS_MAIL_INNOVATIONS_ECONOMY_MAIL_INNOVATIONS),
                     'name'          => 'EconomyMailInnovations',
@@ -331,17 +331,17 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $this->easyPostShippingIntegration->addShippingIntegrationCarrier($easyPostUPSMailInnovations);
+        $this->easyPostShippingApiIntegration->addShippingApiIntegrationCarrier($easyPostUPSMailInnovations);
     }
 
     private function easyPostDHLGlobalMail ()
     {
-        $easyPostDHLGlobalMail      = new ShippingIntegrationCarrier();
+        $easyPostDHLGlobalMail      = new ShippingApiIntegrationCarrier();
         $easyPostDHLGlobalMail->setName('DHL Global Mail');
         $easyPostDHLGlobalMail->setCarrier($this->carrierRepo->getOneById(CarrierUtility::DHL_GLOBAL_MAIL));
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_BPM_EXPEDITED_DOMESTIC),
                     'name'          => 'BPMExpeditedDomestic',
@@ -349,8 +349,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_BPM_GROUND_DOMESTIC),
                     'name'          => 'BPMGroundDomestic',
@@ -358,8 +358,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_FLATS_EXPEDITED_DOMESTIC),
                     'name'          => 'FlatsExpeditedDomestic',
@@ -367,8 +367,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_FLATS_GROUND_DOMESTIC),
                     'name'          => 'FlatsGroundDomestic',
@@ -376,8 +376,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_MEDIA_MAIL_GROUND_DOMESTIC),
                     'name'          => 'MediaMailGroundDomestic',
@@ -385,8 +385,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_PLUS_EXPEDITED_DOMESTIC),
                     'name'          => 'ParcelPlusExpeditedDomestic',
@@ -394,8 +394,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_PLUS_GROUND_DOMESTIC),
                     'name'          => 'ParcelPlusGroundDomestic',
@@ -403,8 +403,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_EXPEDITED_DOMESTIC),
                     'name'          => 'ParcelsExpeditedDomestic',
@@ -412,8 +412,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_PARCEL_GROUND_DOMESTIC),
                     'name'          => 'ParcelsGroundDomestic',
@@ -421,8 +421,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_MARKETING_PARCEL_EXPEDITED_DOMESTIC),
                     'name'          => 'MarketingParcelExpeditedDomestic',
@@ -430,8 +430,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostDHLGlobalMail->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostDHLGlobalMail->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::DHL_GLOBAL_MAIL_MARKETING_PARCEL_GROUND_DOMESTIC),
                     'name'          => 'MarketingParcelGroundDomestic',
@@ -440,17 +440,17 @@ class EasyPostShippingIntegrationSeeder extends Seeder
         );
 
 
-        $this->easyPostShippingIntegration->addShippingIntegrationCarrier($easyPostDHLGlobalMail);
+        $this->easyPostShippingApiIntegration->addShippingApiIntegrationCarrier($easyPostDHLGlobalMail);
     }
 
     private function easyPostFedEx ()
     {
-        $easyPostFedEx              = new ShippingIntegrationCarrier();
+        $easyPostFedEx              = new ShippingApiIntegrationCarrier();
         $easyPostFedEx->setName('FedEx');
         $easyPostFedEx->setCarrier($this->carrierRepo->getOneById(CarrierUtility::FEDEX));
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_GROUND),
                     'name'          => 'FEDEX_GROUND',
@@ -458,8 +458,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_2_DAY),
                     'name'          => 'FEDEX_2_DAY',
@@ -467,8 +467,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_2_DAY_AM),
                     'name'          => 'FEDEX_2_DAY_AM',
@@ -476,8 +476,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_EXPRESS_SAVER),
                     'name'          => 'FEDEX_EXPRESS_SAVER',
@@ -485,8 +485,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_STANDARD_OVERNIGHT),
                     'name'          => 'STANDARD_OVERNIGHT',
@@ -494,8 +494,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_FIRST_OVERNIGHT),
                     'name'          => 'FIRST_OVERNIGHT',
@@ -503,8 +503,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_PRIORITY_OVERNIGHT),
                     'name'          => 'PRIORITY_OVERNIGHT',
@@ -512,8 +512,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_INTERNATIONAL_ECONOMY),
                     'name'          => 'INTERNATIONAL_ECONOMY',
@@ -521,8 +521,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_INTERNATIONAL_FIRST),
                     'name'          => 'INTERNATIONAL_FIRST',
@@ -530,8 +530,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_INTERNATIONAL_PRIORITY),
                     'name'          => 'INTERNATIONAL_PRIORITY',
@@ -539,8 +539,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_GROUND_HOME_DELIVERY),
                     'name'          => 'GROUND_HOME_DELIVERY',
@@ -548,8 +548,8 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $easyPostFedEx->addShippingIntegrationService(
-            new ShippingIntegrationService(
+        $easyPostFedEx->addShippingApiIntegrationService(
+            new ShippingApiIntegrationService(
                 [
                     'service'       => $this->serviceRepo->getOneById(ServiceUtility::FEDEX_SMART_POST),
                     'name'          => 'SMART_POST',
@@ -557,7 +557,7 @@ class EasyPostShippingIntegrationSeeder extends Seeder
             )
         );
 
-        $this->easyPostShippingIntegration->addShippingIntegrationCarrier($easyPostFedEx);
+        $this->easyPostShippingApiIntegration->addShippingApiIntegrationCarrier($easyPostFedEx);
     }
 
 }

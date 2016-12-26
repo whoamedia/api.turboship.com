@@ -5,7 +5,7 @@ namespace App\Repositories\Shopify;
 
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
-use App\Models\Integrations\ClientIntegration;
+use App\Models\Integrations\IntegratedShoppingCart;
 use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Integrations\Shopify\ShopifyConfiguration;
 use App\Integrations\Shopify\ShopifyIntegration;
@@ -26,9 +26,9 @@ class BaseShopifyRepository
     protected $client;
 
     /**
-     * @var ClientIntegration
+     * @var IntegratedShoppingCart
      */
-    protected $clientIntegration;
+    protected $integratedShoppingCart;
 
     /**
      * @var ClientRepository
@@ -38,21 +38,21 @@ class BaseShopifyRepository
 
     /**
      * BaseShopifyRepository constructor.
-     * @param ClientIntegration             $clientIntegration
+     * @param IntegratedShoppingCart        $integratedShoppingCart
      * @param ShopifyIntegration|null       $shopifyIntegration
      */
-    public function __construct(ClientIntegration $clientIntegration, $shopifyIntegration = null)
+    public function __construct(IntegratedShoppingCart $integratedShoppingCart, $shopifyIntegration = null)
     {
         $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->clientValidation         = new ClientValidation($this->clientRepo);
-        $this->clientIntegration        = $clientIntegration;
-        $this->client                   = $this->clientIntegration->getClient();
+        $this->integratedShoppingCart        = $integratedShoppingCart;
+        $this->client                   = $this->integratedShoppingCart->getClient();
 
         if (!is_null($shopifyIntegration))
             $this->shopifyIntegration   = $shopifyIntegration;
         else
         {
-            $credentialService          = new CredentialService($this->clientIntegration);
+            $credentialService          = new CredentialService($this->integratedShoppingCart);
             $apiKey                     = $credentialService->getShopifyApiKey()->getValue();
             $password                   = $credentialService->getShopifyPassword()->getValue();
             $hostName                   = $credentialService->getShopifyHostName()->getValue();
@@ -62,7 +62,7 @@ class BaseShopifyRepository
             $shopifyConfiguration->setPassword($password);
             $shopifyConfiguration->setHostName($hostName);
 
-            $this->shopifyIntegration       = new ShopifyIntegration($shopifyConfiguration);
+            $this->shopifyIntegration   = new ShopifyIntegration($shopifyConfiguration);
         }
     }
 

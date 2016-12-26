@@ -28,12 +28,13 @@ class DatabaseSeeder extends Seeder
          */
         $this->call(CarrierSeeder::class);
         $this->call(ServiceSeeder::class);
+        $this->call(ShipmentAlgorithmSeeder::class);
 
 
         /**
          * Integrations
          */
-        $this->call(ShopifyECommerceIntegrationSeeder::class);
+        $this->call(ShopifyShoppingCartIntegrationSeeder::class);
         $this->call(EasyPostShippingIntegrationSeeder::class);
 
 

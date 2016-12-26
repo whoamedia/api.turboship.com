@@ -25,8 +25,6 @@ class CreateClientTable extends Migration
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index()->default(1);
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
-
-            $table->unique(['name', 'organizationId']);
         });
 
 

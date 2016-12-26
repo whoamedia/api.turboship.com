@@ -34,6 +34,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
+    protected $organizationIds;
+
+    /**
+     * @var string|null
+     */
     protected $statusIds;
 
     /**
@@ -52,6 +57,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->itemIds                  = AU::get($data['itemIds']);
         $this->crmSourceIds             = AU::get($data['crmSourceIds']);
         $this->clientIds                = AU::get($data['clientIds']);
+        $this->organizationIds          = AU::get($data['organizationIds']);
         $this->statusIds                = AU::get($data['statusIds']);
         $this->externalIds              = AU::get($data['externalIds']);
         $this->itemSkus                 = AU::get($data['itemSkus']);
@@ -62,6 +68,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->ids                      = $this->validateIds($this->ids, 'ids');
         $this->itemIds                  = $this->validateIds($this->itemIds, 'itemIds');
         $this->clientIds                = $this->validateIds($this->clientIds, 'clientIds');
+        $this->organizationIds          = $this->validateIds($this->organizationIds, 'organizationIds');
         $this->statusIds                = $this->validateIds($this->statusIds, 'statusIds');
     }
 
@@ -77,6 +84,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     {
         $object['ids']                  = $this->ids;
         $object['clientIds']            = $this->clientIds;
+        $object['organizationIds']      = $this->organizationIds;
         $object['itemIds']              = $this->itemIds;
         $object['crmSourceIds']         = $this->crmSourceIds;
         $object['statusIds']            = $this->statusIds;
@@ -148,6 +156,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setClientIds($clientIds)
     {
         $this->clientIds = $clientIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOrganizationIds()
+    {
+        return $this->organizationIds;
+    }
+
+    /**
+     * @param null|string $organizationIds
+     */
+    public function setOrganizationIds($organizationIds)
+    {
+        $this->organizationIds = $organizationIds;
     }
 
     /**

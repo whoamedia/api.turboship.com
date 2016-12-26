@@ -27,6 +27,11 @@ class Shipment implements \JsonSerializable
     protected $toAddress;
 
     /**
+     * @var Address
+     */
+    protected $returnAddress;
+
+    /**
      * @var Service
      */
     protected $service;
@@ -47,6 +52,11 @@ class Shipment implements \JsonSerializable
     protected $postage;
 
     /**
+     * @var ShippingContainer|null
+     */
+    protected $shippingContainer;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -59,9 +69,11 @@ class Shipment implements \JsonSerializable
 
         $this->fromAddress              = AU::get($data['fromAddress']);
         $this->toAddress                = AU::get($data['toAddress']);
+        $this->returnAddress            = AU::get($data['returnAddress']);
         $this->service                  = AU::get($data['service']);
         $this->weight                   = AU::get($data['weight']);
         $this->postage                  = AU::get($data['postage']);
+        $this->shippingContainer        = AU::get($data['shippingContainer']);
     }
 
     /**
@@ -72,9 +84,11 @@ class Shipment implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['fromAddress']          = $this->fromAddress->jsonSerialize();
         $object['toAddress']            = $this->toAddress->jsonSerialize();
+        $object['returnAddress']        = $this->returnAddress->jsonSerialize();
         $object['service']              = $this->service->jsonSerialize();
         $object['weight']               = $this->weight;
         $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
+        $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
 
         return $object;
@@ -126,6 +140,22 @@ class Shipment implements \JsonSerializable
     public function setToAddress($toAddress)
     {
         $this->toAddress = $toAddress;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getReturnAddress()
+    {
+        return $this->returnAddress;
+    }
+
+    /**
+     * @param Address $returnAddress
+     */
+    public function setReturnAddress($returnAddress)
+    {
+        $this->returnAddress = $returnAddress;
     }
 
     /**
@@ -191,6 +221,22 @@ class Shipment implements \JsonSerializable
     public function setPostage($postage)
     {
         $this->postage = $postage;
+    }
+
+    /**
+     * @return ShippingContainer|null
+     */
+    public function getShippingContainer()
+    {
+        return $this->shippingContainer;
+    }
+
+    /**
+     * @param ShippingContainer|null $shippingContainer
+     */
+    public function setShippingContainer($shippingContainer)
+    {
+        $this->shippingContainer = $shippingContainer;
     }
 
     /**

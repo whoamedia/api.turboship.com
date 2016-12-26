@@ -15,6 +15,7 @@ use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Hash;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends Controller
 {
@@ -30,10 +31,16 @@ class UserController extends Controller
     private $userValidation;
 
     /**
+     * @var User
+     */
+    private $authUser;
+
+    /**
      * UserController constructor.
      */
-    public function __construct ()
+    public function __construct (Request $request)
     {
+        $this->authUser                 = \Auth::getUser();
         $this->userRepo                 = EntityManager::getRepository('App\Models\CMS\User');
         $this->userValidation           = new UserValidation($this->userRepo);
     }
@@ -45,10 +52,8 @@ class UserController extends Controller
      */
     public function index (Request $request)
     {
-        $authUser                       = \Auth::getUser();
-
         $getUsersRequest                = new GetUsersRequest($request->input());
-        $getUsersRequest->setOrganizationIds($authUser->getOrganization()->getId());
+        $getUsersRequest->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
         $getUsersRequest->validate();
         $getUsersRequest->clean();
 
@@ -79,6 +84,9 @@ class UserController extends Controller
         $showUserRequest->clean();
 
         $user                           = $this->userValidation->idExists($showUserRequest->getId(), true);
+
+        if (\Auth::getUser()->getOrganization()->getId() != $user->getOrganization()->getId())
+            throw new NotFoundHttpException('User not found');
 
         return response($user);
     }
