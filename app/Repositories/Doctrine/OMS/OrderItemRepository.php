@@ -92,7 +92,7 @@ class OrderItemRepository extends BaseRepository
      * @param   string|int      $crmSourceIds
      * @return  string[]
      */
-    public function getPendingExternalIds ($clientIds, $crmSourceIds)
+    public function getPendingExternalProductIds ($clientIds, $crmSourceIds)
     {
         $query  = [
             'clientIds'             => $clientIds,
@@ -101,7 +101,7 @@ class OrderItemRepository extends BaseRepository
         ];
 
         $qb                         = $this->_em->createQueryBuilder();
-        $qb->select(['distinct orderItem.externalId']);
+        $qb->select(['distinct orderItem.externalProductId']);
         $qb                         = $this->buildQueryConditions($qb, $query);
         $orderItemResults           = $qb->getQuery()->getResult();
 
