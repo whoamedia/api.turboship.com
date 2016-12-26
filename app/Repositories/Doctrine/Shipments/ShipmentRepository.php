@@ -97,6 +97,13 @@ class ShipmentRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
+        if (!is_null(AU::get($query['toAddressCountryIds'])))
+        {
+            $qb->leftJoin('shipment.toAddress', 'toAddress', Query\Expr\Join::ON)
+                ->leftJoin('toAddress.country', 'toCountry', Query\Expr\Join::ON)
+                ->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
+        }
+
         if (!is_null(AU::get($query['createdFrom'])))
             $qb->andWhere($qb->expr()->gte('shipment.createdAt', $query['createdFrom']));
 
