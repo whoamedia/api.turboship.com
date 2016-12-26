@@ -15,14 +15,14 @@ abstract class IntegratedService implements \JsonSerializable
     protected $id;
 
     /**
+     * @var string;
+     */
+    protected $name;
+
+    /**
      * @var Integration
      */
     protected $integration;
-
-    /**
-     * @var string
-     */
-    protected $symbol;
 
     /**
      * @var \DateTime
@@ -50,8 +50,8 @@ abstract class IntegratedService implements \JsonSerializable
         $this->credentials              = new ArrayCollection();
         $this->integratedWebHooks       = new ArrayCollection();
 
+        $this->name                     = AU::get($data['name']);
         $this->integration              = AU::get($data['integration']);
-        $this->symbol                   = AU::get($data['symbol']);
     }
 
     /**
@@ -60,8 +60,8 @@ abstract class IntegratedService implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['name']                 = $this->name;
         $object['integration']          = $this->integration->jsonSerialize();
-        $object['symbol']               = $this->symbol;
         $object['createdAt']            = $this->createdAt;
 
         $object['credentials']          = [];
@@ -90,6 +90,22 @@ abstract class IntegratedService implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return Integration
      */
     public function getIntegration()
@@ -103,22 +119,6 @@ abstract class IntegratedService implements \JsonSerializable
     public function setIntegration($integration)
     {
         $this->integration = $integration;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSymbol()
-    {
-        return $this->symbol;
-    }
-
-    /**
-     * @param string $symbol
-     */
-    public function setSymbol($symbol)
-    {
-        $this->symbol = $symbol;
     }
 
     /**

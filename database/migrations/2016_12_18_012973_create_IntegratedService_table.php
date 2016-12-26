@@ -16,6 +16,7 @@ class CreateIntegratedServiceTable extends Migration
         Schema::create('IntegratedService', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
+            $table->string('name');
 
             $table->integer('integratedServiceTypeId')->unsigned()->index();
 

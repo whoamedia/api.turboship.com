@@ -119,7 +119,7 @@ class WhoaMediaSeeder extends Seeder
     private function shopify ()
     {
         $integratedShoppingCart      = new IntegratedShoppingCart();
-        $integratedShoppingCart->setSymbol('WHOA_MEDIA_SHOPIFY');
+        $integratedShoppingCart->setName('Whoa Media Shopify');
         $integratedShoppingCart->setClient($this->client);
 
         $shopifyIntegration     = $this->integrationRepo->getOneById(IntegrationUtility::SHOPIFY_ID);
@@ -321,7 +321,7 @@ class WhoaMediaSeeder extends Seeder
     private function easyPost ()
     {
         $integratedShipping     = new \App\Models\Integrations\IntegratedShippingApi();
-        $integratedShipping->setSymbol('WHOA_MEDIA_EASYPOST');
+        $integratedShipping->setName('Whoa Media EasyPost');
         $integratedShipping->setShipper($this->shipper);
 
         $easyPostIntegration    = $this->integrationRepo->getOneById(IntegrationUtility::EASYPOST_ID);

@@ -23,6 +23,12 @@ App\Models\Integrations\IntegratedService:
         strategy:     IDENTITY
 
   fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      options:
+        comment:      "IntegratedService name"
     createdAt:
       column:         createdAt
       type:           datetime

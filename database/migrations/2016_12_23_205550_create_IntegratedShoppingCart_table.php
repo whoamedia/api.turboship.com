@@ -19,10 +19,6 @@ class CreateIntegratedShoppingCartTable extends Migration
 
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
-
-            $table->string('symbol')->index();
-
-            $table->unique(['clientId', 'symbol']);
         });
     }
 

@@ -19,10 +19,6 @@ class CreateIntegratedShippingApiTable extends Migration
 
             $table->integer('shipperId')->unsigned()->index();
             $table->foreign('shipperId')->references('id')->on('Shipper');
-
-            $table->string('symbol')->index();
-
-            $table->unique(['shipperId', 'symbol']);
         });
     }
 

@@ -14,7 +14,7 @@ class IntegratedWebHook implements \JsonSerializable
     protected $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $externalId;
 
@@ -65,7 +65,7 @@ class IntegratedWebHook implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getExternalId()
     {
@@ -73,7 +73,7 @@ class IntegratedWebHook implements \JsonSerializable
     }
 
     /**
-     * @param string $externalId
+     * @param null|string $externalId
      */
     public function setExternalId($externalId)
     {
