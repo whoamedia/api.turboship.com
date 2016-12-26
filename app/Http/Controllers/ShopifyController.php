@@ -100,13 +100,21 @@ class ShopifyController extends BaseIntegratedServiceController
         }
         else
         {
-            $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250);
-            foreach ($shopifyProductsResponse AS $shopifyProduct)
+            $total                      = $shopifyProductRepo->getImportCandidatesCount();
+            $totalPages                 = (int)ceil($total / 250);
+            dd($totalPages);
+            for ($currentPage = 1; $currentPage < $totalPages; $currentPage++)
             {
-                if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
-                    continue;
-                $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
-                $this->productRepo->saveAndCommit($product);
+                set_time_limit(30);
+                $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
+                foreach ($shopifyProductsResponse AS $shopifyProduct)
+                {
+                    if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
+                        continue;
+                    $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
+                    $this->productRepo->saveAndCommit($product);
+                    usleep(250000);
+                }
             }
         }
 
