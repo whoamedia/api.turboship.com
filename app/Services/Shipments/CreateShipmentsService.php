@@ -85,6 +85,7 @@ class CreateShipmentsService
 
                 $shipmentItem           = new ShipmentItem();
                 $shipmentItem->setQuantity($orderItem->getQuantityToFulfill());
+                $shipmentItem->setOrderItem($orderItem);
                 //  $orderItem->addShipmentItem($shipmentItem, $orderItem->getQuantityToFulfill());
                 $shipment->addItem($shipmentItem);
                 $shipments[]            = $shipment;
