@@ -83,6 +83,7 @@ class ShopifyController extends BaseIntegratedServiceController
             $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
             foreach ($externalIdsResponse AS $externalId)
             {
+                set_time_limit(5);
                 $shopifyProduct         = $shopifyProductRepo->show($externalId);
                 if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
                     continue;
