@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Jobs\Shopify\ShopifyImportOrderJob;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
@@ -38,27 +39,8 @@ class ShopifyOrderController extends BaseShopifyController
         try
         {
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-
-            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
-
-            $entityCreated                  = is_null($order->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            $orderApprovalService           = new OrderApprovalService();
-            $orderApprovalService->processOrder($order);
-
-            $this->orderRepo->saveAndCommit($order);
-
-            $this->shopifyWebHookLog->setEntityId($order->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyImportOrderJob($shopifyOrder, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
