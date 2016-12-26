@@ -54,6 +54,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
+    protected $shippingContainerIds;
+
+    /**
+     * @var string|null
+     */
     protected $shipmentStatus;
 
     /**
@@ -71,6 +76,16 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
      */
     protected $createdTo;
 
+    /**
+     * @var string
+     */
+    protected $orderBy;
+
+    /**
+     * @var string
+     */
+    protected $direction;
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
@@ -81,10 +96,13 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->serviceIds               = AU::get($data['serviceIds']);
         $this->carrierIds               = AU::get($data['carrierIds']);
+        $this->shippingContainerIds     = AU::get($data['shippingContainerIds']);
         $this->shipmentStatus           = AU::get($data['shipmentStatus']);
         $this->trackingNumbers          = AU::get($data['trackingNumbers']);
         $this->createdFrom              = AU::get($data['createdFrom']);
         $this->createdTo                = AU::get($data['createdTo']);
+        $this->orderBy                  = AU::get($data['orderBy'], 'shipment.id');
+        $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
     public function validate()
@@ -97,9 +115,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
         $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
+        $this->shippingContainerIds     = parent::validateIds($this->shippingContainerIds, 'shippingContainerIds');
         $this->shipmentStatus           = parent::validateShipmentStatus($this->shipmentStatus, 'shipmentStatus');
         $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
+        $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
     public function clean ()
@@ -120,10 +140,13 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $object['organizationIds']      = $this->organizationIds;
         $object['serviceIds']           = $this->serviceIds;
         $object['carrierIds']           = $this->carrierIds;
+        $object['shippingContainerIds'] = $this->shippingContainerIds;
         $object['shipmentStatus']       = $this->shipmentStatus;
         $object['trackingNumbers']      = $this->trackingNumbers;
         $object['createdFrom']          = $this->createdFrom;
         $object['createdTo']            = $this->createdTo;
+        $object['orderBy']              = $this->orderBy;
+        $object['direction']            = $this->direction;
 
         return $object;
     }
@@ -259,6 +282,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @return null|string
      */
+    public function getShippingContainerIds()
+    {
+        return $this->shippingContainerIds;
+    }
+
+    /**
+     * @param null|string $shippingContainerIds
+     */
+    public function setShippingContainerIds($shippingContainerIds)
+    {
+        $this->shippingContainerIds = $shippingContainerIds;
+    }
+
+    /**
+     * @return null|string
+     */
     public function getShipmentStatus()
     {
         return $this->shipmentStatus;
@@ -318,6 +357,38 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setCreatedTo($createdTo)
     {
         $this->createdTo = $createdTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
+    /**
+     * @param string $orderBy
+     */
+    public function setOrderBy($orderBy)
+    {
+        $this->orderBy = $orderBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirection()
+    {
+        return $this->direction;
+    }
+
+    /**
+     * @param string $direction
+     */
+    public function setDirection($direction)
+    {
+        $this->direction = $direction;
     }
 
 }

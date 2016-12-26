@@ -47,6 +47,7 @@ class ShipmentRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\Shipment', 'shipment')
+            ->leftJoin('shipment.shippingContainer', 'shippingContainer', Query\Expr\Join::ON)
             ->leftJoin('shipment.postage', 'postage', Query\Expr\Join::ON)
             ->leftJoin('shipment.service', 'service', Query\Expr\Join::ON)
             ->leftJoin('service.carrier', 'carrier', Query\Expr\Join::ON)
@@ -58,6 +59,9 @@ class ShipmentRepository extends BaseRepository
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shipment.id', $query['ids']));
+
+        if (!is_null(AU::get($query['shippingContainerIds'])))
+            $qb->andWhere($qb->expr()->in('shippingContainer.id', $query['shippingContainerIds']));
 
         if (!is_null(AU::get($query['itemIds'])))
             $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
@@ -99,7 +103,7 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['createdTo'])))
             $qb->andWhere($qb->expr()->lte('shipment.createdAt', $query['createdTo']));
 
-        $qb->orderBy('shipment.id', 'ASC');
+        $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));
 
         return $qb;
     }

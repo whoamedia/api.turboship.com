@@ -85,4 +85,20 @@ class BaseRequest
         return $value;
     }
 
+    /**
+     * @param   string|null    $value
+     * @return  string
+     */
+    protected function validateOrderByDirection ($value)
+    {
+        if (is_null($value))
+            return 'ASC';
+
+        $value                          = strtoupper($value);
+        if (!in_array($value, ['ASC', 'DESC']))
+            throw new BadRequestHttpException('direction must be either ASC or DESC');
+
+        return $value;
+    }
+
 }
