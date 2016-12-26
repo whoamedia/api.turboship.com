@@ -38,13 +38,14 @@ class OrderSkuMappingJob implements ShouldQueue
     {
         $this->clientId                 = $clientId;
         $this->variantSku               = $variantSku;
-        $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
-        $this->orderApprovalService     = new OrderApprovalService();
     }
 
 
     public function handle()
     {
+        $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $this->orderApprovalService     = new OrderApprovalService();
+
         $orderQuery     = [
             'clientIds'                 => $this->clientId,
             'statusIds'                 => OrderStatusUtility::UNMAPPED_SKU,

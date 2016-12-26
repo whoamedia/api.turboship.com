@@ -35,10 +35,7 @@ class VariantListener
 
         //  If the sku has changed search for orders and run them through the approval process
         if (isset($changeSet['sku']))
-        {
-            $job                        = new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]);
-            $this->dispatch($job);
-        }
+            $this->dispatch(new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]));
     }
 
 }
