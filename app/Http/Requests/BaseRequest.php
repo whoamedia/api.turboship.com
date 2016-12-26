@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use jamesvweston\Utilities\BooleanUtil AS BU;
 
 class BaseRequest
 {
@@ -33,4 +34,20 @@ class BaseRequest
         return rtrim($newValues, ',');
     }
 
+    /**
+     * @param   string|bool|null    $value
+     * @param   string              $fieldName
+     * @return  bool|null
+     */
+    protected function validateBoolean ($value, $fieldName)
+    {
+        if (is_null($value))
+            return null;
+
+        $value                          = BU::getBooleanValue($value);
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' must be boolean value');
+
+        return $value;
+    }
 }

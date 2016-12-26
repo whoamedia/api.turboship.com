@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Orders\GetErrorOrders;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Repositories\Doctrine\OMS\OrderRepository;
@@ -42,6 +41,12 @@ class OrderController extends BaseAuthController
         $getOrders->validate();
         $getOrders->clean();
 
+        if ($getOrders->getIsSkuError() == true)
+            $getOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
+
+        if ($getOrders->getIsAddressError() == true)
+            $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
+
         $query                          = $getOrders->jsonSerialize();
 
         $results                        = $this->orderRepo->where($query, false);
@@ -61,27 +66,6 @@ class OrderController extends BaseAuthController
 
         return response($order);
     }
-
-
-    public function getErrorOrders (Request $request)
-    {
-        $getErrorOrders                 = new GetErrorOrders($request->input());
-        $getErrorOrders->setOrganizationIds($this->getAuthUserOrganization()->getId());
-        $getErrorOrders->validate();
-        $getErrorOrders->clean();
-
-        if ($getErrorOrders->getSkuError() == true)
-            $getErrorOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
-
-        if ($getErrorOrders->getAddressError() == true)
-            $getErrorOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
-
-        $query                          = $getErrorOrders->jsonSerialize();
-        $orders                         = $this->orderRepo->where($query, false);
-        return response($orders);
-    }
-
-
 
 
     public function getStatuses (Request $request)

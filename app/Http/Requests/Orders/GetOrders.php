@@ -51,6 +51,21 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $itemSkus;
 
+    /**
+     * @var bool|null
+     */
+    protected $isAddressError;
+
+    /**
+     * @var bool|null
+     */
+    protected $isSkuError;
+
+    /**
+     * @var bool|null
+     */
+    protected $isError;
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
@@ -61,15 +76,21 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->statusIds                = AU::get($data['statusIds']);
         $this->externalIds              = AU::get($data['externalIds']);
         $this->itemSkus                 = AU::get($data['itemSkus']);
+        $this->isAddressError           = AU::get($data['isAddressError']);
+        $this->isSkuError               = AU::get($data['isSkuError']);
+        $this->isError                  = AU::get($data['isError']);
     }
 
     public function validate()
     {
-        $this->ids                      = $this->validateIds($this->ids, 'ids');
-        $this->itemIds                  = $this->validateIds($this->itemIds, 'itemIds');
-        $this->clientIds                = $this->validateIds($this->clientIds, 'clientIds');
-        $this->organizationIds          = $this->validateIds($this->organizationIds, 'organizationIds');
-        $this->statusIds                = $this->validateIds($this->statusIds, 'statusIds');
+        $this->ids                      = parent::validateIds($this->ids, 'ids');
+        $this->itemIds                  = parent::validateIds($this->itemIds, 'itemIds');
+        $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
+        $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
+        $this->statusIds                = parent::validateIds($this->statusIds, 'statusIds');
+        $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
+        $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
+        $this->isError                  = parent::validateBoolean($this->isError, 'isError');
     }
 
     public function clean ()
@@ -90,6 +111,9 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['statusIds']            = $this->statusIds;
         $object['externalIds']          = $this->externalIds;
         $object['itemSkus']             = $this->itemSkus;
+        $object['isAddressError']       = $this->isAddressError;
+        $object['isSkuError']           = $this->isSkuError;
+        $object['isError']              = $this->isError;
 
         return $object;
     }
@@ -220,6 +244,54 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setItemSkus($itemSkus)
     {
         $this->itemSkus = $itemSkus;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsAddressError()
+    {
+        return $this->isAddressError;
+    }
+
+    /**
+     * @param bool|null $isAddressError
+     */
+    public function setIsAddressError($isAddressError)
+    {
+        $this->isAddressError = $isAddressError;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsSkuError()
+    {
+        return $this->isSkuError;
+    }
+
+    /**
+     * @param bool|null $isSkuError
+     */
+    public function setIsSkuError($isSkuError)
+    {
+        $this->isSkuError = $isSkuError;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsError()
+    {
+        return $this->isError;
+    }
+
+    /**
+     * @param bool|null $isError
+     */
+    public function setIsError($isError)
+    {
+        $this->isError = $isError;
     }
 
 }
