@@ -83,7 +83,7 @@ class ShopifyController extends BaseIntegratedServiceController
             $maxIds                     = 20;
             for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
             {
-                set_time_limit(5);
+                set_time_limit(30);
                 $externalIds            = array_slice($externalIdsResponse, $i, $maxIds);
                 $externalIds            = implode(',', $externalIds);
 
