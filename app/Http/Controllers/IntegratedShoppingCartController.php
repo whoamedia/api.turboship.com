@@ -126,5 +126,7 @@ class IntegratedShoppingCartController extends BaseIntegratedServiceController
 
         $integratedShoppingCart->removeIntegratedWebHook($integratedWebHook);
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
+
+        return response ('', 204);
     }
 }
