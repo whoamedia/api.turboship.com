@@ -214,7 +214,7 @@ class OrderApprovalService
             $sku                    = $orderItem->getSku();
 
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
-                $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantTitle());
+                $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantId());
 
             $variantQuery   = [
                 'clientIds'         => $order->getClient()->getId(),
