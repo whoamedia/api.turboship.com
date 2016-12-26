@@ -62,7 +62,7 @@ class ShopifyImportProductJob implements ShouldQueue
         if (!$shopifyProductMappingService->shouldImport($this->shopifyProduct))
             return;
 
-        $product                = $shopifyProductMappingService->handleMapping($this->shopifyProduct);
+        $product                        = $shopifyProductMappingService->handleMapping($this->shopifyProduct);
         $this->productRepo->saveAndCommit($product);
     }
 }
