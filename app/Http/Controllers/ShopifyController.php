@@ -74,7 +74,7 @@ class ShopifyController extends BaseIntegratedServiceController
     {
         $shoppingCartIntegration        = parent::getIntegratedShoppingCart($request->route('id'));
         $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
-        $shopifyProductMappingService   = new ShopifyProductMappingService($shoppingCartIntegration);
+        $shopifyProductMappingService   = new ShopifyProductMappingService($shoppingCartIntegration->getClient());
         $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
 
 
