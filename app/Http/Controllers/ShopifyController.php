@@ -105,7 +105,7 @@ class ShopifyController extends BaseIntegratedServiceController
 
             for ($currentPage = 1; $currentPage < $totalPages; $currentPage++)
             {
-                set_time_limit(30);
+                set_time_limit(60);
                 $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
                 foreach ($shopifyProductsResponse AS $shopifyProduct)
                 {
@@ -113,8 +113,8 @@ class ShopifyController extends BaseIntegratedServiceController
                         continue;
                     $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
                     $this->productRepo->saveAndCommit($product);
-                    usleep(250000);
                 }
+                usleep(250000);
             }
         }
 
