@@ -20,7 +20,8 @@ class VariantListener
      */
     public function postPersistHandler (Variant $variant, LifecycleEventArgs $event)
     {
-        $this->dispatch(new OrderSkuMappingJob($variant->getClient()->getId(), $variant->getOriginalSku()));
+        $job                            = new OrderSkuMappingJob($variant->getClient()->getId(), $variant->getOriginalSku());
+        $this->dispatch($job);
     }
 
     /**
@@ -34,7 +35,10 @@ class VariantListener
 
         //  If the sku has changed search for orders and run them through the approval process
         if (isset($changeSet['sku']))
-            $this->dispatch(new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]));
+        {
+            $job                        = new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]);
+            $this->dispatch($job);
+        }
     }
 
 }
