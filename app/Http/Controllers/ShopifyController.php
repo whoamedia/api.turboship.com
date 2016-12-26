@@ -81,7 +81,6 @@ class ShopifyController extends BaseIntegratedServiceController
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
             $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
-            dd($externalIdsResponse);
             foreach ($externalIdsResponse AS $externalId)
             {
                 $shopifyProduct         = $shopifyProductRepo->show($externalId);
