@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Orders\GetErrorOrders;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Services\Order\OrderApprovalService;
+use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class OrderController extends Controller
+class OrderController extends BaseAuthController
 {
 
     /**
@@ -20,10 +23,15 @@ class OrderController extends Controller
      */
     private $orderRepo;
 
+    /**
+     * @var OrderStatusRepository
+     */
+    private $orderStatusRepo;
 
     public function __construct ()
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
     }
 
 
@@ -55,6 +63,32 @@ class OrderController extends Controller
     }
 
 
+    public function getErrorOrders (Request $request)
+    {
+        $getErrorOrders                 = new GetErrorOrders($request->input());
+        $getErrorOrders->setOrganizationIds($this->getAuthUserOrganization()->getId());
+        $getErrorOrders->validate();
+        $getErrorOrders->clean();
+
+        if ($getErrorOrders->getSkuError() == true)
+            $getErrorOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
+
+        if ($getErrorOrders->getAddressError() == true)
+            $getErrorOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
+
+        $query                          = $getErrorOrders->jsonSerialize();
+        $orders                         = $this->orderRepo->where($query, false);
+        return response($orders);
+    }
+
+
+
+
+    public function getStatuses (Request $request)
+    {
+        $orderStatuses                  = $this->orderStatusRepo->where([], false);
+        return response($orderStatuses);
+    }
 
     public function approveIndividualOrder (Request $request)
     {
