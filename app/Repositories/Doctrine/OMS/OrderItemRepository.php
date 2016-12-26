@@ -107,7 +107,7 @@ class OrderItemRepository extends BaseRepository
 
         $results                    = [];
         foreach ($orderItemResults AS $orderItem)
-            $results[]              = $orderItem['externalId'];
+            $results[]              = $orderItem['externalProductId'];
 
         return $results;
     }
