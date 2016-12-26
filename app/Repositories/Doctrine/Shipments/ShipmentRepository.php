@@ -47,6 +47,9 @@ class ShipmentRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\Shipment', 'shipment')
+            ->leftJoin('shipment.postage', 'postage', Query\Expr\Join::ON)
+            ->leftJoin('shipment.service', 'service', Query\Expr\Join::ON)
+            ->leftJoin('service.carrier', 'carrier', Query\Expr\Join::ON)
             ->leftJoin('shipment.items', 'items', Query\Expr\Join::ON)
             ->leftJoin('items.orderItem', 'orderItem', Query\Expr\Join::ON)
             ->leftJoin('orderItem.order', 'orders', Query\Expr\Join::ON)
@@ -70,6 +73,25 @@ class ShipmentRepository extends BaseRepository
 
         if (!is_null(AU::get($query['orderItemIds'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['orderItemIds']));
+
+        if (!is_null(AU::get($query['shipmentStatus'])))
+        {
+            if ($query['shipmentStatus'] == 'shipped')
+                $qb->andWhere($qb->expr()->isNotNull('shipment.postage'));
+            else
+                $qb->andWhere($qb->expr()->isNull('shipment.postage'));
+        }
+
+        if (!is_null(AU::get($query['trackingNumbers'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $trackingNumbers               = explode(',', $query['trackingNumbers']);
+            foreach ($trackingNumbers AS $trackingNumber)
+            {
+                $orX->add($qb->expr()->eq('postage.trackingNumber', $qb->expr()->literal($trackingNumber)));
+            }
+            $qb->andWhere($orX);
+        }
 
         if (!is_null(AU::get($query['createdFrom'])))
             $qb->andWhere($qb->expr()->gte('shipment.createdAt', $query['createdFrom']));

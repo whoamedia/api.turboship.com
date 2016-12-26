@@ -44,6 +44,26 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
+    protected $serviceIds;
+
+    /**
+     * @var string|null
+     */
+    protected $carrierIds;
+
+    /**
+     * @var string|null
+     */
+    protected $shipmentStatus;
+
+    /**
+     * @var string|null
+     */
+    protected $trackingNumbers;
+
+    /**
+     * @var string|null
+     */
     protected $createdFrom;
 
     /**
@@ -59,6 +79,10 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->orderItemIds             = AU::get($data['orderItemIds']);
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
+        $this->serviceIds               = AU::get($data['serviceIds']);
+        $this->carrierIds               = AU::get($data['carrierIds']);
+        $this->shipmentStatus           = AU::get($data['shipmentStatus']);
+        $this->trackingNumbers          = AU::get($data['trackingNumbers']);
         $this->createdFrom              = AU::get($data['createdFrom']);
         $this->createdTo                = AU::get($data['createdTo']);
     }
@@ -71,6 +95,9 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->orderItemIds             = parent::validateIds($this->orderItemIds, 'orderItemIds');
         $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
+        $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
+        $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
+        $this->shipmentStatus           = parent::validateShipmentStatus($this->shipmentStatus, 'shipmentStatus');
         $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
     }
@@ -91,6 +118,10 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $object['orderItemIds']         = $this->orderItemIds;
         $object['clientIds']            = $this->clientIds;
         $object['organizationIds']      = $this->organizationIds;
+        $object['serviceIds']           = $this->serviceIds;
+        $object['carrierIds']           = $this->carrierIds;
+        $object['shipmentStatus']       = $this->shipmentStatus;
+        $object['trackingNumbers']      = $this->trackingNumbers;
         $object['createdFrom']          = $this->createdFrom;
         $object['createdTo']            = $this->createdTo;
 
@@ -191,6 +222,70 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setOrganizationIds($organizationIds)
     {
         $this->organizationIds = $organizationIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getServiceIds()
+    {
+        return $this->serviceIds;
+    }
+
+    /**
+     * @param null|string $serviceIds
+     */
+    public function setServiceIds($serviceIds)
+    {
+        $this->serviceIds = $serviceIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCarrierIds()
+    {
+        return $this->carrierIds;
+    }
+
+    /**
+     * @param null|string $carrierIds
+     */
+    public function setCarrierIds($carrierIds)
+    {
+        $this->carrierIds = $carrierIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShipmentStatus()
+    {
+        return $this->shipmentStatus;
+    }
+
+    /**
+     * @param null|string $shipmentStatus
+     */
+    public function setShipmentStatus($shipmentStatus)
+    {
+        $this->shipmentStatus = $shipmentStatus;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTrackingNumbers()
+    {
+        return $this->trackingNumbers;
+    }
+
+    /**
+     * @param null|string $trackingNumbers
+     */
+    public function setTrackingNumbers($trackingNumbers)
+    {
+        $this->trackingNumbers = $trackingNumbers;
     }
 
     /**

@@ -43,6 +43,8 @@ class ShipmentController extends BaseAuthController
     {
         $getShipments                   = new GetShipments($request->input());
         $getShipments->setOrganizationIds($this->getAuthUserOrganization()->getId());
+        $getShipments->validate();
+        $getShipments->clean();
 
         $query                          = $getShipments->jsonSerialize();
         $shipments                      = $this->shipmentRepo->where($query, false);

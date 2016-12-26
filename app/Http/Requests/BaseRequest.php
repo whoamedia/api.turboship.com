@@ -55,7 +55,7 @@ class BaseRequest
     /**
      * @param   string|bool|null    $value
      * @param   string              $fieldName
-     * @return  string
+     * @return  string|null
      */
     protected function validateDate ($value, $fieldName)
     {
@@ -63,8 +63,26 @@ class BaseRequest
             return null;
 
         if (DateUtil::validate($value, 'YYYY-MM-DD') == false)
-            throw new BadRequestHttpException($fieldName . ' be formatted as YYYY-MM-DD');
+            throw new BadRequestHttpException($fieldName . ' must be formatted as YYYY-MM-DD');
 
         return $value;
     }
+
+    /**
+     * @param   string|bool|null    $value
+     * @param   string              $fieldName
+     * @return  string|null
+     */
+    protected function validateShipmentStatus ($value, $fieldName)
+    {
+        if (is_null($value))
+            return null;
+
+        $value                          = strtolower($value);
+        if (!in_array($value, ['shipped', 'unshipped']))
+            throw new BadRequestHttpException($fieldName . ' must be either shipped or unshipped');
+
+        return $value;
+    }
+
 }
