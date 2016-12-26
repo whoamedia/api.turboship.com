@@ -87,7 +87,15 @@ class ShopifyController extends BaseIntegratedServiceController
                 if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
                     continue;
                 $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
-                $this->productRepo->saveAndCommit($product);
+                try
+                {
+                    $this->productRepo->saveAndCommit($product);
+                }
+                catch (\Exception $exception)
+                {
+                    dd($product->getVariants());
+                    throw $exception;
+                }
                 usleep(250000);
             }
         }
