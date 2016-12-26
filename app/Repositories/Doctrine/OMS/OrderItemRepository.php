@@ -31,6 +31,7 @@ class OrderItemRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['orderItem']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->orderBy('orderItem.id', 'ASC');
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -83,8 +84,6 @@ class OrderItemRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-
-        $qb->orderBy('orderItem.id', 'ASC');
         return $qb;
     }
 
