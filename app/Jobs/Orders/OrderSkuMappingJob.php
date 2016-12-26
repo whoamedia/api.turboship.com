@@ -6,13 +6,14 @@ use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use EntityManager;
 
 class OrderSkuMappingJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue, Queueable, DispatchesJobs;
 
     /**
      * @var int
@@ -55,8 +56,8 @@ class OrderSkuMappingJob implements ShouldQueue
         $result                         = $this->orderRepo->where($orderQuery);
         foreach ($result AS $order)
         {
-            $this->orderApprovalService->processOrder($order);
-            $this->orderRepo->saveAndCommit($order);
+            $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
+            $this->dispatch($job);
         }
     }
 }
