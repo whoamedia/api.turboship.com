@@ -141,7 +141,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
 
         //  Lastly, handle the sku
         $variant->setOriginalSku($shopifyVariant->getSku());
-        $sku                                = $this->shopifyMappingExceptionService->getShopifySku($this->client, $shopifyVariant->getSku(), $shopifyVariant->getTitle());
+        $sku                                = $this->shopifyMappingExceptionService->getShopifySku($this->client, $shopifyVariant->getSku(), $shopifyVariant->getId());
         $variant->setSku($sku);
 
         return $variant;

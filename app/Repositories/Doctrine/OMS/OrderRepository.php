@@ -10,6 +10,7 @@ use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
+use jamesvweston\Utilities\BooleanUtil AS BU;
 
 class OrderRepository extends BaseRepository
 {
@@ -46,7 +47,7 @@ class OrderRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\Order', 'orders')
-            ->join('orders.items', 'items', Query\Expr\Join::ON)
+            ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
             ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
@@ -70,6 +71,8 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
 
+        if (!is_null(AU::get($query['isError'])))
+            $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));
 
         if (!is_null(AU::get($query['externalIds'])))
         {

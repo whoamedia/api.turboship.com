@@ -3,7 +3,9 @@
 namespace App\Models\OMS;
 
 
+use App\Models\Shipments\ShipmentItem;
 use App\Utilities\OrderStatusUtility;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class OrderItem implements \JsonSerializable
@@ -94,6 +96,11 @@ class OrderItem implements \JsonSerializable
      */
     protected $createdAt;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $shipmentItems;
+
 
     /**
      * OrderItem constructor.
@@ -102,6 +109,7 @@ class OrderItem implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
+        $this->shipmentItems            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
         $this->externalProductId        = AU::get($data['externalProductId']);
@@ -362,11 +370,61 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
+     * @return ShipmentItem[]
+     */
+    public function getShipmentItems ()
+    {
+        return $this->shipmentItems->toArray();
+    }
+
+    /**
+     * @param ShipmentItem  $shipmentItem
+     * @param int           $quantity
+     */
+    public function addShipmentItem (ShipmentItem $shipmentItem, $quantity)
+    {
+        $shipmentItem->setOrderItem($this);
+        $shipmentItem->setQuantity($quantity);
+        $this->quantityToFulfill        -= $quantity;
+        $this->shipmentItems->add($shipmentItem);
+    }
+
+    /**
+     * @return int
+     */
+    public function getRemainingQuantityToFulfill ()
+    {
+        $shipmentQuantity               = 0;
+        foreach ($this->getShipmentItems() AS $shipmentItem)
+            $shipmentQuantity           += $shipmentItem->getQuantity();
+
+        return $shipmentQuantity;
+    }
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Is it safe for us to add the OrderItem to a Shipment ?
+     * @return bool
+     */
+    public function canAddToShipment ()
+    {
+        if (is_null($this->variant))
+            return false;
+        else if ($this->getQuantityToFulfill() == 0)
+            return false;
+        else if ($this->order->getStatus()->getId() != OrderStatusUtility::PENDING_FULFILLMENT_ID)
+            return false;
+        else if ($this->getRemainingQuantityToFulfill() >= $this->getQuantityToFulfill())
+            return false;
+
+
+        return true;
     }
 
 }

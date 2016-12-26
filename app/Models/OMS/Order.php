@@ -113,9 +113,8 @@ class Order implements \JsonSerializable
      */
     protected $externalWeight;
 
-
     /**
-     * OrderStatusHistory constructor.
+     * Order constructor.
      * @param array $data
      */
     public function __construct($data = [])

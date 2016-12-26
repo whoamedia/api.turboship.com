@@ -3,10 +3,8 @@
 namespace App\Listeners;
 
 
-use App\Models\CMS\Client;
+use App\Jobs\Orders\OrderSkuMappingJob;
 use App\Models\OMS\Variant;
-use App\Services\Order\OrderApprovalService;
-use App\Utilities\OrderStatusUtility;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
@@ -22,7 +20,8 @@ class VariantListener
      */
     public function postPersistHandler (Variant $variant, LifecycleEventArgs $event)
     {
-        $this->runPendingSkuOrders($variant->getClient(), $variant->getOriginalSku(), $event);
+        $job                            = new OrderSkuMappingJob($variant->getClient()->getId(), $variant->getOriginalSku());
+        $this->dispatch($job);
     }
 
     /**
@@ -36,27 +35,7 @@ class VariantListener
 
         //  If the sku has changed search for orders and run them through the approval process
         if (isset($changeSet['sku']))
-            $this->runPendingSkuOrders($variant->getClient(), $changeSet['sku'][1], $event);
+            $this->dispatch(new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]));
     }
 
-
-    private function runPendingSkuOrders (Client $client, $originalSku, LifecycleEventArgs $event)
-    {
-        $orderRepo                      = $event->getEntityManager()->getRepository('App\Models\OMS\Order');
-        $orderApprovalService           = new OrderApprovalService();
-
-        $orderQuery     = [
-            'clientIds'                 => $client->getId(),
-            'statusIds'                 => OrderStatusUtility::UNMAPPED_SKU,
-            'itemSkus'                  => $originalSku,
-        ];
-
-        $result                         = $orderRepo->where($orderQuery);
-
-        foreach ($result AS $order)
-        {
-            $orderApprovalService->processOrder($order);
-            $orderRepo->saveAndCommit($order);
-        }
-    }
 }

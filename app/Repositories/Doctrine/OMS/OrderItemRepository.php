@@ -31,6 +31,7 @@ class OrderItemRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['orderItem']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->orderBy('orderItem.id', 'ASC');
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -46,6 +47,7 @@ class OrderItemRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\OrderItem', 'orderItem')
+            ->leftJoin('orderItem.variant', 'variant', Query\Expr\Join::ON)
             ->join('orderItem.order', 'orders', Query\Expr\Join::ON)
             ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
@@ -66,6 +68,11 @@ class OrderItemRepository extends BaseRepository
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
 
+        if (!is_null(AU::get($query['isError'])))
+        {
+            $qb->andWhere($qb->expr()->isNull('orderItem.variant'));
+        }
+
         if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();
@@ -77,9 +84,32 @@ class OrderItemRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-
-        $qb->orderBy('orderItem.id', 'ASC');
         return $qb;
+    }
+
+    /**
+     * @param   string|int      $clientIds
+     * @param   string|int      $crmSourceIds
+     * @return  string[]
+     */
+    public function getPendingExternalProductIds ($clientIds, $crmSourceIds)
+    {
+        $query  = [
+            'clientIds'             => $clientIds,
+            'crmSourceIds'          => $crmSourceIds,
+            'isError'               => true,
+        ];
+
+        $qb                         = $this->_em->createQueryBuilder();
+        $qb->select(['distinct orderItem.externalProductId']);
+        $qb                         = $this->buildQueryConditions($qb, $query);
+        $orderItemResults           = $qb->getQuery()->getResult();
+
+        $results                    = [];
+        foreach ($orderItemResults AS $orderItem)
+            $results[]              = $orderItem['externalProductId'];
+
+        return $results;
     }
 
 

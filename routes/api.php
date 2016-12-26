@@ -55,12 +55,18 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Order Operations
     Route::get('/orders', 'OrderController@index');
+    Route::get('/orders/statuses', 'OrderController@getStatuses');
     Route::get('/orders/{id}', 'OrderController@show');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
 
+
     //  Product Operations
     Route::get('/products', 'ProductController@index');
+
+
+    //  Shipment Operations
+    Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
 
 
     //  Shipper Operations
@@ -68,6 +74,14 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shippers/{id}', 'ShipperController@show');
     Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
     Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
+    Route::get('/shippers/{id}/clients', 'ShipperController@getClients');
+    Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
+    Route::delete('/shippers/{id}/clients/{clientId}', 'ShipperController@removeClient');
+
+
+    //  Shopify Operations
+    Route::post('/shopify/{id}/orders/download', 'ShopifyController@downloadOrders');
+    Route::post('/shopify/{id}/products/download', 'ShopifyController@downloadProducts');
 
 
     //  Subdivision Operations

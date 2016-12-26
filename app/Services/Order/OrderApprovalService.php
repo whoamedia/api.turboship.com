@@ -14,7 +14,7 @@ use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Services\Address\USPSAddressService;
-use App\Services\MappingExceptionService;
+use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
 use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
 use EntityManager;
@@ -207,14 +207,14 @@ class OrderApprovalService
      */
     public function mapOrderItemSkus (Order $order)
     {
-        $mappingExceptionService    = new MappingExceptionService();
+        $mappingExceptionService    = new ShopifyMappingExceptionService();
         $mappingFailure             = false;
         foreach ($order->getItems() AS $orderItem)
         {
             $sku                    = $orderItem->getSku();
 
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
-                $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantTitle());
+                $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantId());
 
             $variantQuery   = [
                 'clientIds'         => $order->getClient()->getId(),

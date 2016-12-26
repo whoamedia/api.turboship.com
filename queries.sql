@@ -1,7 +1,5 @@
 SELECT
   webHookLog.id,
-  organization.name AS 'Organization',
-  client.name AS 'Client',
   webHookLog.topic,
   webHookLog.verified,
   webHookLog.success,

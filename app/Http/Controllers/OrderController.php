@@ -6,13 +6,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Services\Order\OrderApprovalService;
+use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class OrderController extends Controller
+class OrderController extends BaseAuthController
 {
 
     /**
@@ -20,13 +22,15 @@ class OrderController extends Controller
      */
     private $orderRepo;
 
-
     /**
-     * ClientController constructor.
+     * @var OrderStatusRepository
      */
+    private $orderStatusRepo;
+
     public function __construct ()
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
     }
 
 
@@ -36,6 +40,12 @@ class OrderController extends Controller
         $getOrders->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
         $getOrders->validate();
         $getOrders->clean();
+
+        if ($getOrders->getIsSkuError() == true)
+            $getOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
+
+        if ($getOrders->getIsAddressError() == true)
+            $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
 
         $query                          = $getOrders->jsonSerialize();
 
@@ -58,6 +68,11 @@ class OrderController extends Controller
     }
 
 
+    public function getStatuses (Request $request)
+    {
+        $orderStatuses                  = $this->orderStatusRepo->where([], false);
+        return response($orderStatuses);
+    }
 
     public function approveIndividualOrder (Request $request)
     {

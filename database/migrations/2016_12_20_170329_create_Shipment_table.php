@@ -26,14 +26,14 @@ class CreateShipmentTable extends Migration
             $table->integer('returnAddressId')->unsigned()->index();
             $table->foreign('returnAddressId')->references('id')->on('Address');
 
-            $table->integer('serviceId')->unsigned()->index();
+            $table->integer('serviceId')->unsigned()->index()->nullable()->default(NULL);
             $table->foreign('serviceId')->references('id')->on('Service');
 
-            $table->integer('postageId')->unsigned()->index();
+            $table->integer('postageId')->unsigned()->index()->nullable()->default(NULL);
 
             $table->integer('shippingContainerId')->unsigned()->index()->nullable()->default(NULL);
 
-            $table->decimal('weight', 10, 2);
+            $table->decimal('weight', 10, 2)->nullable()->default(NULL);
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });

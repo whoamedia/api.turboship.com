@@ -130,7 +130,7 @@ class GetShopifyProducts implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
-        $this->limit                    = AU::get($data['limit'], 50);
+        $this->limit                    = AU::get($data['limit'], 250);
         $this->page                     = AU::get($data['page'], 1);
         $this->since_id                 = AU::get($data['since_id']);
         $this->title                    = AU::get($data['title']);

@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IntegratedShoppingCarts\CreateIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\DeleteIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\GetIntegratedShoppingCarts;
-use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
 use App\Models\Integrations\IntegratedWebHook;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Models\Integrations\Validation\IntegratedWebHookValidation;
@@ -50,38 +49,21 @@ class IntegratedShoppingCartController extends BaseIntegratedServiceController
 
     public function show (Request $request)
     {
-        $showIntegratedShoppingCart         = new ShowIntegratedShoppingCart();
-        $showIntegratedShoppingCart->setId($request->route('id'));
-        $showIntegratedShoppingCart->validate();
-        $showIntegratedShoppingCart->clean();
-
-        $integratedShoppingCart             = $this->integratedShoppingCartValidation->idExists($showIntegratedShoppingCart->getId());
-
+        $integratedShoppingCart         = $this->getIntegratedShoppingCart($request->route('id'));
         return response($integratedShoppingCart);
     }
 
 
     public function getWebHooks (Request $request)
     {
-        $showIntegratedShoppingCart         = new ShowIntegratedShoppingCart();
-        $showIntegratedShoppingCart->setId($request->route('id'));
-        $showIntegratedShoppingCart->validate();
-        $showIntegratedShoppingCart->clean();
-
-        $integratedShoppingCart             = $this->integratedShoppingCartValidation->idExists($showIntegratedShoppingCart->getId());
-
+        $integratedShoppingCart         = $this->getIntegratedShoppingCart($request->route('id'));
         return response($integratedShoppingCart->getIntegratedWebHooks());
     }
 
 
     public function getAvailableWebHooks (Request $request)
     {
-        $showIntegratedShoppingCart         = new ShowIntegratedShoppingCart();
-        $showIntegratedShoppingCart->setId($request->route('id'));
-        $showIntegratedShoppingCart->validate();
-        $showIntegratedShoppingCart->clean();
-
-        $integratedShoppingCart             = $this->integratedShoppingCartValidation->idExists($showIntegratedShoppingCart->getId());
+        $integratedShoppingCart         = $this->getIntegratedShoppingCart($request->route('id'));
         return response($integratedShoppingCart->getAvailableIntegratedWebHooks());
     }
 
@@ -144,5 +126,7 @@ class IntegratedShoppingCartController extends BaseIntegratedServiceController
 
         $integratedShoppingCart->removeIntegratedWebHook($integratedWebHook);
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
+
+        return response ('', 204);
     }
 }

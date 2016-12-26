@@ -37,6 +37,22 @@ class OrderStatusUtility
     const FULLY_SHIPPED_ID              = 301;
 
     /**
+     * @return array
+     */
+    public static function getAddressErrors ()
+    {
+        return [
+            self::INVALID_CITY_ID,
+            self::INVALID_STATE_ID,
+            self::INVALID_ADDRESS_ID,
+            self::MULTIPLE_ADDRESSES_FOUND_ID,
+            self::INVALID_POSTAL_CODE_ID,
+            self::INVALID_COUNTRY_ID,
+            self::INVALID_STREET_ID,
+        ];
+    }
+
+    /**
      * @var OrderStatusValidation
      */
     private $orderStatusValidation;
