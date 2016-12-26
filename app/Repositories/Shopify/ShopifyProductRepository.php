@@ -3,6 +3,7 @@
 namespace App\Repositories\Shopify;
 
 
+use App\Integrations\Shopify\Exceptions\ShopifyItemNotFoundException;
 use App\Integrations\Shopify\Models\Requests\GetShopifyProductCount;
 use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
 
@@ -45,4 +46,19 @@ class ShopifyProductRepository extends BaseShopifyRepository
         return $shopifyProductsResponse;
     }
 
+    /**
+     * @param   int     $id
+     * @return  \App\Integrations\Shopify\Models\Responses\ShopifyProduct|null
+     */
+    public function show ($id)
+    {
+        try
+        {
+            return $this->shopifyIntegration->productApi->show($id);
+        }
+        catch (ShopifyItemNotFoundException $shopifyItemNotFoundException)
+        {
+            return null;
+        }
+    }
 }

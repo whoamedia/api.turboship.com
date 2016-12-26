@@ -80,18 +80,28 @@ class ShopifyController extends BaseIntegratedServiceController
 
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
-            $externalIds                = $this->orderItemRepo->getPendingExternalIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
-            $externalIds                = empty($externalIds) ? null : implode(',', $externalIds);
+            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
+            foreach ($externalIdsResponse AS $externalId)
+            {
+                $shopifyProduct         = $shopifyProductRepo->show($externalId);
+                if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
+                    continue;
+                $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
+                $this->productRepo->saveAndCommit($product);
+                usleep(250000);
+            }
         }
-
-        $shopifyProductsResponse        = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
-        foreach ($shopifyProductsResponse AS $shopifyProduct)
+        else
         {
-            if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
-                continue;
-
-            $product                    = $shopifyProductMappingService->handleMapping($shopifyProduct);
-            $this->productRepo->saveAndCommit($product);
+            $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250);
+            foreach ($shopifyProductsResponse AS $shopifyProduct)
+            {
+                if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
+                    continue;
+                $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
+                $this->productRepo->saveAndCommit($product);
+            }
         }
+
     }
 }
