@@ -51,6 +51,12 @@ App\Models\Shipments\Shipper:
         name:         returnAddressId
         referencedColumnName: id
 
+  oneToMany:
+    integratedShippingApis:
+      targetEntity:   App\Models\Integrations\IntegratedShippingApi
+      mappedBy:       shipper
+      cascade:        ["persist", "remove"]
+
   manyToMany:
     clients:
       fetch:          LAZY

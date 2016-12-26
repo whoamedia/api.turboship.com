@@ -17,8 +17,8 @@ class CreateShopifyWebHookLogTable extends Migration
         {
             $table->increments('id')->unsigned();
 
-            $table->integer('clientECommerceIntegrationId')->unsigned()->index();
-            $table->foreign('clientECommerceIntegrationId')->references('id')->on('ClientECommerceIntegration');
+            $table->integer('integratedShoppingCartId')->unsigned()->index();
+            $table->foreign('integratedShoppingCartId')->references('id')->on('IntegratedShoppingCart');
 
             //  $table->integer('integrationWebHookId')->unsigned()->index();
             //  $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');

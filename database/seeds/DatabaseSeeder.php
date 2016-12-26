@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         /**
          * Integrations
          */
-        $this->call(ShopifyECommerceIntegrationSeeder::class);
+        $this->call(ShopifyShoppingCartIntegrationSeeder::class);
         $this->call(EasyPostShippingIntegrationSeeder::class);
 
 

@@ -1,0 +1,49 @@
+App\Models\Integrations\ShippingApiIntegrationCarrier:
+  type:               entity
+  table:              ShippingApiIntegrationCarrier
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiIntegrationCarrierRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ShippingApiIntegrationCarrier id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "ShippingApiIntegrationCarrier name"
+
+  manyToOne:
+    shippingApiIntegration:
+      targetEntity:   ShippingApiIntegration
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     shippingApiIntegrationCarriers
+      joinColumn:
+        name:         shippingApiIntegrationId
+        referencedColumnName: id
+    carrier:
+      targetEntity:   App\Models\Shipments\Carrier
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         carrierId
+        referencedColumnName: id
+
+  oneToMany:
+    shippingApiIntegrationServices:
+      targetEntity:   ShippingApiIntegrationService
+      mappedBy:       shippingApiIntegrationCarrier
+      cascade:        ["persist", "remove"]

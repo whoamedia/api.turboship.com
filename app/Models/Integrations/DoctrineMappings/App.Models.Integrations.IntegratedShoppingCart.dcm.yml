@@ -1,0 +1,22 @@
+App\Models\Integrations\IntegratedShoppingCart:
+  type:               entity
+  table:              IntegratedShoppingCart
+  repositoryClass:    App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository
+
+  fields:
+    symbol:
+      column:         symbol
+      type:           string
+      nullable:       false
+      options:
+        comment:      "IntegratedShoppingCart symbol"
+
+  manyToOne:
+    client:
+      targetEntity:   App\Models\CMS\Client
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     integratedShoppingCarts
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id

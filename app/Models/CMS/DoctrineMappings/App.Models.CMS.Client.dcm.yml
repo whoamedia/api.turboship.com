@@ -46,12 +46,8 @@ App\Models\CMS\Client:
       targetEntity:   App\Models\OMS\Product
       mappedBy:       client
       cascade:        ["persist", "remove"]
-    eCommerceIntegrations:
-      targetEntity:   App\Models\Integrations\ClientECommerceIntegration
-      mappedBy:       client
-      cascade:        ["persist", "remove"]
-    shippingIntegrations:
-      targetEntity:   App\Models\Integrations\ClientShippingIntegration
+    integratedShoppingCarts:
+      targetEntity:   App\Models\Integrations\IntegratedShoppingCart
       mappedBy:       client
       cascade:        ["persist", "remove"]
 

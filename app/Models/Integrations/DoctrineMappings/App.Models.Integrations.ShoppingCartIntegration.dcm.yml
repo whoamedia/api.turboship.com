@@ -1,0 +1,4 @@
+App\Models\Integrations\ShoppingCartIntegration:
+  type:               entity
+  table:              ShoppingCartIntegration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ShoppingCartIntegrationRepository

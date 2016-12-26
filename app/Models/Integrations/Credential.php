@@ -25,9 +25,9 @@ class Credential
     protected $integrationCredential;
 
     /**
-     * @var ClientIntegration
+     * @var IntegratedService
      */
-    protected $clientIntegration;
+    protected $integratedService;
 
     /**
      * @var \DateTime
@@ -41,7 +41,7 @@ class Credential
 
         $this->value                    = AU::get($data['value']);
         $this->integrationCredential    = AU::get($data['integrationCredential']);
-        $this->clientIntegration        = AU::get($data['clientIntegration']);
+        $this->integratedService        = AU::get($data['integratedService']);
 
         if (!is_null($this->value))
             $this->setValue($this->value);
@@ -101,19 +101,19 @@ class Credential
     }
 
     /**
-     * @return ClientIntegration
+     * @return IntegratedService
      */
-    public function getClientIntegration()
+    public function getIntegratedService()
     {
-        return $this->clientIntegration;
+        return $this->integratedService;
     }
 
     /**
-     * @param ClientIntegration $clientIntegration
+     * @param IntegratedService $integratedService
      */
-    public function setClientIntegration($clientIntegration)
+    public function setIntegratedService($integratedService)
     {
-        $this->clientIntegration = $clientIntegration;
+        $this->integratedService = $integratedService;
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Models\Logs;
 
 
-use App\Models\Integrations\ClientECommerceIntegration;
+use App\Models\Integrations\IntegratedShoppingCart;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class ShopifyWebHookLog
@@ -15,9 +15,9 @@ class ShopifyWebHookLog
     protected $id;
 
     /**
-     * @var ClientECommerceIntegration
+     * @var IntegratedShoppingCart
      */
-    protected $clientECommerceIntegration;
+    protected $integratedShoppingCart;
 
     /**
      * @var string
@@ -73,7 +73,7 @@ class ShopifyWebHookLog
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
-        $this->clientECommerceIntegration= AU::get($data['clientECommerceIntegration']);
+        $this->integratedShoppingCart   = AU::get($data['integratedShoppingCart']);
         $this->topic                    = AU::get($data['topic']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
         $this->errorMessage             = AU::get($data['errorMessage']);
@@ -102,19 +102,19 @@ class ShopifyWebHookLog
     }
 
     /**
-     * @return ClientECommerceIntegration
+     * @return IntegratedShoppingCart
      */
-    public function getClientECommerceIntegration()
+    public function getIntegratedShoppingCart()
     {
-        return $this->clientECommerceIntegration;
+        return $this->integratedShoppingCart;
     }
 
     /**
-     * @param ClientECommerceIntegration $clientECommerceIntegration
+     * @param IntegratedShoppingCart $integratedShoppingCart
      */
-    public function setClientECommerceIntegration($clientECommerceIntegration)
+    public function setIntegratedShoppingCart($integratedShoppingCart)
     {
-        $this->clientECommerceIntegration = $clientECommerceIntegration;
+        $this->integratedShoppingCart = $integratedShoppingCart;
     }
 
     /**

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Integrations\CreateWebHook;
-use App\Http\Requests\Integrations\DeleteClientIntegrationWebHook;
-use App\Http\Requests\Integrations\GetClientIntegrationWebHooks;
-use App\Models\Integrations\ClientWebHook;
+use App\Http\Requests\Integrations\CreateIntegratedWebHook;
+use App\Http\Requests\Integrations\DeleteIntegratedWebHook;
+use App\Http\Requests\Integrations\GetIntegratedWebHooks;
+use App\Models\Integrations\IntegratedWebHook;
 use App\Models\Integrations\IntegrationWebHook;
-use App\Models\Integrations\Validation\ClientIntegrationValidation;
+use App\Models\Integrations\Validation\IntegratedServiceValidation;
 use App\Models\Integrations\Validation\IntegrationWebHookValidation;
-use App\Repositories\Doctrine\Integrations\ClientIntegrationRepository;
+use App\Repositories\Doctrine\Integrations\IntegratedServiceRepository;
 use App\Repositories\Shopify\ShopifyWebHookRepository;
 use App\Utilities\IntegrationUtility;
 use Illuminate\Http\Request;
@@ -22,64 +22,64 @@ class ClientIntegrationController extends Controller
 {
 
     /**
-     * @var ClientIntegrationRepository
+     * @var IntegratedServiceRepository
      */
-    private $clientIntegrationRepo;
+    private $integratedServiceRepo;
 
     /**
-     * @var ClientIntegrationValidation
+     * @var IntegratedServiceValidation
      */
-    private $clientIntegrationValidation;
+    private $integratedServiceValidation;
 
 
     public function __construct()
     {
-        $this->clientIntegrationRepo    = EntityManager::getRepository('App\Models\Integrations\ClientIntegration');
-        $this->clientIntegrationValidation = new ClientIntegrationValidation();
+        $this->integratedServiceRepo    = EntityManager::getRepository('App\Models\Integrations\IntegratedService');
+        $this->integratedServiceValidation = new IntegratedServiceValidation();
     }
 
     /**
      * @param   Request $request
-     * @return  ClientWebHook[]
+     * @return  IntegratedWebHook[]
      */
     public function getWebHooks (Request $request)
     {
-        $getClientIntegrationWebHooks   = new GetClientIntegrationWebHooks();
-        $getClientIntegrationWebHooks->setId($request->route('id'));
-        $getClientIntegrationWebHooks->validate();
-        $getClientIntegrationWebHooks->clean();
+        $getIntegratedWebHooks   = new GetIntegratedWebHooks();
+        $getIntegratedWebHooks->setId($request->route('id'));
+        $getIntegratedWebHooks->validate();
+        $getIntegratedWebHooks->clean();
 
-        $clientIntegration              = $this->clientIntegrationValidation->idExists($getClientIntegrationWebHooks->getId());
+        $integratedService              = $this->integratedServiceValidation->idExists($getIntegratedWebHooks->getId());
 
-        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
-            throw new NotFoundHttpException('ClientIntegration not found');
+        if ($integratedService->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('IntegratedService not found');
 
-        return response ($clientIntegration->getWebHooks());
+        return response ($integratedService->getWebHooks());
     }
 
     /**
-     * See which integration webHooks thee clientIntegration is not using
+     * See which integration webHooks thee integratedService is not using
      * @param   Request $request
      * @return  IntegrationWebHook[]
      */
     public function getAvailableWebHooks (Request $request)
     {
-        $getClientIntegrationWebHooks   = new GetClientIntegrationWebHooks();
-        $getClientIntegrationWebHooks->setId($request->route('id'));
-        $getClientIntegrationWebHooks->validate();
-        $getClientIntegrationWebHooks->clean();
+        $getIntegratedWebHooks   = new GetIntegratedWebHooks();
+        $getIntegratedWebHooks->setId($request->route('id'));
+        $getIntegratedWebHooks->validate();
+        $getIntegratedWebHooks->clean();
 
-        $clientIntegration              = $this->clientIntegrationValidation->idExists($getClientIntegrationWebHooks->getId());
+        $integratedService              = $this->integratedServiceValidation->idExists($getIntegratedWebHooks->getId());
 
-        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
-            throw new NotFoundHttpException('ClientIntegration not found');
+        if ($integratedService->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('IntegratedService not found');
 
-        $integrationWebHooks            = $clientIntegration->getIntegration()->getWebHooks();
+        $integrationWebHooks            = $integratedService->getIntegration()->getWebHooks();
 
         $response                       = [];
         foreach ($integrationWebHooks AS $integrationWebHook)
         {
-            if (!$clientIntegration->hasIntegrationWebHook($integrationWebHook) && $integrationWebHook->isActive())
+            if (!$integratedService->hasIntegrationWebHook($integrationWebHook) && $integrationWebHook->isActive())
                 $response[]             = $integrationWebHook;
         }
 
@@ -88,50 +88,50 @@ class ClientIntegrationController extends Controller
 
     /**
      * @param   Request $request
-     * @return  ClientWebHook[]
+     * @return  IntegratedWebHook[]
      */
     public function createWebHook (Request $request)
     {
-        $createWebHook                  = new CreateWebHook($request->input());
+        $createWebHook                  = new CreateIntegratedWebHook($request->input());
         $createWebHook->setId($request->route('id'));
         $createWebHook->validate();
         $createWebHook->clean();
 
-        $clientIntegration              = $this->clientIntegrationValidation->idExists($createWebHook->getId());
+        $integratedService              = $this->integratedServiceValidation->idExists($createWebHook->getId());
 
-        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
-            throw new NotFoundHttpException('ClientIntegration not found');
+        if ($integratedService->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('IntegratedService not found');
 
-        if ($clientIntegration->getIntegration()->getId() != IntegrationUtility::SHOPIFY_ID)
+        if ($integratedService->getIntegration()->getId() != IntegrationUtility::SHOPIFY_ID)
             throw new BadRequestHttpException('WebHooks are currently only enabled for Shopify');
 
         $integrationWebHookValidation   = new IntegrationWebHookValidation();
         $integrationWebHookIds          = explode(',', $createWebHook->getIntegrationWebHookIds());
 
-        $shopifyWebHookRepository       = new ShopifyWebHookRepository($clientIntegration);
+        $shopifyWebHookRepository       = new ShopifyWebHookRepository($integratedService);
 
         foreach ($integrationWebHookIds AS $integrationWebHookId)
         {
             $integrationWebHook         = $integrationWebHookValidation->idExists($integrationWebHookId);
 
-            if (!$clientIntegration->getIntegration()->hasWebHook($integrationWebHook))
+            if (!$integratedService->getIntegration()->hasWebHook($integrationWebHook))
                 throw new BadRequestHttpException('integrationWebHook does not belong to integration');
 
             if (!$integrationWebHook->isActive())
                 throw new BadRequestHttpException('integrationWebHook is not active');
 
-            if ($clientIntegration->hasIntegrationWebHook($integrationWebHook))
-                throw new BadRequestHttpException('clientIntegration is already registered for the webHook');
+            if ($integratedService->hasIntegrationWebHook($integrationWebHook))
+                throw new BadRequestHttpException('integratedService is already registered for the webHook');
 
-            $clientWebHook              = new ClientWebHook();
-            $clientWebHook->setClientIntegration($clientIntegration);
-            $clientWebHook->setIntegrationWebHook($integrationWebHook);
-            $shopifyWebHookRepository->createWebHook($clientWebHook);
-            $clientIntegration->addWebHook($clientWebHook);
-            $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+            $integratedWebHook              = new IntegratedWebHook();
+            $integratedWebHook->setIntegratedService($integratedService);
+            $integratedWebHook->setIntegrationWebHook($integrationWebHook);
+            $shopifyWebHookRepository->createWebHook($integratedWebHook);
+            $integratedService->addIntegratedWebHook($integratedWebHook);
+            $this->integratedServiceRepo->saveAndCommit($integratedService);
         }
 
-        return response($clientIntegration->getWebHooks(), 201);
+        return response($integratedService->getWebHooks(), 201);
     }
 
     /**
@@ -140,33 +140,33 @@ class ClientIntegrationController extends Controller
      */
     public function deleteWebHook (Request $request)
     {
-        $deleteClientIntegrationWebHook = new DeleteClientIntegrationWebHook();
-        $deleteClientIntegrationWebHook->setId($request->route('id'));
-        $deleteClientIntegrationWebHook->setClientWebHookId($request->route('clientWebHookId'));
-        $deleteClientIntegrationWebHook->validate();
-        $deleteClientIntegrationWebHook->clean();
+        $deleteIntegratedServiceWebHook = new DeleteIntegratedWebHook();
+        $deleteIntegratedServiceWebHook->setId($request->route('id'));
+        $deleteIntegratedServiceWebHook->setIntegratedWebHookId($request->route('integratedWebHookId'));
+        $deleteIntegratedServiceWebHook->validate();
+        $deleteIntegratedServiceWebHook->clean();
 
-        $clientIntegration              = $this->clientIntegrationValidation->idExists($deleteClientIntegrationWebHook->getId());
+        $integratedService              = $this->integratedServiceValidation->idExists($deleteIntegratedServiceWebHook->getId());
 
-        if ($clientIntegration->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
-            throw new NotFoundHttpException('ClientIntegration not found');
+        if ($integratedService->getClient()->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+            throw new NotFoundHttpException('IntegratedService not found');
 
         $providedWebHook                = null;
-        foreach ($clientIntegration->getWebHooks() AS $clientWebHook)
+        foreach ($integratedService->getWebHooks() AS $integratedWebHook)
         {
-            if ($clientWebHook->getId() == $deleteClientIntegrationWebHook->getClientWebHookId())
-                $providedWebHook        = $clientWebHook;
+            if ($integratedWebHook->getId() == $deleteIntegratedServiceWebHook->getIntegratedWebHookId())
+                $providedWebHook        = $integratedWebHook;
         }
 
         if (is_null($providedWebHook))
-            throw new BadRequestHttpException('clientIntegration does not have provided clientWebHookId');
+            throw new BadRequestHttpException('integratedService does not have provided integratedWebHookId');
 
         //  Delete the webHook in Shopify
-        $shopifyWebHookRepository       = new ShopifyWebHookRepository($clientIntegration);
+        $shopifyWebHookRepository       = new ShopifyWebHookRepository($integratedService);
         $shopifyWebHookRepository->deleteWebHook($providedWebHook->getExternalId());
 
-        $clientIntegration->removeWebHook($providedWebHook);
-        $this->clientIntegrationRepo->saveAndCommit($clientIntegration);
+        $integratedService->removeIntegratedWebHook($providedWebHook);
+        $this->integratedServiceRepo->saveAndCommit($integratedService);
 
         return response('', 204);
     }

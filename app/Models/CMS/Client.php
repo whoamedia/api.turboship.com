@@ -4,8 +4,7 @@ namespace App\Models\CMS;
 
 
 use App\Models\BaseModel;
-use App\Models\Integrations\ClientECommerceIntegration;
-use App\Models\Integrations\ClientShippingIntegration;
+use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\OMS\Product;
 use App\Models\Shipments\Service;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -37,12 +36,7 @@ class Client extends BaseModel
     /**
      * @var ArrayCollection
      */
-    protected $eCommerceIntegrations;
-
-    /**
-     * @var ArrayCollection
-     */
-    protected $shippingIntegrations;
+    protected $integratedShoppingCarts;
 
     /**
      * @var ArrayCollection
@@ -63,8 +57,7 @@ class Client extends BaseModel
     {
         $this->createdAt                = new \DateTime();
         $this->products                 = new ArrayCollection();
-        $this->eCommerceIntegrations    = new ArrayCollection();
-        $this->shippingIntegrations     = new ArrayCollection();
+        $this->integratedShoppingCarts  = new ArrayCollection();
         $this->services                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
@@ -154,37 +147,20 @@ class Client extends BaseModel
     }
 
     /**
-     * @return ClientECommerceIntegration[]
+     * @return IntegratedShoppingCart[]
      */
-    public function getECommerceIntegrations()
+    public function getIntegratedShoppingCarts()
     {
-        return $this->eCommerceIntegrations->toArray();
+        return $this->integratedShoppingCarts->toArray();
     }
 
     /**
-     * @param ClientECommerceIntegration $clientECommerceIntegration
+     * @param IntegratedShoppingCart $integratedShoppingCart
      */
-    public function addECommerceIntegration(ClientECommerceIntegration $clientECommerceIntegration)
+    public function addIntegratedShoppingCart(IntegratedShoppingCart $integratedShoppingCart)
     {
-        $clientECommerceIntegration->setClient($this);
-        $this->eCommerceIntegrations->add($clientECommerceIntegration);
-    }
-
-    /**
-     * @return ClientShippingIntegration[]
-     */
-    public function getShippingIntegrations()
-    {
-        return $this->shippingIntegrations->toArray();
-    }
-
-    /**
-     * @param ClientShippingIntegration $clientShippingIntegration
-     */
-    public function addClientShippingIntegration (ClientShippingIntegration $clientShippingIntegration)
-    {
-        $clientShippingIntegration->setClient($this);
-        $this->shippingIntegrations->add($clientShippingIntegration);
+        $integratedShoppingCart->setClient($this);
+        $this->integratedShoppingCarts->add($integratedShoppingCart);
     }
 
     /**

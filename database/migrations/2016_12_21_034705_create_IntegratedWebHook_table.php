@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCredentialTable extends Migration
+class CreateIntegratedWebHookTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +13,19 @@ class CreateCredentialTable extends Migration
      */
     public function up()
     {
-        Schema::create('Credential', function (Blueprint $table)
+        Schema::create('IntegratedWebHook', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('value', 500);
+
+            $table->string('externalId')->index()->nullable()->default(null);
 
             $table->integer('integratedServiceId')->unsigned()->index();
             $table->foreign('integratedServiceId')->references('id')->on('IntegratedService');
 
-            $table->integer('integrationCredentialId')->unsigned()->index();
-            $table->foreign('integrationCredentialId')->references('id')->on('IntegrationCredential');
+            $table->integer('integrationWebHookId')->unsigned()->index();
+            $table->foreign('integrationWebHookId')->references('id')->on('IntegrationWebHook');
 
-
-            $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
-
-            $table->unique(['integratedServiceId', 'integrationCredentialId'], 'clientcredential_unique_keys');
+            $table->unique(['integratedServiceId', 'integrationWebHookId'], 'IntegratedWebHook_unique_keys');
         });
 
 
@@ -40,7 +38,6 @@ class CreateCredentialTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Credential');
+        Schema::drop('IntegratedWebHook');
     }
-
 }

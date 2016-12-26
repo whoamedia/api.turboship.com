@@ -5,6 +5,7 @@ namespace App\Models\Shipments;
 
 use App\Models\CMS\Client;
 use App\Models\CMS\Organization;
+use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Locations\Address;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -38,6 +39,11 @@ class Shipper implements \JsonSerializable
     protected $returnAddress;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $integratedShippingApis;
+
+    /**
      * Establishes which clients can use the shipper
      * @var ArrayCollection
      */
@@ -47,6 +53,7 @@ class Shipper implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->clients                  = new ArrayCollection();
+        $this->integratedShippingApis      = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -170,6 +177,23 @@ class Shipper implements \JsonSerializable
     public function hasClient (Client $client)
     {
         return $this->clients->contains($client);
+    }
+
+    /**
+     * @return IntegratedShippingApi[]
+     */
+    public function getIntegratedShippingApis ()
+    {
+        return $this->integratedShippingApis->toArray();
+    }
+
+    /**
+     * @param IntegratedShippingApi $integratedShippingApi
+     */
+    public function addIntegratedShippingApi (IntegratedShippingApi $integratedShippingApi)
+    {
+        $integratedShippingApi->setShipper($this);
+        $this->integratedShippingApis->add($integratedShippingApi);
     }
 
 }

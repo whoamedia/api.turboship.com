@@ -1,0 +1,10 @@
+App\Models\Integrations\ShippingApiIntegration:
+  type:               entity
+  table:              ShippingApiIntegration
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiIntegrationRepository
+
+  oneToMany:
+    shippingApiIntegrationCarriers:
+      targetEntity:   ShippingApiIntegrationCarrier
+      mappedBy:       shippingApiIntegration
+      cascade:        ["persist", "remove"]
