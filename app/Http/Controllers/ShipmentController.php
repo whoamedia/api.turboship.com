@@ -73,15 +73,15 @@ class ShipmentController extends BaseAuthController
 
         set_time_limit(120);
         $createShipmentsService         = new CreateShipmentsService($client, $shipper);
-        $shipments                      = $createShipmentsService->runOnePerOrder();
+        $orders                         = $createShipmentsService->getPendingFulfillmentOrders();
 
-        foreach ($shipments AS $shipment)
+        foreach ($orders AS $order)
         {
-            set_time_limit(60);
-            $this->shipmentRepo->saveAndCommit($shipment);
+            $job                            = (new \App\Jobs\Shipments\CreateShipmentsJob($order->getId(), 1))->onQueue('orderShipments');
+            $this->dispatch($job);
         }
 
-        return response ($shipments, 201);
+        return response ('', 200);
     }
 
 
