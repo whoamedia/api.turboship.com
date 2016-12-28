@@ -64,6 +64,9 @@ class OrderApprovalService
      */
     public function processOrder (Order $order)
     {
+        if (!$order->canRunApprovalProcess())
+            return $order;
+
         if (!$this->processShippingAddress($order))
             return $order;
 

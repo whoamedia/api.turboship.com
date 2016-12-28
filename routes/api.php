@@ -56,6 +56,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Order Operations
     Route::get('/orders', 'OrderController@index');
     Route::get('/orders/statuses', 'OrderController@getStatuses');
+    Route::get('/orders/approve', 'OrderController@approveOrders');
     Route::get('/orders/{id}', 'OrderController@show');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
