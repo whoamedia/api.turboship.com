@@ -62,7 +62,6 @@ class ShipmentController extends BaseAuthController
     }
 
 
-
     public function createShipmentsJob (Request $request)
     {
         $createShipmentsJob             = new CreateShipmentsJob($request->input());
@@ -72,14 +71,19 @@ class ShipmentController extends BaseAuthController
         $client                         = $this->clientValidation->idExists($createShipmentsJob->getClientId());
         $shipper                        = $this->shipperValidation->idExists($createShipmentsJob->getShipperId());
 
+        set_time_limit(120);
         $createShipmentsService         = new CreateShipmentsService($client, $shipper);
         $shipments                      = $createShipmentsService->runOnePerOrder();
 
         foreach ($shipments AS $shipment)
+        {
+            set_time_limit(60);
             $this->shipmentRepo->saveAndCommit($shipment);
+        }
 
         return response ($shipments, 201);
     }
+
 
     /**
      * @param   int         $id
