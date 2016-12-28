@@ -4,7 +4,9 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
-use App\Jobs\Shopify\ShopifyImportProductJob;
+use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
+use App\Jobs\Shopify\Products\ShopifyDeleteProductJob;
+use App\Jobs\Shopify\Products\ShopifyUpdateProductJob;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use Illuminate\Http\Request;
@@ -39,7 +41,8 @@ class ShopifyProductController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
-            $job                            = (new ShopifyImportProductJob($shopifyProduct, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
+
+            $job                            = (new ShopifyCreateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -57,13 +60,10 @@ class ShopifyProductController extends BaseShopifyController
         {
             parent::handleRequest($request);
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
-            //  TODO: Figure out deletion
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $this->shopifyWebHookLog->setExternalId($shopifyProduct->getId());
-            $this->shopifyWebHookLog->addNote('No action taken to delete product');
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-
+            $job                            = (new ShopifyDeleteProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
@@ -81,7 +81,8 @@ class ShopifyProductController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
-            $job                            = (new ShopifyImportProductJob($shopifyProduct, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
+
+            $job                            = (new ShopifyUpdateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }
         catch (\Exception $exception)

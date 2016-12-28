@@ -10,6 +10,7 @@ class OrderStatusUtility
 
     //  LifeCycle
     const CREATED_ID                    = 1;
+    const CANCELLED                     = 2;
 
 
     //  Address Error Statuses

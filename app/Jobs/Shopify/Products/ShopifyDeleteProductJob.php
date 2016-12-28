@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Jobs\Shopify\Products;
+
+
+use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use App\Jobs\Shopify\BaseShopifyJob;
+use App\Models\Logs\ShopifyWebHookLog;
+use App\Repositories\Doctrine\OMS\ProductRepository;
+use App\Services\Shopify\Mapping\ShopifyProductMappingService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use EntityManager;
+
+class ShopifyDeleteProductJob extends BaseShopifyJob implements ShouldQueue
+{
+    use InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * @var ShopifyProduct
+     */
+    private $shopifyProduct;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepo;
+
+    /**
+     * ShopifyImportProductJob constructor.
+     * @param   ShopifyProduct  $shopifyProduct
+     * @param   int                         $integratedShoppingCartId
+     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     */
+    public function __construct($shopifyProduct, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    {
+        parent::__construct($integratedShoppingCartId, 'products/delete', $shopifyWebHookLog);
+        $this->shopifyProduct           = $shopifyProduct;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        parent::initialize($this->shopifyProduct->getId());
+        $this->productRepo              = EntityManager::getRepository('App\Models\OMS\Product');
+        $shopifyProductMappingService   = new ShopifyProductMappingService($this->integratedShoppingCart->getClient());
+
+        $product                        = $shopifyProductMappingService->handleMapping($this->shopifyProduct);
+        if (is_null($product->getId()))
+        {
+            $this->shopifyWebHookLog->addNote('Product was deleted in Shopify but does not exist locally');
+        }
+        else
+        {
+            $this->shopifyWebHookLog->setEntityCreated(false);
+            $this->shopifyWebHookLog->setEntityId($product->getId());
+            // TODO: Set product to inactive
+            $this->productRepo->saveAndCommit($product);
+            $this->shopifyWebHookLog->addNote('No action taken to delete product');
+        }
+        $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+    }
+}

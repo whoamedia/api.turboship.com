@@ -26,7 +26,7 @@ App\Models\Logs\ShopifyWebHookLog:
     incomingMessage:
       column:         incomingMessage
       type:           string
-      nullable:       false
+      nullable:       true
       options:
         fixed:        false
         comment:      "ShopifyWebHookLog incomingMessage"

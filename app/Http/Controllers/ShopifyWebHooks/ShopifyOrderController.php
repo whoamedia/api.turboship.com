@@ -4,7 +4,11 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
-use App\Jobs\Shopify\ShopifyImportOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyCancelOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyDeleteOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyOrderPaidJob;
+use App\Jobs\Shopify\Orders\ShopifyUpdateOrderJob;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Http\Request;
@@ -27,7 +31,6 @@ class ShopifyOrderController extends BaseShopifyController
     public function __construct ()
     {
         parent::__construct();
-
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
     }
 
@@ -39,7 +42,7 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $job                            = (new ShopifyImportOrderJob($shopifyOrder, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyCreateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -58,10 +61,8 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-            $this->shopifyWebHookLog->addNote('No action taken to cancel order');
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyCancelOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
 
         }
         catch (\Exception $exception)
@@ -81,12 +82,12 @@ class ShopifyOrderController extends BaseShopifyController
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-            $this->shopifyWebHookLog->addNote('No action taken to delete order');
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyDeleteOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
+            dd($exception->getMessage());
             $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
@@ -101,7 +102,8 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $job                            = (new ShopifyImportOrderJob($shopifyOrder, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
+
+            $job                            = (new ShopifyOrderPaidJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -120,7 +122,8 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $job                            = (new ShopifyImportOrderJob($shopifyOrder, $this->client->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
+
+            $job                            = (new ShopifyUpdateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
             $this->dispatch($job);
 
         }

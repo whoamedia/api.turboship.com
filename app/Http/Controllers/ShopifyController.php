@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Shopify\DownloadShopifyProducts;
-use App\Jobs\Shopify\ShopifyImportOrderJob;
-use App\Jobs\Shopify\ShopifyImportProductJob;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\ProductRepository;
@@ -64,7 +64,7 @@ class ShopifyController extends BaseIntegratedServiceController
             $shopifyOrdersResponse          = $shopifyOrderRepository->getImportCandidates($currentPage, 250);
             foreach ($shopifyOrdersResponse AS $shopifyOrder)
             {
-                $job                        = (new ShopifyImportOrderJob($shopifyOrder, $shoppingCartIntegration->getClient()->getId()))->onQueue('shopifyOrders');
+                $job                        = (new ShopifyCreateOrderJob($shopifyOrder, $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
                 $this->dispatch($job);
             }
             usleep(250000);
@@ -91,7 +91,7 @@ class ShopifyController extends BaseIntegratedServiceController
                 $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
                 foreach ($shopifyProductsResponse AS $shopifyProduct)
                 {
-                    $job                        = (new ShopifyImportProductJob($shopifyProduct, $shoppingCartIntegration->getClient()->getId()))->onQueue('shopifyProducts');
+                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
                     $this->dispatch($job);
                 }
                 usleep(250000);
@@ -108,7 +108,7 @@ class ShopifyController extends BaseIntegratedServiceController
                 $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
                 foreach ($shopifyProductsResponse AS $shopifyProduct)
                 {
-                    $job                        = (new ShopifyImportProductJob($shopifyProduct, $shoppingCartIntegration->getClient()->getId()))->onQueue('shopifyProducts');
+                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
                     $this->dispatch($job);
                 }
                 usleep(250000);
