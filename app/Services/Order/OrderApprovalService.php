@@ -76,6 +76,7 @@ class OrderApprovalService
 
         $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::PENDING_FULFILLMENT_ID);
         $order->addStatus($status);
+
         return $order;
     }
 
