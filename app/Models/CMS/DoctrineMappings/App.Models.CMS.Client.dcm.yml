@@ -64,3 +64,14 @@ App\Models\CMS\Client:
         inverseJoinColumns:
           serviceId:
             referencedColumnName: id
+    shippers:
+      fetch:          LAZY
+      targetEntity:   App\Models\Shipments\Shipper
+      joinTable:
+        name:         ShipperClient
+        joinColumns:
+          clientId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          shipperId:
+            referencedColumnName: id

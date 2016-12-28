@@ -147,3 +147,8 @@ App\Models\OMS\Order:
       targetEntity:   OrderStatusHistory
       mappedBy:       order
       cascade:        ["persist", "remove"]
+
+  entityListeners:
+    App\Listeners\OrderListener:
+      postPersist:  [postPersistHandler]
+      postUpdate:   [postUpdateHandler]
