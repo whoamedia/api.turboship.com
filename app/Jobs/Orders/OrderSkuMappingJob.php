@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Orders;
 
+use App\Jobs\Job;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
@@ -11,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use EntityManager;
 
-class OrderSkuMappingJob implements ShouldQueue
+class OrderSkuMappingJob extends Job implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, DispatchesJobs;
 
@@ -37,6 +38,7 @@ class OrderSkuMappingJob implements ShouldQueue
 
     public function __construct($clientId, $variantSku)
     {
+        parent::__construct();
         $this->clientId                 = $clientId;
         $this->variantSku               = $variantSku;
     }

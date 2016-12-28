@@ -3,13 +3,14 @@
 namespace App\Jobs\Shopify;
 
 
+use App\Jobs\Job;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
 use App\Repositories\Doctrine\Logs\ShopifyWebHookLogRepository;
 use EntityManager;
 
-class BaseShopifyJob
+class BaseShopifyJob extends Job
 {
 
     /**
@@ -51,6 +52,7 @@ class BaseShopifyJob
      */
     public function __construct($integratedShoppingCartId, $topic, $shopifyWebHookLog = null)
     {
+        parent::__construct();
         $this->integratedShoppingCartId = $integratedShoppingCartId;
         $this->topic                    = $topic;
         $this->shopifyWebHookLog        = $shopifyWebHookLog;

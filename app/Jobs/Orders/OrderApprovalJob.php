@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Orders;
 
+use App\Jobs\Job;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
 use Illuminate\Bus\Queueable;
@@ -10,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use EntityManager;
 
-class OrderApprovalJob implements ShouldQueue
+class OrderApprovalJob extends Job implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,6 +37,7 @@ class OrderApprovalJob implements ShouldQueue
      */
     public function __construct($orderId)
     {
+        parent::__construct();
         $this->orderId                  = $orderId;
     }
 
