@@ -163,6 +163,7 @@ class ShopifyWebHookLog
     public function setErrorMessage($errorMessage)
     {
         $this->errorMessage = $errorMessage;
+        $this->success      = false;
     }
 
     /**
