@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Shipments\RateShipment;
 use App\Http\Requests\Shipments\CreateShipmentsJob;
 use App\Http\Requests\Shipments\GetShipments;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
+use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Repositories\EasyPost\EasyPostShipmentRepository;
+use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Services\Shipments\CreateShipmentsService;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -34,12 +39,18 @@ class ShipmentController extends BaseAuthController
      */
     private $shipmentRepo;
 
+    /**
+     * @var IntegratedShippingApiRepository
+     */
+    private $integratedShippingApiRepo;
+
 
     public function __construct()
     {
         $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
         $this->shipperValidation        = new ShipperValidation();
         $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
+        $this->integratedShippingApiRepo= EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
     }
 
 
@@ -59,6 +70,34 @@ class ShipmentController extends BaseAuthController
     {
         $shipment                       = $this->getShipment($request->route('id'));
         return response($shipment);
+    }
+
+
+
+    public function rate (Request $request)
+    {
+        $rateShipment                  = new RateShipment($request->input());
+        $rateShipment->setId($request->route('id'));
+        $rateShipment->validate();
+        $rateShipment->clean();
+
+        $shipment                       = $this->getShipment($rateShipment->getId());
+
+        $shippingContainerValidation    = new ShippingContainerValidation();
+        $shippingContainer              = $shippingContainerValidation->idExists($rateShipment->getShippingContainerId());
+        $shipment->setShippingContainer($shippingContainer);
+
+        $weight                         = $rateShipment->getWeight();
+        $shipment->setWeight($weight);
+
+
+        $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
+        $easyPostShipmentRepo           = new EasyPostShipmentRepository($integratedShippingApi);
+
+        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
+        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
+
+        $easyPostShipmentRepo->rate($createEasyPostShipment);
     }
 
 
@@ -87,14 +126,15 @@ class ShipmentController extends BaseAuthController
 
     /**
      * @param   int         $id
+     * @param   string      $fieldName
      * @return  Shipment
      */
-    private function getShipment ($id)
+    private function getShipment ($id, $fieldName = 'id')
     {
         if (is_null($id))
-            throw new BadRequestHttpException('id is required');
+            throw new BadRequestHttpException($fieldName . ' is required');
         else if (is_null(InputUtil::getInt($id)))
-            throw new BadRequestHttpException('id must be integer');
+            throw new BadRequestHttpException($fieldName . ' must be integer');
 
         $shipmentValidation             = new ShipmentValidation();
 

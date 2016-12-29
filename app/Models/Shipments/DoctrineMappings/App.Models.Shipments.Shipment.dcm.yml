@@ -81,3 +81,7 @@ App\Models\Shipments\Shipment:
       targetEntity:   ShipmentItem
       mappedBy:       shipment
       cascade:        ["persist", "remove"]
+    rates:
+      targetEntity:   Rate
+      mappedBy:       shipment
+      cascade:        ["persist", "remove"]

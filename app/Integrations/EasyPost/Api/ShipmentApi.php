@@ -58,8 +58,9 @@ class ShipmentApi extends BaseApi
     {
         $request                        = $request instanceof CreateEasyPostShipment ? $request : new CreateEasyPostShipment($request);
         $response                       = parent::makeHttpRequest('post', $this->path, $request->jsonSerialize());
-
-        return new EasyPostShipment($response);
+        dd($response);
+        $easyPostShipment               = new EasyPostShipment($response);
+        //  dd($easyPostShipment);
     }
 
     /**

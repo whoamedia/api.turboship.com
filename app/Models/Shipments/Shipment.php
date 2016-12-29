@@ -3,6 +3,7 @@
 namespace App\Models\Shipments;
 
 
+use App\Models\CMS\Client;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -47,6 +48,11 @@ class Shipment implements \JsonSerializable
     protected $items;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $rates;
+
+    /**
      * @var Postage|null
      */
     protected $postage;
@@ -66,6 +72,7 @@ class Shipment implements \JsonSerializable
     {
         $this->createdAt                = new \DateTime();
         $this->items                    = new ArrayCollection();
+        $this->rates                    = new ArrayCollection();
 
         $this->fromAddress              = AU::get($data['fromAddress']);
         $this->toAddress                = AU::get($data['toAddress']);
@@ -90,6 +97,10 @@ class Shipment implements \JsonSerializable
         $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+
+        $object['rates']                = [];
+        foreach ($this->getRates() AS $rate)
+            $object['rates'][]          = $rate->jsonSerialize();
 
         return $object;
     }
@@ -255,4 +266,38 @@ class Shipment implements \JsonSerializable
         $this->createdAt = $createdAt;
     }
 
+    /**
+     * Can we safely ship this shipment?
+     * @return bool
+     */
+    public function canShip ()
+    {
+        return true;
+    }
+
+    /**
+     * @return  Client
+     */
+    public function getClient ()
+    {
+        foreach ($this->getItems() AS $shipmentItem)
+            return $shipmentItem->getOrderItem()->getOrder()->getClient();
+    }
+
+    /**
+     * @return Rate[]
+     */
+    public function getRates ()
+    {
+        return $this->rates->toArray();
+    }
+
+    /**
+     * @param Rate $rate
+     */
+    public function addRate (Rate $rate)
+    {
+        $rate->setShipment($this);
+        $this->rates->add($rate);
+    }
 }

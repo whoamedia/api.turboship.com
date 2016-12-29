@@ -32,6 +32,17 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
      * @param   Shipment $shipment
      * @return  CreateEasyPostShipment
      */
+    public function handleMapping (Shipment $shipment)
+    {
+        $createEasyPostShipment         = $this->toEasyPostShipment($shipment);
+
+        return $createEasyPostShipment;
+    }
+
+    /**
+     * @param   Shipment $shipment
+     * @return  CreateEasyPostShipment
+     */
     public function toEasyPostShipment (Shipment $shipment)
     {
         $createEasyPostShipment          = new CreateEasyPostShipment();
@@ -46,7 +57,7 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $returnAddress                  = $this->easyPostAddressMappingService->toEasyPostAddress($shipment->getReturnAddress());
         $createEasyPostShipment->setFromAddress($returnAddress);
 
-        $easyPostParcel                 = $this->easyPostParcelMappingService->toEasyPostParcel($shipment->getShippingContainer());
+        $easyPostParcel                 = $this->easyPostParcelMappingService->toEasyPostParcel($shipment->getShippingContainer(), $shipment->getWeight());
         $createEasyPostShipment->setParcel($easyPostParcel);
 
         return $createEasyPostShipment;

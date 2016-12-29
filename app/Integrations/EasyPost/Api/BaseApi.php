@@ -26,14 +26,10 @@ class BaseApi
     protected $guzzle;
 
 
-    protected $jsonMapper;
-
-
     public function __construct(EasyPostConfiguration $config)
     {
         $this->config                   = $config;
         $this->guzzle                   = new Client();
-        $this->jsonMapper               = new \JsonMapper();
     }
 
 
