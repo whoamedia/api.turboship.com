@@ -101,7 +101,6 @@ class BaseApi
                 throw new EasyPostInvalidCredentialsException();
             else if (preg_match("/Unable to complete shipment purchase: carrier is not responding/", $message))
             {
-                dd($code);
                 throw new EasyPostServiceUnavailableException();
             }
             else if (
