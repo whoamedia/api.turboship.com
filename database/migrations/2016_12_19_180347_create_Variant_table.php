@@ -26,6 +26,9 @@ class CreateVariantTable extends Migration
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
 
+            $table->integer('countryOfOriginId')->unsigned()->index();
+            $table->foreign('countryOfOriginId')->references('id')->on('Country');
+
             $table->string('title');
             $table->string('barcode')->index();
             $table->string('originalSku')->nullable()->default(null);

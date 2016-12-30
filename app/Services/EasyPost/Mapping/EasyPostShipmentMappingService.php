@@ -109,7 +109,7 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $createEasyPostCustomsItem->setQuantity($shipmentItem->getQuantity());
         $createEasyPostCustomsItem->setWeight($shipmentItem->getOrderItem()->getVariant()->getWeight());
         $createEasyPostCustomsItem->setValue($shipmentItem->getOrderItem()->getBasePrice());
-        $createEasyPostCustomsItem->setOriginCountry('US');
+        $createEasyPostCustomsItem->setOriginCountry($shipmentItem->getOrderItem()->getVariant()->getCountryOfOrigin()->getIso2());
 
         return $createEasyPostCustomsItem;
     }

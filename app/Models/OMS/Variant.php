@@ -5,7 +5,10 @@ namespace App\Models\OMS;
 
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
+use App\Models\Locations\Country;
+use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
+use App\Utilities\CountryUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
@@ -27,6 +30,11 @@ class Variant extends BaseModel
      * @var Client
      */
     protected $client;
+
+    /**
+     * @var Country
+     */
+    protected $countryOfOrigin;
 
     /**
      * @var CRMSource
@@ -98,6 +106,7 @@ class Variant extends BaseModel
 
         $this->product                  = AU::get($data['product']);
         $this->client                   = AU::get($data['client']);
+        $this->countryOfOrigin          = AU::get($data['countryOfOrigin']);
         $this->crmSource                = AU::get($data['crmSource']);
         $this->title                    = AU::get($data['title']);
         $this->price                    = AU::get($data['price']);
@@ -106,6 +115,12 @@ class Variant extends BaseModel
         $this->sku                      = AU::get($data['sku']);
         $this->weight                   = AU::get($data['weight']);
         $this->externalId               = AU::get($data['externalId']);
+
+        if (is_null($this->countryOfOrigin))
+        {
+            $countryValidation          = new CountryValidation();
+            $this->countryOfOrigin      = $countryValidation->idExists(CountryUtility::UNITED_STATES);
+        }
     }
 
     public function validate()
@@ -148,6 +163,8 @@ class Variant extends BaseModel
         $object['sku']                  = $this->sku;
         $object['originalSku']          = $this->originalSku;
         $object['weight']               = $this->weight;
+        $object['client']               = $this->client->jsonSerialize();
+        $object['countryOfOrigin']      = $this->countryOfOrigin->jsonSerialize();
         $object['crmSource']            = $this->crmSource->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
@@ -194,6 +211,22 @@ class Variant extends BaseModel
     public function setClient($client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @return Country
+     */
+    public function getCountryOfOrigin()
+    {
+        return $this->countryOfOrigin;
+    }
+
+    /**
+     * @param Country $countryOfOrigin
+     */
+    public function setCountryOfOrigin($countryOfOrigin)
+    {
+        $this->countryOfOrigin = $countryOfOrigin;
     }
 
     /**
