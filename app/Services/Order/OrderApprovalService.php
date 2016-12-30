@@ -225,6 +225,10 @@ class OrderApprovalService
         $mappingFailure             = false;
         foreach ($order->getItems() AS $orderItem)
         {
+            //  Don't map the Variant if it's already mapped
+            if (!is_null($orderItem->getVariant()))
+                continue;
+
             $sku                    = $orderItem->getSku();
 
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
