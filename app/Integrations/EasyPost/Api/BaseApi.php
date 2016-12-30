@@ -6,6 +6,7 @@ namespace App\Integrations\EasyPost\Api;
 use App\Integrations\EasyPost\EasyPostConfiguration;
 use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
+use App\Integrations\EasyPost\Exceptions\EasyPostInvalidAddressException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
@@ -106,6 +107,8 @@ class BaseApi
                 throw new EasyPostCustomsInfoException();
             else if (preg_match("/Missing required shipment attribute: reference/", $message))
                 throw new EasyPostReferenceRequiredException();
+            else if (preg_match("/Address is too ambiguous/", $message))
+                throw new EasyPostInvalidAddressException();
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
         }
