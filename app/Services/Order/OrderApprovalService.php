@@ -17,6 +17,7 @@ use App\Services\Address\USPSAddressService;
 use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
 use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
+use Respect\Validation\Validator as v;
 use EntityManager;
 
 class OrderApprovalService
@@ -154,6 +155,14 @@ class OrderApprovalService
          * Ensure that the phone number is always set
          */
         if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
+        {
+            $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
+            $order->addStatus($status);
+            return false;
+        }
+
+        //  Ensure the phone number is valid
+        if (!v::phone()->validate($address->getPhone()))
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
             $order->addStatus($status);
