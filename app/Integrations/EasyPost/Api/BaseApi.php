@@ -4,6 +4,7 @@ namespace App\Integrations\EasyPost\Api;
 
 
 use App\Integrations\EasyPost\EasyPostConfiguration;
+use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -89,9 +90,11 @@ class BaseApi
              */
             $code                   = $ex->getCode();
             $errorMessage           = json_decode($ex->getResponse()->getBody()->getContents(), true);
-            dd($errorMessage);
+            $errorMessage           = $errorMessage['error'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
+            else
+                throw new EasyPostApiException($errorMessage['message'], $code);
         }
 
         $result                 = $response->getBody()->getContents();
