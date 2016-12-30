@@ -5,7 +5,9 @@ namespace App\Integrations\EasyPost\Api;
 
 use App\Integrations\EasyPost\EasyPostConfiguration;
 use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
+use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -91,8 +93,16 @@ class BaseApi
             $code                   = $ex->getCode();
             $errorMessage           = json_decode($ex->getResponse()->getBody()->getContents(), true);
             $errorMessage           = $errorMessage['error'];
+            $message                = $errorMessage['message'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
+            else if (
+                preg_match("/phoneNumber is required/", $message) ||
+                preg_match("/Missing or invalid ship to phone number/", $message) ||
+                preg_match("/RequestedShipment Recipient contact - phoneNumber is required/", $message))
+                throw new EasyPostPhoneNumberRequiredException();
+            else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories", $message))
+                throw new EasyPostCustomsInfoException();
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
         }

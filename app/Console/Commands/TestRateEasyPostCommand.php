@@ -4,6 +4,10 @@ namespace App\Console\Commands;
 
 
 use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
+use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
+use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -75,6 +79,22 @@ class TestRateEasyPostCommand extends Command
             {
                 $shipmentRateService->purchase($shipment, $rate);
                 $this->shipmentRepo->saveAndCommit($shipment);
+            }
+            catch (EasyPostCustomsInfoException $exception)
+            {
+                //   Do nothing
+            }
+            catch (EasyPostInvalidCredentialsException $exception)
+            {
+                //   Do nothing
+            }
+            catch (EasyPostPhoneNumberRequiredException $exception)
+            {
+                //   Do nothing
+            }
+            catch (EasyPostReferenceRequiredException $exception)
+            {
+                //   Do nothing
             }
             catch (EasyPostApiException $easyPostApiException)
             {
