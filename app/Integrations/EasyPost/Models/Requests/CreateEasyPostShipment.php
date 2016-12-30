@@ -51,7 +51,7 @@ class CreateEasyPostShipment implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $object['reference']        = $this->reference;
+        $object['reference']        = $this->getReference();
         $object['to_address']       = is_null($this->to_address) ? null : $this->to_address->jsonSerialize();
         $object['from_address']     = is_null($this->from_address) ? null : $this->from_address->jsonSerialize();
         $object['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
@@ -67,7 +67,7 @@ class CreateEasyPostShipment implements \JsonSerializable
      */
     public function getReference()
     {
-        return $this->reference;
+        return is_null($this->reference) ? null : (string)$this->reference;
     }
 
     /**
