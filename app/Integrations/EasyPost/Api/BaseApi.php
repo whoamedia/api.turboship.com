@@ -101,7 +101,7 @@ class BaseApi
                 preg_match("/Missing or invalid ship to phone number/", $message) ||
                 preg_match("/RequestedShipment Recipient contact - phoneNumber is required/", $message))
                 throw new EasyPostPhoneNumberRequiredException();
-            else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories", $message))
+            else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories/", $message))
                 throw new EasyPostCustomsInfoException();
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
