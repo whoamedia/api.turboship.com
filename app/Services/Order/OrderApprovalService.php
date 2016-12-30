@@ -151,16 +151,13 @@ class OrderApprovalService
         $address->setSubdivision($subdivision);
 
         /**
-         * Make sure that the phone number is set for international shipments
+         * Ensure that the phone number is always set
          */
-        if ($country->getIso2() != 'US')
+        if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
         {
-            if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
-            {
-                $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
-                $order->addStatus($status);
-                return false;
-            }
+            $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
+            $order->addStatus($status);
+            return false;
         }
 
         $order->setShippingAddress($address);
