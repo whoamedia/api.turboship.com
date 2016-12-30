@@ -11,16 +11,21 @@ use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
 
-class TestJunkCommand extends Command
+class TestRateEasyPostCommand extends Command
 {
 
     use DispatchesJobs;
 
-    protected $signature    =   'turboship:test
-                                {--PRODUCTS : Import products}
-                                {--ORDERS : Import orders}';
 
-    protected $description = 'Test whatever junk you want here';
+    protected $signature = 'test:easypost:rates';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Bulk rate easy post shipments';
+
 
     /**
      * @var ShipmentRepository
@@ -61,6 +66,10 @@ class TestJunkCommand extends Command
 
             $shipmentRateService->rate($shipment);
             $this->shipmentRepo->saveAndCommit($shipment);
+
+            $rateId                         = rand(0, sizeof($shipment->getRates()) - 1);
+            $rate                           = $shipment->getRates()[$rateId];
+            $postage                        = $shipmentRateService->purchase($shipment, $rate);
         }
     }
 

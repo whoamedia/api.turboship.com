@@ -63,6 +63,11 @@ class Postage implements \JsonSerializable
      */
     protected $service;
 
+    /**
+     * @var string|null
+     */
+    protected $externalId;
+
 
     public function __construct($data = [])
     {
@@ -77,6 +82,7 @@ class Postage implements \JsonSerializable
         $this->fuelSurcharge            = AU::get($data['fuelSurcharge'], 0.00);
         $this->shipment                 = AU::get($data['shipment']);
         $this->service                  = AU::get($data['service']);
+        $this->externalId               = AU::get($data['externalId']);
     }
 
     /**
@@ -94,6 +100,7 @@ class Postage implements \JsonSerializable
         $object['fuelSurcharge']        = $this->fuelSurcharge;
         $object['shipment']             = $this->shipment->jsonSerialize();
         $object['service']              = $this->service->jsonSerialize();
+        $object['externalId']           = $this->externalId;
         $object['createdAt']            = $this->createdAt;
 
         return $object;
@@ -273,6 +280,22 @@ class Postage implements \JsonSerializable
     public function setService($service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalId()
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * @param null|string $externalId
+     */
+    public function setExternalId($externalId)
+    {
+        $this->externalId = $externalId;
     }
 
 }

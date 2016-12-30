@@ -300,4 +300,10 @@ class Shipment implements \JsonSerializable
         $rate->setShipment($this);
         $this->rates->add($rate);
     }
+
+
+    public function clearRates ()
+    {
+        $this->rates->clear();
+    }
 }

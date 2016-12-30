@@ -11,7 +11,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
  * Class Address
  * @package App\Integrations\EasyPost\Models\Responses
  */
-class EasyPostAddress
+class EasyPostAddress implements \JsonSerializable
 {
 
     use SimpleSerialize;

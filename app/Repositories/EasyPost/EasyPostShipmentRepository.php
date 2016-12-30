@@ -9,10 +9,23 @@ use App\Models\Shipments\Shipment;
 class EasyPostShipmentRepository extends BaseEasyPostRepository
 {
 
-
+    /**
+     * @param   CreateEasyPostShipment $createEasyPostShipment
+     * @return  \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     */
     public function rate (CreateEasyPostShipment $createEasyPostShipment)
     {
-        $easyPostShipment                   = $this->easyPostIntegration->shipmentApi->create($createEasyPostShipment);
-        dd($easyPostShipment);
+        return $this->easyPostIntegration->shipmentApi->create($createEasyPostShipment);
+
+    }
+
+    /**
+     * @param   string      $easyPostShipmentId
+     * @param   string      $easyPostRateId
+     * @return  \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     */
+    public function buy ($easyPostShipmentId, $easyPostRateId)
+    {
+        return $this->easyPostIntegration->shipmentApi->buy($easyPostShipmentId, $easyPostRateId);
     }
 }

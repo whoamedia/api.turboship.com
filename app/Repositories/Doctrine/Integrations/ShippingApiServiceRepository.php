@@ -48,6 +48,7 @@ class ShippingApiServiceRepository extends BaseRepository
         $qb->from('App\Models\Integrations\ShippingApiService', 'shippingApiService')
             ->join('shippingApiService.service', 'service', Query\Expr\Join::ON)
             ->join('shippingApiService.shippingApiCarrier', 'shippingApiCarrier', Query\Expr\Join::ON)
+            ->join('shippingApiCarrier.shippingApiIntegration', 'shippingApiIntegration', Query\Expr\Join::ON)
             ->join('shippingApiCarrier.carrier', 'carrier', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
@@ -58,6 +59,9 @@ class ShippingApiServiceRepository extends BaseRepository
 
         if (!is_null(AU::get($query['shippingApiCarrierIds'])))
             $qb->andWhere($qb->expr()->in('shippingApiCarrier.id', $query['shippingApiCarrierIds']));
+
+        if (!is_null(AU::get($query['shippingApiIntegrationIds'])))
+            $qb->andWhere($qb->expr()->in('shippingApiIntegration.id', $query['shippingApiIntegrationIds']));
 
         if (!is_null(AU::get($query['carrierIds'])))
             $qb->andWhere($qb->expr()->in('carrier.id', $query['carrierIds']));
@@ -86,11 +90,19 @@ class ShippingApiServiceRepository extends BaseRepository
         }
 
 
-        $qb->orderBy('ShippingApiService.id', 'ASC');
+        $qb->orderBy('shippingApiService.id', 'ASC');
         return $qb;
     }
 
-
+    /**
+     * @param   array   $query
+     * @return  ShippingApiService|null
+     */
+    public function getOneByQuery ($query)
+    {
+        $results                    = $this->where($query);
+        return sizeof($results) == 1 ? $results[0] : null;
+    }
 
     /**
      * @param   int     $id

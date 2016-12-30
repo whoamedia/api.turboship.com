@@ -23,7 +23,7 @@ class ShipmentRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      Order[]|LengthAwarePaginator
+     * @return      Shipment[]|LengthAwarePaginator
      */
     function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {

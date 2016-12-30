@@ -283,7 +283,7 @@ class EasyPostShippingIntegrationSeeder extends Seeder
     private function easyPostUPSMailInnovations ()
     {
         $easyPostUPSMailInnovations = new ShippingApiCarrier();
-        $easyPostUPSMailInnovations->setName('UPS Mail Innovations');
+        $easyPostUPSMailInnovations->setName('UPSMailInnovations');
         $easyPostUPSMailInnovations->setCarrier($this->carrierRepo->getOneById(CarrierUtility::UPS_MAIL_INNOVATIONS));
 
         $easyPostUPSMailInnovations->addShippingApiService(

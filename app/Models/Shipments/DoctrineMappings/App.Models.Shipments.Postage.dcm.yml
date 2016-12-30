@@ -81,6 +81,12 @@ App\Models\Shipments\Postage:
       nullable:       false
       options:
         default:      CURRENT_datetime
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Postage externalId"
 
   manyToOne:
     shipment:

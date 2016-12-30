@@ -108,11 +108,15 @@ class ShipmentController extends BaseAuthController
         $rateShipment->clean();
 
         $shipment                       = $this->getShipment($rateShipment->getId());
-
         $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
 
         $shipmentRateService            = new ShipmentRateService($integratedShippingApi);
         $shipmentRateService->rate($shipment);
+
+        $this->shipmentRepo->saveAndCommit($shipment);
+
+
+        return response($shipment, 201);
     }
 
 
