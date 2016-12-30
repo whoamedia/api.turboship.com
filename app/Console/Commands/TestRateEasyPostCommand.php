@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 
+use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -69,9 +70,18 @@ class TestRateEasyPostCommand extends Command
 
             $rateId                         = rand(0, sizeof($shipment->getRates()) - 1);
             $rate                           = $shipment->getRates()[$rateId];
-            $shipmentRateService->purchase($shipment, $rate);
 
-            $this->shipmentRepo->saveAndCommit($shipment);
+            try
+            {
+                $shipmentRateService->purchase($shipment, $rate);
+                $this->shipmentRepo->saveAndCommit($shipment);
+            }
+            catch (EasyPostApiException $easyPostApiException)
+            {
+                $this->info($easyPostApiException->getMessage());
+            }
+
+
         }
     }
 
