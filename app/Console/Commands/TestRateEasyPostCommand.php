@@ -9,6 +9,7 @@ use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
+use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -103,6 +104,10 @@ class TestRateEasyPostCommand extends Command
             catch (EasyPostServiceUnavailableException $exception)
             {
                 $this->info('EasyPostServiceUnavailableException  ' . $exception->getMessage());
+            }
+            catch (EasyPostUserThrottledException $exception)
+            {
+                $this->info('EasyPostUserThrottledException  ' . $exception->getMessage());
             }
             catch (EasyPostApiException $exception)
             {

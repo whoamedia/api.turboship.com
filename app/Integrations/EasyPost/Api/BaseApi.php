@@ -121,7 +121,6 @@ class BaseApi
                 throw new EasyPostCustomsInfoException();
             else if (preg_match("/Missing required shipment attribute: reference/", $message))
             {
-                print_r($apiRequest);
                 throw new EasyPostReferenceRequiredException();
             }
             else if (preg_match("/Address is too ambiguous/", $message))
