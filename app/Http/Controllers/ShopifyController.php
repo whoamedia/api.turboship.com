@@ -56,6 +56,7 @@ class ShopifyController extends BaseIntegratedServiceController
         $shopifyOrderRepository         = new ShopifyOrderRepository($shoppingCartIntegration);
 
         $total                          = $shopifyOrderRepository->getImportCandidatesCount();
+        dd($total);
         $totalPages                     = (int)ceil($total / 250);
 
         for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
