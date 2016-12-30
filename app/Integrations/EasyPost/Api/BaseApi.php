@@ -99,8 +99,11 @@ class BaseApi
             $message                = $errorMessage['message'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
-            else if ($code == 503)
+            else if (preg_match("/Unable to complete shipment purchase: carrier is not responding/", $message))
+            {
+                dd($code);
                 throw new EasyPostServiceUnavailableException();
+            }
             else if (
                 preg_match("/phoneNumber is required/", $message) ||
                 preg_match("/Missing or invalid ship to phone number/", $message) ||
