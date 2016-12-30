@@ -69,7 +69,9 @@ class TestRateEasyPostCommand extends Command
 
             $rateId                         = rand(0, sizeof($shipment->getRates()) - 1);
             $rate                           = $shipment->getRates()[$rateId];
-            $postage                        = $shipmentRateService->purchase($shipment, $rate);
+            $shipmentRateService->purchase($shipment, $rate);
+
+            $this->shipmentRepo->saveAndCommit($shipment);
         }
     }
 

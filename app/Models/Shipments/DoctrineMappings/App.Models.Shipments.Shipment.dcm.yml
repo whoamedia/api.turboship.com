@@ -65,6 +65,7 @@ App\Models\Shipments\Shipment:
       targetEntity:   Postage
       nullable:       true
       fetch:          EAGER
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         postageId
         referencedColumnName: id
