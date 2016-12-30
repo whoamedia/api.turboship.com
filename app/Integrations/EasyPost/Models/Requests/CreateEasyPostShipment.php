@@ -46,12 +46,12 @@ class CreateEasyPostShipment implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $object['shipment']['reference']        = $this->reference;
-        $object['shipment']['to_address']       = is_null($this->to_address) ? null : $this->to_address->jsonSerialize();
-        $object['shipment']['from_address']     = is_null($this->from_address) ? null : $this->from_address->jsonSerialize();
-        $object['shipment']['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
-        $object['shipment']['carrier_accounts'] = $this->carrier_accounts;
-        $object['shipment']['options']          = is_null($this->options) ? null : $this->options->jsonSerialize();
+        $object['reference']        = $this->reference;
+        $object['to_address']       = is_null($this->to_address) ? null : $this->to_address->jsonSerialize();
+        $object['from_address']     = is_null($this->from_address) ? null : $this->from_address->jsonSerialize();
+        $object['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
+        $object['carrier_accounts'] = $this->carrier_accounts;
+        $object['options']          = is_null($this->options) ? null : $this->options->jsonSerialize();
 
         return $object;
     }
