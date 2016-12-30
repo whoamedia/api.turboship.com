@@ -24,4 +24,4 @@ select count(*), queue from jobs group by queue;
 select id, queue, attempts, reserved_at, available_at, created_at from jobs;
 select id, queue, attempts, reserved_at, available_at, created_at from jobs where queue = 'shopifyOrders';
 
-SELECT count(*), orderStatus.name FROM Orders orders JOIN OrderStatus orderStatus ON orderStatus.id = orders.statusId GROUP BY orders.statusId;
+SELECT count(*), orderStatus.id, orderStatus.name FROM Orders orders JOIN OrderStatus orderStatus ON orderStatus.id = orders.statusId GROUP BY orders.statusId;

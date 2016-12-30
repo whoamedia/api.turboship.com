@@ -47,7 +47,14 @@ class BaseApi
      * @param   array|null  $apiRequest
      * @param   array|null  $queryString
      * @return  array
+     *
      * @throws  EasyPostInvalidCredentialsException
+     * @throws  EasyPostServiceUnavailableException
+     * @throws  EasyPostPhoneNumberRequiredException
+     * @throws  EasyPostCustomsInfoException
+     * @throws  EasyPostReferenceRequiredException
+     * @throws  EasyPostInvalidAddressException
+     * @throws  EasyPostApiException
      */
     protected function makeHttpRequest($method, $path, $apiRequest = null, $queryString = null)
     {
@@ -111,7 +118,10 @@ class BaseApi
             else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories/", $message))
                 throw new EasyPostCustomsInfoException();
             else if (preg_match("/Missing required shipment attribute: reference/", $message))
+            {
+                print_r($apiRequest);
                 throw new EasyPostReferenceRequiredException();
+            }
             else if (preg_match("/Address is too ambiguous/", $message))
                 throw new EasyPostInvalidAddressException();
             else
