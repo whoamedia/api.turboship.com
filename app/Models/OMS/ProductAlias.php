@@ -7,7 +7,7 @@ use App\Models\BaseModel;
 use App\Models\CMS\Client;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ProductAlias extends BaseModel
+class ProductAlias extends BaseModel implements \JsonSerializable
 {
 
     /**

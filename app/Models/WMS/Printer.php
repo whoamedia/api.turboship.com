@@ -6,7 +6,7 @@ namespace App\Models\WMS;
 use App\Models\CMS\Organization;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Printer
+class Printer implements \JsonSerializable
 {
 
     /**

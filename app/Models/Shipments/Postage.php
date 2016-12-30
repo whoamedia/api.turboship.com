@@ -59,6 +59,11 @@ class Postage implements \JsonSerializable
     protected $shipment;
 
     /**
+     * @var Rate
+     */
+    protected $rate;
+
+    /**
      * @var Service
      */
     protected $service;
@@ -81,6 +86,7 @@ class Postage implements \JsonSerializable
         $this->totalTaxes               = AU::get($data['totalTaxes'], 0.00);
         $this->fuelSurcharge            = AU::get($data['fuelSurcharge'], 0.00);
         $this->shipment                 = AU::get($data['shipment']);
+        $this->rate                     = AU::get($data['rate']);
         $this->service                  = AU::get($data['service']);
         $this->externalId               = AU::get($data['externalId']);
     }
@@ -99,6 +105,7 @@ class Postage implements \JsonSerializable
         $object['totalTaxes']           = $this->totalTaxes;
         $object['fuelSurcharge']        = $this->fuelSurcharge;
         $object['shipment']             = $this->shipment->jsonSerialize();
+        $object['rate']                 = $this->rate->jsonSerialize();
         $object['service']              = $this->service->jsonSerialize();
         $object['externalId']           = $this->externalId;
         $object['createdAt']            = $this->createdAt;
@@ -264,6 +271,22 @@ class Postage implements \JsonSerializable
     public function setShipment($shipment)
     {
         $this->shipment = $shipment;
+    }
+
+    /**
+     * @return Rate
+     */
+    public function getRate()
+    {
+        return $this->rate;
+    }
+
+    /**
+     * @param Rate $rate
+     */
+    public function setRate($rate)
+    {
+        $this->rate = $rate;
     }
 
     /**

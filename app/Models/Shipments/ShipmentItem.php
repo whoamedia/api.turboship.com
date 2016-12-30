@@ -6,7 +6,7 @@ namespace App\Models\Shipments;
 use App\Models\OMS\OrderItem;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ShipmentItem
+class ShipmentItem implements \JsonSerializable
 {
 
     /**

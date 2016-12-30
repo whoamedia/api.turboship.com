@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Product extends BaseModel
+class Product extends BaseModel implements \JsonSerializable
 {
 
     /**

@@ -70,7 +70,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shipments', 'ShipmentController@index');
     Route::get('/shipments/{id}', 'ShipmentController@show');
     Route::put('/shipments/{id}', 'ShipmentController@update');
-    Route::post('/shipments/{id}/rate', 'ShipmentController@rate');
+    Route::get('/shipments/{id}/rates', 'ShipmentController@getRates');
+    Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
+    Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
+    Route::post('/shipments/{id}/postage/{rateId}', 'ShipmentController@purchasePostage');
     Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
 
 

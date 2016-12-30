@@ -10,6 +10,8 @@ use App\Models\Shipments\Shipment;
 use App\Repositories\EasyPost\EasyPostShipmentRepository;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Utilities\IntegrationUtility;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 class ShipmentRateService
@@ -52,7 +54,6 @@ class ShipmentRateService
 
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
         $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
-
         $easyPostShipment               = $easyPostShipmentRepo->rate($createEasyPostShipment);
 
         foreach ($easyPostShipment->getRates() AS $easyPostRate)
@@ -67,6 +68,12 @@ class ShipmentRateService
 
     public function purchase (Shipment $shipment, Rate $rate)
     {
+        if (!$shipment->hasRate($rate))
+            throw new NotFoundHttpException('Shipment does not have provided Rate');
+
+        if (!is_null($shipment->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+
         if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
             return $this->purchaseEasyPost($shipment, $rate);
         else
@@ -85,6 +92,7 @@ class ShipmentRateService
         $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
         $postage                        = new Postage();
         $postage->setShipment($shipment);
+        $postage->setRate($rate);
         $postage->setService($rate->getShippingApiService()->getService());
         $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
         $postage->setBasePrice($rate->getRate());

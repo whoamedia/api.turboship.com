@@ -13,7 +13,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class Variant extends BaseModel
+class Variant extends BaseModel implements \JsonSerializable
 {
 
     /**

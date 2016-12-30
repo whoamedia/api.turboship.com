@@ -5,7 +5,7 @@ namespace App\Models\Integrations;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-class ShippingApiIntegration extends Integration
+class ShippingApiIntegration extends Integration implements \JsonSerializable
 {
 
 

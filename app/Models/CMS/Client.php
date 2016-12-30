@@ -11,7 +11,7 @@ use App\Models\Shipments\Shipper;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Client extends BaseModel
+class Client extends BaseModel implements \JsonSerializable
 {
 
     /**

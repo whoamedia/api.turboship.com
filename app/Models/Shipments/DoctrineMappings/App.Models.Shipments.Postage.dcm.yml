@@ -96,6 +96,13 @@ App\Models\Shipments\Postage:
       joinColumn:
         name:         shipmentId
         referencedColumnName: id
+    rate:
+      targetEntity:   Rate
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         rateId
+        referencedColumnName: id
     service:
       targetEntity:   Service
       nullable:       false

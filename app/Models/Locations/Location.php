@@ -5,7 +5,7 @@ namespace App\Models\Locations;
 
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Location
+class Location implements \JsonSerializable
 {
 
     /**
