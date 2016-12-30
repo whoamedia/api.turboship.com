@@ -110,6 +110,7 @@ class WhoaMediaSeeder extends Seeder
     {
         $client                 = new \App\Models\CMS\Client();
         $client->setName('Whoa Media');
+        $client->getOptions()->setDefaultShipToPhone('8774430266');
         $client->setOrganization($this->organization);
         $this->clientRepo->saveAndCommit($client);
 

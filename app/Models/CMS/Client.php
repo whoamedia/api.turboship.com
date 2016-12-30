@@ -30,6 +30,11 @@ class Client extends BaseModel implements \JsonSerializable
     protected $organization;
 
     /**
+     * @var ClientOption
+     */
+    protected $options;
+
+    /**
      * @var ArrayCollection
      */
     protected $products;
@@ -68,6 +73,10 @@ class Client extends BaseModel implements \JsonSerializable
         $this->shippers                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
+        $this->options                  = AU::get($data['options']);
+        if (is_null($this->options))
+            $this->options              = new ClientOption(['client' => $this]);
+
         $this->organization             = AU::get($data['organization']);
     }
 
@@ -126,6 +135,22 @@ class Client extends BaseModel implements \JsonSerializable
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return ClientOption
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param ClientOption $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
     }
 
     /**

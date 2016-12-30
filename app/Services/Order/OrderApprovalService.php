@@ -151,9 +151,11 @@ class OrderApprovalService
          */
         $address->setSubdivision($subdivision);
 
-        /**
-         * Ensure that the phone number is always set
-         */
+        //  Use ClientOptions for defaultShipToPhone
+        if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
+            $address->setPhone($order->getClient()->getOptions()->getDefaultShipToPhone());
+
+        //  Ensure that the phone number is always set
         if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);

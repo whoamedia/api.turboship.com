@@ -1,0 +1,34 @@
+App\Models\CMS\ClientOption:
+  type:               entity
+  table:              ClientOption
+  repositoryClass:    App\Repositories\Doctrine\CMS\ClientOptionRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ClientOption id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    defaultShipToPhone:
+      column:         defaultShipToPhone
+      type:           string
+      nullable:       true
+      length:         20
+      options:
+        comment:      "ClientOption defaultShipToPhone. If the shippingAddress phone isn't set this will be used"
+
+  oneToOne:
+    client:
+      targetEntity:   Client
+      nullable:       false
+      inversedBy:     options
+      joinColumn:
+        name:         clientId
+        referencedColumnName: id
