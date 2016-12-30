@@ -50,6 +50,9 @@ class ShipmentRateService
      */
     private function rateEasyPost (Shipment $shipment)
     {
+        if (!is_null($shipment->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
 
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();

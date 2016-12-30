@@ -65,6 +65,9 @@ class TestRateEasyPostCommand extends Command
         $shipmentsResponse                  = $this->shipmentRepo->where([], true);
         foreach ($shipmentsResponse AS $shipment)
         {
+            if (!is_null($shipment->getPostage()))
+                continue;
+
             $this->info('On shipment id ' . $shipment->getId());
             $shipment->setWeight(rand(20, 100) . '.' . rand(1, 99));
             $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
