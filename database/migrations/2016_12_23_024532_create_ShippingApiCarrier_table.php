@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateShippingApiIntegrationCarrierTable extends Migration
+class CreateShippingApiCarrierTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateShippingApiIntegrationCarrierTable extends Migration
      */
     public function up()
     {
-        Schema::create('ShippingApiIntegrationCarrier', function (Blueprint $table)
+        Schema::create('ShippingApiCarrier', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
             $table->string('name', 100)->unique();
@@ -33,6 +33,6 @@ class CreateShippingApiIntegrationCarrierTable extends Migration
      */
     public function down()
     {
-        Schema::drop('ShippingApiIntegrationCarrier');
+        Schema::drop('ShippingApiCarrier');
     }
 }

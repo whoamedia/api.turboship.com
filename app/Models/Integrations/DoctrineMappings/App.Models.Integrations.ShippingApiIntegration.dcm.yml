@@ -4,7 +4,7 @@ App\Models\Integrations\ShippingApiIntegration:
   repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiIntegrationRepository
 
   oneToMany:
-    shippingApiIntegrationCarriers:
-      targetEntity:   ShippingApiIntegrationCarrier
+    shippingApiCarriers:
+      targetEntity:   ShippingApiCarrier
       mappedBy:       shippingApiIntegration
       cascade:        ["persist", "remove"]

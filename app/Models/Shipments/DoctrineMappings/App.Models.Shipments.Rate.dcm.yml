@@ -65,7 +65,7 @@ App\Models\Shipments\Rate:
         name:         integratedShippingApiId
         referencedColumnName: id
     shippingApiService:
-      targetEntity:   App\Models\Integrations\ShippingApiIntegrationService
+      targetEntity:   App\Models\Integrations\ShippingApiService
       nullable:       false
       fetch:          EAGER
       joinColumn:

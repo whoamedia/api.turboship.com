@@ -21,24 +21,12 @@ class RateShipment extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var int
      */
-    protected $shippingContainerId;
-
-    /**
-     * @var float
-     */
-    protected $weight;
-
-    /**
-     * @var int
-     */
     protected $integratedShippingApiId;
 
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
-        $this->shippingContainerId      = AU::get($data['shippingContainerId']);
-        $this->weight                   = AU::get($data['weight']);
         $this->integratedShippingApiId  = AU::get($data['integratedShippingApiId']);
     }
 
@@ -47,24 +35,12 @@ class RateShipment extends BaseRequest implements Cleanable, Validatable, \JsonS
         if (is_null($this->id))
             throw new BadRequestHttpException('id is required');
 
-        if (is_null($this->shippingContainerId))
-            throw new BadRequestHttpException('shippingContainerId is required');
-
-        if (is_null($this->weight))
-            throw new BadRequestHttpException('weight is required');
-
         if (is_null($this->integratedShippingApiId))
             throw new BadRequestHttpException('integratedShippingApiId is required');
 
 
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
-
-        if (is_null(InputUtil::getInt($this->shippingContainerId)))
-            throw new BadRequestHttpException('shippingContainerId must be integer');
-
-        if (is_null(InputUtil::getFloat($this->weight)))
-            throw new BadRequestHttpException('weight must be float');
 
         if (is_null(InputUtil::getInt($this->integratedShippingApiId)))
             throw new BadRequestHttpException('integratedShippingApiId must be integer');
@@ -73,8 +49,6 @@ class RateShipment extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function clean ()
     {
         $this->id                       = InputUtil::getInt($this->id);
-        $this->shippingContainerId      = InputUtil::getInt($this->shippingContainerId);
-        $this->weight                   = InputUtil::getFloat($this->weight);
         $this->integratedShippingApiId  = InputUtil::getInt($this->integratedShippingApiId);
     }
 
@@ -84,8 +58,6 @@ class RateShipment extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function jsonSerialize ()
     {
         $object['id']                   = $this->id;
-        $object['shippingContainerId']  = $this->shippingContainerId;
-        $object['weight']               = $this->weight;
         $object['integratedShippingApiId']  = $this->integratedShippingApiId;
 
         return $object;
@@ -105,38 +77,6 @@ class RateShipment extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getShippingContainerId()
-    {
-        return $this->shippingContainerId;
-    }
-
-    /**
-     * @param int $shippingContainerId
-     */
-    public function setShippingContainerId($shippingContainerId)
-    {
-        $this->shippingContainerId = $shippingContainerId;
-    }
-
-    /**
-     * @return float
-     */
-    public function getWeight()
-    {
-        return $this->weight;
-    }
-
-    /**
-     * @param float $weight
-     */
-    public function setWeight($weight)
-    {
-        $this->weight = $weight;
     }
 
     /**

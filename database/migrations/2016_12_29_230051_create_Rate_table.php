@@ -24,8 +24,8 @@ class CreateRateTable extends Migration
             $table->foreign('integratedShippingApiId')->references('id')->on('IntegratedShippingApi');
 
 
-            $table->integer('shippingApiIntegrationServiceId')->unsigned()->index();
-            $table->foreign('shippingApiIntegrationServiceId')->references('id')->on('ShippingApiIntegrationService');
+            $table->integer('shippingApiServiceId')->unsigned()->index();
+            $table->foreign('shippingApiServiceId')->references('id')->on('ShippingApiService');
 
             $table->string('externalShipmentId', 100)->index()->nullable()->default(null);
             $table->string('externalId', 100)->index()->nullable()->default(null);

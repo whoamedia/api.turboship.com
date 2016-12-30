@@ -7,7 +7,7 @@ use App\Models\Shipments\Carrier;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ShippingApiIntegrationCarrier implements \JsonSerializable
+class ShippingApiCarrier implements \JsonSerializable
 {
 
     /**
@@ -34,12 +34,12 @@ class ShippingApiIntegrationCarrier implements \JsonSerializable
     /**
      * @var ArrayCollection
      */
-    protected $shippingApiIntegrationServices;
+    protected $shippingApiServices;
 
 
     public function __construct($data = [])
     {
-        $this->shippingApiIntegrationServices  = new ArrayCollection();
+        $this->shippingApiServices          = new ArrayCollection();
 
         $this->name                         = AU::get($data['name']);
         $this->shippingApiIntegration       = AU::get($data['shippingApiIntegration']);
@@ -123,20 +123,20 @@ class ShippingApiIntegrationCarrier implements \JsonSerializable
     }
 
     /**
-     * @return ShippingApiIntegrationService[]
+     * @return ShippingApiService[]
      */
-    public function getShippingApiIntegrationServices()
+    public function getShippingApiServices()
     {
-        return $this->shippingApiIntegrationServices->toArray();
+        return $this->shippingApiServices->toArray();
     }
 
     /**
-     * @param ShippingApiIntegrationService $shippingApiIntegrationService
+     * @param ShippingApiService $shippingApiService
      */
-    public function addShippingApiIntegrationService ($shippingApiIntegrationService)
+    public function addShippingApiService ($shippingApiService)
     {
-        $shippingApiIntegrationService->setShippingApiIntegrationCarrier($this);
-        $this->shippingApiIntegrationServices->add($shippingApiIntegrationService);
+        $shippingApiService->setShippingApiCarrier($this);
+        $this->shippingApiServices->add($shippingApiService);
     }
 
 }

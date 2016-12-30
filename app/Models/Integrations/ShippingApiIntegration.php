@@ -12,43 +12,43 @@ class ShippingApiIntegration extends Integration
     /**
      * @var ArrayCollection
      */
-    protected $shippingApiIntegrationCarriers;
+    protected $shippingApiCarriers;
 
 
     public function __construct($data = [])
     {
         parent::__construct($data);
 
-        $this->shippingApiIntegrationCarriers       = new ArrayCollection();
+        $this->shippingApiCarriers          = new ArrayCollection();
     }
 
     /**
-     * @return ShippingApiIntegrationCarrier[]
+     * @return ShippingApiCarrier[]
      */
-    public function getShippingApiIntegrationCarriers()
+    public function getShippingApiCarriers()
     {
-        return $this->shippingApiIntegrationCarriers->toArray();
+        return $this->shippingApiCarriers->toArray();
     }
 
     /**
-     * @param ShippingApiIntegrationCarrier $shippingApiIntegrationCarrier
+     * @param ShippingApiCarrier $shippingApiCarrier
      */
-    public function addShippingApiIntegrationCarrier($shippingApiIntegrationCarrier)
+    public function addShippingApiCarrier($shippingApiCarrier)
     {
-        $shippingApiIntegrationCarrier->setShippingApiIntegration($this);
-        $this->shippingApiIntegrationCarriers->add($shippingApiIntegrationCarrier);
+        $shippingApiCarrier->setShippingApiIntegration($this);
+        $this->shippingApiCarriers->add($shippingApiCarrier);
     }
 
     /**
-     * @return ShippingApiIntegrationService[]
+     * @return ShippingApiService[]
      */
-    public function getShippingApiIntegrationServices ()
+    public function getShippingApiServices ()
     {
         $services                       = [];
-        foreach ($this->getShippingApiIntegrationCarriers() AS $shippingApiIntegrationCarrier)
+        foreach ($this->getShippingApiCarriers() AS $shippingApiCarrier)
         {
-            foreach ($shippingApiIntegrationCarrier->getShippingApiIntegrationServices() AS $shippingApiIntegrationService)
-                $services[]             = $shippingApiIntegrationService->jsonSerialize();
+            foreach ($shippingApiCarrier->getShippingApiServices() AS $shippingApiService)
+                $services[]             = $shippingApiService->jsonSerialize();
         }
 
         return $services;

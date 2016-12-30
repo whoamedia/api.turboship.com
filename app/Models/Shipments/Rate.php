@@ -4,7 +4,7 @@ namespace App\Models\Shipments;
 
 
 use App\Models\Integrations\IntegratedShippingApi;
-use App\Models\Integrations\ShippingApiIntegrationService;
+use App\Models\Integrations\ShippingApiService;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class Rate implements \JsonSerializable
@@ -26,7 +26,7 @@ class Rate implements \JsonSerializable
     protected $integratedShippingApi;
 
     /**
-     * @var ShippingApiIntegrationService
+     * @var ShippingApiService
      */
     protected $shippingApiService;
 
@@ -128,7 +128,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @return ShippingApiIntegrationService
+     * @return ShippingApiService
      */
     public function getShippingApiService()
     {
@@ -136,7 +136,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @param ShippingApiIntegrationService $shippingApiService
+     * @param ShippingApiService $shippingApiService
      */
     public function setShippingApiService($shippingApiService)
     {

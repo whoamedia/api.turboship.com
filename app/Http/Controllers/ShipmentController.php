@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Shipments\RateShipment;
 use App\Http\Requests\Shipments\CreateShipmentsJob;
 use App\Http\Requests\Shipments\GetShipments;
+use App\Http\Requests\Shipments\UpdateShipment;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\Validation\ShipmentValidation;
@@ -16,6 +17,7 @@ use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Repositories\EasyPost\EasyPostShipmentRepository;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Services\Shipments\CreateShipmentsService;
+use App\Services\Shipments\ShipmentRateService;
 use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
@@ -72,7 +74,31 @@ class ShipmentController extends BaseAuthController
         return response($shipment);
     }
 
+    public function update (Request $request)
+    {
+        $updateShipment                 = new UpdateShipment($request->input());
+        $updateShipment->setId($request->route('id'));
+        $updateShipment->validate();
+        $updateShipment->clean();
 
+        $shipment                       = $this->getShipment($updateShipment->getId());
+
+        if (!is_null($updateShipment->getShippingContainerId()))
+        {
+            $shippingContainerValidation= new ShippingContainerValidation();
+            $shippingContainer          = $shippingContainerValidation->idExists($updateShipment->getShippingContainerId());
+            $shipment->setShippingContainer($shippingContainer);
+        }
+
+        if (!is_null($updateShipment->getWeight()))
+        {
+            $weight                     = $updateShipment->getWeight();
+            $shipment->setWeight($weight);
+        }
+
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response($shipment);
+    }
 
     public function rate (Request $request)
     {
@@ -83,21 +109,10 @@ class ShipmentController extends BaseAuthController
 
         $shipment                       = $this->getShipment($rateShipment->getId());
 
-        $shippingContainerValidation    = new ShippingContainerValidation();
-        $shippingContainer              = $shippingContainerValidation->idExists($rateShipment->getShippingContainerId());
-        $shipment->setShippingContainer($shippingContainer);
-
-        $weight                         = $rateShipment->getWeight();
-        $shipment->setWeight($weight);
-
-
         $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($integratedShippingApi);
 
-        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
-        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
-
-        $easyPostShipmentRepo->rate($createEasyPostShipment);
+        $shipmentRateService            = new ShipmentRateService($integratedShippingApi);
+        $shipmentRateService->rate($shipment);
     }
 
 
