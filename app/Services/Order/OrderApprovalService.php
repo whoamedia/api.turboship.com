@@ -67,13 +67,13 @@ class OrderApprovalService
         if (!$order->canRunApprovalProcess())
             return $order;
 
+        if (!$this->mapOrderItemSkus($order))
+            return $order;
+
         if (!$this->processShippingAddress($order))
             return $order;
 
         if (!$this->validateShippingAddress($order))
-            return $order;
-
-        if (!$this->mapOrderItemSkus($order))
             return $order;
 
 
