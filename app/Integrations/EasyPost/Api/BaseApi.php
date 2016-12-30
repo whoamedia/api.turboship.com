@@ -11,6 +11,7 @@ use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
+use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -54,6 +55,7 @@ class BaseApi
      * @throws  EasyPostCustomsInfoException
      * @throws  EasyPostReferenceRequiredException
      * @throws  EasyPostInvalidAddressException
+     * @throws  EasyPostUserThrottledException
      * @throws  EasyPostApiException
      */
     protected function makeHttpRequest($method, $path, $apiRequest = null, $queryString = null)
@@ -124,6 +126,9 @@ class BaseApi
             }
             else if (preg_match("/Address is too ambiguous/", $message))
                 throw new EasyPostInvalidAddressException();
+            else if (preg_match("/The maximum number of user access attempts was exceeded/", $message) ||
+                    preg_match("/The UserId is currently locked out/", $message))
+                throw new EasyPostUserThrottledException($message, $code);
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
         }
