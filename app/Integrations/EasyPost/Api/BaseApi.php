@@ -10,6 +10,7 @@ use App\Integrations\EasyPost\Exceptions\EasyPostInvalidAddressException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -98,6 +99,8 @@ class BaseApi
             $message                = $errorMessage['message'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
+            else if ($code == 503)
+                throw new EasyPostServiceUnavailableException();
             else if (
                 preg_match("/phoneNumber is required/", $message) ||
                 preg_match("/Missing or invalid ship to phone number/", $message) ||
