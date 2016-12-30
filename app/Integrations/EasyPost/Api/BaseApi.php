@@ -8,6 +8,7 @@ use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -103,6 +104,8 @@ class BaseApi
                 throw new EasyPostPhoneNumberRequiredException();
             else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories/", $message))
                 throw new EasyPostCustomsInfoException();
+            else if (preg_match("/Missing required shipment attribute: reference/", $message))
+                throw new EasyPostReferenceRequiredException();
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
         }
