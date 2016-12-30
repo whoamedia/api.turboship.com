@@ -3,7 +3,6 @@
 namespace App\Integrations\EasyPost\Api;
 
 
-use App\Integrations\EasyPost\Models\Requests\BuyEasyPostShipment;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
 use App\Integrations\EasyPost\Models\Requests\GetEasyPostShipments;
 use App\Integrations\EasyPost\Models\Responses\EasyPostShipment;
@@ -57,6 +56,8 @@ class ShipmentApi extends BaseApi
     public function create ($request = [])
     {
         $request                        = $request instanceof CreateEasyPostShipment ? $request : new CreateEasyPostShipment($request);
+        print_r(['shipment' => $request->jsonSerialize()]);
+        die;
         $response                       = parent::makeHttpRequest('post', $this->path, ['shipment' => $request->jsonSerialize()]);
         return new EasyPostShipment($response);
     }
