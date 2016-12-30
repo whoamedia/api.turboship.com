@@ -4,7 +4,11 @@ namespace App\Integrations\EasyPost\Api;
 
 
 use App\Integrations\EasyPost\EasyPostConfiguration;
+use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
+use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -26,14 +30,10 @@ class BaseApi
     protected $guzzle;
 
 
-    protected $jsonMapper;
-
-
     public function __construct(EasyPostConfiguration $config)
     {
         $this->config                   = $config;
         $this->guzzle                   = new Client();
-        $this->jsonMapper               = new \JsonMapper();
     }
 
 
@@ -93,9 +93,21 @@ class BaseApi
              */
             $code                   = $ex->getCode();
             $errorMessage           = json_decode($ex->getResponse()->getBody()->getContents(), true);
-            dd($errorMessage);
+            $errorMessage           = $errorMessage['error'];
+            $message                = $errorMessage['message'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
+            else if (
+                preg_match("/phoneNumber is required/", $message) ||
+                preg_match("/Missing or invalid ship to phone number/", $message) ||
+                preg_match("/RequestedShipment Recipient contact - phoneNumber is required/", $message))
+                throw new EasyPostPhoneNumberRequiredException();
+            else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories/", $message))
+                throw new EasyPostCustomsInfoException();
+            else if (preg_match("/Missing required shipment attribute: reference/", $message))
+                throw new EasyPostReferenceRequiredException();
+            else
+                throw new EasyPostApiException($errorMessage['message'], $code);
         }
 
         $result                 = $response->getBody()->getContents();

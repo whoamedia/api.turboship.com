@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\OMS\Product;
 use App\Models\Shipments\Service;
+use App\Models\Shipments\Shipper;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -44,6 +45,11 @@ class Client extends BaseModel
     protected $services;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $shippers;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -59,6 +65,7 @@ class Client extends BaseModel
         $this->products                 = new ArrayCollection();
         $this->integratedShoppingCarts  = new ArrayCollection();
         $this->services                 = new ArrayCollection();
+        $this->shippers                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
         $this->organization             = AU::get($data['organization']);
@@ -196,4 +203,11 @@ class Client extends BaseModel
         $this->services->removeElement($service);
     }
 
+    /**
+     * @return Shipper[]
+     */
+    public function getShippers ()
+    {
+        return $this->shippers->toArray();
+    }
 }

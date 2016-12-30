@@ -22,6 +22,7 @@ class EasyPostAddressMappingService extends BaseEasyPostMappingService
 
         $state                          = !is_null($address->getSubdivision()) ? $address->getSubdivision()->getName() : $address->getStateProvince();
         $easyPostAddress->setState($state);
+        $easyPostAddress->setZip($address->getPostalCode());
         $easyPostAddress->setCountry($address->getCountry()->getIso2());
         $easyPostAddress->setName($address->getFirstName() . ' ' . $address->getLastName());
         $easyPostAddress->setCompany($address->getCompany());

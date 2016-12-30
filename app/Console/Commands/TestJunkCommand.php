@@ -3,16 +3,13 @@
 namespace App\Console\Commands;
 
 
-use App\Integrations\EasyPost\EasyPostConfiguration;
-use App\Integrations\EasyPost\EasyPostIntegration;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostAddress;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
-use App\Integrations\EasyPost\Models\Requests\GetEasyPostShipments;
-use App\Jobs\Orders\OrderSkuMappingJob;
-use App\Models\Integrations\Validation\IntegratedServiceValidation;
-use App\Services\CredentialService;
+use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\Shipments\ShipmentRateService;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use EntityManager;
 
 class TestJunkCommand extends Command
 {
@@ -25,18 +22,22 @@ class TestJunkCommand extends Command
 
     protected $description = 'Test whatever junk you want here';
 
+    /**
+     * @var ShipmentRepository
+     */
+    private $shipmentRepo;
 
     /**
-     * @var IntegratedServiceValidation
+     * @var IntegratedShippingApiRepository
      */
-    private $integratedServiceValidation;
-
+    private $integratedShippingApiRepo;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->integratedServiceValidation  = new IntegratedServiceValidation();
+        $this->shipmentRepo                 = EntityManager::getRepository('App\Models\Shipments\Shipment');
+        $this->integratedShippingApiRepo    = EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
     }
 
     /**
@@ -46,7 +47,21 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $this->dispatch(new OrderSkuMappingJob(1, 'asdf'));
+        $integratedShippingApi              = $this->integratedShippingApiRepo->getOneById(2);
+        $shipmentRateService                = new ShipmentRateService($integratedShippingApi);
+        $shippingContainerValidation        = new ShippingContainerValidation();
+
+        $shipmentsResponse                  = $this->shipmentRepo->where([], true);
+        foreach ($shipmentsResponse AS $shipment)
+        {
+            $this->info('On shipment id ' . $shipment->getId());
+            $shipment->setWeight(rand(20, 100) . '.' . rand(1, 99));
+            $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
+            $shipment->setShippingContainer($shippingContainer);
+
+            $shipmentRateService->rate($shipment);
+            $this->shipmentRepo->saveAndCommit($shipment);
+        }
     }
 
 }

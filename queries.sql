@@ -18,3 +18,7 @@ FROM
 
 
 select id, integratedShoppingCartId, topic, verified, success, entityId, externalId, entityCreated, notes, errorMessage, createdAt from ShopifyWebHookLog;
+
+select count(*), queue from jobs group by queue;
+
+select id, queue, attempts, reserved_at, available_at, created_at from jobs;

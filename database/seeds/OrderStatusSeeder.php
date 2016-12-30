@@ -29,6 +29,11 @@ class OrderStatusSeeder extends Seeder
                 'name'  => 'Created',
                 'isError' => false
             ],
+            [
+                'id'    => OrderStatusUtility::CANCELLED,
+                'name'  => 'Cancelled',
+                'isError' => false
+            ],
 
 
 

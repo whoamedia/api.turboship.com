@@ -2,17 +2,19 @@
 
 namespace App\Jobs\Orders;
 
+use App\Jobs\Job;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use EntityManager;
 
-class OrderSkuMappingJob implements ShouldQueue
+class OrderSkuMappingJob extends Job implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable;
+    use InteractsWithQueue, Queueable, DispatchesJobs;
 
     /**
      * @var int
@@ -36,6 +38,7 @@ class OrderSkuMappingJob implements ShouldQueue
 
     public function __construct($clientId, $variantSku)
     {
+        parent::__construct();
         $this->clientId                 = $clientId;
         $this->variantSku               = $variantSku;
     }
@@ -55,8 +58,8 @@ class OrderSkuMappingJob implements ShouldQueue
         $result                         = $this->orderRepo->where($orderQuery);
         foreach ($result AS $order)
         {
-            $this->orderApprovalService->processOrder($order);
-            $this->orderRepo->saveAndCommit($order);
+            $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
+            $this->dispatch($job);
         }
     }
 }

@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Shopify\DownloadShopifyProducts;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
 use App\Repositories\Shopify\ShopifyProductRepository;
 use App\Services\Order\OrderApprovalService;
-use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
-use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use App\Utilities\CRMSourceUtility;
-use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -55,17 +54,20 @@ class ShopifyController extends BaseIntegratedServiceController
     {
         $shoppingCartIntegration        = parent::getIntegratedShoppingCart($request->route('id'));
         $shopifyOrderRepository         = new ShopifyOrderRepository($shoppingCartIntegration);
-        $shopifyOrderMappingService     = new ShopifyOrderMappingService($shoppingCartIntegration->getClient());
 
-        $shopifyOrdersResponse          = $shopifyOrderRepository->getImportCandidates();
-        foreach ($shopifyOrdersResponse AS $shopifyOrder)
+        $total                          = $shopifyOrderRepository->getImportCandidatesCount();
+        $totalPages                     = (int)ceil($total / 250);
+
+        for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
         {
-            if (!$shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
-                continue;
-
-            $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
-            $this->orderApprovalService->processOrder($order);
-            $this->orderRepo->saveAndCommit($order);
+            set_time_limit(60);
+            $shopifyOrdersResponse          = $shopifyOrderRepository->getImportCandidates($currentPage, 250);
+            foreach ($shopifyOrdersResponse AS $shopifyOrder)
+            {
+                $job                        = (new ShopifyCreateOrderJob($shopifyOrder, $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
+                $this->dispatch($job);
+            }
+            usleep(250000);
         }
     }
 
@@ -74,7 +76,6 @@ class ShopifyController extends BaseIntegratedServiceController
     {
         $shoppingCartIntegration        = parent::getIntegratedShoppingCart($request->route('id'));
         $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
-        $shopifyProductMappingService   = new ShopifyProductMappingService($shoppingCartIntegration->getClient());
         $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
 
         if ($downloadShopifyProducts->getPendingSku() == true)
@@ -90,23 +91,27 @@ class ShopifyController extends BaseIntegratedServiceController
                 $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
                 foreach ($shopifyProductsResponse AS $shopifyProduct)
                 {
-                    if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
-                        continue;
-                    $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
-                    $this->productRepo->saveAndCommit($product);
+                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
+                    $this->dispatch($job);
                 }
                 usleep(250000);
             }
         }
         else
         {
-            $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250);
-            foreach ($shopifyProductsResponse AS $shopifyProduct)
+            $total                      = $shopifyProductRepo->getImportCandidatesCount();
+            $totalPages                 = (int)ceil($total / 250);
+
+            for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
             {
-                if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
-                    continue;
-                $product                = $shopifyProductMappingService->handleMapping($shopifyProduct);
-                $this->productRepo->saveAndCommit($product);
+                set_time_limit(60);
+                $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
+                foreach ($shopifyProductsResponse AS $shopifyProduct)
+                {
+                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
+                    $this->dispatch($job);
+                }
+                usleep(250000);
             }
         }
 

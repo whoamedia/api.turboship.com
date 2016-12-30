@@ -25,7 +25,7 @@ class ShopifyWebHookLog
     protected $topic;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $incomingMessage;
 
@@ -77,8 +77,8 @@ class ShopifyWebHookLog
         $this->topic                    = AU::get($data['topic']);
         $this->incomingMessage          = AU::get($data['incomingMessage']);
         $this->errorMessage             = AU::get($data['errorMessage']);
-        $this->verified                 = AU::get($data['verified']);
-        $this->success                  = AU::get($data['success']);
+        $this->verified                 = AU::get($data['verified'], true);
+        $this->success                  = AU::get($data['success'], true);
         $this->entityId                 = AU::get($data['entityId']);
         $this->entityCreated            = AU::get($data['entityCreated'], false);
         $this->externalId               = AU::get($data['externalId']);
@@ -134,7 +134,7 @@ class ShopifyWebHookLog
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getIncomingMessage()
     {
@@ -142,7 +142,7 @@ class ShopifyWebHookLog
     }
 
     /**
-     * @param string $incomingMessage
+     * @param null|string $incomingMessage
      */
     public function setIncomingMessage($incomingMessage)
     {
@@ -163,6 +163,7 @@ class ShopifyWebHookLog
     public function setErrorMessage($errorMessage)
     {
         $this->errorMessage = $errorMessage;
+        $this->success      = false;
     }
 
     /**

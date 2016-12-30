@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ClientCreatorCommand::class,
         \App\Console\Commands\RebootApplicationCommand::class,
         \App\Console\Commands\TestJunkCommand::class,
+        \App\Console\Commands\TestRateEasyPostCommand::class,
     ];
 
     /**

@@ -65,6 +65,7 @@ App\Models\Shipments\Shipment:
       targetEntity:   Postage
       nullable:       true
       fetch:          EAGER
+      cascade:        ["persist", "remove"]
       joinColumn:
         name:         postageId
         referencedColumnName: id
@@ -80,4 +81,9 @@ App\Models\Shipments\Shipment:
     items:
       targetEntity:   ShipmentItem
       mappedBy:       shipment
+      cascade:        ["persist", "remove"]
+    rates:
+      targetEntity:   Rate
+      mappedBy:       shipment
+      orphanRemoval:  true
       cascade:        ["persist", "remove"]

@@ -1,7 +1,7 @@
-App\Models\Integrations\ShippingApiIntegrationCarrier:
+App\Models\Integrations\ShippingApiCarrier:
   type:               entity
-  table:              ShippingApiIntegrationCarrier
-  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiIntegrationCarrierRepository
+  table:              ShippingApiCarrier
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiCarrierRepository
 
   id:
     id:
@@ -10,7 +10,7 @@ App\Models\Integrations\ShippingApiIntegrationCarrier:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'ShippingApiIntegrationCarrier id'
+        comment:      'ShippingApiCarrier id'
       id:             true
       generator:
         strategy:     IDENTITY
@@ -23,14 +23,14 @@ App\Models\Integrations\ShippingApiIntegrationCarrier:
       length:         100
       options:
         fixed:        false
-        comment:      "ShippingApiIntegrationCarrier name"
+        comment:      "ShippingApiCarrier name"
 
   manyToOne:
     shippingApiIntegration:
       targetEntity:   ShippingApiIntegration
       nullable:       false
       fetch:          EAGER
-      inversedBy:     shippingApiIntegrationCarriers
+      inversedBy:     shippingApiCarriers
       joinColumn:
         name:         shippingApiIntegrationId
         referencedColumnName: id
@@ -43,7 +43,7 @@ App\Models\Integrations\ShippingApiIntegrationCarrier:
         referencedColumnName: id
 
   oneToMany:
-    shippingApiIntegrationServices:
-      targetEntity:   ShippingApiIntegrationService
-      mappedBy:       shippingApiIntegrationCarrier
+    shippingApiServices:
+      targetEntity:   ShippingApiService
+      mappedBy:       shippingApiCarrier
       cascade:        ["persist", "remove"]

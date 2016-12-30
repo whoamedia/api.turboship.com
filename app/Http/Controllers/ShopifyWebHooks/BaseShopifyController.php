@@ -24,7 +24,7 @@ class BaseShopifyController extends Controller
     /**
      * @var IntegratedShoppingCartRepository
      */
-    protected $integratedShoppingCartCartRepo;
+    protected $integratedShoppingCartRepo;
 
     /**
      * @var ShopifyWebHookLogRepository
@@ -34,7 +34,7 @@ class BaseShopifyController extends Controller
     /**
      * @var IntegratedShoppingCart
      */
-    protected $integratedShoppingCartCart;
+    protected $integratedShoppingCart;
 
     /**
      * @var ShopifyWebHookLog
@@ -42,16 +42,19 @@ class BaseShopifyController extends Controller
     protected $shopifyWebHookLog;
 
 
-    public function __construct (Request $request)
+    public function __construct ()
     {
-        $this->integratedShoppingCartCartRepo = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
+        $this->integratedShoppingCartRepo = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
         $this->shopifyWebHookLogRepo    = EntityManager::getRepository('App\Models\Logs\ShopifyWebHookLog');
+    }
 
-        $integratedShoppingCartCartId   = $request->route('id');
-        $this->integratedShoppingCartCart= $this->integratedShoppingCartCartRepo->getOneById($integratedShoppingCartCartId);
-        $this->client                   = $this->integratedShoppingCartCart->getClient();
+    public function handleRequest (Request $request)
+    {
+        $integratedShoppingCartId   = $request->route('id');
+        $this->integratedShoppingCart= $this->integratedShoppingCartRepo->getOneById($integratedShoppingCartId);
+        $this->client                   = $this->integratedShoppingCart->getClient();
 
-        $credentialService              = new CredentialService($this->integratedShoppingCartCart);
+        $credentialService              = new CredentialService($this->integratedShoppingCart);
         $shopifySharedSecret            = $credentialService->getShopifySharedSecret()->getValue();
 
         $topic                          = str_replace('webhooks/shopify/' . $request->route('id') . '/', '', $request->path());
@@ -60,11 +63,8 @@ class BaseShopifyController extends Controller
         $this->shopifyWebHookLog->setTopic($topic);
         $verified                       = $this->verifyWebHook($request, $shopifySharedSecret);
         $this->shopifyWebHookLog->setVerified($verified);
-        $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integratedShoppingCartCart);
+        $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integratedShoppingCart);
         $this->shopifyWebHookLog->setIncomingMessage(json_encode($request->input(), true));
-        $this->shopifyWebHookLog->setSuccess(true);
-
-        $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
     }
 
     /**
@@ -73,7 +73,7 @@ class BaseShopifyController extends Controller
      * @param   string  $shopifySharedSecret
      * @return  bool
      */
-    private function verifyWebHook (Request $request, $shopifySharedSecret)
+    protected function verifyWebHook (Request $request, $shopifySharedSecret)
     {
         $data                           = file_get_contents('php://input');
 

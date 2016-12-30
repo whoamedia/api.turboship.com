@@ -1,7 +1,7 @@
-App\Models\Integrations\ShippingApiIntegrationService:
+App\Models\Integrations\ShippingApiService:
   type:               entity
-  table:              ShippingApiIntegrationService
-  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiIntegrationServiceRepository
+  table:              ShippingApiService
+  repositoryClass:    App\Repositories\Doctrine\Integrations\ShippingApiServiceRepository
 
   id:
     id:
@@ -10,7 +10,7 @@ App\Models\Integrations\ShippingApiIntegrationService:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'ShippingApiIntegrationService id'
+        comment:      'ShippingApiService id'
       id:             true
       generator:
         strategy:     IDENTITY
@@ -23,16 +23,16 @@ App\Models\Integrations\ShippingApiIntegrationService:
       length:         100
       options:
         fixed:        false
-        comment:      "ShippingApiIntegrationService name"
+        comment:      "ShippingApiService name"
 
   manyToOne:
-    shippingApiIntegrationCarrier:
-      targetEntity:   ShippingApiIntegrationCarrier
+    shippingApiCarrier:
+      targetEntity:   ShippingApiCarrier
       nullable:       false
       fetch:          EAGER
-      inversedBy:     shippingApiIntegrationServices
+      inversedBy:     shippingApiServices
       joinColumn:
-        name:         shippingApiIntegrationCarrierId
+        name:         shippingApiCarrierId
         referencedColumnName: id
     service:
       targetEntity:   App\Models\Shipments\Service

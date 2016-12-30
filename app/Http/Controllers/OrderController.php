@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
+use App\Jobs\Orders\OrderApprovalJob;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Services\Order\OrderApprovalService;
@@ -93,6 +94,31 @@ class OrderController extends BaseAuthController
 
         $this->orderRepo->saveAndCommit($order);
         return response($order);
+    }
+
+
+    public function approveOrders (Request $request)
+    {
+        $getOrders                      = new GetOrders($request->input());
+        $getOrders->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getOrders->validate();
+        $getOrders->clean();
+
+        if ($getOrders->getIsSkuError() == true)
+            $getOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
+
+        if ($getOrders->getIsAddressError() == true)
+            $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
+
+        $query                          = $getOrders->jsonSerialize();
+
+        $results                        = $this->orderRepo->where($query);
+
+        foreach ($results AS $order)
+        {
+            $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
+            $this->dispatch($job);
+        }
     }
 
 }

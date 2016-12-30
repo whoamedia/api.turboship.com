@@ -4,8 +4,12 @@ namespace App\Http\Controllers\ShopifyWebHooks;
 
 
 use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Jobs\Shopify\Orders\ShopifyCancelOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyDeleteOrderJob;
+use App\Jobs\Shopify\Orders\ShopifyOrderPaidJob;
+use App\Jobs\Shopify\Orders\ShopifyUpdateOrderJob;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Services\Order\OrderApprovalService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -24,12 +28,10 @@ class ShopifyOrderController extends BaseShopifyController
     protected $shopifyOrderMappingService;
 
 
-    public function __construct (Request $request)
+    public function __construct ()
     {
-        parent::__construct($request);
-
+        parent::__construct();
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
-        $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
     }
 
 
@@ -37,28 +39,11 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-
-            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
-
-            $entityCreated                  = is_null($order->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            $orderApprovalService           = new OrderApprovalService();
-            $orderApprovalService->processOrder($order);
-
-            $this->orderRepo->saveAndCommit($order);
-
-            $this->shopifyWebHookLog->setEntityId($order->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyCreateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
@@ -73,11 +58,11 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-            $this->shopifyWebHookLog->addNote('No action taken to cancel order');
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyCancelOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
 
         }
         catch (\Exception $exception)
@@ -93,14 +78,16 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
-            $this->shopifyWebHookLog->addNote('No action taken to delete order');
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyDeleteOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
+            dd($exception->getMessage());
             $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
@@ -112,43 +99,12 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
-            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
-
-            $entityCreated                  = is_null($order->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            if (!is_null($order->getId()))
-            {
-                $this->shopifyWebHookLog->setEntityId($order->getId());
-                if (!$order->canUpdate())
-                {
-                    $this->shopifyWebHookLog->addNote('$order->canUpdate was false');
-                    $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                    // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
-                    return response('', 200);
-                }
-
-                if ($order->canRunApprovalProcess())
-                {
-                    $orderApprovalService   = new OrderApprovalService();
-                    $orderApprovalService->processOrder($order);
-                }
-            }
-
-            $this->orderRepo->saveAndCommit($order);
-
-            $this->shopifyWebHookLog->setEntityId($order->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyOrderPaidJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
         }
         catch (\Exception $exception)
         {
@@ -163,43 +119,12 @@ class ShopifyOrderController extends BaseShopifyController
     {
         try
         {
+            parent::handleRequest($request);
+            $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $this->shopifyWebHookLog->setExternalId($shopifyOrder->getId());
 
-            if (!$this->shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
-            {
-                $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
-                $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                return response('', 200);
-            }
-
-            $order                          = $this->shopifyOrderMappingService->handleMapping($shopifyOrder);
-
-            $entityCreated                  = is_null($order->getId()) ? true : false;
-            $this->shopifyWebHookLog->setEntityCreated($entityCreated);
-
-            if (!is_null($order->getId()))
-            {
-                $this->shopifyWebHookLog->setEntityId($order->getId());
-                if (!$order->canUpdate())
-                {
-                    $this->shopifyWebHookLog->addNote('order->canUpdate was false');
-                    $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-                    // TODO: Log that the CRM cancelled the Order but we cannot cancel it internall
-                    return response('', 200);
-                }
-
-                if ($order->canRunApprovalProcess())
-                {
-                    $orderApprovalService   = new OrderApprovalService();
-                    $orderApprovalService->processOrder($order);
-                }
-            }
-
-            $this->orderRepo->saveAndCommit($order);
-
-            $this->shopifyWebHookLog->setEntityId($order->getId());
-            $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
+            $job                            = (new ShopifyUpdateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $this->dispatch($job);
 
         }
         catch (\Exception $exception)

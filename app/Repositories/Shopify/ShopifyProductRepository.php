@@ -35,11 +35,13 @@ class ShopifyProductRepository extends BaseShopifyRepository
     }
 
     /**
+     * @param   string      $ids
      * @return  int
      */
-    public function getImportCandidatesCount ()
+    public function getImportCandidatesCount ($ids = null)
     {
         $getShopifyProducts             = new GetShopifyProductCount();
+        $getShopifyProducts->setIds($ids);
         $getShopifyProducts->setPublishedStatus('published');
 
         $shopifyProductsResponse        = $this->shopifyIntegration->productApi->count($getShopifyProducts);

@@ -1,0 +1,73 @@
+App\Models\Shipments\Rate:
+  type:               entity
+  table:              Rate
+  repositoryClass:    App\Repositories\Doctrine\Shipments\RateRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Rate id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    externalShipmentId:
+      column:         externalShipmentId
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Rate externalShipmentId"
+    externalId:
+      column:         externalId
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Rate externalId"
+    rate:
+      column:         rate
+      type:           decimal
+      nullable:       true
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        default:      CURRENT_datetime
+
+  manyToOne:
+    shipment:
+      targetEntity:   Shipment
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     rates
+      joinColumn:
+        name:         shipmentId
+        referencedColumnName: id
+    integratedShippingApi:
+      targetEntity:   App\Models\Integrations\IntegratedShippingApi
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         integratedShippingApiId
+        referencedColumnName: id
+    shippingApiService:
+      targetEntity:   App\Models\Integrations\ShippingApiService
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         shippingApiServiceId
+        referencedColumnName: id

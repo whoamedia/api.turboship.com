@@ -6,7 +6,7 @@ namespace App\Models\Integrations;
 use App\Models\Shipments\Service;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class ShippingApiIntegrationService implements \JsonSerializable
+class ShippingApiService implements \JsonSerializable
 {
 
     /**
@@ -21,9 +21,9 @@ class ShippingApiIntegrationService implements \JsonSerializable
     protected $name;
 
     /**
-     * @var ShippingApiIntegrationCarrier
+     * @var ShippingApiCarrier
      */
-    protected $shippingApiIntegrationCarrier;
+    protected $shippingApiCarrier;
 
     /**
      * @var Service
@@ -34,7 +34,7 @@ class ShippingApiIntegrationService implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->name                         = AU::get($data['name']);
-        $this->shippingApiIntegrationCarrier= AU::get($data['shippingApiIntegrationCarrier']);
+        $this->shippingApiCarrier           = AU::get($data['shippingApiCarrier']);
         $this->service                      = AU::get($data['service']);
     }
 
@@ -45,7 +45,7 @@ class ShippingApiIntegrationService implements \JsonSerializable
     {
         $object['id']                       = $this->id;
         $object['name']                     = $this->name;
-        $object['shippingApiIntegrationCarrier']    = $this->shippingApiIntegrationCarrier->jsonSerialize();
+        $object['shippingApiCarrier']       = $this->shippingApiCarrier->jsonSerialize();
         $object['service']                  = $this->service->jsonSerialize();
 
         return $object;
@@ -85,19 +85,19 @@ class ShippingApiIntegrationService implements \JsonSerializable
     }
 
     /**
-     * @return ShippingApiIntegrationCarrier
+     * @return ShippingApiCarrier
      */
-    public function getShippingApiIntegrationCarrier()
+    public function getShippingApiCarrier()
     {
-        return $this->shippingApiIntegrationCarrier;
+        return $this->shippingApiCarrier;
     }
 
     /**
-     * @param ShippingApiIntegrationCarrier $shippingApiIntegrationCarrier
+     * @param ShippingApiCarrier $shippingApiCarrier
      */
-    public function setShippingApiIntegrationCarrier($shippingApiIntegrationCarrier)
+    public function setShippingApiCarrier($shippingApiCarrier)
     {
-        $this->shippingApiIntegrationCarrier = $shippingApiIntegrationCarrier;
+        $this->shippingApiCarrier = $shippingApiCarrier;
     }
 
     /**

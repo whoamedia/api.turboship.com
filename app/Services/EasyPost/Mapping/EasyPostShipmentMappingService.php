@@ -5,8 +5,14 @@ namespace App\Services\EasyPost\Mapping;
 
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
+use App\Integrations\EasyPost\Models\Responses\EasyPostRate;
+use App\Models\Integrations\IntegratedShippingApi;
+use App\Models\Shipments\Rate;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\ShipmentItem;
+use App\Repositories\Doctrine\Integrations\ShippingApiServiceRepository;
+use App\Utilities\IntegrationUtility;
+use EntityManager;
 
 class EasyPostShipmentMappingService extends BaseEasyPostMappingService
 {
@@ -21,11 +27,28 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
      */
     protected $easyPostParcelMappingService;
 
+    /**
+     * @var ShippingApiServiceRepository
+     */
+    protected $shippingApiServiceRepo;
+
     public function __construct()
     {
         $this->easyPostAddressMappingService    = new EasyPostAddressMappingService();
         $this->easyPostParcelMappingService     = new EasyPostParcelMappingService();
+        $this->shippingApiServiceRepo           = EntityManager::getRepository('App\Models\Integrations\ShippingApiService');
 
+    }
+
+    /**
+     * @param   Shipment $shipment
+     * @return  CreateEasyPostShipment
+     */
+    public function handleMapping (Shipment $shipment)
+    {
+        $createEasyPostShipment         = $this->toEasyPostShipment($shipment);
+
+        return $createEasyPostShipment;
     }
 
     /**
@@ -46,7 +69,7 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $returnAddress                  = $this->easyPostAddressMappingService->toEasyPostAddress($shipment->getReturnAddress());
         $createEasyPostShipment->setFromAddress($returnAddress);
 
-        $easyPostParcel                 = $this->easyPostParcelMappingService->toEasyPostParcel($shipment->getShippingContainer());
+        $easyPostParcel                 = $this->easyPostParcelMappingService->toEasyPostParcel($shipment->getShippingContainer(), $shipment->getWeight());
         $createEasyPostShipment->setParcel($easyPostParcel);
 
         return $createEasyPostShipment;
@@ -65,5 +88,36 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $createEasyPostCustomsItem->setValue($shipmentItem->getOrderItem()->getBasePrice());
 
         return $createEasyPostCustomsItem;
+    }
+
+    /**
+     * @param   EasyPostRate $easyPostRate
+     * @param   IntegratedShippingApi $integratedShippingApi
+     * @return  Rate
+     */
+    public function toLocalRate (EasyPostRate $easyPostRate, IntegratedShippingApi $integratedShippingApi)
+    {
+        $rate                           = new Rate();
+        $rate->setExternalId($easyPostRate->getId());
+        $rate->setExternalShipmentId($easyPostRate->getShipmentId());
+        $rate->setIntegratedShippingApi($integratedShippingApi);
+        $rate->setRate($easyPostRate->getRate());
+
+        $shippingApiService             = $this->getShippingApiService($easyPostRate->getCarrier(), $easyPostRate->getService());
+        $rate->setShippingApiService($shippingApiService);
+
+        return $rate;
+    }
+
+
+    public function getShippingApiService ($shippingApiCarrierName, $shippingApiServiceName)
+    {
+        $query      = [
+            'names'                         => $shippingApiServiceName,
+            'shippingApiCarrierNames'       => $shippingApiCarrierName,
+            'shippingApiIntegrationIds'     => IntegrationUtility::EASYPOST_ID,
+        ];
+
+        return $this->shippingApiServiceRepo->getOneByQuery($query);
     }
 }

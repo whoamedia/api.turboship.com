@@ -64,6 +64,9 @@ class OrderApprovalService
      */
     public function processOrder (Order $order)
     {
+        if (!$order->canRunApprovalProcess())
+            return $order;
+
         if (!$this->processShippingAddress($order))
             return $order;
 
@@ -76,6 +79,7 @@ class OrderApprovalService
 
         $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::PENDING_FULFILLMENT_ID);
         $order->addStatus($status);
+
         return $order;
     }
 

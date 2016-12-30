@@ -108,7 +108,7 @@ class EasyPostShipment
 
     /**
      * The associated PostageLabel object
-     * @var string
+     * @var EasyPostPostageLabel|null
      */
     protected $postage_label;
 
@@ -248,6 +248,8 @@ class EasyPostShipment
             $this->selected_rate        = new EasyPostRate($this->selected_rate);
 
         $this->postage_label            = AU::get($data['postage_label']);
+        if (!is_null($this->postage_label))
+            $this->postage_label        = new EasyPostPostageLabel($this->postage_label);
 
         $this->messages                 = [];
         $messages                       = AU::get($data['messages']);
@@ -532,7 +534,7 @@ class EasyPostShipment
     }
 
     /**
-     * @return string
+     * @return EasyPostPostageLabel|null
      */
     public function getPostageLabel()
     {
@@ -540,7 +542,7 @@ class EasyPostShipment
     }
 
     /**
-     * @param string $postage_label
+     * @param EasyPostPostageLabel|null $postage_label
      */
     public function setPostageLabel($postage_label)
     {
