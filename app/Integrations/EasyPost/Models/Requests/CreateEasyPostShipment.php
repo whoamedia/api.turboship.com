@@ -42,6 +42,11 @@ class CreateEasyPostShipment implements \JsonSerializable
     protected $options;
 
     /**
+     * @var CreateEasyPostCustomsInfo|null
+     */
+    protected $customs_info;
+
+    /**
      * @return array
      */
     public function jsonSerialize()
@@ -52,6 +57,7 @@ class CreateEasyPostShipment implements \JsonSerializable
         $object['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
         $object['carrier_accounts'] = $this->carrier_accounts;
         $object['options']          = is_null($this->options) ? null : $this->options->jsonSerialize();
+        $object['customs_info']     = is_null($this->customs_info) ? null : $this->customs_info->jsonSerialize();
 
         return $object;
     }
@@ -150,6 +156,22 @@ class CreateEasyPostShipment implements \JsonSerializable
     public function setOptions($options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * @return CreateEasyPostCustomsInfo|null
+     */
+    public function getCustomsInfo()
+    {
+        return $this->customs_info;
+    }
+
+    /**
+     * @param CreateEasyPostCustomsInfo|null $customs_info
+     */
+    public function setCustomsInfo($customs_info)
+    {
+        $this->customs_info = $customs_info;
     }
 
 }

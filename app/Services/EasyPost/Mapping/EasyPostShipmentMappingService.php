@@ -3,6 +3,7 @@
 namespace App\Services\EasyPost\Mapping;
 
 
+use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsInfo;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
 use App\Integrations\EasyPost\Models\Responses\EasyPostRate;
@@ -47,6 +48,11 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
     public function handleMapping (Shipment $shipment)
     {
         $createEasyPostShipment         = $this->toEasyPostShipment($shipment);
+        if ($createEasyPostShipment->getToAddress()->getCountry() != 'US')
+        {
+            $createEasyPostCustomsInfo  = $this->toEasyPostCustomsInfo($shipment);
+            $createEasyPostShipment->setCustomsInfo($createEasyPostCustomsInfo);
+        }
 
         return $createEasyPostShipment;
     }
@@ -75,6 +81,23 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         return $createEasyPostShipment;
     }
 
+    /**
+     * @param   Shipment $shipment
+     * @return  CreateEasyPostCustomsInfo
+     */
+    public function toEasyPostCustomsInfo (Shipment $shipment)
+    {
+        $createEasyPostCustomsInfo      = new CreateEasyPostCustomsInfo();
+
+        $customs_items                  = [];
+        foreach ($shipment->getItems() AS $shipmentItem)
+        {
+            $customs_items[]            = $this->toEasyPostCustomsItem($shipmentItem);
+        }
+        $createEasyPostCustomsInfo->setCustomsItems($customs_items);
+
+        return $createEasyPostCustomsInfo;
+    }
     /**
      * @param   ShipmentItem $shipmentItem
      * @return  CreateEasyPostCustomsItem
