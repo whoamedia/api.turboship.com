@@ -11,7 +11,7 @@ use App\Models\Shipments\Shipper;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Client extends BaseModel
+class Client extends BaseModel implements \JsonSerializable
 {
 
     /**
@@ -28,6 +28,11 @@ class Client extends BaseModel
      * @var Organization
      */
     protected $organization;
+
+    /**
+     * @var ClientOption
+     */
+    protected $options;
 
     /**
      * @var ArrayCollection
@@ -68,6 +73,10 @@ class Client extends BaseModel
         $this->shippers                 = new ArrayCollection();
 
         $this->name                     = AU::get($data['name']);
+        $this->options                  = AU::get($data['options']);
+        if (is_null($this->options))
+            $this->options              = new ClientOption(['client' => $this]);
+
         $this->organization             = AU::get($data['organization']);
     }
 
@@ -126,6 +135,22 @@ class Client extends BaseModel
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return ClientOption
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param ClientOption $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
     }
 
     /**

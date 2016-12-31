@@ -6,6 +6,7 @@ namespace App\Models\Locations\Validation;
 use App\Models\Locations\Country;
 use App\Repositories\Doctrine\Locations\CountryRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use EntityManager;
 
 class CountryValidation
 {
@@ -16,8 +17,15 @@ class CountryValidation
     private $countryRepo;
 
 
-    public function __construct(CountryRepository $countryRepo)
+    /**
+     * CountryValidation constructor.
+     * @param CountryRepository|null $countryRepo
+     */
+    public function __construct($countryRepo = null)
     {
+        if (is_null($countryRepo))
+            $countryRepo                = EntityManager::getRepository('App\Models\Locations\Country');
+
         $this->countryRepo              = $countryRepo;
     }
 

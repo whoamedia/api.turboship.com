@@ -66,6 +66,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $isError;
 
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);

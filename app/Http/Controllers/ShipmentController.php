@@ -3,25 +3,26 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
 use App\Http\Requests\Shipments\CreateShipmentsJob;
 use App\Http\Requests\Shipments\GetShipments;
 use App\Http\Requests\Shipments\UpdateShipment;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
+use App\Models\Shipments\Validation\RateValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
-use App\Repositories\EasyPost\EasyPostShipmentRepository;
-use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Services\Shipments\CreateShipmentsService;
 use App\Services\Shipments\ShipmentRateService;
 use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShipmentController extends BaseAuthController
 {
@@ -100,7 +101,14 @@ class ShipmentController extends BaseAuthController
         return response($shipment);
     }
 
-    public function rate (Request $request)
+
+    public function getRates (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+        return response ($shipment->getRates());
+    }
+
+    public function createRates (Request $request)
     {
         $rateShipment                  = new RateShipment($request->input());
         $rateShipment->setId($request->route('id'));
@@ -117,6 +125,34 @@ class ShipmentController extends BaseAuthController
 
 
         return response($shipment, 201);
+    }
+
+    public function purchasePostage (Request $request)
+    {
+        $purchasePostage                = new PurchasePostage();
+        $purchasePostage->setId($request->route('id'));
+        $purchasePostage->setRateId($request->route('rateId'));
+        $purchasePostage->validate();
+        $purchasePostage->clean();
+
+        $shipment                       = $this->getShipment($purchasePostage->getId());
+
+        $rateValidation                 = new RateValidation();
+        $rate                           = $rateValidation->idExists($purchasePostage->getRateId());
+
+        $shipmentRateService            = new ShipmentRateService($rate->getIntegratedShippingApi());
+        $shipmentRateService->purchase($shipment, $rate);
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response ($shipment->getPostage(), 201);
+    }
+
+    public function voidPostage (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+        if (is_null($shipment->getPostage()))
+            throw new BadRequestHttpException('Shipment has no postage to void');
+
+
     }
 
 

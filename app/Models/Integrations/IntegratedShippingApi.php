@@ -6,7 +6,7 @@ namespace App\Models\Integrations;
 use App\Models\Shipments\Shipper;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class IntegratedShippingApi extends IntegratedService
+class IntegratedShippingApi extends IntegratedService implements \JsonSerializable
 {
 
 

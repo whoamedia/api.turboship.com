@@ -6,7 +6,7 @@ namespace App\Models\Integrations;
 use App\Models\CMS\Client;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class IntegratedShoppingCart extends IntegratedService
+class IntegratedShoppingCart extends IntegratedService implements \JsonSerializable
 {
 
     /**

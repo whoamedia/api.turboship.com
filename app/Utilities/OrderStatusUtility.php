@@ -21,6 +21,7 @@ class OrderStatusUtility
     const INVALID_POSTAL_CODE_ID        = 104;
     const INVALID_COUNTRY_ID            = 105;
     const INVALID_STREET_ID             = 106;
+    const INVALID_PHONE_NUMBER          = 107;
 
 
     //  Order Error Statuses

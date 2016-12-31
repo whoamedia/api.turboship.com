@@ -19,11 +19,6 @@ class CountryController extends Controller
      */
     private $countryRepo;
 
-    /**
-     * @var CountryValidation
-     */
-    private $countryValidation;
-
 
     /**
      * CountryController constructor.
@@ -31,7 +26,6 @@ class CountryController extends Controller
     public function __construct ()
     {
         $this->countryRepo              = EntityManager::getRepository('App\Models\Locations\Country');
-        $this->countryValidation        = new CountryValidation($this->countryRepo);
     }
 
     /**
@@ -56,12 +50,7 @@ class CountryController extends Controller
      */
     public function show (Request $request)
     {
-        $showCountryRequest             = new ShowCountryRequest();
-        $showCountryRequest->setId($request->route('id'));
-        $showCountryRequest->validate();
-        $showCountryRequest->clean();
-
-        $country                        = $this->countryValidation->idExists($showCountryRequest->getId());
+        $country                        = $this->getCountryFromRoute($request->route('id'));
         return response($country);
     }
 
@@ -71,13 +60,23 @@ class CountryController extends Controller
      */
     public function getCountrySubdivisions (Request $request)
     {
-        $getCountrySubdivisionRequest   = new GetCountrySubdivisionsRequest();
-        $getCountrySubdivisionRequest->setId($request->route('id'));
-        $getCountrySubdivisionRequest->validate();
-        $getCountrySubdivisionRequest->clean();
-
-        $country                        = $this->countryValidation->idExists($getCountrySubdivisionRequest->getId());
+        $country                        = $this->getCountryFromRoute($request->route('id'));
         return response()->json($country->getSubdivisions());
+    }
+
+    /**
+     * @param   int     $id
+     * @return  Country
+     */
+    private function getCountryFromRoute ($id)
+    {
+        $showCountryRequest             = new ShowCountryRequest();
+        $showCountryRequest->setId($id);
+        $showCountryRequest->validate();
+        $showCountryRequest->clean();
+
+        $countryValidation              = new CountryValidation($this->countryRepo);
+        return $countryValidation->idExists($showCountryRequest->getId());
     }
 
 }

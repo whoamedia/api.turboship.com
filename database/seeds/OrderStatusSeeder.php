@@ -76,7 +76,11 @@ class OrderStatusSeeder extends Seeder
                 'name'  => 'Invalid Street Address',
                 'isError' => true
             ],
-
+            [
+                'id'    => OrderStatusUtility::INVALID_PHONE_NUMBER,
+                'name'  => 'Invalid phone number',
+                'isError' => true
+            ],
 
 
 

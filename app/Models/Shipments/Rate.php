@@ -57,7 +57,7 @@ class Rate implements \JsonSerializable
 
         $this->shipment                 = AU::get($data['shipment']);
         $this->integratedShippingApi    = AU::get($data['integratedShippingApi']);
-        $this->shippingApiService        = AU::get($data['shippingApiService']);
+        $this->shippingApiService       = AU::get($data['shippingApiService']);
         $this->externalShipmentId       = AU::get($data['externalShipmentId']);
         $this->externalId               = AU::get($data['externalId']);
         $this->rate                     = AU::get($data['rate']);
@@ -69,7 +69,7 @@ class Rate implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
+        //  $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
         $object['shippingApiService']    = $this->shippingApiService->jsonSerialize();
         $object['externalShipmentId']   = $this->externalShipmentId;
         $object['externalId']           = $this->externalId;

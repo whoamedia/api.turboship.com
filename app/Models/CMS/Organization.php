@@ -13,7 +13,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 /**
  * @SWG\Definition()
  */
-class Organization extends BaseModel
+class Organization extends BaseModel implements \JsonSerializable
 {
 
     /**

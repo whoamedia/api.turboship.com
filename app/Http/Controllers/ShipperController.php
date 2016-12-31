@@ -7,6 +7,7 @@ use App\Http\Requests\Shippers\AddClientToShipper;
 use App\Http\Requests\Shippers\GetShippers;
 use App\Http\Requests\Shippers\ShowShipper;
 use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Shipments\Shipper;
 use App\Models\Shipments\Validation\ShipperValidation;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -20,11 +21,6 @@ class ShipperController extends BaseAuthController
      */
     private $shipperRepo;
 
-    /**
-     * @var ShipperValidation
-     */
-    private $shipperValidation;
-
 
     /**
      * ClientController constructor.
@@ -32,7 +28,6 @@ class ShipperController extends BaseAuthController
     public function __construct ()
     {
         $this->shipperRepo              = EntityManager::getRepository('App\Models\Shipments\Shipper');
-        $this->shipperValidation        = new ShipperValidation();
     }
 
 
@@ -56,25 +51,31 @@ class ShipperController extends BaseAuthController
 
     public function show (Request $request)
     {
-        $shipper                        = $this->getOneById($request->route('id'));
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
         return response($shipper);
     }
 
     public function showAddress (Request $request)
     {
-        $shipper                        = $this->getOneById($request->route('id'));
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
         return response($shipper->getAddress());
     }
 
     public function showReturnAddress (Request $request)
     {
-        $shipper                        = $this->getOneById($request->route('id'));
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
         return response($shipper->getReturnAddress());
+    }
+
+    public function getShippingApis (Request $request)
+    {
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
+        return response($shipper->getIntegratedShippingApis());
     }
 
     public function getClients (Request $request)
     {
-        $shipper                        = $this->getOneById($request->route('id'));
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
         return response($shipper->getClients());
     }
 
@@ -85,7 +86,7 @@ class ShipperController extends BaseAuthController
         $addClientToShipper->setClientId($request->route('clientId'));
 
         $clientValidation               = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
-        $shipper                        = $this->getOneById($addClientToShipper->getId());
+        $shipper                        = $this->getShipperFromRoute($addClientToShipper->getId());
         $client                         = $clientValidation->idExists($addClientToShipper->getClientId());
 
         if ($shipper->hasClient($client))
@@ -104,7 +105,7 @@ class ShipperController extends BaseAuthController
         $addClientToShipper->setClientId($request->route('clientId'));
 
         $clientValidation               = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
-        $shipper                        = $this->getOneById($addClientToShipper->getId());
+        $shipper                        = $this->getShipperFromRoute($addClientToShipper->getId());
         $client                         = $clientValidation->idExists($addClientToShipper->getClientId());
 
         if (!$shipper->hasClient($client))
@@ -117,17 +118,18 @@ class ShipperController extends BaseAuthController
     }
 
     /**
-     * @param $id
-     * @return \App\Models\Shipments\Shipper
+     * @param   int     $id
+     * @return  Shipper
      */
-    private function getOneById ($id)
+    private function getShipperFromRoute ($id)
     {
         $showShipper                    = new ShowShipper();
         $showShipper->setId($id);
         $showShipper->validate();
         $showShipper->clean();
 
-        $shipper                        = $this->shipperValidation->idExists($showShipper->getId());
+        $shipperValidation              = new ShipperValidation();
+        $shipper                        = $shipperValidation->idExists($showShipper->getId());
         return $shipper;
     }
 }

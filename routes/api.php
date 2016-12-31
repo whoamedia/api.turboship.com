@@ -37,6 +37,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  IntegratedShoppingCart Operations
     Route::get('/integratedShoppingCarts', 'IntegratedShoppingCartController@index');
     Route::get('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@show');
+    Route::get('/integratedShoppingCarts/{id}/credentials', 'IntegratedShoppingCartController@getCredentials');
     Route::get('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@getWebHooks');
     Route::get('/integratedShoppingCarts/{id}/webHooks/available', 'IntegratedShoppingCartController@getAvailableWebHooks');
     Route::post('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@createWebHook');
@@ -55,22 +56,33 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Order Operations
     Route::get('/orders', 'OrderController@index');
+    Route::get('/orders/lexicon', 'OrderController@getLexicon');
     Route::get('/orders/statuses', 'OrderController@getStatuses');
     Route::get('/orders/approve', 'OrderController@approveOrders');
     Route::get('/orders/{id}', 'OrderController@show');
+    Route::get('/orders/{id}/statusHistory', 'OrderController@getStatusHistory');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
 
 
     //  Product Operations
     Route::get('/products', 'ProductController@index');
+    Route::get('/products/{id}/aliases', 'ProductController@getAliases');
+    Route::get('/products/{id}/images', 'ProductController@getImages');
+    Route::get('/products/{id}/variants', 'ProductController@getVariants');
+    Route::get('/products/{id}', 'ProductController@show');
+
+
 
 
     //  Shipment Operations
     Route::get('/shipments', 'ShipmentController@index');
     Route::get('/shipments/{id}', 'ShipmentController@show');
     Route::put('/shipments/{id}', 'ShipmentController@update');
-    Route::post('/shipments/{id}/rate', 'ShipmentController@rate');
+    Route::get('/shipments/{id}/rates', 'ShipmentController@getRates');
+    Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
+    Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
+    Route::post('/shipments/{id}/postage/{rateId}', 'ShipmentController@purchasePostage');
     Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
 
 
@@ -79,6 +91,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shippers/{id}', 'ShipperController@show');
     Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
     Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
+    Route::get('/shippers/{id}/integratedShippingApis', 'ShipperController@getShippingApis');
     Route::get('/shippers/{id}/clients', 'ShipperController@getClients');
     Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
     Route::delete('/shippers/{id}/clients/{clientId}', 'ShipperController@removeClient');

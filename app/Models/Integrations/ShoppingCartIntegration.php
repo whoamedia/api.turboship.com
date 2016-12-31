@@ -3,7 +3,7 @@
 namespace App\Models\Integrations;
 
 
-class ShoppingCartIntegration extends Integration
+class ShoppingCartIntegration extends Integration implements \JsonSerializable
 {
 
     /**

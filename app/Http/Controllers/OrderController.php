@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Jobs\Orders\OrderApprovalJob;
+use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Services\Order\OrderApprovalService;
@@ -49,42 +50,45 @@ class OrderController extends BaseAuthController
             $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
 
         $query                          = $getOrders->jsonSerialize();
-
         $results                        = $this->orderRepo->where($query, false);
+        return response($results);
+    }
+
+
+    public function getLexicon (Request $request)
+    {
+        $getOrders                      = new GetOrders($request->input());
+        $getOrders->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getOrders->validate();
+        $getOrders->clean();
+
+        if ($getOrders->getIsSkuError() == true)
+            $getOrders->setStatusIds(OrderStatusUtility::UNMAPPED_SKU);
+
+        if ($getOrders->getIsAddressError() == true)
+            $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
+
+        $query                          = $getOrders->jsonSerialize();
+        $results                        = $this->orderRepo->getLexicon($query);
         return response($results);
     }
 
     public function show (Request $request)
     {
-        $showOrder                      = new ShowOrder();
-        $showOrder->setId($request->route('id'));
-        $showOrder->validate();
-        $showOrder->clean();
-
-        $order                          = $this->orderRepo->getOneById($showOrder->getId());
-        if (is_null($order))
-            throw new NotFoundHttpException('Order not found');
-
+        $order                          = $this->getOrderFromRoute($request->route('id'));
         return response($order);
     }
 
-
-    public function getStatuses (Request $request)
+    public function getStatusHistory (Request $request)
     {
-        $orderStatuses                  = $this->orderStatusRepo->where([], false);
-        return response($orderStatuses);
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        return response($order->getStatusHistory());
     }
+
 
     public function approveIndividualOrder (Request $request)
     {
-        $showOrder                      = new ShowOrder();
-        $showOrder->setId($request->route('id'));
-        $showOrder->validate();
-        $showOrder->clean();
-
-        $order                          = $this->orderRepo->getOneById($showOrder->getId());
-        if (is_null($order))
-            throw new NotFoundHttpException('Order not found');
+        $order                          = $this->getOrderFromRoute($request->route('id'));
 
         if (!$order->canRunApprovalProcess())
             throw new BadRequestHttpException('The order is in a status where it cannot be put through the approval process');
@@ -121,4 +125,28 @@ class OrderController extends BaseAuthController
         }
     }
 
+    public function getStatuses (Request $request)
+    {
+        $orderStatuses                  = $this->orderStatusRepo->where([], false);
+        return response($orderStatuses);
+    }
+
+
+    /**
+     * @param   int     $id
+     * @return  Order
+     */
+    private function getOrderFromRoute ($id)
+    {
+        $showOrder                      = new ShowOrder();
+        $showOrder->setId($id);
+        $showOrder->validate();
+        $showOrder->clean();
+
+        $order                          = $this->orderRepo->getOneById($showOrder->getId());
+        if (is_null($order))
+            throw new NotFoundHttpException('Order not found');
+
+        return $order;
+    }
 }

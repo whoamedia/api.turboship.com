@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -33,10 +34,16 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        if ($exception->getCode() == 500 || ($this->isHttpException($exception) && $exception->getStatusCode() == 500))
+        parent::report($exception);
+
+        /**
+        if ($exception->getCode() == 500 ||
+        ($this->isHttpException($exception) && $exception->getStatusCode() == 500) ||
+        $exception instanceof EasyPostApiException)
         {
-            parent::report($exception);
+        parent::report($exception);
         }
+         */
     }
 
     /**

@@ -6,9 +6,12 @@ namespace App\Integrations\EasyPost\Api;
 use App\Integrations\EasyPost\EasyPostConfiguration;
 use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
 use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
+use App\Integrations\EasyPost\Exceptions\EasyPostInvalidAddressException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
+use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -45,7 +48,15 @@ class BaseApi
      * @param   array|null  $apiRequest
      * @param   array|null  $queryString
      * @return  array
+     *
      * @throws  EasyPostInvalidCredentialsException
+     * @throws  EasyPostServiceUnavailableException
+     * @throws  EasyPostPhoneNumberRequiredException
+     * @throws  EasyPostCustomsInfoException
+     * @throws  EasyPostReferenceRequiredException
+     * @throws  EasyPostInvalidAddressException
+     * @throws  EasyPostUserThrottledException
+     * @throws  EasyPostApiException
      */
     protected function makeHttpRequest($method, $path, $apiRequest = null, $queryString = null)
     {
@@ -97,6 +108,10 @@ class BaseApi
             $message                = $errorMessage['message'];
             if ($code == 401)
                 throw new EasyPostInvalidCredentialsException();
+            else if (preg_match("/Unable to complete shipment purchase: carrier is not responding/", $message))
+            {
+                throw new EasyPostServiceUnavailableException();
+            }
             else if (
                 preg_match("/phoneNumber is required/", $message) ||
                 preg_match("/Missing or invalid ship to phone number/", $message) ||
@@ -105,7 +120,14 @@ class BaseApi
             else if (preg_match("/'customs_info' is required for international shipments, shipments bound for US military bases, or US territories/", $message))
                 throw new EasyPostCustomsInfoException();
             else if (preg_match("/Missing required shipment attribute: reference/", $message))
+            {
                 throw new EasyPostReferenceRequiredException();
+            }
+            else if (preg_match("/Address is too ambiguous/", $message))
+                throw new EasyPostInvalidAddressException();
+            else if (preg_match("/The maximum number of user access attempts was exceeded/", $message) ||
+                    preg_match("/The UserId is currently locked out/", $message))
+                throw new EasyPostUserThrottledException($message, $code);
             else
                 throw new EasyPostApiException($errorMessage['message'], $code);
         }

@@ -13,6 +13,7 @@ use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Utilities\CRMSourceUtility;
+use Bugsnag;
 use EntityManager;
 
 class ShopifyOrderMappingService extends BaseShopifyMappingService
@@ -227,6 +228,12 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     public function shouldImportOrderItem (ShopifyOrderLineItem $shopifyOrderLineItem)
     {
         if ($shopifyOrderLineItem->getRequiresShipping() == false)
+            return false;
+        else if (is_null($shopifyOrderLineItem->getVariantId()))
+            return false;
+        else if (is_null($shopifyOrderLineItem->getProductId()))
+            return false;
+        else if (is_null($shopifyOrderLineItem->getSku()))
             return false;
         else
             return true;

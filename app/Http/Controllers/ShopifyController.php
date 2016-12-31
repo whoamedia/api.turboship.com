@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
 use App\Http\Requests\Shopify\DownloadShopifyProducts;
 use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
 use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
+use App\Models\Integrations\IntegratedShoppingCart;
+use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\ProductRepository;
@@ -16,7 +19,7 @@ use App\Utilities\CRMSourceUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 
-class ShopifyController extends BaseIntegratedServiceController
+class ShopifyController extends BaseAuthController
 {
 
     /**
@@ -42,8 +45,6 @@ class ShopifyController extends BaseIntegratedServiceController
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
         $this->orderItemRepo                = EntityManager::getRepository('App\Models\OMS\OrderItem');
         $this->orderApprovalService         = new OrderApprovalService();
@@ -52,7 +53,7 @@ class ShopifyController extends BaseIntegratedServiceController
 
     public function downloadOrders (Request $request)
     {
-        $shoppingCartIntegration        = parent::getIntegratedShoppingCart($request->route('id'));
+        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
         $shopifyOrderRepository         = new ShopifyOrderRepository($shoppingCartIntegration);
 
         $total                          = $shopifyOrderRepository->getImportCandidatesCount();
@@ -74,7 +75,7 @@ class ShopifyController extends BaseIntegratedServiceController
 
     public function downloadProducts (Request $request)
     {
-        $shoppingCartIntegration        = parent::getIntegratedShoppingCart($request->route('id'));
+        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
         $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
         $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
 
@@ -114,6 +115,20 @@ class ShopifyController extends BaseIntegratedServiceController
                 usleep(250000);
             }
         }
+    }
 
+    /**
+     * @param   int     $id
+     * @return  IntegratedShoppingCart
+     */
+    private function getIntegratedShoppingCartFromRoute ($id)
+    {
+        $showIntegratedShoppingCart         = new ShowIntegratedShoppingCart();
+        $showIntegratedShoppingCart->setId($id);
+        $showIntegratedShoppingCart->validate();
+        $showIntegratedShoppingCart->clean();
+
+        $integratedShoppingCartValidation   = new IntegratedShoppingCartValidation();
+        return $integratedShoppingCartValidation->idExists($showIntegratedShoppingCart->getId());
     }
 }

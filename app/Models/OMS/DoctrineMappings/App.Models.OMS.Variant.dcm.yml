@@ -96,6 +96,13 @@ App\Models\OMS\Variant:
       joinColumn:
         name:         clientId
         referencedColumnName: id
+    countryOfOrigin:
+      targetEntity:   App\Models\Locations\Country
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         countryOfOriginId
+        referencedColumnName: id
     crmSource:
       targetEntity:   CRMSource
       nullable:       false

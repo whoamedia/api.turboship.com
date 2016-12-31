@@ -17,6 +17,7 @@ use App\Services\Address\USPSAddressService;
 use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
 use App\Utilities\CRMSourceUtility;
 use App\Utilities\OrderStatusUtility;
+use Respect\Validation\Validator as v;
 use EntityManager;
 
 class OrderApprovalService
@@ -67,13 +68,13 @@ class OrderApprovalService
         if (!$order->canRunApprovalProcess())
             return $order;
 
+        if (!$this->mapOrderItemSkus($order))
+            return $order;
+
         if (!$this->processShippingAddress($order))
             return $order;
 
         if (!$this->validateShippingAddress($order))
-            return $order;
-
-        if (!$this->mapOrderItemSkus($order))
             return $order;
 
 
@@ -150,6 +151,26 @@ class OrderApprovalService
          */
         $address->setSubdivision($subdivision);
 
+        //  Use ClientOptions for defaultShipToPhone
+        if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
+            $address->setPhone($order->getClient()->getOptions()->getDefaultShipToPhone());
+
+        //  Ensure that the phone number is always set
+        if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
+        {
+            $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
+            $order->addStatus($status);
+            return false;
+        }
+
+        //  Ensure the phone number is valid
+        if (!v::phone()->validate($address->getPhone()))
+        {
+            $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_PHONE_NUMBER);
+            $order->addStatus($status);
+            return false;
+        }
+
         $order->setShippingAddress($address);
 
         return true;
@@ -215,6 +236,10 @@ class OrderApprovalService
         $mappingFailure             = false;
         foreach ($order->getItems() AS $orderItem)
         {
+            //  Don't map the Variant if it's already mapped
+            if (!is_null($orderItem->getVariant()))
+                continue;
+
             $sku                    = $orderItem->getSku();
 
             if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)

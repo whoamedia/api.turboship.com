@@ -85,5 +85,6 @@ App\Models\Shipments\Shipment:
     rates:
       targetEntity:   Rate
       mappedBy:       shipment
+      fetch:          LAZY
       orphanRemoval:  true
       cascade:        ["persist", "remove"]

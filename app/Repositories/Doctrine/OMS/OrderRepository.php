@@ -25,19 +25,55 @@ class OrderRepository extends BaseRepository
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
      * @return      Order[]|LengthAwarePaginator
      */
-    function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
+    public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
-        $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
+        $pagination                 =   parent::buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->orderBy('orders.id', 'ASC');
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
     }
+
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(orders.id) AS total',
+            'crmSource.id AS crmSource_id', 'crmSource.name AS crmSource_name',
+            'client.id AS client_id', 'client.name AS client_name',
+            'organization.id AS organization_id', 'organization.name AS organization_name',
+            'status.id AS status_id', 'status.name AS status_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('crmSource');
+        $qb->addGroupBy('client');
+        $qb->addGroupBy('organization');
+        $qb->addGroupBy('status');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'crmSource'         =>  [],
+            'client'            =>  [],
+            'organization'      =>  [],
+            'status'            =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
 
     /**
      * @param       QueryBuilder            $qb
@@ -99,8 +135,6 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['externalCreatedFrom'])))
             $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', $query['externalCreatedFrom']));
-
-        $qb->orderBy('orders.id', 'ASC');
 
         return $qb;
     }

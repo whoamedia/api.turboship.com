@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Product extends BaseModel
+class Product extends BaseModel implements \JsonSerializable
 {
 
     /**
@@ -81,24 +81,6 @@ class Product extends BaseModel
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
-
-        $object['variants']             = [];
-        foreach ($this->getVariants() AS $variant)
-        {
-            $object['variants'][]       = $variant->jsonSerialize();
-        }
-
-        $object['images']               = [];
-        foreach ($this->getImages() AS $image)
-        {
-            $object['images'][]         = $image->jsonSerialize();
-        }
-
-        $object['aliases']              = [];
-        foreach ($this->getAliases() AS $alias)
-        {
-            $object['aliases'][]        = $alias->jsonSerialize();
-        }
 
         return $object;
     }

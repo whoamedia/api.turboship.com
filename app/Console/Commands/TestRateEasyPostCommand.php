@@ -8,6 +8,8 @@ use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
 use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
+use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
+use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -64,6 +66,9 @@ class TestRateEasyPostCommand extends Command
         $shipmentsResponse                  = $this->shipmentRepo->where([], true);
         foreach ($shipmentsResponse AS $shipment)
         {
+            if (!is_null($shipment->getPostage()))
+                continue;
+
             $this->info('On shipment id ' . $shipment->getId());
             $shipment->setWeight(rand(20, 100) . '.' . rand(1, 99));
             $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
@@ -82,23 +87,31 @@ class TestRateEasyPostCommand extends Command
             }
             catch (EasyPostCustomsInfoException $exception)
             {
-                //   Do nothing
+                $this->info('EasyPostCustomsInfoException  ' . $exception->getMessage());
             }
             catch (EasyPostInvalidCredentialsException $exception)
             {
-                //   Do nothing
+                $this->info('EasyPostInvalidCredentialsException  ' . $exception->getMessage());
             }
             catch (EasyPostPhoneNumberRequiredException $exception)
             {
-                //   Do nothing
+                $this->info('EasyPostPhoneNumberRequiredException  ' . $exception->getMessage());
             }
             catch (EasyPostReferenceRequiredException $exception)
             {
-                //   Do nothing
+                $this->info('EasyPostReferenceRequiredException  ' . $exception->getMessage());
             }
-            catch (EasyPostApiException $easyPostApiException)
+            catch (EasyPostServiceUnavailableException $exception)
             {
-                $this->info($easyPostApiException->getMessage());
+                $this->info('EasyPostServiceUnavailableException  ' . $exception->getMessage());
+            }
+            catch (EasyPostUserThrottledException $exception)
+            {
+                $this->info('EasyPostUserThrottledException  ' . $exception->getMessage());
+            }
+            catch (EasyPostApiException $exception)
+            {
+                $this->info('EasyPostApiException  ' . $exception->getMessage());
             }
 
 

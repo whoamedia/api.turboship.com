@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetIntegrationWebHooks;
 use App\Http\Requests\Integrations\GetShippingApiIntegrations;
 use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
 use App\Http\Requests\Integrations\ShowIntegration;
 use App\Http\Requests\Integrations\ShowIntegrationCredentials;
+use App\Models\Integrations\Integration;
 use App\Models\Integrations\IntegrationWebHook;
+use App\Models\Integrations\ShippingApiIntegration;
 use App\Models\Integrations\Validation\IntegrationValidation;
 use App\Models\Integrations\Validation\ShippingApiIntegrationValidation;
 use App\Repositories\Doctrine\Integrations\IntegrationRepository;
@@ -18,7 +19,7 @@ use App\Repositories\Doctrine\Integrations\ShoppingCartIntegrationRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 
-class IntegrationController
+class IntegrationController extends BaseAuthController
 {
 
     /**
@@ -74,26 +75,14 @@ class IntegrationController
 
     public function show (Request $request)
     {
-        $showIntegration                = new ShowIntegration();
-        $showIntegration->setId($request->route('id'));
-        $showIntegration->validate();
-        $showIntegration->clean();
-
-        $integration                    = $this->integrationValidation->idExists($showIntegration->getId());
-
+        $integration                    = $this->getIntegrationFromRoute($request->route('id'));
         return response ($integration);
     }
 
 
     public function showIntegrationCredentials (Request $request)
     {
-        $showIntegrationCredentials     = new ShowIntegrationCredentials();
-        $showIntegrationCredentials->setId($request->route('id'));
-        $showIntegrationCredentials->validate();
-        $showIntegrationCredentials->clean();
-
-        $integration                    = $this->integrationValidation->idExists($showIntegrationCredentials->getId());
-
+        $integration                    = $this->getIntegrationFromRoute($request->route('id'));
         return response($integration->getIntegrationCredentials());
     }
 
@@ -103,12 +92,7 @@ class IntegrationController
      */
     public function getWebHooks (Request $request)
     {
-        $getIntegrationWebHooks         = new GetIntegrationWebHooks();
-        $getIntegrationWebHooks->setId($request->route('id'));
-        $getIntegrationWebHooks->validate();
-        $getIntegrationWebHooks->clean();
-
-        $integration                    = $this->integrationValidation->idExists($getIntegrationWebHooks->getId());
+        $integration                    = $this->getIntegrationFromRoute($request->route('id'));
 
         $integrationWebHooks            = [];
         foreach ($integration->getIntegrationWebHooks() AS $integrationWebHook)
@@ -123,27 +107,44 @@ class IntegrationController
 
     public function getShippingApiCarriers (Request $request)
     {
-        $showIntegration                = new ShowIntegration();
-        $showIntegration->setId($request->route('id'));
-        $showIntegration->validate();
-        $showIntegration->clean();
-
-        $shippingApiValidation          = new ShippingApiIntegrationValidation();
-        $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
-
-        return response($shippingApiIntegration->getShippingApiIntegrationCarriers());
+        $shippingApiIntegration         = $this->getShippingApiIntegrationFromRoute($request->route('id'));
+        return response($shippingApiIntegration->getShippingApiCarriers());
     }
 
     public function getShippingApiServices (Request $request)
     {
+        $shippingApiIntegration         = $this->getShippingApiIntegrationFromRoute($request->route('id'));
+        return response($shippingApiIntegration->getShippingApiServices());
+    }
+
+
+    /**
+     * @param   int     $id
+     * @return  Integration
+     */
+    private function getIntegrationFromRoute ($id)
+    {
         $showIntegration                = new ShowIntegration();
-        $showIntegration->setId($request->route('id'));
+        $showIntegration->setId($id);
+        $showIntegration->validate();
+        $showIntegration->clean();
+
+        $integrationValidation          = new IntegrationValidation();
+        return $integrationValidation->idExists($showIntegration->getId());
+    }
+
+    /**
+     * @param   int     $id
+     * @return  ShippingApiIntegration
+     */
+    private function getShippingApiIntegrationFromRoute ($id)
+    {
+        $showIntegration                = new ShowIntegration();
+        $showIntegration->setId($id);
         $showIntegration->validate();
         $showIntegration->clean();
 
         $shippingApiValidation          = new ShippingApiIntegrationValidation();
-        $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
-
-        return response($shippingApiIntegration->getShippingApiIntegrationServices());
+        return $shippingApiValidation->idExists($showIntegration->getId());
     }
 }

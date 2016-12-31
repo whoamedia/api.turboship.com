@@ -98,9 +98,9 @@ class Shipment implements \JsonSerializable
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
 
-        $object['rates']                = [];
-        foreach ($this->getRates() AS $rate)
-            $object['rates'][]          = $rate->jsonSerialize();
+        $object['items']                = [];
+        foreach ($this->getItems() AS $shipmentItem)
+            $object['items'][]          = $shipmentItem->jsonSerialize();
 
         return $object;
     }
@@ -306,4 +306,14 @@ class Shipment implements \JsonSerializable
     {
         $this->rates->clear();
     }
+
+    /**
+     * @param   Rate $rate
+     * @return  bool
+     */
+    public function hasRate (Rate $rate)
+    {
+        return $this->rates->contains($rate);
+    }
+
 }

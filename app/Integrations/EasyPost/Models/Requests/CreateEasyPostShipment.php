@@ -42,15 +42,22 @@ class CreateEasyPostShipment implements \JsonSerializable
     protected $options;
 
     /**
+     * @var CreateEasyPostCustomsInfo|null
+     */
+    protected $customs_info;
+
+    /**
      * @return array
      */
     public function jsonSerialize()
     {
-        $object['shipment']                     = $this->simpleSerialize();
-        $object['shipment']['to_address']       = is_null($this->to_address) ? null : $this->to_address->jsonSerialize();
-        $object['shipment']['from_address']     = is_null($this->from_address) ? null : $this->from_address->jsonSerialize();
-        $object['shipment']['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
-        $object['shipment']['options']          = is_null($this->options) ? null : $this->options->jsonSerialize();
+        $object['reference']        = $this->getReference();
+        $object['to_address']       = is_null($this->to_address) ? null : $this->to_address->jsonSerialize();
+        $object['from_address']     = is_null($this->from_address) ? null : $this->from_address->jsonSerialize();
+        $object['parcel']           = is_null($this->parcel) ? null : $this->parcel->jsonSerialize();
+        $object['carrier_accounts'] = $this->carrier_accounts;
+        $object['options']          = is_null($this->options) ? null : $this->options->jsonSerialize();
+        $object['customs_info']     = is_null($this->customs_info) ? null : $this->customs_info->jsonSerialize();
 
         return $object;
     }
@@ -60,7 +67,7 @@ class CreateEasyPostShipment implements \JsonSerializable
      */
     public function getReference()
     {
-        return $this->reference;
+        return is_null($this->reference) ? null : (string)$this->reference;
     }
 
     /**
@@ -149,6 +156,22 @@ class CreateEasyPostShipment implements \JsonSerializable
     public function setOptions($options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * @return CreateEasyPostCustomsInfo|null
+     */
+    public function getCustomsInfo()
+    {
+        return $this->customs_info;
+    }
+
+    /**
+     * @param CreateEasyPostCustomsInfo|null $customs_info
+     */
+    public function setCustomsInfo($customs_info)
+    {
+        $this->customs_info = $customs_info;
     }
 
 }

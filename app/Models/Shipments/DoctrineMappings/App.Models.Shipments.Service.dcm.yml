@@ -35,7 +35,7 @@ App\Models\Shipments\Service:
     carrier:
       targetEntity:   Carrier
       nullable:       false
-      fetch:          LAZY
+      fetch:          EAGER
       inversedBy:     services
       joinColumn:
         name:         carrierId

@@ -110,6 +110,7 @@ class WhoaMediaSeeder extends Seeder
     {
         $client                 = new \App\Models\CMS\Client();
         $client->setName('Whoa Media');
+        $client->getOptions()->setDefaultShipToPhone('8774430266');
         $client->setOrganization($this->organization);
         $this->clientRepo->saveAndCommit($client);
 
@@ -316,6 +317,9 @@ class WhoaMediaSeeder extends Seeder
         $this->organization->addShipper($this->shipper);
 
         $this->organizationRepo->saveAndCommit($this->organization);
+
+        $this->client->getOptions()->setDefaultShipper($this->shipper);
+        $this->clientRepo->saveAndCommit($this->client);
     }
 
     private function easyPost ()
@@ -337,6 +341,9 @@ class WhoaMediaSeeder extends Seeder
 
         $this->shipper->addIntegratedShippingApi($integratedShipping);
         $this->organizationRepo->saveAndCommit($this->organization);
+
+        $this->client->getOptions()->setDefaultIntegratedShippingApi($integratedShipping);
+        $this->clientRepo->saveAndCommit($this->client);
     }
 
 }
