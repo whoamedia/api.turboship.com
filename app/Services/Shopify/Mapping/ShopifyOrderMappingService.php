@@ -54,6 +54,9 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             $orderItem                      = $this->findLocalOrderItem($shopifyOrderLineItem, $order->getId());
             $orderItem                      = $this->toOrderItem($shopifyOrderLineItem, $orderItem);
 
+            if (is_null($orderItem->getSku()))
+                dd($shopifyOrder);
+
             if (is_null($orderItem->getId()))
                 $order->addItem($orderItem);
         }
