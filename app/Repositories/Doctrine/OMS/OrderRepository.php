@@ -33,6 +33,8 @@ class OrderRepository extends BaseRepository
         $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
+        $qb->orderBy('orders.id', 'ASC');
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
@@ -149,8 +151,6 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['externalCreatedFrom'])))
             $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', $query['externalCreatedFrom']));
-
-        $qb->orderBy('orders.id', 'ASC');
 
         return $qb;
     }
