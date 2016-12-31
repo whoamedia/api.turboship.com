@@ -27,7 +27,7 @@ class OrderRepository extends BaseRepository
      */
     public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
-        $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
+        $pagination                 =   parent::buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['orders']);
@@ -41,6 +41,10 @@ class OrderRepository extends BaseRepository
             return $this->paginate($qb->getQuery(), $pagination['limit']);
     }
 
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
     public function getLexicon ($query)
     {
         $qb                         =   $this->_em->createQueryBuilder();
@@ -68,26 +72,6 @@ class OrderRepository extends BaseRepository
         ];
 
         return $this->buildLexicon($lexicon, $result);
-    }
-
-    private function buildLexicon($lexicon, $result) {
-        $lexiconKeySet = array_keys($lexicon);
-        foreach($result AS $resultItem) {
-            foreach ($lexiconKeySet AS $lexiconKey) {
-                $key = array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id'));
-                if ($key !== false) {
-                    $lexicon[$lexiconKey][$key]['total'] += $resultItem['total'];
-                } else {
-                    echo array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id')) . PHP_EOL;
-                    array_push($lexicon[$lexiconKey], [
-                        'id' => $resultItem[$lexiconKey.'_'.'id'],
-                        'name' => $resultItem[$lexiconKey.'_'.'name'],
-                        'total' => $resultItem['total']
-                    ]);
-                }
-            }
-        }
-        return $lexicon;
     }
 
 

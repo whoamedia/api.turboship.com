@@ -33,10 +33,47 @@ class ShipmentRepository extends BaseRepository
         $qb->select(['shipment']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
+        $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
+    }
+
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(orders.id) AS total',
+            'crmSource.id AS crmSource_id', 'crmSource.name AS crmSource_name',
+            'client.id AS client_id', 'client.name AS client_name',
+            'organization.id AS organization_id', 'organization.name AS organization_name',
+            'status.id AS status_id', 'status.name AS status_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('shippingContainer');
+        $qb->addGroupBy('carrier');
+        $qb->addGroupBy('service');
+        $qb->addGroupBy('client');
+        $qb->addGroupBy('organization');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'shippingContainer' =>  [],
+            'carrier'           =>  [],
+            'service'           =>  [],
+            'client'            =>  [],
+            'organization'      =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
     }
 
     /**
@@ -110,7 +147,6 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['createdTo'])))
             $qb->andWhere($qb->expr()->lte('shipment.createdAt', $query['createdTo']));
 
-        $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));
 
         return $qb;
     }

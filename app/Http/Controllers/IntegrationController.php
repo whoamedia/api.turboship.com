@@ -131,7 +131,7 @@ class IntegrationController
         $shippingApiValidation          = new ShippingApiIntegrationValidation();
         $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
 
-        return response($shippingApiIntegration->getShippingApiIntegrationCarriers());
+        return response($shippingApiIntegration->getShippingApiCarriers());
     }
 
     public function getShippingApiServices (Request $request)
@@ -144,6 +144,6 @@ class IntegrationController
         $shippingApiValidation          = new ShippingApiIntegrationValidation();
         $shippingApiIntegration         = $shippingApiValidation->idExists($showIntegration->getId());
 
-        return response($shippingApiIntegration->getShippingApiIntegrationServices());
+        return response($shippingApiIntegration->getShippingApiServices());
     }
 }
