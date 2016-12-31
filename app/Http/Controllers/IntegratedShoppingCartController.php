@@ -54,6 +54,11 @@ class IntegratedShoppingCartController extends BaseAuthController
         return response($integratedShoppingCart);
     }
 
+    public function getCredentials (Request $request)
+    {
+        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        return response($integratedShoppingCart->getCredentials());
+    }
 
     public function getWebHooks (Request $request)
     {
