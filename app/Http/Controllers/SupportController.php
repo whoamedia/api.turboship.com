@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use EntityManager;
 
-class ListController extends BaseAuthController
+class SupportController extends BaseAuthController
 {
 
     /**

@@ -35,11 +35,6 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/countries/{id}/subdivisions', 'CountryController@getCountrySubdivisions');
 
 
-    //  List Operations
-    Route::get('/lists/crmSources', 'ListController@getCRMSources');
-    Route::get('/lists/orderStatuses', 'ListController@getOrderStatuses');
-
-
     //  IntegratedShoppingCart Operations
     Route::get('/integratedShoppingCarts', 'IntegratedShoppingCartController@index');
     Route::get('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@show');
@@ -68,6 +63,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/{id}/statusHistory', 'OrderController@getStatusHistory');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
+
+    //  Support Operations
+    Route::get('/support/crmSources', 'SupportController@getCRMSources');
+    Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
 
 
     //  Product Operations
