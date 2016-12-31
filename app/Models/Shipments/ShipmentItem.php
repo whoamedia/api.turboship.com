@@ -43,7 +43,7 @@ class ShipmentItem implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['orderItem']            = $this->orderItem->getId();
+        $object['orderItem']            = $this->orderItem->jsonSerialize();
         $object['quantity']             = $this->quantity;
 
         return $object;

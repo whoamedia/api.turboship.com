@@ -92,11 +92,11 @@ class Shipment implements \JsonSerializable
         $object['fromAddress']          = $this->fromAddress->jsonSerialize();
         $object['toAddress']            = $this->toAddress->jsonSerialize();
         $object['returnAddress']        = $this->returnAddress->jsonSerialize();
-        $object['service']              = !is_null($this->service) ? $this->service->jsonSerialize() : null;
+        //  $object['service']              = !is_null($this->service) ? $this->service->jsonSerialize() : null;
         $object['weight']               = $this->weight;
-        $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
-        $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
-        $object['createdAt']            = $this->createdAt;
+        //  $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
+        //  $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
+        //  $object['createdAt']            = $this->createdAt;
 
         $object['items']                = [];
         foreach ($this->getItems() AS $shipmentItem)
