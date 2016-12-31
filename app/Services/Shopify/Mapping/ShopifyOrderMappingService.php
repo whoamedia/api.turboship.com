@@ -13,6 +13,7 @@ use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Utilities\CRMSourceUtility;
+use Bugsnag;
 use EntityManager;
 
 class ShopifyOrderMappingService extends BaseShopifyMappingService
@@ -55,7 +56,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             $orderItem                      = $this->toOrderItem($shopifyOrderLineItem, $orderItem);
 
             if (is_null($orderItem->getSku()))
-                dd($shopifyOrder);
+                Bugsnag::leaveBreadcrumb('shopifyOrder', 'ShopifyOrder', $shopifyOrder->jsonSerialize());
 
             if (is_null($orderItem->getId()))
                 $order->addItem($orderItem);
