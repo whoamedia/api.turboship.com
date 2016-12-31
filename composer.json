@@ -19,8 +19,7 @@
         "soapbox/laravel-formatter": "^2.0",
         "lucadegasperi/oauth2-server-laravel": "^5.2",
         "respect/validation": "^1.1",
-        "pda/pheanstalk": "^3.1",
-        "maxbrokman/safe-queue": "^0.2.4"
+        "pda/pheanstalk": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
