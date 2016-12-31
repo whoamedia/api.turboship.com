@@ -18,6 +18,12 @@ Route::post('/oauth/access_token',
 Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 {
 
+    //  Carrier operations
+    Route::get('/carriers', 'CarrierController@index');
+    Route::get('/carriers/{id}', 'CarrierController@show');
+    Route::get('/carriers/{id}/services', 'CarrierController@getServices');
+
+
     //  Client Operations
     Route::get('/clients', 'ClientController@index');
     Route::post('/clients', 'ClientController@store');
@@ -78,6 +84,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products/{id}', 'ProductController@show');
 
 
+    //  Carrier operations
+    Route::get('/services', 'ServiceController@index');
+    Route::get('/services/{id}', 'ServiceController@show');
 
 
     //  Shipment Operations
