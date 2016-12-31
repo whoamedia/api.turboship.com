@@ -71,7 +71,6 @@ class ShipmentController extends BaseAuthController
 
     public function show (Request $request)
     {
-        dd($request->route('id'));
         $shipment                       = $this->getShipment($request->route('id'));
         return response($shipment);
     }
