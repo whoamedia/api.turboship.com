@@ -114,6 +114,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  ShippingContainer operations
     Route::get('/shippingContainers', 'ShippingContainerController@index');
     Route::get('/shippingContainers/{id}', 'ShippingContainerController@show');
+    Route::put('/shippingContainers/{id}', 'ShippingContainerController@update');
+    Route::post('/shippingContainers', 'ShippingContainerController@create');
 
 
     //  Shopify Operations

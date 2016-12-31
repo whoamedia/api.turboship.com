@@ -26,9 +26,6 @@ class CreateShippingContainerTable extends Migration
             $table->decimal('width', 10, 2);
             $table->decimal('height', 10, 2);
             $table->decimal('weight', 10, 2);
-
-
-            $table->unique(['organizationId', 'name']);
         });
 
 

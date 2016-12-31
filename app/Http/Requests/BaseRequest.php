@@ -12,6 +12,65 @@ class BaseRequest
 {
 
     /**
+     * @param   $value
+     * @return  bool|null
+     */
+    protected function getBoolean ($value)
+    {
+        if (is_null($value))
+            return null;
+        else
+            return BU::getBooleanValue($value);
+    }
+
+    /**
+     * @param   $value
+     * @return  int|null
+     */
+    protected function getInteger ($value)
+    {
+        if (is_null($value))
+            return null;
+        else
+            return InputUtil::getInt(trim($value));
+    }
+
+    /**
+     * @param   $value
+     * @return  null|string
+     */
+    protected function getIds ($value)
+    {
+        if (is_null($value))
+            return null;
+
+        $value                          = explode(',', $value);
+        $newValues                      = '';
+        foreach ($value AS $item)
+        {
+            $id                         = trim($item);
+            $newValues                  .= $id . ',';
+        }
+
+        return rtrim($newValues, ',');
+    }
+
+    /**
+     * @param   $value
+     * @return  float|int|null
+     */
+    protected function getFloat ($value)
+    {
+        if (is_null($value))
+            return null;
+
+        if (!is_null(InputUtil::getInt($value)))
+            return InputUtil::getInt($value);
+
+        return InputUtil::getFloat($value);
+    }
+
+    /**
      * @param   string|null     $values
      * @param   string          $fieldName
      * @return  string|null
@@ -45,7 +104,8 @@ class BaseRequest
         if (is_null($value))
             return null;
 
-        $value                          = BU::getBooleanValue($value);
+        $value                          = $this->getBoolean($value);
+
         if (is_null($value))
             throw new BadRequestHttpException($fieldName . ' must be boolean value');
 
@@ -64,6 +124,26 @@ class BaseRequest
 
         if (DateUtil::validate($value, 'YYYY-MM-DD') == false)
             throw new BadRequestHttpException($fieldName . ' must be formatted as YYYY-MM-DD');
+
+        return $value;
+    }
+
+    /**
+     * @param   string|bool|null    $value
+     * @param   string              $fieldName
+     * @return  float|null
+     */
+    protected function validateFloat ($value, $fieldName)
+    {
+        if (is_null($value))
+            return null;
+
+        if (!is_null(InputUtil::getInt($value)))
+            return InputUtil::getInt($value);
+
+        $value                          = InputUtil::getFloat($value);
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' must be float value');
 
         return $value;
     }

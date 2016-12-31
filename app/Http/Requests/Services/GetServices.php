@@ -22,22 +22,29 @@ class GetServices extends BaseRequest implements Cleanable, Validatable, \JsonSe
      */
     protected $carrierIds;
 
+    /**
+     * @var bool|null
+     */
+    protected $isDomestic;
+
 
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
         $this->carrierIds               = AU::get($data['carrierIds']);
+        $this->isDomestic               = AU::get($data['isDomestic']);
     }
 
     public function validate()
     {
-
+        $this->isDomestic               = parent::validateBoolean($this->isDomestic, 'isDomestic');
     }
 
     public function clean ()
     {
         $this->ids                      = InputUtil::getIdsString($this->ids);
         $this->carrierIds               = InputUtil::getIdsString($this->carrierIds);
+        $this->isDomestic               = parent::getBoolean($this->isDomestic);
     }
 
     /**
@@ -47,6 +54,7 @@ class GetServices extends BaseRequest implements Cleanable, Validatable, \JsonSe
     {
         $object['ids']                  = $this->ids;
         $object['carrierIds']           = $this->carrierIds;
+        $object['isDomestic']           = $this->isDomestic;
 
         return $object;
     }
@@ -81,6 +89,22 @@ class GetServices extends BaseRequest implements Cleanable, Validatable, \JsonSe
     public function setCarrierIds($carrierIds)
     {
         $this->carrierIds = $carrierIds;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsDomestic()
+    {
+        return $this->isDomestic;
+    }
+
+    /**
+     * @param bool|null $isDomestic
+     */
+    public function setIsDomestic($isDomestic)
+    {
+        $this->isDomestic = $isDomestic;
     }
 
 }
