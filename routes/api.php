@@ -67,6 +67,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Support Operations
     Route::get('/support/crmSources', 'SupportController@getCRMSources');
     Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
+    Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 
     //  Product Operations
@@ -99,6 +100,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shippers/{id}/clients', 'ShipperController@getClients');
     Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
     Route::delete('/shippers/{id}/clients/{clientId}', 'ShipperController@removeClient');
+
+
+    //  ShippingContainer operations
+    Route::get('/shippingContainers', 'ShippingContainerController@index');
+    Route::get('/shippingContainers/{id}', 'ShippingContainerController@show');
 
 
     //  Shopify Operations
