@@ -18,3 +18,4 @@ return [
     'command_name' => 'doctrine:queue:work',
 
 ];
+//  php artisan doctrine:queue:work beanstalkd --queue=shopifyOrders --tries=5 --sleep=5 --daemon

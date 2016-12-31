@@ -55,9 +55,6 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             $orderItem                      = $this->findLocalOrderItem($shopifyOrderLineItem, $order->getId());
             $orderItem                      = $this->toOrderItem($shopifyOrderLineItem, $orderItem);
 
-            if (is_null($orderItem->getSku()))
-                Bugsnag::leaveBreadcrumb('shopifyOrder', \Bugsnag\Breadcrumbs\Breadcrumb::MANUAL_TYPE, $shopifyOrder->jsonSerialize());
-
             if (is_null($orderItem->getId()))
                 $order->addItem($orderItem);
         }
@@ -231,6 +228,12 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     public function shouldImportOrderItem (ShopifyOrderLineItem $shopifyOrderLineItem)
     {
         if ($shopifyOrderLineItem->getRequiresShipping() == false)
+            return false;
+        else if (is_null($shopifyOrderLineItem->getVariantId()))
+            return false;
+        else if (is_null($shopifyOrderLineItem->getProductId()))
+            return false;
+        else if (is_null($shopifyOrderLineItem->getSku()))
             return false;
         else
             return true;
