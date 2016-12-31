@@ -73,12 +73,20 @@ class OrderController extends BaseAuthController
         return response($order);
     }
 
-
-    public function getStatuses (Request $request)
+    public function getStatusHistory (Request $request)
     {
-        $orderStatuses                  = $this->orderStatusRepo->where([], false);
-        return response($orderStatuses);
+        $showOrder                      = new ShowOrder();
+        $showOrder->setId($request->route('id'));
+        $showOrder->validate();
+        $showOrder->clean();
+
+        $order                          = $this->orderRepo->getOneById($showOrder->getId());
+        if (is_null($order))
+            throw new NotFoundHttpException('Order not found');
+
+        return response($order->getStatusHistory());
     }
+
 
     public function approveIndividualOrder (Request $request)
     {
@@ -124,6 +132,12 @@ class OrderController extends BaseAuthController
             $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
             $this->dispatch($job);
         }
+    }
+
+    public function getStatuses (Request $request)
+    {
+        $orderStatuses                  = $this->orderStatusRepo->where([], false);
+        return response($orderStatuses);
     }
 
 }
