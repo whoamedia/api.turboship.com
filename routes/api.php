@@ -20,9 +20,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Client Operations
     Route::get('/clients', 'ClientController@index');
+    Route::post('/clients', 'ClientController@store');
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
-    Route::post('/clients', 'ClientController@store');
+    Route::get('/clients/{id}/options', 'ClientController@getOptions');
     Route::get('/clients/{id}/services', 'ClientController@getServices');
     Route::post('/clients/{id}/services', 'ClientController@addService');
     Route::delete('/clients/{id}/services/{serviceId}', 'ClientController@removeService');

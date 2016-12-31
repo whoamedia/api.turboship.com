@@ -67,13 +67,7 @@ class ClientController extends BaseAuthController
      */
     public function show (Request $request)
     {
-        $showClientRequest              = new ShowClientRequest();
-        $showClientRequest->setId($request->route('id'));
-        $showClientRequest->validate();
-        $showClientRequest->clean();
-
-        $client                         = $this->clientValidation->idExists($showClientRequest->getId(), true);
-
+        $client                         = $this->getClientFromRoute($request->route('id'));
         return response($client);
     }
 
@@ -88,7 +82,7 @@ class ClientController extends BaseAuthController
         $updateClientRequest->validate();
         $updateClientRequest->clean();
 
-        $client                         = $this->clientValidation->idExists($updateClientRequest->getId(), true);
+        $client                         = $this->getClientFromRoute($updateClientRequest->getId());
 
         if ($client->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update clients that belong to other organizations');
@@ -123,6 +117,12 @@ class ClientController extends BaseAuthController
         $this->clientRepo->saveAndCommit($client);
 
         return response($client, 201);
+    }
+
+    public function getOptions (Request $request)
+    {
+        $client                         = $this->getClientFromRoute($request->route('id'));
+        return response($client->getOptions());
     }
 
     public function getServices (Request $request)
@@ -183,5 +183,21 @@ class ClientController extends BaseAuthController
         }
 
         return response('', 204);
+    }
+
+    /**
+     * @param   int     $id
+     * @return  Client
+     */
+    private function getClientFromRoute ($id)
+    {
+        $showClientRequest              = new ShowClientRequest();
+        $showClientRequest->setId($id);
+        $showClientRequest->validate();
+        $showClientRequest->clean();
+
+        $client                         = $this->clientValidation->idExists($showClientRequest->getId());
+
+        return $client;
     }
 }
