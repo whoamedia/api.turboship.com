@@ -69,7 +69,7 @@ class Rate implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
+        //  $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
         $object['shippingApiService']    = $this->shippingApiService->jsonSerialize();
         $object['externalShipmentId']   = $this->externalShipmentId;
         $object['externalId']           = $this->externalId;
