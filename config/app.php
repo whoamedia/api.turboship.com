@@ -189,7 +189,7 @@ return [
         LaravelDoctrine\ORM\DoctrineServiceProvider::class,
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
-        MaxBrokman\SafeQueue\DoctrineQueueProvider::class,
+
     ],
 
     /*
