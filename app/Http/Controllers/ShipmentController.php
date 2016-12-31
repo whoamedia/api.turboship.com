@@ -72,6 +72,7 @@ class ShipmentController extends BaseAuthController
     public function show (Request $request)
     {
         $shipment                       = $this->getShipment($request->route('id'));
+        dd($shipment->jsonSerialize());
         return response($shipment);
     }
 
