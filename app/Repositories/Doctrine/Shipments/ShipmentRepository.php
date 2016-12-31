@@ -135,7 +135,7 @@ class ShipmentRepository extends BaseRepository
      */
     public function getOneById($id)
     {
-        dd($id);
+        dd($this->find($id));
         return $this->find($id);
     }
 
