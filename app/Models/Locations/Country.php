@@ -89,7 +89,6 @@ class Country implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
         $object['iso2']                 = $this->iso2;
-        $object['continent']            = $this->continent->jsonSerialize();
 
         return $object;
     }
