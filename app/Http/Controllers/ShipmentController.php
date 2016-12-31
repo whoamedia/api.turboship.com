@@ -71,6 +71,7 @@ class ShipmentController extends BaseAuthController
 
     public function show (Request $request)
     {
+        dd(ini_get('memory_limit'));
         $shipment                       = $this->getShipment($request->route('id'));
         return response($shipment);
     }
