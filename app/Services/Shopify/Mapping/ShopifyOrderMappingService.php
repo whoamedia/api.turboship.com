@@ -56,7 +56,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             $orderItem                      = $this->toOrderItem($shopifyOrderLineItem, $orderItem);
 
             if (is_null($orderItem->getSku()))
-                Bugsnag::leaveBreadcrumb('shopifyOrder', 'ShopifyOrder', $shopifyOrder->jsonSerialize());
+                Bugsnag::leaveBreadcrumb('shopifyOrder', \Bugsnag\Breadcrumbs\Breadcrumb::MANUAL_TYPE, $shopifyOrder->jsonSerialize());
 
             if (is_null($orderItem->getId()))
                 $order->addItem($orderItem);

@@ -17,6 +17,11 @@ abstract class Job
             EntityManager::getConnection()->close();
             EntityManager::getConnection()->connect();
         }
+
+        if (!EntityManager::isOpen())
+        {
+            EntityManager::getConnection()->connect();
+        }
     }
 
 }
