@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetIntegrationWebHooks;
 use App\Http\Requests\Integrations\GetShippingApiIntegrations;
 use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
