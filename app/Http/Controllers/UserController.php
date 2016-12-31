@@ -63,7 +63,7 @@ class UserController extends BaseAuthController
      */
     public function me ()
     {
-        $authUser                       = \Auth::getUser();
+        $authUser                       = parent::getAuthUser();
         return response($authUser);
     }
 
