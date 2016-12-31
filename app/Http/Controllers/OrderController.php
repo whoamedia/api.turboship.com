@@ -50,7 +50,12 @@ class OrderController extends BaseAuthController
 
         $query                          = $getOrders->jsonSerialize();
 
-        $results                        = $this->orderRepo->where($query, false);
+        if (!$getOrders->getLexicon())
+            $results                        = $this->orderRepo->where($query, false);
+        else
+            $results                        = $this->orderRepo->getLexicon($query);
+
+
         return response($results);
     }
 

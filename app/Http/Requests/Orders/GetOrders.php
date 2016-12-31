@@ -66,6 +66,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $isError;
 
+    /**
+     * @var bool
+     */
+    protected $lexicon;
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
@@ -79,6 +84,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = AU::get($data['isAddressError']);
         $this->isSkuError               = AU::get($data['isSkuError']);
         $this->isError                  = AU::get($data['isError']);
+        $this->lexicon                  = AU::get($data['lexicon'], false);
     }
 
     public function validate()
@@ -91,6 +97,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
         $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
+        $this->lexicon                  = parent::validateBoolean($this->lexicon, 'lexicon');
     }
 
     public function clean ()
@@ -114,6 +121,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['isAddressError']       = $this->isAddressError;
         $object['isSkuError']           = $this->isSkuError;
         $object['isError']              = $this->isError;
+        $object['lexicon']              = $this->lexicon;
 
         return $object;
     }
@@ -292,6 +300,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setIsError($isError)
     {
         $this->isError = $isError;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getLexicon()
+    {
+        return $this->lexicon;
+    }
+
+    /**
+     * @param boolean $lexicon
+     */
+    public function setLexicon($lexicon)
+    {
+        $this->lexicon = $lexicon;
     }
 
 }

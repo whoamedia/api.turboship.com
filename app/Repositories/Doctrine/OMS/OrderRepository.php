@@ -25,7 +25,7 @@ class OrderRepository extends BaseRepository
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
      * @return      Order[]|LengthAwarePaginator
      */
-    function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
+    public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
@@ -38,6 +38,56 @@ class OrderRepository extends BaseRepository
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
     }
+
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(orders.id) AS total',
+            'crmSource.id AS crmSource_id', 'crmSource.name AS crmSource_name',
+            'client.id AS client_id', 'client.name AS client_name',
+            'organization.id AS organization_id', 'organization.name AS organization_name',
+            'status.id AS status_id', 'status.name AS status_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('crmSource');
+        $qb->addGroupBy('client');
+        $qb->addGroupBy('organization');
+        $qb->addGroupBy('status');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'crmSource'         =>  [],
+            'client'            =>  [],
+            'organization'      =>  [],
+            'status'            =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
+    private function buildLexicon($lexicon, $result) {
+        $lexiconKeySet = array_keys($lexicon);
+        foreach($result AS $resultItem) {
+            foreach ($lexiconKeySet AS $lexiconKey) {
+                $key = array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id'));
+                if ($key !== false) {
+                    $lexicon[$lexiconKey][$key]['total'] += $resultItem['total'];
+                } else {
+                    echo array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id')) . PHP_EOL;
+                    array_push($lexicon[$lexiconKey], [
+                        'id' => $resultItem[$lexiconKey.'_'.'id'],
+                        'name' => $resultItem[$lexiconKey.'_'.'name'],
+                        'total' => $resultItem['total']
+                    ]);
+                }
+            }
+        }
+        return $lexicon;
+    }
+
 
     /**
      * @param       QueryBuilder            $qb
