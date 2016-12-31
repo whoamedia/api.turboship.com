@@ -20,6 +20,13 @@ class CreateClientOptionTable extends Migration
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
 
+            $table->integer('defaultShipperId')->unsigned()->index()->nullable()->default(null);
+            $table->foreign('defaultShipperId')->references('id')->on('Shipper');
+
+            $table->integer('defaultIntegratedShippingApiId')->unsigned()->index()->nullable()->default(null);
+            $table->foreign('defaultIntegratedShippingApiId')->references('id')->on('IntegratedShippingApi');
+
+
             $table->string('defaultShipToPhone', 20)->nullable()->default(null);
         });
 

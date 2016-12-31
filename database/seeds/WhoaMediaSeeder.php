@@ -317,6 +317,9 @@ class WhoaMediaSeeder extends Seeder
         $this->organization->addShipper($this->shipper);
 
         $this->organizationRepo->saveAndCommit($this->organization);
+
+        $this->client->getOptions()->setDefaultShipper($this->shipper);
+        $this->clientRepo->saveAndCommit($this->client);
     }
 
     private function easyPost ()
@@ -338,6 +341,9 @@ class WhoaMediaSeeder extends Seeder
 
         $this->shipper->addIntegratedShippingApi($integratedShipping);
         $this->organizationRepo->saveAndCommit($this->organization);
+
+        $this->client->getOptions()->setDefaultIntegratedShippingApi($integratedShipping);
+        $this->clientRepo->saveAndCommit($this->client);
     }
 
 }

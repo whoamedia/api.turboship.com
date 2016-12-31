@@ -32,3 +32,17 @@ App\Models\CMS\ClientOption:
       joinColumn:
         name:         clientId
         referencedColumnName: id
+
+  manyToOne:
+    defaultShipper:
+      targetEntity:   App\Models\Shipments\Shipper
+      nullable:       true
+      joinColumn:
+        name:         defaultShipperId
+        referencedColumnName: id
+    defaultIntegratedShippingApi:
+      targetEntity:   App\Models\Integrations\IntegratedShippingApi
+      nullable:       true
+      joinColumn:
+        name:         defaultIntegratedShippingApiId
+        referencedColumnName: id
