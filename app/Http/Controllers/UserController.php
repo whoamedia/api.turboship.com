@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Hash;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class UserController extends Controller
+class UserController extends BaseAuthController
 {
 
     /**
@@ -30,17 +30,12 @@ class UserController extends Controller
      */
     private $userValidation;
 
-    /**
-     * @var User
-     */
-    private $authUser;
 
     /**
      * UserController constructor.
      */
     public function __construct (Request $request)
     {
-        $this->authUser                 = \Auth::getUser();
         $this->userRepo                 = EntityManager::getRepository('App\Models\CMS\User');
         $this->userValidation           = new UserValidation($this->userRepo);
     }
@@ -53,7 +48,7 @@ class UserController extends Controller
     public function index (Request $request)
     {
         $getUsersRequest                = new GetUsersRequest($request->input());
-        $getUsersRequest->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getUsersRequest->setOrganizationIds(parent::getAuthUserOrganization()->getId());
         $getUsersRequest->validate();
         $getUsersRequest->clean();
 
@@ -78,16 +73,7 @@ class UserController extends Controller
      */
     public function show (Request $request)
     {
-        $showUserRequest                = new ShowUserRequest();
-        $showUserRequest->setId($request->route('id'));
-        $showUserRequest->validate();
-        $showUserRequest->clean();
-
-        $user                           = $this->userValidation->idExists($showUserRequest->getId(), true);
-
-        if (\Auth::getUser()->getOrganization()->getId() != $user->getOrganization()->getId())
-            throw new NotFoundHttpException('User not found');
-
+        $user                           = $this->getUserFromRoute($request->route('id'));
         return response($user);
     }
 
@@ -102,9 +88,9 @@ class UserController extends Controller
         $updateUserRequest->validate();
         $updateUserRequest->clean();
 
-        $user                           = $this->userValidation->idExists($updateUserRequest->getId(), true);
+        $user                           = $this->getUserFromRoute($updateUserRequest->getId());
 
-        if ($user->getId() != \Auth::getUser()->getId())
+        if ($user->getId() != parent::getAuthUser()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update other users');
 
 
@@ -159,9 +145,9 @@ class UserController extends Controller
         $updatePasswordRequest->setId($request->route('id'));
         $updatePasswordRequest->validate();
 
-        $user                           = $this->userValidation->idExists($updatePasswordRequest->getId(), true);
+        $user                           = $this->getUserFromRoute($updatePasswordRequest->getId());
 
-        if ($user->getId() != \Auth::getUser()->getId())
+        if ($user->getId() != parent::getAuthUser()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update passwords for other users');
 
         if (!Hash::check($updatePasswordRequest->getCurrentPassword(), $user->getPassword()))
@@ -173,4 +159,23 @@ class UserController extends Controller
         return response($user);
     }
 
+
+    /**
+     * @param   int     $id
+     * @return  User
+     */
+    private function getUserFromRoute ($id)
+    {
+        $showUserRequest                = new ShowUserRequest();
+        $showUserRequest->setId($id);
+        $showUserRequest->validate();
+        $showUserRequest->clean();
+
+        $user                           = $this->userValidation->idExists($showUserRequest->getId());
+
+        if ($this->getAuthUserOrganization()->getId() != $user->getOrganization()->getId())
+            throw new NotFoundHttpException('User not found');
+
+        return $user;
+    }
 }

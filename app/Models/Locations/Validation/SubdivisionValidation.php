@@ -6,6 +6,7 @@ namespace App\Models\Locations\Validation;
 use App\Models\Locations\Subdivision;
 use App\Repositories\Doctrine\Locations\SubdivisionRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use EntityManager;
 
 class SubdivisionValidation
 {
@@ -15,9 +16,15 @@ class SubdivisionValidation
      */
     private $subdivisionRepo;
 
-
-    public function __construct(SubdivisionRepository $subdivisionRepo)
+    /**
+     * SubdivisionValidation constructor.
+     * @param SubdivisionRepository|null $subdivisionRepo
+     */
+    public function __construct($subdivisionRepo = null)
     {
+        if (is_null($subdivisionRepo))
+            $subdivisionRepo            = EntityManager::getRepository('App\Models\Locations\Subdivision');
+
         $this->subdivisionRepo          = $subdivisionRepo;
     }
 

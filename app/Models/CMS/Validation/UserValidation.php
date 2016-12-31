@@ -8,6 +8,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\CMS\User;
+use EntityManager;
 
 class UserValidation
 {
@@ -18,8 +19,15 @@ class UserValidation
     private $userRepo;
 
 
-    public function __construct(UserRepository $userRepo)
+    /**
+     * UserValidation constructor.
+     * @param UserRepository|null $userRepo
+     */
+    public function __construct($userRepo = null)
     {
+        if (is_null($userRepo))
+            $userRepo                   = EntityManager::getRepository('App\Models\CMS\User');
+
         $this->userRepo                 = $userRepo;
     }
 

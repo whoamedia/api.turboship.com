@@ -18,11 +18,6 @@ class SubdivisionController extends Controller
      */
     private $subdivisionRepo;
 
-    /**
-     * @var SubdivisionValidation
-     */
-    private $subdivisionValidation;
-
 
     /**
      * SubdivisionController constructor.
@@ -30,7 +25,6 @@ class SubdivisionController extends Controller
     public function __construct ()
     {
         $this->subdivisionRepo          = EntityManager::getRepository('App\Models\Locations\Subdivision');
-        $this->subdivisionValidation    = new SubdivisionValidation($this->subdivisionRepo);
     }
 
 
@@ -56,13 +50,23 @@ class SubdivisionController extends Controller
      */
     public function show (Request $request)
     {
-        $showSubdivisionRequest             = new ShowSubdivisionRequest();
-        $showSubdivisionRequest->setId($request->route('id'));
-        $showSubdivisionRequest->validate();
-        $showSubdivisionRequest->clean();
-
-        $subdivision                        = $this->subdivisionValidation->idExists($showSubdivisionRequest->getId());
+        $subdivision                        = $this->getSubdivisionFromRoute($request->route('id'));
         return response($subdivision);
     }
 
+
+    /**
+     * @param   int     $id
+     * @return  Subdivision
+     */
+    private function getSubdivisionFromRoute ($id)
+    {
+        $showSubdivisionRequest             = new ShowSubdivisionRequest();
+        $showSubdivisionRequest->setId($id);
+        $showSubdivisionRequest->validate();
+        $showSubdivisionRequest->clean();
+
+        $subdivisionValidation              = new SubdivisionValidation();
+        return $subdivisionValidation->idExists($showSubdivisionRequest->getId());
+    }
 }
