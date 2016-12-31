@@ -52,7 +52,7 @@ App\Models\Shipments\Rate:
     shipment:
       targetEntity:   Shipment
       nullable:       false
-      fetch:          EAGER
+      fetch:          LAZY
       inversedBy:     rates
       joinColumn:
         name:         shipmentId
@@ -60,14 +60,14 @@ App\Models\Shipments\Rate:
     integratedShippingApi:
       targetEntity:   App\Models\Integrations\IntegratedShippingApi
       nullable:       false
-      fetch:          EAGER
+      fetch:          LAZY
       joinColumn:
         name:         integratedShippingApiId
         referencedColumnName: id
     shippingApiService:
       targetEntity:   App\Models\Integrations\ShippingApiService
       nullable:       false
-      fetch:          EAGER
+      fetch:          LAZY
       joinColumn:
         name:         shippingApiServiceId
         referencedColumnName: id

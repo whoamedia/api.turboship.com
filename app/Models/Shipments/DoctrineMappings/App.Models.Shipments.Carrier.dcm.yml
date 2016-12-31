@@ -37,4 +37,5 @@ App\Models\Shipments\Carrier:
     services:
       targetEntity:   Service
       mappedBy:       carrier
+      fetch:          LAZY
       cascade:        ["persist", "remove"]
