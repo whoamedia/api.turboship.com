@@ -82,24 +82,6 @@ class Product extends BaseModel implements \JsonSerializable
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
 
-        $object['variants']             = [];
-        foreach ($this->getVariants() AS $variant)
-        {
-            $object['variants'][]       = $variant->jsonSerialize();
-        }
-
-        $object['images']               = [];
-        foreach ($this->getImages() AS $image)
-        {
-            $object['images'][]         = $image->jsonSerialize();
-        }
-
-        $object['aliases']              = [];
-        foreach ($this->getAliases() AS $alias)
-        {
-            $object['aliases'][]        = $alias->jsonSerialize();
-        }
-
         return $object;
     }
 

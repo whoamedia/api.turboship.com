@@ -67,6 +67,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Product Operations
     Route::get('/products', 'ProductController@index');
+    Route::get('/products/{id}/aliases', 'ProductController@getAliases');
+    Route::get('/products/{id}/images', 'ProductController@getImages');
+    Route::get('/products/{id}/variants', 'ProductController@getVariants');
+    Route::get('/products/{id}', 'ProductController@show');
+
+
 
 
     //  Shipment Operations
