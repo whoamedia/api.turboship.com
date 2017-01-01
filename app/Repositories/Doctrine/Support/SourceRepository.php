@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Repositories\Doctrine\OMS;
+namespace App\Repositories\Doctrine\Support;
 
 
-use App\Models\OMS\CRMSource;
+use App\Models\Support\Source;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class CRMSourceRepository extends BaseRepository
+class SourceRepository extends BaseRepository
 {
 
     use Paginatable;
@@ -22,14 +21,14 @@ class CRMSourceRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      CRMSource[]|LengthAwarePaginator
+     * @return      Source[]|LengthAwarePaginator
      */
     function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['crmSource']);
+        $qb->select(['source']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -45,10 +44,10 @@ class CRMSourceRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\OMS\CRMSource', 'crmSource');
+        $qb->from('App\Models\Support\Source', 'source');
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('crmSource.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('source.id', $query['ids']));
 
         if (!is_null(AU::get($query['names'])))
         {
@@ -56,19 +55,19 @@ class CRMSourceRepository extends BaseRepository
             $names                  = explode(',', $query['names']);
             foreach ($names AS $name)
             {
-                $orX->add($qb->expr()->LIKE('crmSource.name', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->LIKE('source.name', $qb->expr()->literal('%' . trim($name) . '%')));
             }
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('crmSource.id', 'ASC');
+        $qb->orderBy('source.id', 'ASC');
         return $qb;
     }
 
 
     /**
      * @param   int         $id
-     * @return  CRMSource|null
+     * @return  Source|null
      */
     public function getOneById($id)
     {
@@ -77,7 +76,7 @@ class CRMSourceRepository extends BaseRepository
 
     /**
      * @param   string      $name
-     * @return  CRMSource|null
+     * @return  Source|null
      */
     public function getOneByName($name)
     {

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Integrations\GetIntegrationWebHooks;
 use App\Http\Requests\Integrations\GetShippingApiIntegrations;
 use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
 use App\Http\Requests\Integrations\ShowIntegration;
-use App\Http\Requests\Integrations\ShowIntegrationCredentials;
 use App\Models\Integrations\Integration;
 use App\Models\Integrations\IntegrationWebHook;
 use App\Models\Integrations\ShippingApiIntegration;

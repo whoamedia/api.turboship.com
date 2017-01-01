@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\OMS;
+namespace App\Models\Support;
 
 
-class CRMSource implements \JsonSerializable
+class Source implements \JsonSerializable
 {
 
     /**

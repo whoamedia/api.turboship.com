@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\Utilities\CRMSourceUtility;
+use \App\Utilities\SourceUtility;
 
-class CRMSourceSeeder extends Seeder
+class SourceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,7 +12,7 @@ class CRMSourceSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('CRMSource')->insert(
+        DB::table('Source')->insert(
             $this->getSources()
         );
     }
@@ -21,11 +21,11 @@ class CRMSourceSeeder extends Seeder
     {
         return [
             [
-                'id'    => CRMSourceUtility::INTERNAL_ID,
+                'id'    => SourceUtility::INTERNAL_ID,
                 'name'  => 'Internal',
             ],
             [
-                'id'    => CRMSourceUtility::SHOPIFY_ID,
+                'id'    => SourceUtility::SHOPIFY_ID,
                 'name'  => 'Shopify',
             ],
         ];

@@ -22,7 +22,6 @@ use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShipmentController extends BaseAuthController
 {

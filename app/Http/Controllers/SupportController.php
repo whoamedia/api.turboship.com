@@ -10,9 +10,9 @@ class SupportController extends BaseAuthController
 {
 
     /**
-     * @var \App\Repositories\Doctrine\OMS\CRMSourceRepository
+     * @var \App\Repositories\Doctrine\Support\SourceRepository
      */
-    private $crmSourceRepo;
+    private $sourceRepo;
 
     /**
      * @var \App\Repositories\Doctrine\OMS\OrderStatusRepository
@@ -25,10 +25,10 @@ class SupportController extends BaseAuthController
     private $subdivisionTypeRepo;
 
 
-    public function getCRMSources (Request $request)
+    public function getSources (Request $request)
     {
-        $this->crmSourceRepo            = EntityManager::getRepository('App\Models\OMS\CRMSource');
-        return $this->crmSourceRepo->where([], false);
+        $this->sourceRepo            = EntityManager::getRepository('App\Models\Support\Source');
+        return $this->sourceRepo->where([], false);
     }
 
     public function getOrderStatuses (Request $request)

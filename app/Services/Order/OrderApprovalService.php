@@ -15,7 +15,7 @@ use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Services\Address\USPSAddressService;
 use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
-use App\Utilities\CRMSourceUtility;
+use App\Utilities\SourceUtility;
 use App\Utilities\OrderStatusUtility;
 use Respect\Validation\Validator as v;
 use EntityManager;
@@ -242,7 +242,7 @@ class OrderApprovalService
 
             $sku                    = $orderItem->getSku();
 
-            if ($order->getCRMSource()->getId() == CRMSourceUtility::SHOPIFY_ID)
+            if ($order->getSource()->getId() == SourceUtility::SHOPIFY_ID)
                 $sku                = $mappingExceptionService->getShopifySku($order->getClient(), $sku, $orderItem->getExternalVariantId());
 
             $variantQuery   = [

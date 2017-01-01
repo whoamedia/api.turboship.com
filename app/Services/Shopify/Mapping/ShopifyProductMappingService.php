@@ -87,7 +87,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
             $productAlias                   = new ProductAlias();
 
         $productAlias->setClient($this->client);
-        $productAlias->setCrmSource($this->shopifyCRMSource);
+        $productAlias->setSource($this->shopifySource);
         $productAlias->setExternalId($shopifyProduct->getId());
         $productAlias->setExternalCreatedAt($this->toDate($shopifyProduct->getCreatedAt()));
 
@@ -124,7 +124,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
             $variant                        = new Variant();
 
         $variant->setClient($this->client);
-        $variant->setCrmSource($this->shopifyCRMSource);
+        $variant->setSource($this->shopifySource);
         $variant->setTitle($shopifyVariant->getTitle());
         $variant->setPrice($shopifyVariant->getPrice());
         $variant->setBarcode($shopifyVariant->getBarcode());
@@ -157,7 +157,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         if (is_null($image))
             $image                          = new Image();
 
-        $image->setCrmSource($this->shopifyCRMSource);
+        $image->setSource($this->shopifySource);
         $image->setExternalId($shopifyProductImage->getId());
         $image->setExternalCreatedAt($this->toDate($shopifyProductImage->getCreatedAt()));
         $image->setPath($shopifyProductImage->getSrc());
@@ -172,7 +172,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
     {
         $productAliasQuery  = [
             'clientIds'             => $this->client->getId(),
-            'crmSourceIds'          => $this->shopifyCRMSource->getId(),
+            'sourceIds'             => $this->shopifySource->getId(),
             'externalIds'           => $shopifyProduct->getId(),
         ];
 
@@ -192,7 +192,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
     {
         $variantQuery   = [
             'clientIds'             => $this->client->getId(),
-            'crmSourceIds'          => $this->shopifyCRMSource->getId(),
+            'sourceIds'             => $this->shopifySource->getId(),
             'externalIds'           => $shopifyVariant->getId(),
         ];
 
@@ -211,7 +211,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
     public function findLocalImage (ShopifyProductImage $shopifyProductImage)
     {
         $imageQuery     = [
-            'crmSourceIds'          => $this->shopifyCRMSource->getId(),
+            'sourceIds'             => $this->shopifySource->getId(),
             'externalIds'           => $shopifyProductImage->getId(),
         ];
 

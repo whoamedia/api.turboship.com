@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCRMSourceTable extends Migration
+class CreateSourceTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCRMSourceTable extends Migration
      */
     public function up()
     {
-        Schema::create('CRMSource', function (Blueprint $table)
+        Schema::create('Source', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
             $table->string('name', 100)->unique();
@@ -27,6 +27,6 @@ class CreateCRMSourceTable extends Migration
      */
     public function down()
     {
-        Schema::drop('CRMSource');
+        Schema::drop('Source');
     }
 }

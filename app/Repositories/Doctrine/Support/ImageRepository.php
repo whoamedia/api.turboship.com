@@ -46,13 +46,13 @@ class ImageRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Support\Image', 'image')
-            ->join('image.crmSource', 'crmSource', Query\Expr\Join::ON);
+            ->join('image.source', 'source', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('image.id', $query['ids']));
 
-        if (!is_null(AU::get($query['crmSourceIds'])))
-            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+        if (!is_null(AU::get($query['sourceIds'])))
+            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['externalIds'])))
         {
