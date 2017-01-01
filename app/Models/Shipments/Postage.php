@@ -104,7 +104,6 @@ class Postage implements \JsonSerializable
         $object['basePrice']            = $this->basePrice;
         $object['totalTaxes']           = $this->totalTaxes;
         $object['fuelSurcharge']        = $this->fuelSurcharge;
-        $object['shipment']             = $this->shipment->jsonSerialize();
         $object['rate']                 = $this->rate->jsonSerialize();
         $object['service']              = $this->service->jsonSerialize();
         $object['externalId']           = $this->externalId;

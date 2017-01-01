@@ -35,6 +35,12 @@ class ShipmentRateService
      */
     public function rate (Shipment $shipment, $clearRates = true)
     {
+        if (is_null($shipment->getShippingContainer()))
+            throw new BadRequestHttpException('Shipment needs a ShippingContainer');
+
+        if (is_null($shipment->getWeight()) || $shipment->getWeight() <= 0)
+            throw new BadRequestHttpException('Shipment needs a weight');
+
         if ($clearRates == true)
             $shipment->clearRates();
 
