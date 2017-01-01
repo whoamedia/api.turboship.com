@@ -61,6 +61,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/integrations/shippingApis/{id}/services', 'IntegrationController@getShippingApiServices');
 
 
+    //  Organization Operations
+    Route::get('/organizations/{id}', 'OrganizationController@show');
+    Route::put('/organizations/{id}', 'OrganizationController@update');
+
+
     //  Order Operations
     Route::get('/orders', 'OrderController@index');
     Route::get('/orders/lexicon', 'OrderController@getLexicon');
@@ -69,11 +74,6 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/{id}/statusHistory', 'OrderController@getStatusHistory');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
-
-    //  Support Operations
-    Route::get('/support/crmSources', 'SupportController@getCRMSources');
-    Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
-    Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 
     //  Product Operations
@@ -84,7 +84,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products/{id}', 'ProductController@show');
 
 
-    //  Carrier operations
+    //  Service operations
     Route::get('/services', 'ServiceController@index');
     Route::get('/services/{id}', 'ServiceController@show');
 
@@ -127,6 +127,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Subdivision Operations
     Route::get('/subdivisions', 'SubdivisionController@index');
     Route::get('/subdivisions/{id}', 'SubdivisionController@show');
+
+
+    //  Support Operations
+    Route::get('/support/crmSources', 'SupportController@getCRMSources');
+    Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
+    Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 
     //  User Operations
