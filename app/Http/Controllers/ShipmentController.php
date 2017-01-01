@@ -179,6 +179,12 @@ class ShipmentController extends BaseAuthController
     }
 
 
+    public function getImages (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+        return response($shipment->getImages());
+    }
+
     /**
      * @param   int         $id
      * @param   string      $fieldName
