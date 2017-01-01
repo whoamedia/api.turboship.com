@@ -4,6 +4,7 @@ namespace App\Models\Shipments;
 
 
 use App\Models\CMS\Client;
+use App\Models\Support\Image;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -53,6 +54,11 @@ class Shipment implements \JsonSerializable
     protected $rates;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $images;
+
+    /**
      * @var Postage|null
      */
     protected $postage;
@@ -73,6 +79,7 @@ class Shipment implements \JsonSerializable
         $this->createdAt                = new \DateTime();
         $this->items                    = new ArrayCollection();
         $this->rates                    = new ArrayCollection();
+        $this->images                   = new ArrayCollection();
 
         $this->fromAddress              = AU::get($data['fromAddress']);
         $this->toAddress                = AU::get($data['toAddress']);
@@ -314,6 +321,22 @@ class Shipment implements \JsonSerializable
     public function hasRate (Rate $rate)
     {
         return $this->rates->contains($rate);
+    }
+
+    /**
+     * @return Image[]
+     */
+    public function getImages ()
+    {
+        return $this->images->toArray();
+    }
+
+    /**
+     * @param Image $image
+     */
+    public function addImage (Image $image)
+    {
+        $this->images->add($image);
     }
 
 }

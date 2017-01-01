@@ -4,22 +4,21 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductImageTable extends Migration
+class CreateShipmentImageTable extends Migration
 {
-
 
     public function up()
     {
-        Schema::create('ProductImage', function (Blueprint $table)
+        Schema::create('ShipmentImage', function (Blueprint $table)
         {
-            $table->integer('productId')->unsigned()->index();
-            $table->foreign('productId')->references('id')->on('Product');
+            $table->integer('shipmentId')->unsigned()->index();
+            $table->foreign('shipmentId')->references('id')->on('Shipment');
 
 
             $table->integer('imageId')->unsigned()->index();
             $table->foreign('imageId')->references('id')->on('Image');
 
-            $table->primary(['productId', 'imageId']);
+            $table->primary(['shipmentId', 'imageId']);
         });
 
     }
@@ -31,6 +30,6 @@ class CreateProductImageTable extends Migration
      */
     public function down()
     {
-        Schema::drop('ProductImage');
+        Schema::drop('ShipmentImage');
     }
 }
