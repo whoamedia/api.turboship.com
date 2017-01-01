@@ -93,6 +93,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shipments', 'ShipmentController@index');
     Route::get('/shipments/{id}', 'ShipmentController@show');
     Route::put('/shipments/{id}', 'ShipmentController@update');
+    Route::get('/shipments/{id}/images', 'ShipmentController@getImages');
     Route::get('/shipments/{id}/rates', 'ShipmentController@getRates');
     Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
     Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
