@@ -19,7 +19,7 @@ class SourceValidation
 
     public function __construct()
     {
-        $this->sourceRepo                   = EntityManager::getRepository('App\Models\OMS\Source');
+        $this->sourceRepo                   = EntityManager::getRepository('App\Models\Support\Source');
     }
 
     /**
