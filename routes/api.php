@@ -103,6 +103,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Shipper Operations
     Route::get('/shippers', 'ShipperController@index');
     Route::get('/shippers/{id}', 'ShipperController@show');
+    Route::put('/shippers/{id}', 'ShipperController@update');
     Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
     Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
     Route::get('/shippers/{id}/integratedShippingApis', 'ShipperController@getShippingApis');

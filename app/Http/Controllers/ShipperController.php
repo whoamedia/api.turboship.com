@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Shippers\AddClientToShipper;
 use App\Http\Requests\Shippers\GetShippers;
 use App\Http\Requests\Shippers\ShowShipper;
+use App\Http\Requests\Shippers\UpdateShipper;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipper;
 use App\Models\Shipments\Validation\ShipperValidation;
@@ -52,6 +53,22 @@ class ShipperController extends BaseAuthController
     public function show (Request $request)
     {
         $shipper                        = $this->getShipperFromRoute($request->route('id'));
+        return response($shipper);
+    }
+
+    public function update (Request $request)
+    {
+        $updateShipper                  = new UpdateShipper($request->input());
+        $updateShipper->setId($request->route('id'));
+        $updateShipper->validate();
+        $updateShipper->clean();
+
+        $shipper                        = $this->getShipperFromRoute($updateShipper->getId());
+
+        if (!is_null($updateShipper->getName()))
+            $shipper->setName($updateShipper->getName());
+
+        $this->shipperRepo->saveAndCommit($shipper);
         return response($shipper);
     }
 

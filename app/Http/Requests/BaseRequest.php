@@ -39,7 +39,7 @@ class BaseRequest
      * @param   $value
      * @return  null|string
      */
-    protected function getIds ($value)
+    protected function getCommaSeparatedIds ($value)
     {
         if (is_null($value))
             return null;

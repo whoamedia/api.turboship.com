@@ -11,16 +11,21 @@ use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
-     * @var string
+     * @var int
+     */
+    protected $id;
+
+    /**
+     * @var string|null
      */
     protected $firstName;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $lastName;
 
@@ -30,7 +35,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     protected $company;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $street1;
 
@@ -40,17 +45,17 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     protected $street2;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $city;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $postalCode;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $subdivisionId;
 
@@ -67,6 +72,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
 
     public function __construct($data = [])
     {
+        $this->id                       = AU::get($data['id']);
         $this->firstName                = AU::get($data['firstName']);
         $this->lastName                 = AU::get($data['lastName']);
         $this->company                  = AU::get($data['company']);
@@ -81,31 +87,16 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
 
     public function validate()
     {
-        if (is_null($this->firstName))
-            throw new MissingMandatoryParametersException('firstName is required');
+        if (is_null($this->id))
+            throw new MissingMandatoryParametersException('id is required');
 
-        if (is_null($this->lastName))
-            throw new MissingMandatoryParametersException('lastName is required');
-
-        if (is_null($this->street1))
-            throw new MissingMandatoryParametersException('street1 is required');
-
-        if (is_null($this->city))
-            throw new MissingMandatoryParametersException('city is required');
-
-        if (is_null($this->postalCode))
-            throw new MissingMandatoryParametersException('postalCode is required');
-
-        if (is_null($this->subdivisionId))
-            throw new MissingMandatoryParametersException('subdivisionId is required');
-
-
-        if (is_null(InputUtil::getInt($this->subdivisionId)))
-            throw new BadRequestHttpException('subdivisionId must be integer');
+        if (is_null(InputUtil::getInt($this->id)))
+            throw new BadRequestHttpException('id must be integer');
     }
 
-    public function clean ()
+    public function clean()
     {
+
     }
 
     /**
@@ -113,6 +104,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
      */
     public function jsonSerialize()
     {
+        $object['id']                   = $this->id;
         $object['firstName']            = $this->firstName;
         $object['lastName']             = $this->lastName;
         $object['company']              = $this->company;
@@ -128,7 +120,23 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return string
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return null|string
      */
     public function getFirstName()
     {
@@ -136,7 +144,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param string $firstName
+     * @param null|string $firstName
      */
     public function setFirstName($firstName)
     {
@@ -144,7 +152,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getLastName()
     {
@@ -152,7 +160,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param string $lastName
+     * @param null|string $lastName
      */
     public function setLastName($lastName)
     {
@@ -176,7 +184,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getStreet1()
     {
@@ -184,7 +192,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param string $street1
+     * @param null|string $street1
      */
     public function setStreet1($street1)
     {
@@ -208,7 +216,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getCity()
     {
@@ -216,7 +224,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param string $city
+     * @param null|string $city
      */
     public function setCity($city)
     {
@@ -224,7 +232,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getPostalCode()
     {
@@ -232,7 +240,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param string $postalCode
+     * @param null|string $postalCode
      */
     public function setPostalCode($postalCode)
     {
@@ -240,7 +248,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSubdivisionId()
     {
@@ -248,7 +256,7 @@ class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable
     }
 
     /**
-     * @param int $subdivisionId
+     * @param int|null $subdivisionId
      */
     public function setSubdivisionId($subdivisionId)
     {
