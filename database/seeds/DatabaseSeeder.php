@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ServiceSeeder::class);
         $this->call(ShipmentAlgorithmSeeder::class);
         $this->call(ShipmentStatusSeeder::class);
+        $this->call(ShippingContainerTypeSeeder::class);
 
 
         /**
