@@ -6,6 +6,7 @@ namespace App\Listeners;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Variant;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -62,8 +63,9 @@ class VariantListener
         $result                         = $this->orderRepo->where($orderQuery);
         foreach ($result AS $order)
         {
-            $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
-            $this->dispatch($job);
+            $orderApprovalService       = new OrderApprovalService();
+            $orderApprovalService->processOrder($order);
+            $this->orderRepo->saveAndCommit($order);
         }
     }
 
