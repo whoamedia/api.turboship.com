@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Subdivisions\GetSubdivisionsRequest;
-use App\Http\Requests\Subdivisions\ShowSubdivisionRequest;
+use App\Http\Requests\Subdivisions\GetSubdivisions;
+use App\Http\Requests\Subdivisions\ShowSubdivision;
 use App\Models\Locations\Subdivision;
 use App\Models\Locations\Validation\SubdivisionValidation;
 use EntityManager;
@@ -34,11 +34,11 @@ class SubdivisionController extends Controller
      */
     public function index (Request $request)
     {
-        $getSubdivisionsRequest         = new GetSubdivisionsRequest($request->input());
-        $getSubdivisionsRequest->validate();
-        $getSubdivisionsRequest->clean();
+        $getSubdivisions                = new GetSubdivisions($request->input());
+        $getSubdivisions->validate();
+        $getSubdivisions->clean();
 
-        $query                          = $getSubdivisionsRequest->jsonSerialize();
+        $query                          = $getSubdivisions->jsonSerialize();
 
         $results                        = $this->subdivisionRepo->where($query, false);
         return response($results);
@@ -61,12 +61,12 @@ class SubdivisionController extends Controller
      */
     private function getSubdivisionFromRoute ($id)
     {
-        $showSubdivisionRequest             = new ShowSubdivisionRequest();
-        $showSubdivisionRequest->setId($id);
-        $showSubdivisionRequest->validate();
-        $showSubdivisionRequest->clean();
+        $showSubdivision                    = new ShowSubdivision();
+        $showSubdivision->setId($id);
+        $showSubdivision->validate();
+        $showSubdivision->clean();
 
         $subdivisionValidation              = new SubdivisionValidation();
-        return $subdivisionValidation->idExists($showSubdivisionRequest->getId());
+        return $subdivisionValidation->idExists($showSubdivision->getId());
     }
 }

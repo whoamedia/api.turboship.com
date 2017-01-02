@@ -8,7 +8,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 
-class GetCountriesRequest implements Cleanable, Validatable, \JsonSerializable
+class GetCountries implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

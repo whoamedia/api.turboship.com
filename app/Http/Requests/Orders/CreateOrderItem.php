@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Orders;
 
 
-class CreateOrderItemRequest
+class CreateOrderItem
 {
 
 }

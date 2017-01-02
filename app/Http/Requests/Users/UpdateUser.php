@@ -3,14 +3,13 @@
 namespace App\Http\Requests\Users;
 
 
-use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Respect\Validation\Validator as v;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UpdateUserRequest implements Cleanable, Validatable, \JsonSerializable
+class UpdateUser implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

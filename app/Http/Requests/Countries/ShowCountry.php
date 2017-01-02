@@ -9,7 +9,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ShowCountryRequest implements Cleanable, Validatable, \JsonSerializable
+class ShowCountry implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

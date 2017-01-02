@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Clients;
+namespace App\Http\Requests\Users;
 
 
 use App\Http\Requests\_Contracts\Cleanable;
@@ -9,7 +9,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UpdateClientRequest implements Cleanable, Validatable, \JsonSerializable
+class ShowUser implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -17,16 +17,10 @@ class UpdateClientRequest implements Cleanable, Validatable, \JsonSerializable
      */
     protected $id;
 
-    /**
-     * @var string|null
-     */
-    protected $name;
-
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
-        $this->name                     = AU::get($data['name']);
     }
 
     public function validate()
@@ -49,7 +43,6 @@ class UpdateClientRequest implements Cleanable, Validatable, \JsonSerializable
     public function jsonSerialize ()
     {
         $object['id']                   = $this->id;
-        $object['name']                 = $this->name;
 
         return $object;
     }
@@ -68,22 +61,6 @@ class UpdateClientRequest implements Cleanable, Validatable, \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param null|string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
     }
 
 }

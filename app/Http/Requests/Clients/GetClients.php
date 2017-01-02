@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\Clients;
 
 
 use App\Http\Requests\_Contracts\Cleanable;
@@ -8,7 +8,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 
-class GetUsersRequest implements Cleanable, Validatable, \JsonSerializable
+class GetClients implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -24,26 +24,14 @@ class GetUsersRequest implements Cleanable, Validatable, \JsonSerializable
     /**
      * @var string|null
      */
-    protected $firstNames;
-
-    /**
-     * @var string|null
-     */
-    protected $lastNames;
-
-    /**
-     * @var string|null
-     */
-    protected $emails;
+    protected $names;
 
 
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
         $this->organizationIds          = AU::get($data['organizationIds']);
-        $this->firstNames               = AU::get($data['firstNames']);
-        $this->lastNames                = AU::get($data['lastNames']);
-        $this->emails                   = AU::get($data['emails']);
+        $this->names                    = AU::get($data['names']);
     }
 
     public function validate()
@@ -64,9 +52,7 @@ class GetUsersRequest implements Cleanable, Validatable, \JsonSerializable
     {
         $object['ids']                  = $this->ids;
         $object['organizationIds']      = $this->organizationIds;
-        $object['firstNames']           = $this->firstNames;
-        $object['lastNames']            = $this->lastNames;
-        $object['emails']               = $this->emails;
+        $object['names']                = $this->names;
 
         return $object;
     }
@@ -106,49 +92,18 @@ class GetUsersRequest implements Cleanable, Validatable, \JsonSerializable
     /**
      * @return null|string
      */
-    public function getFirstNames()
+    public function getNames()
     {
-        return $this->firstNames;
+        return $this->names;
     }
 
     /**
-     * @param null|string $firstNames
+     * @param null|string $names
      */
-    public function setFirstNames($firstNames)
+    public function setNames($names)
     {
-        $this->firstNames = $firstNames;
+        $this->names = $names;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getLastNames()
-    {
-        return $this->lastNames;
-    }
-
-    /**
-     * @param null|string $lastNames
-     */
-    public function setLastNames($lastNames)
-    {
-        $this->lastNames = $lastNames;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getEmails()
-    {
-        return $this->emails;
-    }
-
-    /**
-     * @param null|string $emails
-     */
-    public function setEmails($emails)
-    {
-        $this->emails = $emails;
-    }
 
 }

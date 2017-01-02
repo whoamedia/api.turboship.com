@@ -8,7 +8,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 
-class GetSubdivisionsRequest implements Cleanable, Validatable, \JsonSerializable
+class GetSubdivisions implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

@@ -9,7 +9,7 @@ use Respect\Validation\Validator as v;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class CreateUserRequest implements Validatable, \JsonSerializable
+class CreateUser implements Validatable, \JsonSerializable
 {
 
     /**

@@ -11,7 +11,7 @@ use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class CreateAddressRequest extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class CreateAddress extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

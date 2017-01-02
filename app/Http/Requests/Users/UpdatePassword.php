@@ -9,7 +9,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UpdatePasswordRequest implements Cleanable, Validatable, \JsonSerializable
+class UpdatePassword implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

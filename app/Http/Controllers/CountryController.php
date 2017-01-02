@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Countries\GetCountriesRequest;
-use App\Http\Requests\Countries\ShowCountryRequest;
+use App\Http\Requests\Countries\GetCountries;
+use App\Http\Requests\Countries\ShowCountry;
 use App\Models\Locations\Country;
 use App\Models\Locations\Validation\CountryValidation;
 use Illuminate\Http\Request;
@@ -33,11 +33,11 @@ class CountryController extends Controller
      */
     public function index (Request $request)
     {
-        $getCountriesRequest            = new GetCountriesRequest($request->input());
-        $getCountriesRequest->validate();
-        $getCountriesRequest->clean();
+        $getCountries                   = new GetCountries($request->input());
+        $getCountries->validate();
+        $getCountries->clean();
 
-        $query                          = $getCountriesRequest->jsonSerialize();
+        $query                          = $getCountries->jsonSerialize();
 
         $results                        = $this->countryRepo->where($query, false);
         return response($results);
@@ -69,13 +69,13 @@ class CountryController extends Controller
      */
     private function getCountryFromRoute ($id)
     {
-        $showCountryRequest             = new ShowCountryRequest();
-        $showCountryRequest->setId($id);
-        $showCountryRequest->validate();
-        $showCountryRequest->clean();
+        $showCountry                    = new ShowCountry();
+        $showCountry->setId($id);
+        $showCountry->validate();
+        $showCountry->clean();
 
         $countryValidation              = new CountryValidation($this->countryRepo);
-        return $countryValidation->idExists($showCountryRequest->getId());
+        return $countryValidation->idExists($showCountry->getId());
     }
 
 }

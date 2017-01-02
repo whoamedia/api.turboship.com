@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\Clients;
 
 
 use App\Http\Requests\_Contracts\Cleanable;
@@ -9,7 +9,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ShowUserRequest implements Cleanable, Validatable, \JsonSerializable
+class ShowClient implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**

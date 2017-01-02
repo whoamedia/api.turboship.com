@@ -7,7 +7,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class CreateClientRequest implements Validatable, \JsonSerializable
+class CreateClient implements Validatable, \JsonSerializable
 {
 
     /**

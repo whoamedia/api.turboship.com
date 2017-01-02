@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Clients\CreateClientRequest;
+use App\Http\Requests\Clients\CreateClient;
 use App\Http\Requests\Clients\CreateClientServices;
 use App\Http\Requests\Clients\DeleteClientService;
-use App\Http\Requests\Clients\GetClientsRequest;
-use App\Http\Requests\Clients\ShowClientRequest;
+use App\Http\Requests\Clients\GetClients;
+use App\Http\Requests\Clients\ShowClient;
 use App\Http\Requests\Clients\UpdateClientOptions;
-use App\Http\Requests\Clients\UpdateClientRequest;
+use App\Http\Requests\Clients\UpdateClient;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Integrations\Validation\IntegratedShippingApiValidation;
@@ -50,16 +50,16 @@ class ClientController extends BaseAuthController
      */
     public function index (Request $request)
     {
-        $getClientsRequest              = new GetClientsRequest($request->input());
-        $getClientsRequest->setOrganizationIds($this->getAuthUserOrganization()->getId());
+        $getClients                     = new GetClients($request->input());
+        $getClients->setOrganizationIds($this->getAuthUserOrganization()->getId());
 
-        if (!is_null(\Auth::getUser()->getClient()))
-            $getClientsRequest->setIds(\Auth::getUser()->getClient()->getId());
+        if (!is_null(parent::getAuthUser()->getClient()))
+            $getClients->setIds(parent::getAuthUserOrganization()->getId());
 
-        $getClientsRequest->validate();
-        $getClientsRequest->clean();
+        $getClients->validate();
+        $getClients->clean();
 
-        $query                          = $getClientsRequest->jsonSerialize();
+        $query                          = $getClients->jsonSerialize();
 
         $results                        = $this->clientRepo->where($query, false);
         return response($results);
@@ -81,22 +81,22 @@ class ClientController extends BaseAuthController
      */
     public function update (Request $request)
     {
-        $updateClientRequest            = new UpdateClientRequest($request->input());
-        $updateClientRequest->setId($request->route('id'));
-        $updateClientRequest->validate();
-        $updateClientRequest->clean();
+        $updateClient                   = new UpdateClient($request->input());
+        $updateClient->setId($request->route('id'));
+        $updateClient->validate();
+        $updateClient->clean();
 
-        $client                         = $this->getClientFromRoute($updateClientRequest->getId());
+        $client                         = $this->getClientFromRoute($updateClient->getId());
 
-        if ($client->getOrganization()->getId() != \Auth::getUser()->getOrganization()->getId())
+        if ($client->getOrganization()->getId() != parent::getAuthUserOrganization()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update clients that belong to other organizations');
 
 
-        if (!is_null($updateClientRequest->getName()))
+        if (!is_null($updateClient->getName()))
         {
-            if ($updateClientRequest->getName() != $client->getName())
+            if ($updateClient->getName() != $client->getName())
             {
-                $client->setName($updateClientRequest->getName());
+                $client->setName($updateClient->getName());
             }
         }
 
@@ -110,11 +110,11 @@ class ClientController extends BaseAuthController
      */
     public function store (Request $request)
     {
-        $createClientRequest            = new CreateClientRequest($request->input());
-        $createClientRequest->validate();
+        $createClient                   = new CreateClient($request->input());
+        $createClient->validate();
 
         $client                         = new Client();
-        $client->setName($createClientRequest->getName());
+        $client->setName($createClient->getName());
         $client->setOrganization($this->getAuthUserOrganization());
         $client->validate();
 
@@ -179,13 +179,7 @@ class ClientController extends BaseAuthController
 
     public function getServices (Request $request)
     {
-        $showClientRequest              = new ShowClientRequest();
-        $showClientRequest->setId($request->route('id'));
-        $showClientRequest->validate();
-        $showClientRequest->clean();
-
-        $client                         = $this->getClientFromRoute($showClientRequest->getId());
-
+        $client                         = $this->getClientFromRoute($request->route('id'));
         return response($client->getServices());
     }
 
@@ -243,12 +237,12 @@ class ClientController extends BaseAuthController
      */
     private function getClientFromRoute ($id)
     {
-        $showClientRequest              = new ShowClientRequest();
-        $showClientRequest->setId($id);
-        $showClientRequest->validate();
-        $showClientRequest->clean();
+        $showClient                     = new ShowClient();
+        $showClient->setId($id);
+        $showClient->validate();
+        $showClient->clean();
 
-        $client                         = $this->clientValidation->idExists($showClientRequest->getId());
+        $client                         = $this->clientValidation->idExists($showClient->getId());
 
         return $client;
     }
