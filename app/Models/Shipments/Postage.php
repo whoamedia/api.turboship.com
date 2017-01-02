@@ -54,6 +54,11 @@ class Postage implements \JsonSerializable
     protected $createdAt;
 
     /**
+     * @var \DateTime|null
+     */
+    protected $voidedAt;
+
+    /**
      * @var Shipment
      */
     protected $shipment;
@@ -108,6 +113,7 @@ class Postage implements \JsonSerializable
         $object['service']              = $this->service->jsonSerialize();
         $object['externalId']           = $this->externalId;
         $object['createdAt']            = $this->createdAt;
+        $object['voidedAt']             = $this->voidedAt;
 
         return $object;
     }
@@ -254,6 +260,22 @@ class Postage implements \JsonSerializable
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getVoidedAt()
+    {
+        return $this->voidedAt;
+    }
+
+    /**
+     * @param \DateTime|null $voidedAt
+     */
+    public function setVoidedAt($voidedAt)
+    {
+        $this->voidedAt = $voidedAt;
     }
 
     /**

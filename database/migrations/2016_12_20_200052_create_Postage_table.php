@@ -36,6 +36,7 @@ class CreatePostageTable extends Migration
             $table->decimal('totalTaxes', 10, 2)->unsigned()->default(0.00);
             $table->decimal('fuelSurcharge', 10, 2)->unsigned()->default(0.00);
 
+            $table->datetime('voidedAt')->nullabled()->default(NULL)->index();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 

@@ -81,6 +81,12 @@ App\Models\Shipments\Postage:
       nullable:       false
       options:
         default:      CURRENT_datetime
+    voidedAt:
+      column:         voidedAt
+      type:           datetime
+      nullable:       true
+      options:
+        default:      NULL
     externalId:
       column:         externalId
       type:           string

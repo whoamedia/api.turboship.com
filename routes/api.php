@@ -30,6 +30,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
     Route::get('/clients/{id}/options', 'ClientController@getOptions');
+    Route::put('/clients/{id}/options', 'ClientController@updateOptions');
     Route::get('/clients/{id}/services', 'ClientController@getServices');
     Route::post('/clients/{id}/services', 'ClientController@addService');
     Route::delete('/clients/{id}/services/{serviceId}', 'ClientController@removeService');
@@ -98,7 +99,6 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
     Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
     Route::post('/shipments/{id}/postage/{rateId}', 'ShipmentController@purchasePostage');
-    Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
 
 
     //  Shipper Operations

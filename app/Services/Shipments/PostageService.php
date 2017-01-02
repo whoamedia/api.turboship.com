@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 
-class ShipmentRateService
+class PostageService
 {
 
     /**
@@ -74,7 +74,11 @@ class ShipmentRateService
         return $shipment;
     }
 
-
+    /**
+     * @param   Shipment $shipment
+     * @param   Rate $rate
+     * @return  Shipment
+     */
     public function purchase (Shipment $shipment, Rate $rate)
     {
         if (!$shipment->hasRate($rate))
@@ -87,6 +91,26 @@ class ShipmentRateService
             return $this->purchaseEasyPost($shipment, $rate);
         else
             throw new UnsupportedException('Integration is unsupported');
+    }
+
+    /**
+     * @param   Shipment $shipment
+     * @return  Shipment
+     */
+    public function void (Shipment $shipment)
+    {
+        if (is_null($shipment->getPostage()))
+            throw new BadRequestHttpException('Shipment does not have postage to void');
+
+        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
+            $this->voidEasyPost($shipment);
+        else
+            throw new UnsupportedException('Integration is unsupported');
+
+
+        $shipment->getPostage()->setVoidedAt(new \DateTime());
+        $shipment->setPostage(null);
+        return $shipment;
     }
 
 
@@ -110,6 +134,18 @@ class ShipmentRateService
         $postage->setTrackingNumber($easyPostShipment->getTrackingCode());
         $postage->setExternalId($easyPostShipment->getPostageLabel()->getId());
         $shipment->setPostage($postage);
+
+        return $shipment;
+    }
+
+    /**
+     * @param   Shipment $shipment
+     * @return  Shipment
+     */
+    private function voidEasyPost (Shipment $shipment)
+    {
+        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
+        $easyPostShipment               = $easyPostShipmentRepo->void($shipment->getPostage()->getRate()->getExternalShipmentId());
 
         return $shipment;
     }

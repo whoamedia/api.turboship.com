@@ -8,13 +8,17 @@ use App\Http\Requests\Clients\CreateClientServices;
 use App\Http\Requests\Clients\DeleteClientService;
 use App\Http\Requests\Clients\GetClientsRequest;
 use App\Http\Requests\Clients\ShowClientRequest;
+use App\Http\Requests\Clients\UpdateClientOptions;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Integrations\Validation\IntegratedShippingApiValidation;
 use App\Models\Shipments\Validation\ServiceValidation;
+use App\Models\Shipments\Validation\ShipperValidation;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ClientController extends BaseAuthController
 {
@@ -125,6 +129,54 @@ class ClientController extends BaseAuthController
         return response($client->getOptions());
     }
 
+
+    public function updateOptions (Request $request)
+    {
+        $updateClientOptions            = new UpdateClientOptions($request->input());
+        $updateClientOptions->setId($request->route('id'));
+        $updateClientOptions->validate();
+        $updateClientOptions->clean();
+
+        $client                         = $this->getClientFromRoute($updateClientOptions->getId());
+
+        if ($request->has('defaultShipToPhone'))
+            $client->getOptions()->setDefaultShipToPhone($updateClientOptions->getDefaultShipToPhone());
+
+        if ($request->has('defaultShipperId'))
+        {
+            if (is_null($updateClientOptions->getDefaultShipperId()))
+                $client->getOptions()->setDefaultShipper(null);
+            else
+            {
+                $shipperValidation      = new ShipperValidation();
+                $shipper                = $shipperValidation->idExists($updateClientOptions->getDefaultShipperId());
+                if (!$shipper->hasClient($client))
+                    throw new BadRequestHttpException('Client does not have permissions to provided shipper');
+                else
+                    $client->getOptions()->setDefaultShipper($shipper);
+            }
+        }
+
+        if ($request->has('defaultIntegratedShippingApiId'))
+        {
+            if (is_null($updateClientOptions->getDefaultIntegratedShippingApiId()))
+                $client->getOptions()->setDefaultIntegratedShippingApi(null);
+            else
+            {
+                $integratedShippingApiValidation    = new IntegratedShippingApiValidation();
+                $integratedShippingApi              = $integratedShippingApiValidation->idExists($updateClientOptions->getDefaultIntegratedShippingApiId());
+
+                if (!$integratedShippingApi->getShipper()->hasClient($client))
+                    throw new BadRequestHttpException('Client does not have permissions to provided integratedShippingApi shipper');
+                else
+                    $client->getOptions()->setDefaultIntegratedShippingApi($integratedShippingApi);
+            }
+        }
+
+        $this->clientRepo->saveAndCommit($client);
+        return response($client->getOptions());
+    }
+
     public function getServices (Request $request)
     {
         $showClientRequest              = new ShowClientRequest();
@@ -132,7 +184,7 @@ class ClientController extends BaseAuthController
         $showClientRequest->validate();
         $showClientRequest->clean();
 
-        $client                         = $this->clientValidation->idExists($showClientRequest->getId(), true);
+        $client                         = $this->getClientFromRoute($showClientRequest->getId());
 
         return response($client->getServices());
     }
