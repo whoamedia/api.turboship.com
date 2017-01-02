@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Shipments\GetPostage;
 use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
 use App\Http\Requests\Shipments\GetShipments;
@@ -23,6 +24,7 @@ use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShipmentController extends BaseAuthController
 {
@@ -125,6 +127,21 @@ class ShipmentController extends BaseAuthController
 
 
         return response($shipment->getRates(), 201);
+    }
+
+    public function getPostage (Request $request)
+    {
+        $getPostage                     = new GetPostage();
+        $getPostage->setId($request->route('id'));
+        $getPostage->validate();
+        $getPostage->clean();
+
+        $shipment                       = $this->getShipment($getPostage->getId());
+
+        if (is_null($shipment->getPostage()))
+            throw new NotFoundHttpException('Shipment has not postage');
+
+        return response($shipment->getPostage());
     }
 
     public function purchasePostage (Request $request)
