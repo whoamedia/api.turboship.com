@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddRateIdFKToPostageTable extends Migration
+class AddFKsToPostageTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,8 @@ class AddRateIdFKToPostageTable extends Migration
     {
         Schema::table('Postage', function (Blueprint $table)
         {
-            $table->foreign('rateId')->references('id')->on('Rate');
+            $table->foreign('integratedShippingApiId')->references('id')->on('IntegratedShippingApi');
+            $table->foreign('shippingApiServiceId')->references('id')->on('ShippingApiService');
         });
     }
 
@@ -28,7 +29,8 @@ class AddRateIdFKToPostageTable extends Migration
     {
         Schema::table('Postage', function (Blueprint $table)
         {
-            $table->dropForeign('postage_rateid_foreign');
+            $table->dropForeign('postage_integratedshippingapiid_foreign');
+            $table->dropForeign('postage_shippingapiserviceid_foreign');
         });
     }
 }

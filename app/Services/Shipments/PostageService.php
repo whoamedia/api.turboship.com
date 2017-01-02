@@ -94,6 +94,32 @@ class PostageService
     }
 
     /**
+     * @param   Shipment    $shipment
+     * @param   Rate        $rate
+     * @return  Shipment
+     */
+    private function purchaseEasyPost (Shipment $shipment, Rate $rate)
+    {
+        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
+        $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
+        $postage                        = new Postage();
+        $postage->setShipment($shipment);
+        $postage->setIntegratedShippingApi($this->integratedShippingApi);
+        $postage->setShippingApiService($rate->getShippingApiService());
+        $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
+        $postage->setBasePrice($rate->getRate());
+        $postage->setTotalPrice($rate->getRate());
+        $postage->setWeight($shipment->getWeight());
+        $postage->setTrackingNumber($easyPostShipment->getTrackingCode());
+        $postage->setExternalId($easyPostShipment->getPostageLabel()->getId());
+        $postage->setExternalShipmentId($rate->getExternalShipmentId());
+        $postage->setExternalRateId($rate->getExternalId());
+        $shipment->setPostage($postage);
+
+        return $shipment;
+    }
+
+    /**
      * @param   Shipment $shipment
      * @return  Shipment
      */
@@ -110,31 +136,6 @@ class PostageService
 
         $shipment->getPostage()->setVoidedAt(new \DateTime());
         $shipment->setPostage(null);
-        return $shipment;
-    }
-
-
-    /**
-     * @param   Shipment    $shipment
-     * @param   Rate        $rate
-     * @return  Shipment
-     */
-    private function purchaseEasyPost (Shipment $shipment, Rate $rate)
-    {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
-        $postage                        = new Postage();
-        $postage->setShipment($shipment);
-        $postage->setRate($rate);
-        $postage->setService($rate->getShippingApiService()->getService());
-        $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
-        $postage->setBasePrice($rate->getRate());
-        $postage->setTotalPrice($rate->getRate());
-        $postage->setWeight($shipment->getWeight());
-        $postage->setTrackingNumber($easyPostShipment->getTrackingCode());
-        $postage->setExternalId($easyPostShipment->getPostageLabel()->getId());
-        $shipment->setPostage($postage);
-
         return $shipment;
     }
 
