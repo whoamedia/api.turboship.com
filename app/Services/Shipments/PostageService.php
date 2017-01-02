@@ -139,7 +139,9 @@ class PostageService
                 $orderItem->setShipmentStatus($shipmentStatusValidation->getPartiallyShipped());
         }
 
-        foreach ($orderCollection->toArray() AS $order)
+        $orders                         = $orderCollection->toArray();
+        dd($orders);
+        foreach ($orders AS $order)
         {
             $shipmentStatus         = $shipmentStatusValidation->getFullyShipped();
             foreach ($order->getItems() AS $orderItem)
@@ -175,7 +177,8 @@ class PostageService
                 $orderItem->setShipmentStatus($shipmentStatusValidation->getPartiallyShipped());
         }
 
-        foreach ($orderCollection->toArray() AS $order)
+        $orders                         = $orderCollection->toArray();
+        foreach ($orders AS $order)
         {
             $shipmentStatus         = $shipmentStatusValidation->getPending();
             foreach ($order->getItems() AS $orderItem)
