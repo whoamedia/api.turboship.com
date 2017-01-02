@@ -4,6 +4,7 @@ namespace App\Models\Shipments;
 
 
 use App\Models\CMS\Client;
+use App\Models\Support\Dimension;
 use App\Models\Support\Image;
 use App\Models\Support\ShipmentStatus;
 use App\Models\Support\Validation\ShipmentStatusValidation;
@@ -72,6 +73,11 @@ class Shipment implements \JsonSerializable
     protected $shippingContainer;
 
     /**
+     * @var Dimension|null
+     */
+    protected $dimensions;
+
+    /**
      * @var ShipmentStatus
      */
     protected $status;
@@ -101,6 +107,7 @@ class Shipment implements \JsonSerializable
         $this->weight                   = AU::get($data['weight']);
         $this->postage                  = AU::get($data['postage']);
         $this->shippingContainer        = AU::get($data['shippingContainer']);
+        $this->dimensions               = AU::get($data['dimensions']);
         $this->status                   = AU::get($data['status']);
         $this->shippedAt                = AU::get($data['shippedAt']);
 
@@ -123,6 +130,7 @@ class Shipment implements \JsonSerializable
         $object['service']              = !is_null($this->service) ? $this->service->jsonSerialize() : null;
         $object['weight']               = $this->weight;
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
+        $object['dimensions']           = is_null($this->dimensions) ? null : $this->dimensions->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['shippedAt']            = $this->shippedAt;
 
@@ -276,6 +284,30 @@ class Shipment implements \JsonSerializable
     public function setShippingContainer($shippingContainer)
     {
         $this->shippingContainer = $shippingContainer;
+
+        if (is_null($this->shippingContainer))
+            $this->setDimensions(null);
+        else
+        {
+            $dimensions             = new Dimension($this->shippingContainer->jsonSerialize());
+            $this->setDimensions($dimensions);
+        }
+    }
+
+    /**
+     * @return Dimension|null
+     */
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
+
+    /**
+     * @param Dimension|null $dimensions
+     */
+    public function setDimensions($dimensions)
+    {
+        $this->dimensions = $dimensions;
     }
 
     /**

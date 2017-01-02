@@ -33,6 +33,9 @@ class CreateShipmentTable extends Migration
 
             $table->integer('shippingContainerId')->unsigned()->index()->nullable()->default(NULL);
 
+            $table->integer('dimensionId')->unsigned()->index()->nullable()->default(NULL);
+            $table->foreign('dimensionId')->references('id')->on('Dimension');
+
             $table->decimal('weight', 10, 2)->nullable()->default(NULL);
 
             $table->integer('statusId')->unsigned()->index()->nullable()->default(NULL);

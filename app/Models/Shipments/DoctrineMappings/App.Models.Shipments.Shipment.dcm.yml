@@ -89,6 +89,13 @@ App\Models\Shipments\Shipment:
         name:         statusId
         referencedColumnName: id
 
+  oneToOne:
+    dimensions:
+      targetEntity:   App\Models\Support\Dimension
+      fetch:          EAGER
+      nullable:       true
+      cascade:        ["persist", "remove"]
+
   oneToMany:
     items:
       targetEntity:   ShipmentItem
