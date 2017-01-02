@@ -35,11 +35,7 @@ class PostageService
      */
     public function rate (Shipment $shipment, $clearRates = true)
     {
-        if (is_null($shipment->getShippingContainer()))
-            throw new BadRequestHttpException('Shipment needs a ShippingContainer');
-
-        if (is_null($shipment->getWeight()) || $shipment->getWeight() <= 0)
-            throw new BadRequestHttpException('Shipment needs a weight');
+        $shipment->canRate();
 
         if ($clearRates == true)
             $shipment->clearRates();
@@ -56,11 +52,7 @@ class PostageService
      */
     private function rateEasyPost (Shipment $shipment)
     {
-        if (!is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment already has postage');
-
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
         $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
         $easyPostShipment               = $easyPostShipmentRepo->rate($createEasyPostShipment);
@@ -81,11 +73,7 @@ class PostageService
      */
     public function purchase (Shipment $shipment, Rate $rate)
     {
-        if (!$shipment->hasRate($rate))
-            throw new NotFoundHttpException('Shipment does not have provided Rate');
-
-        if (!is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment already has postage');
+        $shipment->canPurchasePostage($rate);
 
         if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
             return $this->purchaseEasyPost($shipment, $rate);

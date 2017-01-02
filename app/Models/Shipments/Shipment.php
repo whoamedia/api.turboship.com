@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 use App\Models\Locations\Address;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Shipment implements \JsonSerializable
 {
@@ -321,6 +322,39 @@ class Shipment implements \JsonSerializable
     public function hasRate (Rate $rate)
     {
         return $this->rates->contains($rate);
+    }
+
+    /**
+     * Can we safely rate this Shipment?
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canRate ()
+    {
+        if (is_null($this->getShippingContainer()))
+            throw new BadRequestHttpException('Shipment needs a ShippingContainer');
+        else if (is_null($this->getWeight()) || $this->getWeight() <= 0)
+            throw new BadRequestHttpException('Shipment needs a weight');
+        else if (!is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+        else
+            return true;
+    }
+
+    /**
+     * Can we safely purchase postage for this Shipment?
+     * @param   Rate $rate
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canPurchasePostage (Rate $rate)
+    {
+        if (!$this->hasRate($rate))
+            throw new BadRequestHttpException('Shipment does not have provided Rate');
+        else if (!is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+        else
+            return true;
     }
 
     /**
