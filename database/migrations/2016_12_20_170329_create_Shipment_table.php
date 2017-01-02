@@ -38,6 +38,7 @@ class CreateShipmentTable extends Migration
             $table->integer('statusId')->unsigned()->index()->nullable()->default(NULL);
             $table->foreign('statusId')->references('id')->on('ShipmentStatus');
 
+            $table->datetime('shippedAt')->nullable()->default(NULL)->index();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 

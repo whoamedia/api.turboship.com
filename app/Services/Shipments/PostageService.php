@@ -97,6 +97,7 @@ class PostageService
 
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getFullyShipped());
+        $shipment->setShippedAt(new \DateTime());
         return $shipment;
     }
 
@@ -115,6 +116,7 @@ class PostageService
 
 
         $shipment->getPostage()->setVoidedAt(new \DateTime());
+        $shipment->setShippedAt(null);
         $shipment->setPostage(null);
         $shipment->clearRates();
 
@@ -196,7 +198,7 @@ class PostageService
                 if ($orderItem->getQuantityShipped() > 0)
                     $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
 
-                $orderItem->setShipmentStatus($shipmentStatusValidation->getPartiallyShipped());
+                $orderItem->setShipmentStatus($shipmentStatus);
                 $this->orderItemRepo->saveAndCommit($orderItem);
             }
             $order->setShipmentStatus($shipmentStatus);

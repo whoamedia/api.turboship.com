@@ -77,6 +77,11 @@ class Shipment implements \JsonSerializable
     protected $status;
 
     /**
+     * @var \DateTime|null
+     */
+    protected $shippedAt;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -97,6 +102,7 @@ class Shipment implements \JsonSerializable
         $this->postage                  = AU::get($data['postage']);
         $this->shippingContainer        = AU::get($data['shippingContainer']);
         $this->status                   = AU::get($data['status']);
+        $this->shippedAt                = AU::get($data['shippedAt']);
 
         if (is_null($this->status))
         {
@@ -119,6 +125,7 @@ class Shipment implements \JsonSerializable
         $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+        $object['shippedAt']            = $this->shippedAt;
 
         $object['items']                = [];
         foreach ($this->getItems() AS $shipmentItem)
@@ -286,6 +293,22 @@ class Shipment implements \JsonSerializable
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getShippedAt()
+    {
+        return $this->shippedAt;
+    }
+
+    /**
+     * @param \DateTime|null $shippedAt
+     */
+    public function setShippedAt($shippedAt)
+    {
+        $this->shippedAt = $shippedAt;
     }
 
     /**
