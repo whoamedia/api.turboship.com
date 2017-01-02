@@ -42,6 +42,7 @@ class BaseEasyPostRepository
 
         $easyPostConfiguration      = new EasyPostConfiguration();
         $easyPostConfiguration->setApiKey($apiKey);
+        dd($apiKey);
         $this->easyPostIntegration  = new EasyPostIntegration($easyPostConfiguration);
     }
 }
