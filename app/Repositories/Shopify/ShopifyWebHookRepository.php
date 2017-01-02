@@ -29,6 +29,7 @@ class ShopifyWebHookRepository extends BaseShopifyRepository
         $response                       = $this->shopifyIntegration->webHookApi->create($createShopifyWebHook);
 
         $integratedWebHook->setExternalId($response->getId());
+        $integratedWebHook->setUrl($response->getAddress());
         return $integratedWebHook;
     }
 

@@ -23,6 +23,13 @@ App\Models\Integrations\IntegratedWebHook:
       options:
         fixed:        false
         comment:      "IntegratedWebHook externalId"
+    url:
+      column:         url
+      type:           string
+      nullable:       true
+      options:
+        fixed:        false
+        comment:      "IntegratedWebHook call back url"
 
   manyToOne:
     integratedService:

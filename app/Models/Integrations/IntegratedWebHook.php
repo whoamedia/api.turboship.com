@@ -19,6 +19,11 @@ class IntegratedWebHook implements \JsonSerializable
     protected $externalId;
 
     /**
+     * @var string|null
+     */
+    protected $url;
+
+    /**
      * @var IntegratedService
      */
     protected $integratedService;
@@ -32,6 +37,7 @@ class IntegratedWebHook implements \JsonSerializable
     public function __construct($data = [])
     {
         $this->externalId               = AU::get($data['externalId']);
+        $this->url                      = AU::get($data['url']);
         $this->integratedService        = AU::get($data['integratedService']);
         $this->integrationWebHook       = AU::get($data['integrationWebHook']);
     }
@@ -78,6 +84,22 @@ class IntegratedWebHook implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param null|string $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
     }
 
     /**
