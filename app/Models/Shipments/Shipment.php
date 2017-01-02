@@ -5,6 +5,8 @@ namespace App\Models\Shipments;
 
 use App\Models\CMS\Client;
 use App\Models\Support\Image;
+use App\Models\Support\ShipmentStatus;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -70,6 +72,11 @@ class Shipment implements \JsonSerializable
     protected $shippingContainer;
 
     /**
+     * @var ShipmentStatus
+     */
+    protected $status;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -89,6 +96,13 @@ class Shipment implements \JsonSerializable
         $this->weight                   = AU::get($data['weight']);
         $this->postage                  = AU::get($data['postage']);
         $this->shippingContainer        = AU::get($data['shippingContainer']);
+        $this->status                   = AU::get($data['status']);
+
+        if (is_null($this->status))
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $this->status               = $shipmentStatusValidation->getPending();
+        }
     }
 
     /**
@@ -384,6 +398,22 @@ class Shipment implements \JsonSerializable
     public function addImage (Image $image)
     {
         $this->images->add($image);
+    }
+
+    /**
+     * @return ShipmentStatus
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param ShipmentStatus $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
 }

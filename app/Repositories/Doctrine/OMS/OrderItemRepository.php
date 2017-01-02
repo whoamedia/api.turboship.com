@@ -51,7 +51,8 @@ class OrderItemRepository extends BaseRepository
             ->join('orderItem.order', 'orders', Query\Expr\Join::ON)
             ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
-            ->join('orders.status', 'status', Query\Expr\Join::ON);
+            ->join('orders.status', 'status', Query\Expr\Join::ON)
+            ->join('orders.shipmentStatus', 'shipmentStatus', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['ids']));
@@ -67,6 +68,9 @@ class OrderItemRepository extends BaseRepository
 
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
+
+        if (!is_null(AU::get($query['shipmentStatusIds'])))
+            $qb->andWhere($qb->expr()->in('shipmentStatus.id', $query['shipmentStatusIds']));
 
         if (!is_null(AU::get($query['isError'])))
         {

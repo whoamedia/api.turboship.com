@@ -76,6 +76,13 @@ App\Models\Shipments\Shipment:
       joinColumn:
         name:         shippingContainerId
         referencedColumnName: id
+    status:
+      targetEntity:   App\Models\Support\ShipmentStatus
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         statusId
+        referencedColumnName: id
 
   oneToMany:
     items:

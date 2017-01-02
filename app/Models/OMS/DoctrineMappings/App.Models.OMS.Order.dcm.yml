@@ -137,6 +137,13 @@ App\Models\OMS\Order:
       joinColumn:
         name:         statusId
         referencedColumnName: id
+    shipmentStatus:
+      targetEntity:   App\Models\Support\ShipmentStatus
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         shipmentStatusId
+        referencedColumnName: id
 
   oneToMany:
     items:

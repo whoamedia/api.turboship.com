@@ -14,7 +14,9 @@ use App\Models\Shipments\Validation\RateValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\Shipments\PostageService;
 use Illuminate\Http\Request;
@@ -141,6 +143,9 @@ class ShipmentController extends BaseAuthController
         $postageService                 = new PostageService($rate->getIntegratedShippingApi());
         $postageService->purchase($shipment, $rate);
         $this->shipmentRepo->saveAndCommit($shipment);
+
+        $postageService->handleOrderShippedLogic($shipment);
+
         return response ($shipment->getPostage(), 201);
     }
 
@@ -154,8 +159,10 @@ class ShipmentController extends BaseAuthController
         $shipment                       = $this->getShipment($voidPostage->getId());
         $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
         $postageService->void($shipment);
-
         $this->shipmentRepo->saveAndCommit($shipment);
+
+        $postageService->handleOrderVoidedLogic($shipment);
+
         return response('', 204);
     }
 

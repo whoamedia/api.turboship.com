@@ -54,6 +54,7 @@ class OrderRepository extends BaseRepository
             'client.id AS client_id', 'client.name AS client_name',
             'organization.id AS organization_id', 'organization.name AS organization_name',
             'status.id AS status_id', 'status.name AS status_name',
+            'shipmentStatus.id AS shipmentStatus_id', 'shipmentStatus.name AS shipmentStatus_name',
         ]);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
@@ -61,14 +62,16 @@ class OrderRepository extends BaseRepository
         $qb->addGroupBy('client');
         $qb->addGroupBy('organization');
         $qb->addGroupBy('status');
+        $qb->addGroupBy('shipmentStatus');
 
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'source'         =>  [],
+            'source'            =>  [],
             'client'            =>  [],
             'organization'      =>  [],
             'status'            =>  [],
+            'shipmentStatus'    =>  [],
         ];
 
         return $this->buildLexicon($lexicon, $result);
@@ -87,7 +90,8 @@ class OrderRepository extends BaseRepository
             ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
-            ->join('orders.status', 'status', Query\Expr\Join::ON);
+            ->join('orders.status', 'status', Query\Expr\Join::ON)
+            ->join('orders.shipmentStatus', 'shipmentStatus', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orders.id', $query['ids']));
@@ -106,6 +110,9 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
+
+        if (!is_null(AU::get($query['shipmentStatusIds'])))
+            $qb->andWhere($qb->expr()->in('shipmentStatus.id', $query['shipmentStatusIds']));
 
         if (!is_null(AU::get($query['isError'])))
             $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));

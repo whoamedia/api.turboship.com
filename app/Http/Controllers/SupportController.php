@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Support\GetOrderStatuses;
+use App\Http\Requests\Support\GetShipmentStatuses;
 use App\Http\Requests\Support\GetSources;
 use App\Http\Requests\Support\GetSubdivisionTypes;
 use Illuminate\Http\Request;
@@ -21,6 +22,11 @@ class SupportController extends BaseAuthController
      * @var \App\Repositories\Doctrine\OMS\OrderStatusRepository
      */
     private $orderStatusRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\Support\ShipmentStatusRepository
+     */
+    private $shipmentStatusRepo;
 
     /**
      * @var \App\Repositories\Doctrine\Locations\SubdivisionTypeRepository
@@ -50,6 +56,18 @@ class SupportController extends BaseAuthController
         $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
 
         return $this->orderStatusRepo->where($query, false);
+    }
+
+    public function getShipmentStatuses (Request $request)
+    {
+        $getShipmentStatuses            = new GetShipmentStatuses($request->input());
+        $getShipmentStatuses->validate();
+        $getShipmentStatuses->clean();
+
+        $query                          = $getShipmentStatuses->jsonSerialize();
+        $this->shipmentStatusRepo       = EntityManager::getRepository('App\Models\Support\ShipmentStatus');
+
+        return $this->shipmentStatusRepo->where($query, false);
     }
 
     public function getSubdivisionTypes (Request $request)

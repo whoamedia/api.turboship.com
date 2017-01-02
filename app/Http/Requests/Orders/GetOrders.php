@@ -44,6 +44,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
+    protected $shipmentStatusId;
+
+    /**
+     * @var string|null
+     */
     protected $externalIds;
 
     /**
@@ -75,6 +80,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->statusIds                = AU::get($data['statusIds']);
+        $this->shipmentStatusId         = AU::get($data['shipmentStatusId']);
         $this->externalIds              = AU::get($data['externalIds']);
         $this->itemSkus                 = AU::get($data['itemSkus']);
         $this->isAddressError           = AU::get($data['isAddressError']);
@@ -89,6 +95,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->statusIds                = parent::validateIds($this->statusIds, 'statusIds');
+        $this->shipmentStatusId         = parent::validateIds($this->shipmentStatusId, 'shipmentStatusId');
         $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
         $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
@@ -110,6 +117,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['itemIds']              = $this->itemIds;
         $object['sourceIds']            = $this->sourceIds;
         $object['statusIds']            = $this->statusIds;
+        $object['shipmentStatusId']     = $this->shipmentStatusId;
         $object['externalIds']          = $this->externalIds;
         $object['itemSkus']             = $this->itemSkus;
         $object['isAddressError']       = $this->isAddressError;
@@ -213,6 +221,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setStatusIds($statusIds)
     {
         $this->statusIds = $statusIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShipmentStatusId()
+    {
+        return $this->shipmentStatusId;
+    }
+
+    /**
+     * @param null|string $shipmentStatusId
+     */
+    public function setShipmentStatusId($shipmentStatusId)
+    {
+        $this->shipmentStatusId = $shipmentStatusId;
     }
 
     /**
