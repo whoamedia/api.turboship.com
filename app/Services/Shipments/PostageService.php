@@ -146,7 +146,7 @@ class PostageService
     private function voidEasyPost (Shipment $shipment)
     {
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->void($shipment->getPostage()->getRate()->getExternalShipmentId());
+        $easyPostShipment               = $easyPostShipmentRepo->void($shipment->getPostage()->getExternalShipmentId());
 
         return $shipment;
     }
