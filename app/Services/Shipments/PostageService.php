@@ -140,7 +140,6 @@ class PostageService
         }
 
         $orders                         = $orderCollection->toArray();
-        dd($orders);
         foreach ($orders AS $order)
         {
             $shipmentStatus         = $shipmentStatusValidation->getFullyShipped();
@@ -148,6 +147,8 @@ class PostageService
             {
                 if ($orderItem->getQuantityToFulfill() != $orderItem->getQuantityShipped())
                     $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
+                
+                $orderItem->setShipmentStatus($shipmentStatus);
             }
             $order->setShipmentStatus($shipmentStatus);
             $this->orderRepo->saveAndCommit($order);
