@@ -18,11 +18,19 @@ Route::post('/oauth/access_token',
 Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 {
 
+    //  Carrier operations
+    Route::get('/carriers', 'CarrierController@index');
+    Route::get('/carriers/{id}', 'CarrierController@show');
+    Route::get('/carriers/{id}/services', 'CarrierController@getServices');
+
+
     //  Client Operations
     Route::get('/clients', 'ClientController@index');
+    Route::post('/clients', 'ClientController@store');
     Route::get('/clients/{id}', 'ClientController@show');
     Route::put('/clients/{id}', 'ClientController@update');
-    Route::post('/clients', 'ClientController@store');
+    Route::get('/clients/{id}/options', 'ClientController@getOptions');
+    Route::put('/clients/{id}/options', 'ClientController@updateOptions');
     Route::get('/clients/{id}/services', 'ClientController@getServices');
     Route::post('/clients/{id}/services', 'ClientController@addService');
     Route::delete('/clients/{id}/services/{serviceId}', 'ClientController@removeService');
@@ -54,10 +62,14 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/integrations/shippingApis/{id}/services', 'IntegrationController@getShippingApiServices');
 
 
+    //  Organization Operations
+    Route::get('/organizations/{id}', 'OrganizationController@show');
+    Route::put('/organizations/{id}', 'OrganizationController@update');
+
+
     //  Order Operations
     Route::get('/orders', 'OrderController@index');
     Route::get('/orders/lexicon', 'OrderController@getLexicon');
-    Route::get('/orders/statuses', 'OrderController@getStatuses');
     Route::get('/orders/approve', 'OrderController@approveOrders');
     Route::get('/orders/{id}', 'OrderController@show');
     Route::get('/orders/{id}/statusHistory', 'OrderController@getStatusHistory');
@@ -73,28 +85,39 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products/{id}', 'ProductController@show');
 
 
+    //  Service operations
+    Route::get('/services', 'ServiceController@index');
+    Route::get('/services/{id}', 'ServiceController@show');
 
 
     //  Shipment Operations
     Route::get('/shipments', 'ShipmentController@index');
     Route::get('/shipments/{id}', 'ShipmentController@show');
     Route::put('/shipments/{id}', 'ShipmentController@update');
+    Route::get('/shipments/{id}/images', 'ShipmentController@getImages');
     Route::get('/shipments/{id}/rates', 'ShipmentController@getRates');
     Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
     Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
     Route::post('/shipments/{id}/postage/{rateId}', 'ShipmentController@purchasePostage');
-    Route::post('/shipments/jobs/create', 'ShipmentController@createShipmentsJob');
 
 
     //  Shipper Operations
     Route::get('/shippers', 'ShipperController@index');
     Route::get('/shippers/{id}', 'ShipperController@show');
+    Route::put('/shippers/{id}', 'ShipperController@update');
     Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
     Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
     Route::get('/shippers/{id}/integratedShippingApis', 'ShipperController@getShippingApis');
     Route::get('/shippers/{id}/clients', 'ShipperController@getClients');
     Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
     Route::delete('/shippers/{id}/clients/{clientId}', 'ShipperController@removeClient');
+
+
+    //  ShippingContainer operations
+    Route::get('/shippingContainers', 'ShippingContainerController@index');
+    Route::get('/shippingContainers/{id}', 'ShippingContainerController@show');
+    Route::put('/shippingContainers/{id}', 'ShippingContainerController@update');
+    Route::post('/shippingContainers', 'ShippingContainerController@create');
 
 
     //  Shopify Operations
@@ -105,6 +128,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Subdivision Operations
     Route::get('/subdivisions', 'SubdivisionController@index');
     Route::get('/subdivisions/{id}', 'SubdivisionController@show');
+
+
+    //  Support Operations
+    Route::get('/support/sources', 'SupportController@getSources');
+    Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
+    Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 
     //  User Operations

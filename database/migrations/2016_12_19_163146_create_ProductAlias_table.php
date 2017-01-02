@@ -23,14 +23,14 @@ class CreateProductAliasTable extends Migration
             $table->integer('productId')->unsigned()->index();
             $table->foreign('productId')->references('id')->on('Product');
 
-            $table->integer('crmSourceId')->unsigned()->index();
-            $table->foreign('crmSourceId')->references('id')->on('CRMSource');
+            $table->integer('sourceId')->unsigned()->index();
+            $table->foreign('sourceId')->references('id')->on('Source');
 
             $table->string('externalId')->index();
             $table->datetime('externalCreatedAt')->index();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
-            $table->unique(['clientId', 'externalId', 'crmSourceId']);
+            $table->unique(['clientId', 'externalId', 'sourceId']);
         });
     }
 

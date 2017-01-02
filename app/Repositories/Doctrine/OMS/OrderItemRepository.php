@@ -49,7 +49,7 @@ class OrderItemRepository extends BaseRepository
         $qb->from('App\Models\OMS\OrderItem', 'orderItem')
             ->leftJoin('orderItem.variant', 'variant', Query\Expr\Join::ON)
             ->join('orderItem.order', 'orders', Query\Expr\Join::ON)
-            ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
+            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('orders.status', 'status', Query\Expr\Join::ON);
 
@@ -59,8 +59,8 @@ class OrderItemRepository extends BaseRepository
         if (!is_null(AU::get($query['orderIds'])))
             $qb->andWhere($qb->expr()->in('orders.id', $query['orderIds']));
 
-        if (!is_null(AU::get($query['crmSourceIds'])))
-            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+        if (!is_null(AU::get($query['sourceIds'])))
+            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
@@ -89,14 +89,14 @@ class OrderItemRepository extends BaseRepository
 
     /**
      * @param   string|int      $clientIds
-     * @param   string|int      $crmSourceIds
+     * @param   string|int      $sourceIds
      * @return  string[]
      */
-    public function getPendingExternalProductIds ($clientIds, $crmSourceIds)
+    public function getPendingExternalProductIds ($clientIds, $sourceIds)
     {
         $query  = [
             'clientIds'             => $clientIds,
-            'crmSourceIds'          => $crmSourceIds,
+            'sourceIds'             => $sourceIds,
             'isError'               => true,
         ];
 

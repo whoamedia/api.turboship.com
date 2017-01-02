@@ -28,4 +28,13 @@ class EasyPostShipmentRepository extends BaseEasyPostRepository
     {
         return $this->easyPostIntegration->shipmentApi->buy($easyPostShipmentId, $easyPostRateId);
     }
+
+    /**
+     * @param   string      $easyPostShipmentId
+     * @return \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     */
+    public function void ($easyPostShipmentId)
+    {
+        return $this->easyPostIntegration->shipmentApi->refund($easyPostShipmentId);
+    }
 }

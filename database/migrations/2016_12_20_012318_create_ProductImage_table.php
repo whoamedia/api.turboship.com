@@ -6,11 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateProductImageTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
+
     public function up()
     {
         Schema::create('ProductImage', function (Blueprint $table)

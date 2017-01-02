@@ -53,10 +53,10 @@ App\Models\OMS\ProductAlias:
       joinColumn:
         name:         clientId
         referencedColumnName: id
-    crmSource:
-      targetEntity:   CRMSource
+    source:
+      targetEntity:   App\Models\Support\Source
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         crmSourceId
+        name:         sourceId
         referencedColumnName: id

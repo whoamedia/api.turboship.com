@@ -37,9 +37,9 @@ class GetShippers extends BaseRequest implements Cleanable, Validatable, \JsonSe
 
     public function validate()
     {
-        $this->ids                      = $this->validateIds($this->ids, 'ids');
-        $this->clientIds                = $this->validateIds($this->clientIds, 'clientIds');
-        $this->organizationIds          = $this->validateIds($this->organizationIds, 'organizationIds');
+        $this->ids                      = parent::validateIds($this->ids, 'ids');
+        $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
+        $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\CMS\Client;
 use App\Models\Locations\Country;
 use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
+use App\Models\Support\Source;
 use App\Utilities\CountryUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -37,9 +38,9 @@ class Variant extends BaseModel implements \JsonSerializable
     protected $countryOfOrigin;
 
     /**
-     * @var CRMSource
+     * @var Source
      */
-    protected $crmSource;
+    protected $source;
 
     /**
      * Shopify title
@@ -107,7 +108,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $this->product                  = AU::get($data['product']);
         $this->client                   = AU::get($data['client']);
         $this->countryOfOrigin          = AU::get($data['countryOfOrigin']);
-        $this->crmSource                = AU::get($data['crmSource']);
+        $this->source                   = AU::get($data['source']);
         $this->title                    = AU::get($data['title']);
         $this->price                    = AU::get($data['price']);
         $this->barcode                  = AU::get($data['barcode']);
@@ -165,7 +166,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['weight']               = $this->weight;
         $object['client']               = $this->client->jsonSerialize();
         $object['countryOfOrigin']      = $this->countryOfOrigin->jsonSerialize();
-        $object['crmSource']            = $this->crmSource->jsonSerialize();
+        $object['source']            = $this->source->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
@@ -230,19 +231,19 @@ class Variant extends BaseModel implements \JsonSerializable
     }
 
     /**
-     * @return CRMSource
+     * @return Source
      */
-    public function getCrmSource()
+    public function getSource()
     {
-        return $this->crmSource;
+        return $this->source;
     }
 
     /**
-     * @param CRMSource $crmSource
+     * @param Source $source
      */
-    public function setCrmSource($crmSource)
+    public function setSource($source)
     {
-        $this->crmSource = $crmSource;
+        $this->source = $source;
     }
 
     /**

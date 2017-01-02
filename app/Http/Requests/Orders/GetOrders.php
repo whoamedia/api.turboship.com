@@ -24,7 +24,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
-    protected $crmSourceIds;
+    protected $sourceIds;
 
     /**
      * @var string|null
@@ -71,7 +71,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     {
         $this->ids                      = AU::get($data['ids']);
         $this->itemIds                  = AU::get($data['itemIds']);
-        $this->crmSourceIds             = AU::get($data['crmSourceIds']);
+        $this->sourceIds                = AU::get($data['sourceIds']);
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->statusIds                = AU::get($data['statusIds']);
@@ -108,7 +108,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['clientIds']            = $this->clientIds;
         $object['organizationIds']      = $this->organizationIds;
         $object['itemIds']              = $this->itemIds;
-        $object['crmSourceIds']         = $this->crmSourceIds;
+        $object['sourceIds']            = $this->sourceIds;
         $object['statusIds']            = $this->statusIds;
         $object['externalIds']          = $this->externalIds;
         $object['itemSkus']             = $this->itemSkus;
@@ -152,19 +152,19 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     }
 
     /**
-     * @return null
+     * @return null|string
      */
-    public function getCrmSourceIds()
+    public function getSourceIds()
     {
-        return $this->crmSourceIds;
+        return $this->sourceIds;
     }
 
     /**
-     * @param null $crmSourceIds
+     * @param null|string $sourceIds
      */
-    public function setCrmSourceIds($crmSourceIds)
+    public function setSourceIds($sourceIds)
     {
-        $this->crmSourceIds = $crmSourceIds;
+        $this->sourceIds = $sourceIds;
     }
 
     /**

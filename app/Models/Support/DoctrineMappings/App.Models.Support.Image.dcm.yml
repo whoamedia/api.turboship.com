@@ -44,10 +44,10 @@ App\Models\Support\Image:
         default:      CURRENT_datetime
 
   manyToOne:
-    crmSource:
-      targetEntity:   App\Models\OMS\CRMSource
+    source:
+      targetEntity:   App\Models\Support\Source
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         crmSourceId
+        name:         sourceId
         referencedColumnName: id

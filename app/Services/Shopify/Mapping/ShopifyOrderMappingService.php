@@ -12,8 +12,7 @@ use App\Models\OMS\Order;
 use App\Models\OMS\OrderItem;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Utilities\CRMSourceUtility;
-use Bugsnag;
+use App\Utilities\SourceUtility;
 use EntityManager;
 
 class ShopifyOrderMappingService extends BaseShopifyMappingService
@@ -72,7 +71,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         if (is_null($order))
             $order                          = new Order();
 
-        $order->setCRMSource($this->shopifyCRMSource);
+        $order->setSource($this->shopifySource);
         $order->setClient($this->client);
 
         $order->setExternalId($shopifyOrder->getId());
@@ -177,7 +176,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     {
         $orderQuery     = [
             'clientIds'             => $this->client->getId(),
-            'crmSourceIds'          => CRMSourceUtility::SHOPIFY_ID,
+            'sourceIds'             => SourceUtility::SHOPIFY_ID,
             'externalIds'           => $shopifyOrder->getId(),
         ];
 
@@ -194,7 +193,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     {
         $orderItemQuery = [
             'clientIds'             => $this->client->getId(),
-            'crmSourceIds'          => CRMSourceUtility::SHOPIFY_ID,
+            'sourceIds'             => SourceUtility::SHOPIFY_ID,
             'externalIds'           => $shopifyOrderLineItem->getId()
         ];
 

@@ -48,7 +48,7 @@ class ProductAliasRepository extends BaseRepository
         $qb->from('App\Models\OMS\ProductAlias', 'productAlias')
             ->join('productAlias.client', 'client', Query\Expr\Join::ON)
             ->join('productAlias.product', 'product', Query\Expr\Join::ON)
-            ->join('productAlias.crmSource', 'crmSource', Query\Expr\Join::ON);
+            ->join('productAlias.source', 'source', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('productAlias.id', $query['ids']));
@@ -59,8 +59,8 @@ class ProductAliasRepository extends BaseRepository
         if (!is_null(AU::get($query['productIds'])))
             $qb->andWhere($qb->expr()->in('product.id', $query['productIds']));
 
-        if (!is_null(AU::get($query['crmSourceIds'])))
-            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+        if (!is_null(AU::get($query['sourceIds'])))
+            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['externalIds'])))
         {

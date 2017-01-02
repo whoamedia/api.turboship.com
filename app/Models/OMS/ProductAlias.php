@@ -5,6 +5,7 @@ namespace App\Models\OMS;
 
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
+use App\Models\Support\Source;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class ProductAlias extends BaseModel implements \JsonSerializable
@@ -26,9 +27,9 @@ class ProductAlias extends BaseModel implements \JsonSerializable
     protected $product;
 
     /**
-     * @var CRMSource
+     * @var Source
      */
-    protected $crmSource;
+    protected $source;
 
     /**
      * Shopify product id
@@ -59,7 +60,7 @@ class ProductAlias extends BaseModel implements \JsonSerializable
 
         $this->client                   = AU::get($data['client']);
         $this->product                  = AU::get($data['product']);
-        $this->crmSource                = AU::get($data['crmSource']);
+        $this->source                   = AU::get($data['source']);
         $this->externalId               = AU::get($data['externalId']);
     }
 
@@ -74,7 +75,7 @@ class ProductAlias extends BaseModel implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->getId();
-        $object['crmSource']            = $this->crmSource->jsonSerialize();
+        $object['source']               = $this->source->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
@@ -123,19 +124,19 @@ class ProductAlias extends BaseModel implements \JsonSerializable
     }
 
     /**
-     * @return CRMSource
+     * @return Source
      */
-    public function getCrmSource()
+    public function getSource()
     {
-        return $this->crmSource;
+        return $this->source;
     }
 
     /**
-     * @param CRMSource $crmSource
+     * @param Source $source
      */
-    public function setCrmSource($crmSource)
+    public function setSource($source)
     {
-        $this->crmSource = $crmSource;
+        $this->source = $source;
     }
 
     /**

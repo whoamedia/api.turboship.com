@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
         /**
          * Orders
          */
-        $this->call(CRMSourceSeeder::class);
+        $this->call(SourceSeeder::class);
         $this->call(OrderStatusSeeder::class);
 
 

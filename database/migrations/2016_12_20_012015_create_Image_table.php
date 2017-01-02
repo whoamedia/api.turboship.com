@@ -18,8 +18,8 @@ class CreateImageTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('path');
 
-            $table->integer('crmSourceId')->unsigned()->index();
-            $table->foreign('crmSourceId')->references('id')->on('CRMSource');
+            $table->integer('sourceId')->unsigned()->index();
+            $table->foreign('sourceId')->references('id')->on('Source');
 
             $table->string('externalId')->index()->nullable()->default(null);
 

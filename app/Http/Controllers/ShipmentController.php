@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
-use App\Http\Requests\Shipments\CreateShipmentsJob;
 use App\Http\Requests\Shipments\GetShipments;
 use App\Http\Requests\Shipments\UpdateShipment;
+use App\Http\Requests\Shipments\VoidPostage;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\Validation\RateValidation;
@@ -16,13 +16,11 @@ use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
-use App\Services\Shipments\CreateShipmentsService;
-use App\Services\Shipments\ShipmentRateService;
+use App\Services\Shipments\PostageService;
 use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShipmentController extends BaseAuthController
 {
@@ -118,13 +116,13 @@ class ShipmentController extends BaseAuthController
         $shipment                       = $this->getShipment($rateShipment->getId());
         $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
 
-        $shipmentRateService            = new ShipmentRateService($integratedShippingApi);
-        $shipmentRateService->rate($shipment);
+        $postageService                 = new PostageService($integratedShippingApi);
+        $postageService->rate($shipment);
 
         $this->shipmentRepo->saveAndCommit($shipment);
 
 
-        return response($shipment, 201);
+        return response($shipment->getRates(), 201);
     }
 
     public function purchasePostage (Request $request)
@@ -140,44 +138,37 @@ class ShipmentController extends BaseAuthController
         $rateValidation                 = new RateValidation();
         $rate                           = $rateValidation->idExists($purchasePostage->getRateId());
 
-        $shipmentRateService            = new ShipmentRateService($rate->getIntegratedShippingApi());
-        $shipmentRateService->purchase($shipment, $rate);
+        $postageService                 = new PostageService($rate->getIntegratedShippingApi());
+        $postageService->purchase($shipment, $rate);
         $this->shipmentRepo->saveAndCommit($shipment);
         return response ($shipment->getPostage(), 201);
     }
 
     public function voidPostage (Request $request)
     {
-        $shipment                       = $this->getShipment($request->route('id'));
+        $voidPostage                    = new VoidPostage();
+        $voidPostage->setId($request->route('id'));
+        $voidPostage->validate();
+        $voidPostage->clean();
+
+        $shipment                       = $this->getShipment($voidPostage->getId());
+
         if (is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment has no postage to void');
+            throw new BadRequestHttpException('Shipment has not postage to void');
 
+        $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
+        $postageService->void($shipment);
 
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response('', 204);
     }
 
 
-    public function createShipmentsJob (Request $request)
+    public function getImages (Request $request)
     {
-        $createShipmentsJob             = new CreateShipmentsJob($request->input());
-        $createShipmentsJob->validate();
-        $createShipmentsJob->clean();
-
-        $client                         = $this->clientValidation->idExists($createShipmentsJob->getClientId());
-        $shipper                        = $this->shipperValidation->idExists($createShipmentsJob->getShipperId());
-
-        set_time_limit(120);
-        $createShipmentsService         = new CreateShipmentsService($client, $shipper);
-        $orders                         = $createShipmentsService->getPendingFulfillmentOrders();
-
-        foreach ($orders AS $order)
-        {
-            $job                            = (new \App\Jobs\Shipments\CreateShipmentsJob($order->getId(), 1))->onQueue('orderShipments');
-            $this->dispatch($job);
-        }
-
-        return response ('', 200);
+        $shipment                       = $this->getShipment($request->route('id'));
+        return response($shipment->getImages());
     }
-
 
     /**
      * @param   int         $id

@@ -3,7 +3,6 @@
 namespace App\Models\Support;
 
 
-use App\Models\OMS\CRMSource;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class Image implements \JsonSerializable
@@ -27,9 +26,9 @@ class Image implements \JsonSerializable
     protected $externalId;
 
     /**
-     * @var CRMSource
+     * @var Source
      */
-    protected $crmSource;
+    protected $source;
 
     /**
      * @var \DateTime
@@ -50,7 +49,7 @@ class Image implements \JsonSerializable
 
         $this->path                     = AU::get($data['path']);
         $this->externalId               = AU::get($data['externalId']);
-        $this->crmSource                = AU::get($data['crmSource']);
+        $this->source                   = AU::get($data['source']);
     }
 
     /**
@@ -60,7 +59,7 @@ class Image implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['path']                 = $this->path;
-        $object['crmSource']            = $this->crmSource->jsonSerialize();
+        $object['source']               = $this->source->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
@@ -117,19 +116,19 @@ class Image implements \JsonSerializable
     }
 
     /**
-     * @return CRMSource
+     * @return Source
      */
-    public function getCrmSource()
+    public function getSource()
     {
-        return $this->crmSource;
+        return $this->source;
     }
 
     /**
-     * @param CRMSource $crmSource
+     * @param Source $source
      */
-    public function setCrmSource($crmSource)
+    public function setSource($source)
     {
-        $this->crmSource = $crmSource;
+        $this->source = $source;
     }
 
     /**

@@ -103,12 +103,12 @@ App\Models\OMS\Variant:
       joinColumn:
         name:         countryOfOriginId
         referencedColumnName: id
-    crmSource:
-      targetEntity:   CRMSource
+    source:
+      targetEntity:   App\Models\Support\Source
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         crmSourceId
+        name:         sourceId
         referencedColumnName: id
 
   entityListeners:

@@ -5,6 +5,7 @@ namespace App\Models\OMS;
 
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
+use App\Models\Support\Source;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -72,9 +73,9 @@ class Order implements \JsonSerializable
     protected $billingAddress;
 
     /**
-     * @var CRMSource
+     * @var Source
      */
-    protected $crmSource;
+    protected $source;
 
     /**
      * @var Client
@@ -133,7 +134,7 @@ class Order implements \JsonSerializable
         $this->shippingAddress          = AU::get($data['shippingAddress']);
         $this->providedAddress          = AU::get($data['providedAddress']);
         $this->billingAddress           = AU::get($data['billingAddress']);
-        $this->crmSource                = AU::get($data['crmSource']);
+        $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
 
@@ -165,7 +166,7 @@ class Order implements \JsonSerializable
         $object['totalItemsPrice']      = $this->totalItemsPrice;
         $object['totalPrice']           = $this->totalPrice;
         $object['shippingAddress']      = $this->shippingAddress->jsonSerialize();
-        $object['crmSource']            = $this->crmSource->jsonSerialize();
+        $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
@@ -367,19 +368,19 @@ class Order implements \JsonSerializable
     }
 
     /**
-     * @return CRMSource
+     * @return Source
      */
-    public function getCRMSource ()
+    public function getSource ()
     {
-        return $this->crmSource;
+        return $this->source;
     }
 
     /**
-     * @param CRMSource $crmSource
+     * @param Source $source
      */
-    public function setCRMSource($crmSource)
+    public function setSource($source)
     {
-        $this->crmSource = $crmSource;
+        $this->source = $source;
     }
 
     /**

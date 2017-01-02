@@ -81,12 +81,34 @@ App\Models\Shipments\Postage:
       nullable:       false
       options:
         default:      CURRENT_datetime
+    voidedAt:
+      column:         voidedAt
+      type:           datetime
+      nullable:       true
+      options:
+        default:      NULL
     externalId:
       column:         externalId
       type:           string
       nullable:       true
       options:
         comment:      "Postage externalId"
+    externalShipmentId:
+      column:         externalShipmentId
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Rate externalShipmentId"
+    externalRateId:
+      column:         externalRateId
+      type:           string
+      nullable:       true
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Rate externalRateId"
 
   manyToOne:
     shipment:
@@ -96,17 +118,17 @@ App\Models\Shipments\Postage:
       joinColumn:
         name:         shipmentId
         referencedColumnName: id
-    rate:
-      targetEntity:   Rate
+    integratedShippingApi:
+      targetEntity:   App\Models\Integrations\IntegratedShippingApi
       nullable:       false
-      fetch:          LAZY
+      fetch:          EAGER
       joinColumn:
-        name:         rateId
+        name:         integratedShippingApiId
         referencedColumnName: id
-    service:
-      targetEntity:   Service
+    shippingApiService:
+      targetEntity:   App\Models\Integrations\ShippingApiService
       nullable:       false
-      fetch:          LAZY
+      fetch:          EAGER
       joinColumn:
-        name:         serviceId
+        name:         shippingApiServiceId
         referencedColumnName: id

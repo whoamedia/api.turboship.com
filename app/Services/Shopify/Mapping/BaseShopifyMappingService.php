@@ -4,10 +4,9 @@ namespace App\Services\Shopify\Mapping;
 
 
 use App\Models\CMS\Client;
-use App\Models\OMS\CRMSource;
-use App\Models\OMS\Validation\CRMSourceValidation;
+use App\Models\Support\Source;
+use App\Models\Support\Validation\SourceValidation;
 use App\Services\WeightConversionService;
-use App\Utilities\CRMSourceUtility;
 
 class BaseShopifyMappingService
 {
@@ -18,9 +17,9 @@ class BaseShopifyMappingService
     protected $client;
 
     /**
-     * @var CRMSource
+     * @var Source
      */
-    protected $shopifyCRMSource;
+    protected $shopifySource;
 
     /**
      * @var WeightConversionService
@@ -36,8 +35,8 @@ class BaseShopifyMappingService
     public function __construct(Client $client)
     {
         $this->client                   = $client;
-        $crmSourceValidation            = new CRMSourceValidation();
-        $this->shopifyCRMSource         = $crmSourceValidation->idExists(CRMSourceUtility::SHOPIFY_ID);
+        $sourceValidation               = new SourceValidation();
+        $this->shopifySource            = $sourceValidation->getShopify();
         $this->weightConversionService  = new WeightConversionService();
         $this->shopifyMappingExceptionService = new ShopifyMappingExceptionService();
     }

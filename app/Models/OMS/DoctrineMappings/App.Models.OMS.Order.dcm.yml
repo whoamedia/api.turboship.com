@@ -116,12 +116,12 @@ App\Models\OMS\Order:
       joinColumn:
         name:         billingAddressId
         referencedColumnName: id
-    crmSource:
-      targetEntity:   CRMSource
+    source:
+      targetEntity:   App\Models\Support\Source
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         crmSourceId
+        name:         sourceId
         referencedColumnName: id
     client:
       targetEntity:   App\Models\CMS\Client

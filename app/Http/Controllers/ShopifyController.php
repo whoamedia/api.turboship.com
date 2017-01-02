@@ -15,7 +15,7 @@ use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Repositories\Shopify\ShopifyOrderRepository;
 use App\Repositories\Shopify\ShopifyProductRepository;
 use App\Services\Order\OrderApprovalService;
-use App\Utilities\CRMSourceUtility;
+use App\Utilities\SourceUtility;
 use Illuminate\Http\Request;
 use EntityManager;
 
@@ -81,7 +81,7 @@ class ShopifyController extends BaseAuthController
 
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
-            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), CRMSourceUtility::SHOPIFY_ID);
+            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
             $maxIds                     = 20;
             for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
             {

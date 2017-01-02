@@ -8,7 +8,6 @@ use App\Http\Requests\Orders\ShowOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
@@ -24,15 +23,10 @@ class OrderController extends BaseAuthController
      */
     private $orderRepo;
 
-    /**
-     * @var OrderStatusRepository
-     */
-    private $orderStatusRepo;
 
     public function __construct ()
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
-        $this->orderStatusRepo          = EntityManager::getRepository('App\Models\OMS\OrderStatus');
     }
 
 
@@ -124,13 +118,6 @@ class OrderController extends BaseAuthController
             $this->dispatch($job);
         }
     }
-
-    public function getStatuses (Request $request)
-    {
-        $orderStatuses                  = $this->orderStatusRepo->where([], false);
-        return response($orderStatuses);
-    }
-
 
     /**
      * @param   int     $id

@@ -50,14 +50,14 @@ class OrderRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select([
             'COUNT(orders.id) AS total',
-            'crmSource.id AS crmSource_id', 'crmSource.name AS crmSource_name',
+            'source.id AS source_id', 'source.name AS source_name',
             'client.id AS client_id', 'client.name AS client_name',
             'organization.id AS organization_id', 'organization.name AS organization_name',
             'status.id AS status_id', 'status.name AS status_name',
         ]);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
-        $qb->addGroupBy('crmSource');
+        $qb->addGroupBy('source');
         $qb->addGroupBy('client');
         $qb->addGroupBy('organization');
         $qb->addGroupBy('status');
@@ -65,7 +65,7 @@ class OrderRepository extends BaseRepository
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'crmSource'         =>  [],
+            'source'         =>  [],
             'client'            =>  [],
             'organization'      =>  [],
             'status'            =>  [],
@@ -84,7 +84,7 @@ class OrderRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Order', 'orders')
             ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
-            ->join('orders.crmSource', 'crmSource', Query\Expr\Join::ON)
+            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
             ->join('orders.status', 'status', Query\Expr\Join::ON);
@@ -95,8 +95,8 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['itemIds'])))
             $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
 
-        if (!is_null(AU::get($query['crmSourceIds'])))
-            $qb->andWhere($qb->expr()->in('crmSource.id', $query['crmSourceIds']));
+        if (!is_null(AU::get($query['sourceIds'])))
+            $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));

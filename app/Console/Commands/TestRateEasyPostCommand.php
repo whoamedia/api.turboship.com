@@ -13,7 +13,7 @@ use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
-use App\Services\Shipments\ShipmentRateService;
+use App\Services\Shipments\PostageService;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
@@ -60,7 +60,7 @@ class TestRateEasyPostCommand extends Command
     public function handle()
     {
         $integratedShippingApi              = $this->integratedShippingApiRepo->getOneById(2);
-        $shipmentRateService                = new ShipmentRateService($integratedShippingApi);
+        $postageService                     = new PostageService($integratedShippingApi);
         $shippingContainerValidation        = new ShippingContainerValidation();
 
         $shipmentsResponse                  = $this->shipmentRepo->where([], true);
@@ -74,7 +74,7 @@ class TestRateEasyPostCommand extends Command
             $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
             $shipment->setShippingContainer($shippingContainer);
 
-            $shipmentRateService->rate($shipment);
+            $postageService->rate($shipment);
             $this->shipmentRepo->saveAndCommit($shipment);
 
             $rateId                         = rand(0, sizeof($shipment->getRates()) - 1);
@@ -82,7 +82,7 @@ class TestRateEasyPostCommand extends Command
 
             try
             {
-                $shipmentRateService->purchase($shipment, $rate);
+                $postageService->purchase($shipment, $rate);
                 $this->shipmentRepo->saveAndCommit($shipment);
             }
             catch (EasyPostCustomsInfoException $exception)

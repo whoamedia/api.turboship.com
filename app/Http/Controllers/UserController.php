@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Users\CreateUserRequest;
-use App\Http\Requests\Users\ShowUserRequest;
-use App\Http\Requests\Users\GetUsersRequest;
-use App\Http\Requests\Users\UpdatePasswordRequest;
-use App\Http\Requests\Users\UpdateUserRequest;
+use App\Http\Requests\Users\CreateUser;
+use App\Http\Requests\Users\ShowUser;
+use App\Http\Requests\Users\GetUsers;
+use App\Http\Requests\Users\UpdatePassword;
+use App\Http\Requests\Users\UpdateUser;
 use App\Models\CMS\User;
 use App\Models\CMS\Validation\UserValidation;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Hash;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class UserController extends Controller
+class UserController extends BaseAuthController
 {
 
     /**
@@ -30,17 +30,12 @@ class UserController extends Controller
      */
     private $userValidation;
 
-    /**
-     * @var User
-     */
-    private $authUser;
 
     /**
      * UserController constructor.
      */
     public function __construct (Request $request)
     {
-        $this->authUser                 = \Auth::getUser();
         $this->userRepo                 = EntityManager::getRepository('App\Models\CMS\User');
         $this->userValidation           = new UserValidation($this->userRepo);
     }
@@ -52,12 +47,12 @@ class UserController extends Controller
      */
     public function index (Request $request)
     {
-        $getUsersRequest                = new GetUsersRequest($request->input());
-        $getUsersRequest->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
-        $getUsersRequest->validate();
-        $getUsersRequest->clean();
+        $getUsers                       = new GetUsers($request->input());
+        $getUsers->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+        $getUsers->validate();
+        $getUsers->clean();
 
-        $query                          = $getUsersRequest->jsonSerialize();
+        $query                          = $getUsers->jsonSerialize();
 
         $results                        = $this->userRepo->where($query, false);
         return response($results);
@@ -68,7 +63,7 @@ class UserController extends Controller
      */
     public function me ()
     {
-        $authUser                       = \Auth::getUser();
+        $authUser                       = parent::getAuthUser();
         return response($authUser);
     }
 
@@ -78,16 +73,7 @@ class UserController extends Controller
      */
     public function show (Request $request)
     {
-        $showUserRequest                = new ShowUserRequest();
-        $showUserRequest->setId($request->route('id'));
-        $showUserRequest->validate();
-        $showUserRequest->clean();
-
-        $user                           = $this->userValidation->idExists($showUserRequest->getId(), true);
-
-        if (\Auth::getUser()->getOrganization()->getId() != $user->getOrganization()->getId())
-            throw new NotFoundHttpException('User not found');
-
+        $user                           = $this->getUserFromRoute($request->route('id'));
         return response($user);
     }
 
@@ -97,29 +83,29 @@ class UserController extends Controller
      */
     public function update (Request $request)
     {
-        $updateUserRequest              = new UpdateUserRequest($request->input());
-        $updateUserRequest->setId($request->route('id'));
-        $updateUserRequest->validate();
-        $updateUserRequest->clean();
+        $updateUser                     = new UpdateUser($request->input());
+        $updateUser->setId($request->route('id'));
+        $updateUser->validate();
+        $updateUser->clean();
 
-        $user                           = $this->userValidation->idExists($updateUserRequest->getId(), true);
+        $user                           = $this->getUserFromRoute($updateUser->getId());
 
-        if ($user->getId() != \Auth::getUser()->getId())
+        if ($user->getId() != parent::getAuthUser()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update other users');
 
 
-        if (!is_null($updateUserRequest->getFirstName()))
-            $user->setFirstName($updateUserRequest->getFirstName());
+        if (!is_null($updateUser->getFirstName()))
+            $user->setFirstName($updateUser->getFirstName());
 
-        if (!is_null($updateUserRequest->getLastName()))
-            $user->setLastName($updateUserRequest->getLastName());
+        if (!is_null($updateUser->getLastName()))
+            $user->setLastName($updateUser->getLastName());
 
-        if (!is_null($updateUserRequest->getEmail()))
+        if (!is_null($updateUser->getEmail()))
         {
-            if ($user->getEmail() != $updateUserRequest->getEmail())
+            if ($user->getEmail() != $updateUser->getEmail())
             {
-                $this->userValidation->uniqueEmail($updateUserRequest->getEmail());
-                $user->setEmail($updateUserRequest->getEmail());
+                $this->userValidation->uniqueEmail($updateUser->getEmail());
+                $user->setEmail($updateUser->getEmail());
             }
         }
 
@@ -134,10 +120,10 @@ class UserController extends Controller
      */
     public function store (Request $request)
     {
-        $createUserRequest              = new CreateUserRequest($request->input());
-        $createUserRequest->validate();
+        $createUser                     = new CreateUser($request->input());
+        $createUser->validate();
 
-        $user                           = new User($createUserRequest->jsonSerialize());
+        $user                           = new User($createUser->jsonSerialize());
         $user->setOrganization(\Auth::getUser()->getOrganization());
 
         $user->validate();
@@ -155,22 +141,41 @@ class UserController extends Controller
      */
     public function updatePassword (Request $request)
     {
-        $updatePasswordRequest          = new UpdatePasswordRequest($request->input());
-        $updatePasswordRequest->setId($request->route('id'));
-        $updatePasswordRequest->validate();
+        $updatePassword                 = new UpdatePassword($request->input());
+        $updatePassword->setId($request->route('id'));
+        $updatePassword->validate();
 
-        $user                           = $this->userValidation->idExists($updatePasswordRequest->getId(), true);
+        $user                           = $this->getUserFromRoute($updatePassword->getId());
 
-        if ($user->getId() != \Auth::getUser()->getId())
+        if ($user->getId() != parent::getAuthUser()->getId())
             throw new AccessDeniedHttpException('Insufficient permissions to update passwords for other users');
 
-        if (!Hash::check($updatePasswordRequest->getCurrentPassword(), $user->getPassword()))
+        if (!Hash::check($updatePassword->getCurrentPassword(), $user->getPassword()))
             throw new BadRequestHttpException('Password does not match');
 
-        $user->setPassword($updatePasswordRequest->getNewPassword());
+        $user->setPassword($updatePassword->getNewPassword());
 
         $this->userRepo->saveAndCommit($user);
         return response($user);
     }
 
+
+    /**
+     * @param   int     $id
+     * @return  User
+     */
+    private function getUserFromRoute ($id)
+    {
+        $showUser                       = new ShowUser();
+        $showUser->setId($id);
+        $showUser->validate();
+        $showUser->clean();
+
+        $user                           = $this->userValidation->idExists($showUser->getId());
+
+        if ($this->getAuthUserOrganization()->getId() != $user->getOrganization()->getId())
+            throw new NotFoundHttpException('User not found');
+
+        return $user;
+    }
 }
