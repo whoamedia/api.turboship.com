@@ -122,7 +122,7 @@ class ShipmentController extends BaseAuthController
         $this->shipmentRepo->saveAndCommit($shipment);
 
 
-        return response($shipment, 201);
+        return response($shipment->getRates(), 201);
     }
 
     public function purchasePostage (Request $request)
