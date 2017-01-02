@@ -140,6 +140,7 @@ class PostageService
         }
 
         $orders                         = $orderCollection->toArray();
+        dd($orders);
         foreach ($orders AS $order)
         {
             $shipmentStatus         = $shipmentStatusValidation->getFullyShipped();
