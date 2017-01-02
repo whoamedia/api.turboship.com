@@ -98,6 +98,7 @@ class PostageService
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getFullyShipped());
         $shipment->setShippedAt(new \DateTime());
+        $shipment->setService($rate->getShippingApiService()->getService());
         return $shipment;
     }
 
@@ -120,7 +121,7 @@ class PostageService
 
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getPending());
-
+        $shipment->setService(null);
         return $shipment;
     }
 
