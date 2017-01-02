@@ -8,6 +8,7 @@ use App\Models\Shipments\Postage;
 use App\Models\Shipments\Rate;
 use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
+use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\EasyPost\EasyPostShipmentRepository;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
@@ -29,11 +30,17 @@ class PostageService
      */
     private $orderRepo;
 
+    /**
+     * @var OrderItemRepository
+     */
+    private $orderItemRepo;
+
 
     public function __construct(IntegratedShippingApi $integratedShippingApi)
     {
         $this->integratedShippingApi    = $integratedShippingApi;
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $this->orderItemRepo            = EntityManager::getRepository('App\Models\OMS\OrderItem');
     }
 
     /**
@@ -137,6 +144,8 @@ class PostageService
                 $orderItem->setShipmentStatus($shipmentStatusValidation->getFullyShipped());
             else
                 $orderItem->setShipmentStatus($shipmentStatusValidation->getPartiallyShipped());
+
+            $this->orderItemRepo->saveAndCommit($orderItem);
         }
 
         $orders                         = $orderCollection->toArray();
@@ -147,7 +156,7 @@ class PostageService
             {
                 if ($orderItem->getQuantityToFulfill() != $orderItem->getQuantityShipped())
                     $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
-                
+
                 $orderItem->setShipmentStatus($shipmentStatus);
             }
             $order->setShipmentStatus($shipmentStatus);
@@ -186,6 +195,9 @@ class PostageService
             {
                 if ($orderItem->getQuantityShipped() > 0)
                     $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
+
+                $orderItem->setShipmentStatus($shipmentStatusValidation->getPartiallyShipped());
+                $this->orderItemRepo->saveAndCommit($orderItem);
             }
             $order->setShipmentStatus($shipmentStatus);
             $this->orderRepo->saveAndCommit($order);
