@@ -107,8 +107,6 @@ class PostageService
      */
     public function void (Shipment $shipment)
     {
-        $shipment->canVoidPostage();
-
         if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
             $this->voidEasyPost($shipment);
         else

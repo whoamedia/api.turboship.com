@@ -157,6 +157,8 @@ class ShipmentController extends BaseAuthController
         $voidPostage->clean();
 
         $shipment                       = $this->getShipment($voidPostage->getId());
+        $shipment->canVoidPostage();
+
         $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
         $postageService->void($shipment);
         $this->shipmentRepo->saveAndCommit($shipment);

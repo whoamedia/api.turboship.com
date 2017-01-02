@@ -25,3 +25,5 @@ select id, queue, attempts, reserved_at, available_at, created_at from jobs;
 select id, queue, attempts, reserved_at, available_at, created_at from jobs where queue = 'shopifyOrders';
 
 SELECT count(*), orderStatus.id, orderStatus.name FROM Orders orders JOIN OrderStatus orderStatus ON orderStatus.id = orders.statusId GROUP BY orders.statusId;
+
+select count(*), orderItemId FROM ShipmentItem GROUP BY orderItemId HAVING count(*) > 1;
