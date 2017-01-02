@@ -152,10 +152,6 @@ class ShipmentController extends BaseAuthController
         $voidPostage->clean();
 
         $shipment                       = $this->getShipment($voidPostage->getId());
-
-        if (is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment has not postage to void');
-
         $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
         $postageService->void($shipment);
 

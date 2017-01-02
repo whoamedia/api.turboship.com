@@ -113,8 +113,7 @@ class PostageService
      */
     public function void (Shipment $shipment)
     {
-        if (is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment does not have postage to void');
+        $shipment->canVoidPostage();
 
         if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
             $this->voidEasyPost($shipment);
@@ -124,6 +123,7 @@ class PostageService
 
         $shipment->getPostage()->setVoidedAt(new \DateTime());
         $shipment->setPostage(null);
+        $shipment->clearRates();
         return $shipment;
     }
 

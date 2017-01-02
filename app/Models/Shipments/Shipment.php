@@ -358,6 +358,19 @@ class Shipment implements \JsonSerializable
     }
 
     /**
+     * Can we safely void the postage for this Shipment?
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canVoidPostage ()
+    {
+        if (is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment does not have postage to void');
+        else
+            return true;
+    }
+
+    /**
      * @return Image[]
      */
     public function getImages ()
