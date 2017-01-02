@@ -3,8 +3,9 @@
 namespace App\Repositories\EasyPost;
 
 
+use App\Integrations\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
 use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
-use App\Models\Shipments\Shipment;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class EasyPostShipmentRepository extends BaseEasyPostRepository
 {
@@ -31,10 +32,18 @@ class EasyPostShipmentRepository extends BaseEasyPostRepository
 
     /**
      * @param   string      $easyPostShipmentId
-     * @return \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     * @return  \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     * @throws  BadRequestHttpException
      */
     public function void ($easyPostShipmentId)
     {
-        return $this->easyPostIntegration->shipmentApi->refund($easyPostShipmentId);
+        try
+        {
+            return $this->easyPostIntegration->shipmentApi->refund($easyPostShipmentId);
+        }
+        catch (EasyPostUnableToVoidShippedOrderException $exception)
+        {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
     }
 }
