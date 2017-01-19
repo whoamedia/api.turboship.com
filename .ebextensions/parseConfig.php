@@ -15,7 +15,7 @@ startsecs=$startSecs
 EOT;
     return $program;
 }
-
+$programs           = '';
 $programs           .= generateProgram('beanstalkd', 'shopifyOrders', 5, 5, 2, 1);
 
 $superLocation = '';
