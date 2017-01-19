@@ -33,32 +33,17 @@ for line in "${lines[@]}"; do
    ary[$key]=$value
 done
 
-#if key exists and is true
+echo "Copying environmental variables to dotenv"
+cp bashEnv .env
+echo "Starting worker deploy process...";
 
-if test "${ary['QUEUE_WORKER']+isset}" #if key exists
+if [ -f /etc/init.d/supervisord ];
     then
-        if [ ${ary['QUEUE_WORKER']} == "'true'" ] #if the value is true
-            then
-                echo "Found worker key!"
-                echo "Copying environmental variables to dotenv"
-                cp bashEnv .env
-                echo "Starting worker deploy process...";
-
-                if [ -f /etc/init.d/supervisord ];
-                    then
-                       echo "Config found. Supervisor already installed"
-                       updateSupervisor
-                    else
-                       echo "No supervisor config found. Installing supervisor..."
-                       installSupervisor
-                    fi
-
-                echo "Deployment done!"
-
-            else
-                echo "Worker variable set, but not true. Skipping worker installation";
-        fi;
-
+       echo "Config found. Supervisor already installed"
+       updateSupervisor
     else
-        echo "No worker variable found. Skipping worker installation";
-fi;
+       echo "No supervisor config found. Installing supervisor..."
+       installSupervisor
+    fi
+
+echo "Deployment done!"
