@@ -11,7 +11,7 @@ updateSupervisor(){
 
 installSupervisor(){
     pip install --install-option="--install-scripts=/usr/bin" supervisor --pre
-    cp /var/app/ondeck/.ebextensions/supervisord /etc/init.d/supervisord
+    cp ../.ebextensions/supervisord /etc/init.d/supervisord
     chmod 777 /etc/init.d/supervisord
     mkdir -m 766 /var/log/supervisor
     umask 022
@@ -21,7 +21,7 @@ installSupervisor(){
     sudo chkconfig supervisord  on
 }
 
-/opt/elasticbeanstalk/bin/get-config environment --output yaml | sed -n '1!p' | sed -e 's/^\(.*\): /\1=/g' > bashEnv
+#/opt/elasticbeanstalk/bin/get-config environment --output yaml | sed -n '1!p' | sed -e 's/^\(.*\): /\1=/g' > bashEnv
 
 declare -A ary
 
