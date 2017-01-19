@@ -18,6 +18,7 @@ class CreateIntegratedWebHookTable extends Migration
             $table->increments('id')->unsigned();
 
             $table->string('externalId')->index()->nullable()->default(null);
+            $table->string('url')->nullable()->default(null);
 
             $table->integer('integratedServiceId')->unsigned()->index();
             $table->foreign('integratedServiceId')->references('id')->on('IntegratedService');

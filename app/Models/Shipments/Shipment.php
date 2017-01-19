@@ -4,11 +4,15 @@ namespace App\Models\Shipments;
 
 
 use App\Models\CMS\Client;
+use App\Models\Support\Dimension;
 use App\Models\Support\Image;
+use App\Models\Support\ShipmentStatus;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 use App\Models\Locations\Address;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Shipment implements \JsonSerializable
 {
@@ -69,6 +73,21 @@ class Shipment implements \JsonSerializable
     protected $shippingContainer;
 
     /**
+     * @var Dimension|null
+     */
+    protected $dimensions;
+
+    /**
+     * @var ShipmentStatus
+     */
+    protected $status;
+
+    /**
+     * @var \DateTime|null
+     */
+    protected $shippedAt;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -88,6 +107,15 @@ class Shipment implements \JsonSerializable
         $this->weight                   = AU::get($data['weight']);
         $this->postage                  = AU::get($data['postage']);
         $this->shippingContainer        = AU::get($data['shippingContainer']);
+        $this->dimensions               = AU::get($data['dimensions']);
+        $this->status                   = AU::get($data['status']);
+        $this->shippedAt                = AU::get($data['shippedAt']);
+
+        if (is_null($this->status))
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $this->status               = $shipmentStatusValidation->getPending();
+        }
     }
 
     /**
@@ -101,9 +129,10 @@ class Shipment implements \JsonSerializable
         $object['returnAddress']        = $this->returnAddress->jsonSerialize();
         $object['service']              = !is_null($this->service) ? $this->service->jsonSerialize() : null;
         $object['weight']               = $this->weight;
-        $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
+        $object['dimensions']           = is_null($this->dimensions) ? null : $this->dimensions->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+        $object['shippedAt']            = $this->shippedAt;
 
         $object['items']                = [];
         foreach ($this->getItems() AS $shipmentItem)
@@ -255,6 +284,30 @@ class Shipment implements \JsonSerializable
     public function setShippingContainer($shippingContainer)
     {
         $this->shippingContainer = $shippingContainer;
+
+        if (is_null($this->shippingContainer))
+            $this->setDimensions(null);
+        else
+        {
+            $dimensions             = new Dimension($this->shippingContainer->jsonSerialize());
+            $this->setDimensions($dimensions);
+        }
+    }
+
+    /**
+     * @return Dimension|null
+     */
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
+
+    /**
+     * @param Dimension|null $dimensions
+     */
+    public function setDimensions($dimensions)
+    {
+        $this->dimensions = $dimensions;
     }
 
     /**
@@ -271,6 +324,22 @@ class Shipment implements \JsonSerializable
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getShippedAt()
+    {
+        return $this->shippedAt;
+    }
+
+    /**
+     * @param \DateTime|null $shippedAt
+     */
+    public function setShippedAt($shippedAt)
+    {
+        $this->shippedAt = $shippedAt;
     }
 
     /**
@@ -324,6 +393,52 @@ class Shipment implements \JsonSerializable
     }
 
     /**
+     * Can we safely rate this Shipment?
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canRate ()
+    {
+        if (is_null($this->getShippingContainer()))
+            throw new BadRequestHttpException('Shipment needs a ShippingContainer');
+        else if (is_null($this->getWeight()) || $this->getWeight() <= 0)
+            throw new BadRequestHttpException('Shipment needs a weight');
+        else if (!is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+        else
+            return true;
+    }
+
+    /**
+     * Can we safely purchase postage for this Shipment?
+     * @param   Rate $rate
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canPurchasePostage (Rate $rate)
+    {
+        if (!$this->hasRate($rate))
+            throw new BadRequestHttpException('Shipment does not have provided Rate');
+        else if (!is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment already has postage');
+        else
+            return true;
+    }
+
+    /**
+     * Can we safely void the postage for this Shipment?
+     * @throws  BadRequestHttpException
+     * @return  bool
+     */
+    public function canVoidPostage ()
+    {
+        if (is_null($this->getPostage()))
+            throw new BadRequestHttpException('Shipment does not have postage to void');
+        else
+            return true;
+    }
+
+    /**
      * @return Image[]
      */
     public function getImages ()
@@ -337,6 +452,22 @@ class Shipment implements \JsonSerializable
     public function addImage (Image $image)
     {
         $this->images->add($image);
+    }
+
+    /**
+     * @return ShipmentStatus
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param ShipmentStatus $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
 }

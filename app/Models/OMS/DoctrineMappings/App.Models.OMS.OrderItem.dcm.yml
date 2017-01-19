@@ -34,6 +34,12 @@ App\Models\OMS\OrderItem:
       nullable:       false
       options:
         unsigned:     true
+    quantityShipped:
+      column:         quantityShipped
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
     basePrice:
       column:         basePrice
       type:           decimal
@@ -117,6 +123,13 @@ App\Models\OMS\OrderItem:
       fetch:          EAGER
       joinColumn:
         name:         statusId
+        referencedColumnName: id
+    shipmentStatus:
+      targetEntity:   App\Models\Support\ShipmentStatus
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         shipmentStatusId
         referencedColumnName: id
 
   oneToMany:

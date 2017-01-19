@@ -26,6 +26,7 @@ class CreateOrderItemTable extends Migration
 
             $table->integer('quantityPurchased')->unsigned()->index();
             $table->integer('quantityToFulfill')->unsigned()->index();
+            $table->integer('quantityShipped')->unsigned()->index();
             $table->decimal('basePrice', 10, 2)->unsigned()->index();
             $table->decimal('totalDiscount', 10, 2)->unsigned()->index();
             $table->decimal('totalTaxes', 10, 2)->unsigned()->index();
@@ -39,6 +40,9 @@ class CreateOrderItemTable extends Migration
 
             $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('OrderStatus');
+
+            $table->integer('shipmentStatusId')->unsigned()->index()->nullable()->default(NULL);
+            $table->foreign('shipmentStatusId')->references('id')->on('ShipmentStatus');
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });

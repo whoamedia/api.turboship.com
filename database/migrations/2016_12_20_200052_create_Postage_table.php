@@ -38,7 +38,7 @@ class CreatePostageTable extends Migration
             $table->string('externalId', 100)->index();
             $table->string('externalShipmentId', 100)->index()->nullable()->default(null);
             $table->string('externalRateId', 100)->index()->nullable()->default(null);
-            $table->datetime('voidedAt')->nullabled()->default(NULL)->index();
+            $table->datetime('voidedAt')->nullable()->default(NULL)->index();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
     }

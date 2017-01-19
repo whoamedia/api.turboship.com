@@ -46,6 +46,10 @@ class CreateOrderTable extends Migration
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('OrderStatus');
+
+            $table->integer('shipmentStatusId')->unsigned()->index()->nullable()->default(NULL);
+            $table->foreign('shipmentStatusId')->references('id')->on('ShipmentStatus');
+
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
 
             $table->unique(['externalId', 'sourceId', 'clientId']);

@@ -5,7 +5,9 @@ namespace App\Models\OMS;
 
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
+use App\Models\Support\ShipmentStatus;
 use App\Models\Support\Source;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -115,6 +117,11 @@ class Order implements \JsonSerializable
     protected $externalWeight;
 
     /**
+     * @var ShipmentStatus
+     */
+    protected $shipmentStatus;
+
+    /**
      * Order constructor.
      * @param array $data
      */
@@ -137,6 +144,7 @@ class Order implements \JsonSerializable
         $this->source                   = AU::get($data['source']);
         $this->client                   = AU::get($data['client']);
         $this->status                   = AU::get($data['status']);
+        $this->shipmentStatus           = AU::get($data['shipmentStatus']);
 
         /**
          * Default the externalCreatedAt and update it later
@@ -145,11 +153,14 @@ class Order implements \JsonSerializable
 
         if (is_null($this->status))
         {
-            /**
-             * Add the created status but don't add it to the OrderStatusHistory
-             */
             $orderStatusUtility         = new OrderStatusUtility();
             $this->status               = $orderStatusUtility->getCreated();
+        }
+
+        if (is_null($this->shipmentStatus))
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $this->shipmentStatus       = $shipmentStatusValidation->getPending();
         }
     }
 
@@ -169,6 +180,7 @@ class Order implements \JsonSerializable
         $object['source']               = $this->source->jsonSerialize();
         $object['client']               = $this->client->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
+        $object['shipmentStatus']       = $this->shipmentStatus->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalWeight']       = $this->externalWeight;
@@ -447,6 +459,22 @@ class Order implements \JsonSerializable
     }
 
     /**
+     * @return ShipmentStatus
+     */
+    public function getShipmentStatus()
+    {
+        return $this->shipmentStatus;
+    }
+
+    /**
+     * @param ShipmentStatus $shipmentStatus
+     */
+    public function setShipmentStatus($shipmentStatus)
+    {
+        $this->shipmentStatus = $shipmentStatus;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -480,5 +508,6 @@ class Order implements \JsonSerializable
     {
         return true;
     }
+
 
 }

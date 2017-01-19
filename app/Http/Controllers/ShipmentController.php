@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Shipments\GetPostage;
 use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
 use App\Http\Requests\Shipments\GetShipments;
@@ -14,13 +15,16 @@ use App\Models\Shipments\Validation\RateValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\Shipments\PostageService;
 use Illuminate\Http\Request;
 use EntityManager;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ShipmentController extends BaseAuthController
 {
@@ -125,6 +129,21 @@ class ShipmentController extends BaseAuthController
         return response($shipment->getRates(), 201);
     }
 
+    public function getPostage (Request $request)
+    {
+        $getPostage                     = new GetPostage();
+        $getPostage->setId($request->route('id'));
+        $getPostage->validate();
+        $getPostage->clean();
+
+        $shipment                       = $this->getShipment($getPostage->getId());
+
+        if (is_null($shipment->getPostage()))
+            throw new NotFoundHttpException('Shipment has not postage');
+
+        return response($shipment->getPostage());
+    }
+
     public function purchasePostage (Request $request)
     {
         $purchasePostage                = new PurchasePostage();
@@ -141,6 +160,9 @@ class ShipmentController extends BaseAuthController
         $postageService                 = new PostageService($rate->getIntegratedShippingApi());
         $postageService->purchase($shipment, $rate);
         $this->shipmentRepo->saveAndCommit($shipment);
+
+        $postageService->handleOrderShippedLogic($shipment);
+
         return response ($shipment->getPostage(), 201);
     }
 
@@ -152,14 +174,14 @@ class ShipmentController extends BaseAuthController
         $voidPostage->clean();
 
         $shipment                       = $this->getShipment($voidPostage->getId());
-
-        if (is_null($shipment->getPostage()))
-            throw new BadRequestHttpException('Shipment has not postage to void');
+        $shipment->canVoidPostage();
 
         $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
         $postageService->void($shipment);
-
         $this->shipmentRepo->saveAndCommit($shipment);
+
+        $postageService->handleOrderVoidedLogic($shipment);
+
         return response('', 204);
     }
 

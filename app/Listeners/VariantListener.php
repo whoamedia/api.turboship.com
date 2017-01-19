@@ -3,15 +3,24 @@
 namespace App\Listeners;
 
 
-use App\Jobs\Orders\OrderSkuMappingJob;
+use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Variant;
+use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Utilities\OrderStatusUtility;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use EntityManager;
 
 class VariantListener
 {
 
     use DispatchesJobs;
+
+
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepo;
 
     /**
      * Called after the entity has been saved for the first time
@@ -20,8 +29,7 @@ class VariantListener
      */
     public function postPersistHandler (Variant $variant, LifecycleEventArgs $event)
     {
-        $job                            = (new OrderSkuMappingJob($variant->getClient()->getId(), $variant->getOriginalSku()))->onQueue('orderSkuMapping');
-        $this->dispatch($job);
+        $this->findOrders($variant->getClient()->getId(), $variant->getOriginalSku());
     }
 
     /**
@@ -36,7 +44,25 @@ class VariantListener
         //  If the sku has changed search for orders and run them through the approval process
         if (isset($changeSet['sku']))
         {
-            $job                        = (new OrderSkuMappingJob($variant->getClient()->getId(), $changeSet['sku'][1]))->onQueue('orderSkuMapping');
+            $this->findOrders($variant->getClient()->getId(), $changeSet['sku'][1]);
+        }
+    }
+
+
+    private function findOrders ($clientId, $sku)
+    {
+        $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+
+        $orderQuery     = [
+            'clientIds'                 => $clientId,
+            'statusIds'                 => OrderStatusUtility::UNMAPPED_SKU,
+            'itemSkus'                  => $sku,
+        ];
+
+        $result                         = $this->orderRepo->where($orderQuery);
+        foreach ($result AS $order)
+        {
+            $job                            = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
             $this->dispatch($job);
         }
     }

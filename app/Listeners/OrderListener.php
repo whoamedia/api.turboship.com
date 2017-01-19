@@ -45,7 +45,7 @@ class OrderListener
 
     private function handleOrderShipmentLogic (Order $order)
     {
-        $job                            = (new CreateShipmentsJob($order->getId(), 1))->onQueue('orderShipments');
+        $job                            = (new CreateShipmentsJob($order->getId(), $order->getClient()->getOptions()->getDefaultShipper()->getId()))->onQueue('orderShipments');
         $this->dispatch($job);
     }
 

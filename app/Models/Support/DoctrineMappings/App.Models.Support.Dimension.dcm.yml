@@ -1,0 +1,45 @@
+App\Models\Support\Dimension:
+  type:               entity
+  table:              Dimension
+  repositoryClass:    App\Repositories\Doctrine\Support\DimensionRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Dimension id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    length:
+      column:         length
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    width:
+      column:         width
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    height:
+      column:         height
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false

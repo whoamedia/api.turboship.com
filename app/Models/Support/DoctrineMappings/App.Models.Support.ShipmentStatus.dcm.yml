@@ -1,0 +1,32 @@
+App\Models\Support\ShipmentStatus:
+  type:               entity
+  table:              ShipmentStatus
+  repositoryClass:    App\Repositories\Doctrine\Support\ShipmentStatusRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ShipmentStatus id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "ShipmentStatus name"
+    isError:
+      column:         isError
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the ShipmentStatus indicates an error"

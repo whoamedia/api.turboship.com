@@ -97,6 +97,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shipments/{id}/images', 'ShipmentController@getImages');
     Route::get('/shipments/{id}/rates', 'ShipmentController@getRates');
     Route::post('/shipments/{id}/rates', 'ShipmentController@createRates');
+    Route::get('/shipments/{id}/postage', 'ShipmentController@getPostage');
     Route::delete('/shipments/{id}/postage', 'ShipmentController@voidPostage');
     Route::post('/shipments/{id}/postage/{rateId}', 'ShipmentController@purchasePostage');
 
@@ -133,6 +134,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Support Operations
     Route::get('/support/sources', 'SupportController@getSources');
     Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
+    Route::get('/support/shipmentStatuses', 'SupportController@getShipmentStatuses');
     Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 

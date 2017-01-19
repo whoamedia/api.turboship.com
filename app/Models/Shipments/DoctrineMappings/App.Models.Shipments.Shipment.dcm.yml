@@ -31,7 +31,12 @@ App\Models\Shipments\Shipment:
       nullable:       false
       options:
         default:      CURRENT_datetime
-
+    shippedAt:
+      column:         shippedAt
+      type:           datetime
+      nullable:       true
+      options:
+        default:      null
   manyToOne:
     fromAddress:
       targetEntity:   App\Models\Locations\Address
@@ -76,6 +81,20 @@ App\Models\Shipments\Shipment:
       joinColumn:
         name:         shippingContainerId
         referencedColumnName: id
+    status:
+      targetEntity:   App\Models\Support\ShipmentStatus
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         statusId
+        referencedColumnName: id
+
+  oneToOne:
+    dimensions:
+      targetEntity:   App\Models\Support\Dimension
+      fetch:          EAGER
+      nullable:       true
+      cascade:        ["persist", "remove"]
 
   oneToMany:
     items:

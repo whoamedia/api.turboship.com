@@ -4,6 +4,8 @@ namespace App\Models\OMS;
 
 
 use App\Models\Shipments\ShipmentItem;
+use App\Models\Support\ShipmentStatus;
+use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -59,6 +61,11 @@ class OrderItem implements \JsonSerializable
     protected $quantityToFulfill;
 
     /**
+     * @var int
+     */
+    protected $quantityShipped;
+
+    /**
      * Shopify price
      * @var float
      */
@@ -101,6 +108,10 @@ class OrderItem implements \JsonSerializable
      */
     protected $shipmentItems;
 
+    /**
+     * @var ShipmentStatus
+     */
+    protected $shipmentStatus;
 
     /**
      * OrderItem constructor.
@@ -118,10 +129,12 @@ class OrderItem implements \JsonSerializable
         $this->sku                      = AU::get($data['sku']);
         $this->quantityPurchased        = AU::get($data['quantityPurchased']);
         $this->quantityToFulfill        = AU::get($data['quantityToFulfill']);
+        $this->quantityShipped          = AU::get($data['quantityShipped'], 0);
         $this->basePrice                = AU::get($data['basePrice']);
         $this->totalDiscount            = AU::get($data['totalDiscount']);
         $this->totalTaxes               = AU::get($data['totalTaxes']);
         $this->status                   = AU::get($data['status']);
+        $this->shipmentStatus           = AU::get($data['shipmentStatus']);
         $this->order                    = AU::get($data['order']);
         $this->variant                  = AU::get($data['variant']);
 
@@ -129,6 +142,12 @@ class OrderItem implements \JsonSerializable
         {
             $orderStatusUtility         = new OrderStatusUtility();
             $this->setStatus($orderStatusUtility->getCreated());
+        }
+
+        if (is_null($this->shipmentStatus))
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $this->shipmentStatus       = $shipmentStatusValidation->getPending();
         }
     }
 
@@ -141,10 +160,12 @@ class OrderItem implements \JsonSerializable
         $object['sku']                  = $this->sku;
         $object['quantityPurchased']    = $this->quantityPurchased;
         $object['quantityToFulfill']    = $this->quantityToFulfill;
+        $object['quantityShipped']      = $this->quantityShipped;
         $object['basePrice']            = $this->basePrice;
         $object['totalDiscount']        = $this->totalDiscount;
         $object['totalTaxes']           = $this->totalTaxes;
         $object['status']               = $this->status->jsonSerialize();
+        $object['shipmentStatus']       = $this->shipmentStatus->jsonSerialize();
         $object['variant']              = is_null($this->variant) ? null : $this->variant->jsonSerialize();
         $object['externalId']           = $this->externalId;
         $object['externalProductId']    = $this->externalProductId;
@@ -274,6 +295,22 @@ class OrderItem implements \JsonSerializable
     }
 
     /**
+     * @return int
+     */
+    public function getQuantityShipped()
+    {
+        return $this->quantityShipped;
+    }
+
+    /**
+     * @param int $quantityShipped
+     */
+    public function setQuantityShipped($quantityShipped)
+    {
+        $this->quantityShipped = $quantityShipped;
+    }
+
+    /**
      * @return float
      */
     public function getBasePrice()
@@ -367,6 +404,23 @@ class OrderItem implements \JsonSerializable
     public function setStatus($status)
     {
         $this->status = $status;
+
+    }
+
+    /**
+     * @return ShipmentStatus
+     */
+    public function getShipmentStatus()
+    {
+        return $this->shipmentStatus;
+    }
+
+    /**
+     * @param ShipmentStatus $shipmentStatus
+     */
+    public function setShipmentStatus($shipmentStatus)
+    {
+        $this->shipmentStatus = $shipmentStatus;
     }
 
     /**
