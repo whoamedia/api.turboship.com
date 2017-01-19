@@ -10,40 +10,7 @@ updateSupervisor(){
 }
 
 installSupervisor(){
-    pip install --install-option="--install-scripts=/usr/bin" supervisor --pre
-    cp ../.ebextensions/supervisord /etc/init.d/supervisord
-    chmod 777 /etc/init.d/supervisord
-    mkdir -m 766 /var/log/supervisor
-    umask 022
-    touch /var/log/supervisor/supervisord.log
-    cp .ebextensions/supervisord.conf /etc/supervisord.conf
-    /etc/init.d/supervisord  start
-    sudo chkconfig supervisord  on
+    sudo php artisan doctrine:queue:work beanstalkd --queue=shopifyOrders --tries=5 --sleep=5 --daemon
 }
 
-#/opt/elasticbeanstalk/bin/get-config environment --output yaml | sed -n '1!p' | sed -e 's/^\(.*\): /\1=/g' > bashEnv
-
-declare -A ary
-
-readarray -t lines < "bashEnv"
-
-for line in "${lines[@]}"; do
-   key=${line%%=*}
-   value=${line#*=}
-   ary[$key]=$value
-done
-
-echo "Copying environmental variables to dotenv"
-cp bashEnv .env
-echo "Starting worker deploy process...";
-
-if [ -f /etc/init.d/supervisord ];
-    then
-       echo "Config found. Supervisor already installed"
-       updateSupervisor
-    else
-       echo "No supervisor config found. Installing supervisor..."
-       installSupervisor
-    fi
-
-echo "Deployment done!"
+installSupervisor
