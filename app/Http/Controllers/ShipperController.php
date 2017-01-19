@@ -45,7 +45,7 @@ class ShipperController extends BaseAuthController
 
         $query                          = $getShippers->jsonSerialize();
 
-        $results                        = $this->shipperRepo->where($query);
+        $results                        = $this->shipperRepo->where($query, false);
         return response($results);
     }
 
