@@ -38,7 +38,7 @@ class CreateShipmentTable extends Migration
 
             $table->decimal('weight', 10, 2)->nullable()->default(NULL);
 
-            $table->integer('statusId')->unsigned()->index()->nullable()->default(NULL);
+            $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('ShipmentStatus');
 
             $table->datetime('shippedAt')->nullable()->default(NULL)->index();

@@ -83,7 +83,7 @@ App\Models\Shipments\Shipment:
         referencedColumnName: id
     status:
       targetEntity:   App\Models\Support\ShipmentStatus
-      nullable:       true
+      nullable:       false
       fetch:          EAGER
       joinColumn:
         name:         statusId

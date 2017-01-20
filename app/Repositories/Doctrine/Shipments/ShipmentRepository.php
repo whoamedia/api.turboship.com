@@ -54,7 +54,7 @@ class ShipmentRepository extends BaseRepository
             'carrier.id AS carrier_id', 'carrier.name AS carrier_name',
             'service.id AS service_id', 'service.name AS service_name',
             'client.id AS client_id', 'client.name AS client_name',
-            'organization.id AS organization_id', 'organization.name AS organization_name',
+            'status.id AS status_id', 'status.name AS status_name',
         ]);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
@@ -62,7 +62,7 @@ class ShipmentRepository extends BaseRepository
         $qb->addGroupBy('carrier');
         $qb->addGroupBy('service');
         $qb->addGroupBy('client');
-        $qb->addGroupBy('organization');
+        $qb->addGroupBy('status');
 
         $result                                 =       $qb->getQuery()->getResult();
 
@@ -71,7 +71,7 @@ class ShipmentRepository extends BaseRepository
             'carrier'           =>  [],
             'service'           =>  [],
             'client'            =>  [],
-            'organization'      =>  [],
+            'status'            =>  [],
         ];
 
         return $this->buildLexicon($lexicon, $result);
@@ -85,6 +85,7 @@ class ShipmentRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\Shipment', 'shipment')
+            ->join('shipment.status', 'status', Query\Expr\Join::ON)
             ->leftJoin('shipment.shippingContainer', 'shippingContainer', Query\Expr\Join::ON)
             ->leftJoin('shipment.postage', 'postage', Query\Expr\Join::ON)
             ->leftJoin('shipment.service', 'service', Query\Expr\Join::ON)

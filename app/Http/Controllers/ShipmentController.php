@@ -71,6 +71,18 @@ class ShipmentController extends BaseAuthController
         return response($shipments);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getShipments                   = new GetShipments($request->input());
+        $getShipments->setOrganizationIds($this->getAuthUserOrganization()->getId());
+        $getShipments->validate();
+        $getShipments->clean();
+
+        $query                          = $getShipments->jsonSerialize();
+        $shipments                      = $this->shipmentRepo->getLexicon($query);
+        return response($shipments);
+    }
+
     public function show (Request $request)
     {
         $shipment                       = $this->getShipment($request->route('id'));
