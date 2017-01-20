@@ -131,6 +131,7 @@ class Shipment implements \JsonSerializable
         $object['weight']               = $this->weight;
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['dimensions']           = is_null($this->dimensions) ? null : $this->dimensions->jsonSerialize();
+        $object['status']               = $this->status->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['shippedAt']            = $this->shippedAt;
 
