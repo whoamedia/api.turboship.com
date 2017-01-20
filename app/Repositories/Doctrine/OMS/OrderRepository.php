@@ -52,7 +52,6 @@ class OrderRepository extends BaseRepository
             'COUNT(orders.id) AS total',
             'source.id AS source_id', 'source.name AS source_name',
             'client.id AS client_id', 'client.name AS client_name',
-            'organization.id AS organization_id', 'organization.name AS organization_name',
             'status.id AS status_id', 'status.name AS status_name',
             'shipmentStatus.id AS shipmentStatus_id', 'shipmentStatus.name AS shipmentStatus_name',
         ]);
@@ -60,7 +59,6 @@ class OrderRepository extends BaseRepository
 
         $qb->addGroupBy('source');
         $qb->addGroupBy('client');
-        $qb->addGroupBy('organization');
         $qb->addGroupBy('status');
         $qb->addGroupBy('shipmentStatus');
 
@@ -69,7 +67,6 @@ class OrderRepository extends BaseRepository
         $lexicon = [
             'source'            =>  [],
             'client'            =>  [],
-            'organization'      =>  [],
             'status'            =>  [],
             'shipmentStatus'    =>  [],
         ];
@@ -86,7 +83,7 @@ class OrderRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\Order', 'orders')
-            ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
+            //  ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
             ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
