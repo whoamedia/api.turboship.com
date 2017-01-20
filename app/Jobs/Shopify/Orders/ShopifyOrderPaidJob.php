@@ -42,9 +42,9 @@ class ShopifyOrderPaidJob extends BaseShopifyJob implements ShouldQueue
      * ShopifyImportOrderJob constructor.
      * @param   ShopifyOrder                $shopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
         parent::__construct($integratedShoppingCartId, 'orders/paid', $shopifyWebHookLog);
         $this->shopifyOrder             = $shopifyOrder;

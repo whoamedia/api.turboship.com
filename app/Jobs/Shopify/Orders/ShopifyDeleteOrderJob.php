@@ -41,11 +41,11 @@ class ShopifyDeleteOrderJob extends BaseShopifyJob implements ShouldQueue
      * ShopifyDeleteOrderJob constructor.
      * @param   ShopifyOrder                $shopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/delete', $shopifyWebHookLog);
+        parent::__construct($integratedShoppingCartId, 'orders/delete', $shopifyWebHookLogId);
         $this->shopifyOrder             = $shopifyOrder;
     }
 

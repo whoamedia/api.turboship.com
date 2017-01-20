@@ -32,16 +32,15 @@ class ShopifyCancelOrderJob extends BaseShopifyJob implements ShouldQueue
      */
     private $orderRepo;
 
-
     /**
      * ShopifyCancelOrderJob constructor.
      * @param   ShopifyOrder                $shopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/cancel', $shopifyWebHookLog);
+        parent::__construct($integratedShoppingCartId, 'orders/cancel', $shopifyWebHookLogId);
         $this->shopifyOrder             = $shopifyOrder;
     }
 

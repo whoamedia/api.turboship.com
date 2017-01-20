@@ -42,7 +42,7 @@ class ShopifyProductController extends BaseShopifyController
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $job                            = (new ShopifyCreateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
+            $job                            = (new ShopifyCreateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -62,7 +62,7 @@ class ShopifyProductController extends BaseShopifyController
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $job                            = (new ShopifyDeleteProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
+            $job                            = (new ShopifyDeleteProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -82,7 +82,7 @@ class ShopifyProductController extends BaseShopifyController
             $this->shopifyProductMappingService = new ShopifyProductMappingService($this->client);
             $shopifyProduct                 = new ShopifyProduct($request->input());
 
-            $job                            = (new ShopifyUpdateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyProducts');
+            $job                            = (new ShopifyUpdateProductJob($shopifyProduct, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyProducts');
             $this->dispatch($job);
         }
         catch (\Exception $exception)

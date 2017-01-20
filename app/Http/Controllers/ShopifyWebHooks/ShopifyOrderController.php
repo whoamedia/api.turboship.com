@@ -42,7 +42,7 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $job                            = (new ShopifyCreateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyCreateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -61,7 +61,7 @@ class ShopifyOrderController extends BaseShopifyController
             parent::handleRequest($request);
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
-            $job                            = (new ShopifyCancelOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyCancelOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
 
         }
@@ -82,7 +82,7 @@ class ShopifyOrderController extends BaseShopifyController
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $job                            = (new ShopifyDeleteOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyDeleteOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -103,7 +103,7 @@ class ShopifyOrderController extends BaseShopifyController
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $job                            = (new ShopifyOrderPaidJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyOrderPaidJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
         }
         catch (\Exception $exception)
@@ -123,7 +123,7 @@ class ShopifyOrderController extends BaseShopifyController
             $this->shopifyOrderMappingService   = new ShopifyOrderMappingService($this->client);
             $shopifyOrder                   = new ShopifyOrder($request->input());
 
-            $job                            = (new ShopifyUpdateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog))->onQueue('shopifyOrders');
+            $job                            = (new ShopifyUpdateOrderJob($shopifyOrder, $this->integratedShoppingCart->getId(), $this->shopifyWebHookLog->getId()))->onQueue('shopifyOrders');
             $this->dispatch($job);
 
         }
