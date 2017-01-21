@@ -160,6 +160,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['limit']                = $this->limit;
         $object['receivedFrom']         = $this->receivedFrom;
         $object['receivedTo']           = $this->receivedTo;
+        $object['externalCreatedFrom']  = $this->externalCreatedFrom;
+        $object['externalCreatedTo']    = $this->externalCreatedTo;
 
         return $object;
     }

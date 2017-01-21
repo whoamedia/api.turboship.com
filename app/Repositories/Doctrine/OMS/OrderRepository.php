@@ -126,6 +126,18 @@ class OrderRepository extends BaseRepository
             $qb->setParameter('receivedTo', $query['receivedTo']);
         }
 
+        if (!is_null(AU::get($query['externalCreatedFrom'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedFrom'));
+            $qb->setParameter('externalCreatedFrom', $query['externalCreatedFrom']);
+        }
+
+        if (!is_null(AU::get($query['externalCreatedTo'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedTo'));
+            $qb->setParameter('externalCreatedTo', $query['externalCreatedTo']);
+        }
+
         if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();
