@@ -43,7 +43,7 @@ class IntegratedShoppingCartController extends BaseAuthController
 
         $query                              = $getIntegratedShoppingCarts->jsonSerialize();
 
-        $results                            = $this->integratedShoppingCartRepo->where($query);
+        $results                            = $this->integratedShoppingCartRepo->where($query, false);
         return response($results);
     }
 
