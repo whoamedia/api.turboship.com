@@ -71,6 +71,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $isError;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
 
     public function __construct($data = [])
     {
@@ -86,6 +91,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = AU::get($data['isAddressError']);
         $this->isSkuError               = AU::get($data['isSkuError']);
         $this->isError                  = AU::get($data['isError']);
+        $this->limit                    = AU::get($data['limit'], 80);
     }
 
     public function validate()
@@ -123,6 +129,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['isAddressError']       = $this->isAddressError;
         $object['isSkuError']           = $this->isSkuError;
         $object['isError']              = $this->isError;
+        $object['limit']                = $this->limit;
 
         return $object;
     }
@@ -317,6 +324,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setIsError($isError)
     {
         $this->isError = $isError;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
     }
 
 }
