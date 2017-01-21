@@ -114,16 +114,16 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['isError'])))
             $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));
 
-        if (!is_null(AU::get($query['receivedFrom'])))
+        if (!is_null(AU::get($query['createdFrom'])))
         {
-            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':receivedFrom'));
-            $qb->setParameter('receivedFrom', $query['receivedFrom']);
+            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':createdFrom'));
+            $qb->setParameter('createdFrom', $query['createdFrom']);
         }
 
-        if (!is_null(AU::get($query['receivedTo'])))
+        if (!is_null(AU::get($query['createdTo'])))
         {
-            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':receivedTo'));
-            $qb->setParameter('receivedTo', $query['receivedTo']);
+            $qb->andWhere($qb->expr()->lte('orders.createdAt', ':createdTo'));
+            $qb->setParameter('createdTo', $query['createdTo']);
         }
 
         if (!is_null(AU::get($query['externalCreatedFrom'])))
@@ -134,7 +134,7 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['externalCreatedTo'])))
         {
-            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedTo'));
+            $qb->andWhere($qb->expr()->lte('orders.externalCreatedAt', ':externalCreatedTo'));
             $qb->setParameter('externalCreatedTo', $query['externalCreatedTo']);
         }
 

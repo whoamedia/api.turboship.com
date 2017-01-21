@@ -79,12 +79,12 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
-    protected $receivedFrom;
+    protected $createdFrom;
 
     /**
      * @var string|null
      */
-    protected $receivedTo;
+    protected $createdTo;
 
     /**
      * @var string|null
@@ -112,8 +112,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isSkuError               = AU::get($data['isSkuError']);
         $this->isError                  = AU::get($data['isError']);
         $this->limit                    = AU::get($data['limit'], 80);
-        $this->receivedFrom             = AU::get($data['receivedFrom']);
-        $this->receivedTo               = AU::get($data['receivedTo']);
+        $this->createdFrom              = AU::get($data['createdFrom']);
+        $this->createdTo                = AU::get($data['createdTo']);
         $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
         $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
     }
@@ -129,8 +129,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
         $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
-        $this->receivedFrom             = parent::validateDate($this->receivedFrom, 'receivedFrom');
-        $this->receivedTo               = parent::validateDate($this->receivedTo, 'receivedTo');
+        $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
+        $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->externalCreatedFrom      = parent::validateDate($this->externalCreatedFrom, 'externalCreatedFrom');
         $this->externalCreatedTo        = parent::validateDate($this->externalCreatedTo, 'externalCreatedTo');
     }
@@ -158,8 +158,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['isSkuError']           = $this->isSkuError;
         $object['isError']              = $this->isError;
         $object['limit']                = $this->limit;
-        $object['receivedFrom']         = $this->receivedFrom;
-        $object['receivedTo']           = $this->receivedTo;
+        $object['createdFrom']          = $this->createdFrom;
+        $object['createdTo']            = $this->createdTo;
         $object['externalCreatedFrom']  = $this->externalCreatedFrom;
         $object['externalCreatedTo']    = $this->externalCreatedTo;
 
@@ -377,17 +377,17 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @return null|string
      */
-    public function getReceivedFrom()
+    public function getCreatedFrom()
     {
-        return $this->receivedFrom;
+        return $this->createdFrom;
     }
 
     /**
-     * @param null|string $receivedFrom
+     * @return null|string
      */
-    public function setReceivedFrom($receivedFrom)
+    public function getCreatedTo()
     {
-        $this->receivedFrom = $receivedFrom;
+        return $this->createdTo;
     }
 
     /**
@@ -395,15 +395,15 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     public function getReceivedTo()
     {
-        return $this->receivedTo;
+        return $this->createdTo;
     }
 
     /**
-     * @param null|string $receivedTo
+     * @param null|string $createdTo
      */
-    public function setReceivedTo($receivedTo)
+    public function setReceivedTo($createdTo)
     {
-        $this->receivedTo = $receivedTo;
+        $this->createdTo = $createdTo;
     }
 
     /**
