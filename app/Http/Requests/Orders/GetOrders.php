@@ -86,6 +86,16 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $receivedTo;
 
+    /**
+     * @var string|null
+     */
+    protected $externalCreatedFrom;
+
+    /**
+     * @var string|null
+     */
+    protected $externalCreatedTo;
+
 
     public function __construct($data = [])
     {
@@ -104,6 +114,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->limit                    = AU::get($data['limit'], 80);
         $this->receivedFrom             = AU::get($data['receivedFrom']);
         $this->receivedTo               = AU::get($data['receivedTo']);
+        $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
+        $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
     }
 
     public function validate()
@@ -119,6 +131,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
         $this->receivedFrom             = parent::validateDate($this->receivedFrom, 'receivedFrom');
         $this->receivedTo               = parent::validateDate($this->receivedTo, 'receivedTo');
+        $this->externalCreatedFrom      = parent::validateDate($this->externalCreatedFrom, 'externalCreatedFrom');
+        $this->externalCreatedTo        = parent::validateDate($this->externalCreatedTo, 'externalCreatedTo');
     }
 
     public function clean ()
@@ -388,6 +402,38 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setReceivedTo($receivedTo)
     {
         $this->receivedTo = $receivedTo;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalCreatedFrom()
+    {
+        return $this->externalCreatedFrom;
+    }
+
+    /**
+     * @param null|string $externalCreatedFrom
+     */
+    public function setExternalCreatedFrom($externalCreatedFrom)
+    {
+        $this->externalCreatedFrom = $externalCreatedFrom;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalCreatedTo()
+    {
+        return $this->externalCreatedTo;
+    }
+
+    /**
+     * @param null|string $externalCreatedTo
+     */
+    public function setExternalCreatedTo($externalCreatedTo)
+    {
+        $this->externalCreatedTo = $externalCreatedTo;
     }
 
 }
