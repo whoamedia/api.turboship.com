@@ -149,6 +149,20 @@ abstract class IntegratedService implements \JsonSerializable
     }
 
     /**
+     * @param   int     $id
+     * @return  Credential|null
+     */
+    public function getCredentialById ($id)
+    {
+        foreach ($this->getCredentials() AS $credential)
+        {
+            if ($credential->getId() == $id)
+                return $credential;
+        }
+        return null;
+    }
+
+    /**
      * @return IntegratedWebHook[]
      */
     public function getIntegratedWebHooks ()

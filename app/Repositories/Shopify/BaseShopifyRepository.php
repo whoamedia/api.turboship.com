@@ -3,6 +3,7 @@
 namespace App\Repositories\Shopify;
 
 
+use App\Integrations\Shopify\Exceptions\ShopifyInvalidCredentialsException;
 use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Integrations\IntegratedShoppingCart;
@@ -45,7 +46,7 @@ class BaseShopifyRepository
     {
         $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->clientValidation         = new ClientValidation($this->clientRepo);
-        $this->integratedShoppingCart        = $integratedShoppingCart;
+        $this->integratedShoppingCart   = $integratedShoppingCart;
         $this->client                   = $this->integratedShoppingCart->getClient();
 
         if (!is_null($shopifyIntegration))
@@ -80,6 +81,22 @@ class BaseShopifyRepository
     public function setShopifyIntegration($shopifyIntegration)
     {
         $this->shopifyIntegration = $shopifyIntegration;
+    }
+
+    /**
+     * @return bool
+     */
+    public function validateCredentials ()
+    {
+        try
+        {
+            $this->shopifyIntegration->webHookApi->get();
+        }
+        catch (ShopifyInvalidCredentialsException $exception)
+        {
+            return false;
+        }
+        return true;
     }
 
 }

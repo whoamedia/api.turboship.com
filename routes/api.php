@@ -46,6 +46,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/integratedShoppingCarts', 'IntegratedShoppingCartController@index');
     Route::get('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@show');
     Route::get('/integratedShoppingCarts/{id}/credentials', 'IntegratedShoppingCartController@getCredentials');
+    Route::put('/integratedShoppingCarts/{id}/credentials', 'IntegratedShoppingCartController@updateCredentials');
     Route::get('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@getWebHooks');
     Route::get('/integratedShoppingCarts/{id}/webHooks/available', 'IntegratedShoppingCartController@getAvailableWebHooks');
     Route::post('/integratedShoppingCarts/{id}/webHooks', 'IntegratedShoppingCartController@createWebHook');

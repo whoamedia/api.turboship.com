@@ -7,16 +7,19 @@ use App\Http\Requests\IntegratedShoppingCarts\CreateIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\DeleteIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\GetIntegratedShoppingCarts;
 use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
+use App\Http\Requests\Integrations\UpdateIntegrationCredentials;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\IntegratedWebHook;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Models\Integrations\Validation\IntegratedWebHookValidation;
 use App\Models\Integrations\Validation\IntegrationWebHookValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
+use App\Repositories\Shopify\BaseShopifyRepository;
 use App\Repositories\Shopify\ShopifyWebHookRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use EntityManager;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IntegratedShoppingCartController extends BaseAuthController
 {
@@ -57,6 +60,31 @@ class IntegratedShoppingCartController extends BaseAuthController
     public function getCredentials (Request $request)
     {
         $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        return response($integratedShoppingCart->getCredentials());
+    }
+
+    public function updateCredentials (Request $request)
+    {
+        $updateIntegrationCredentials       = new UpdateIntegrationCredentials($request->input());
+        $updateIntegrationCredentials->setId($request->route('id'));
+        $updateIntegrationCredentials->validate();
+        $updateIntegrationCredentials->clean();
+
+        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($updateIntegrationCredentials->getId());
+        foreach ($updateIntegrationCredentials->getCredentials() AS $updateCredential)
+        {
+            $integrationCredential          = $integratedShoppingCart->getCredentialById($updateCredential->getIntegrationCredentialId());
+            if (is_null($integrationCredential))
+                throw new NotFoundHttpException('integrationCredentialId not found');
+
+            $integrationCredential->setValue($updateCredential->getValue());
+        }
+
+        $baseShopifyRepository              = new BaseShopifyRepository($integratedShoppingCart);
+        if (!$baseShopifyRepository->validateCredentials())
+            throw new BadRequestHttpException('The provided credentials are invalid');
+
+        $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
         return response($integratedShoppingCart->getCredentials());
     }
 
