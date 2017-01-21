@@ -76,6 +76,16 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $limit;
 
+    /**
+     * @var string|null
+     */
+    protected $receivedFrom;
+
+    /**
+     * @var string|null
+     */
+    protected $receivedTo;
+
 
     public function __construct($data = [])
     {
@@ -92,6 +102,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isSkuError               = AU::get($data['isSkuError']);
         $this->isError                  = AU::get($data['isError']);
         $this->limit                    = AU::get($data['limit'], 80);
+        $this->receivedFrom             = AU::get($data['receivedFrom']);
+        $this->receivedTo               = AU::get($data['receivedTo']);
     }
 
     public function validate()
@@ -105,6 +117,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
         $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
+        $this->receivedFrom             = parent::validateDate($this->receivedFrom, 'receivedFrom');
+        $this->receivedTo               = parent::validateDate($this->receivedTo, 'receivedTo');
     }
 
     public function clean ()
@@ -130,6 +144,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['isSkuError']           = $this->isSkuError;
         $object['isError']              = $this->isError;
         $object['limit']                = $this->limit;
+        $object['receivedFrom']         = $this->receivedFrom;
+        $object['receivedTo']           = $this->receivedTo;
 
         return $object;
     }
@@ -340,6 +356,38 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setLimit($limit)
     {
         $this->limit = $limit;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReceivedFrom()
+    {
+        return $this->receivedFrom;
+    }
+
+    /**
+     * @param null|string $receivedFrom
+     */
+    public function setReceivedFrom($receivedFrom)
+    {
+        $this->receivedFrom = $receivedFrom;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReceivedTo()
+    {
+        return $this->receivedTo;
+    }
+
+    /**
+     * @param null|string $receivedTo
+     */
+    public function setReceivedTo($receivedTo)
+    {
+        $this->receivedTo = $receivedTo;
     }
 
 }

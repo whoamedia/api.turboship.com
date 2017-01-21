@@ -114,6 +114,18 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['isError'])))
             $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));
 
+        if (!is_null(AU::get($query['receivedFrom'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':receivedFrom'));
+            $qb->setParameter('receivedFrom', $query['receivedFrom']);
+        }
+
+        if (!is_null(AU::get($query['receivedTo'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':receivedTo'));
+            $qb->setParameter('receivedTo', $query['receivedTo']);
+        }
+
         if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();
