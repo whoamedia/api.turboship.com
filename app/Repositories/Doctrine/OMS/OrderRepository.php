@@ -49,7 +49,7 @@ class OrderRepository extends BaseRepository
     {
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select([
-            'COUNT(orders.id) AS total',
+            'COUNT(DISTINCT orders.id) AS total',
             'source.id AS source_id', 'source.name AS source_name',
             'client.id AS client_id', 'client.name AS client_name',
             'status.id AS status_id', 'status.name AS status_name',
