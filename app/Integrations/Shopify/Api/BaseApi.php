@@ -99,6 +99,8 @@ class BaseApi
                 throw new ShopifyInvalidCredentialsException();
             else if ($ex->getCode() == 404)
                 throw new ShopifyItemNotFoundException('Item not found', $ex->getCode());
+            else if (preg_match("/Invalid API key or access token/", $errorMessage))
+                throw new ShopifyInvalidCredentialsException();
             else if ($ex->getCode() == 422)
             {
                 throw new ShopifyUnprocessableEntityException($errorMessage);

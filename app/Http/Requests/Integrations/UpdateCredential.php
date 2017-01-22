@@ -40,6 +40,9 @@ class UpdateCredential implements Cleanable, Validatable, \JsonSerializable
 
         if (is_null(InputUtil::getInt($this->integrationCredentialId)))
             throw new BadRequestHttpException('integrationCredentialId must be integer');
+
+        if (empty($this->value))
+            throw new BadRequestHttpException('value cannot be empty');
     }
 
     public function clean ()
