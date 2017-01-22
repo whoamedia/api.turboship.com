@@ -56,7 +56,7 @@ class IntegrationController extends BaseAuthController
         $getShippingApiIntegrations->clean();
 
         $query                          = $getShippingApiIntegrations->jsonSerialize();
-        $results                        = $this->shippingApiIntegrationRepo->where($query);
+        $results                        = $this->shippingApiIntegrationRepo->where($query, false);
         return response($results);
     }
 
@@ -67,7 +67,7 @@ class IntegrationController extends BaseAuthController
         $getShoppingCartIntegrations->clean();
 
         $query                          = $getShoppingCartIntegrations->jsonSerialize();
-        $results                        = $this->shoppingCartIntegrationRepo->where($query);
+        $results                        = $this->shoppingCartIntegrationRepo->where($query, false);
         return response($results);
     }
 
