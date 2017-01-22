@@ -14,8 +14,8 @@ use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Models\Integrations\Validation\IntegratedWebHookValidation;
 use App\Models\Integrations\Validation\IntegrationWebHookValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
-use App\Repositories\Shopify\BaseShopifyRepository;
 use App\Repositories\Shopify\ShopifyWebHookRepository;
+use App\Services\CredentialService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use EntityManager;
@@ -80,9 +80,9 @@ class IntegratedShoppingCartController extends BaseAuthController
             $integrationCredential->setValue($updateCredential->getValue());
         }
 
-        $baseShopifyRepository              = new BaseShopifyRepository($integratedShoppingCart);
-        if (!$baseShopifyRepository->validateCredentials())
-            throw new BadRequestHttpException('The provided credentials are invalid');
+        $credentialService                  = new CredentialService($integratedShoppingCart);
+        if (!$credentialService->validateCredentials())
+            throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
 
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
         return response($integratedShoppingCart->getCredentials());
