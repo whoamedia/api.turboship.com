@@ -44,6 +44,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  IntegratedShoppingCart Operations
     Route::get('/integratedShoppingCarts', 'IntegratedShoppingCartController@index');
+    Route::post('/integratedShoppingCarts', 'IntegratedShoppingCartController@store');
     Route::get('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@show');
     Route::put('/integratedShoppingCarts/{id}', 'IntegratedShoppingCartController@update');
     Route::get('/integratedShoppingCarts/{id}/credentials', 'IntegratedShoppingCartController@getCredentials');

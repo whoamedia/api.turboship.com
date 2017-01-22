@@ -16,33 +16,29 @@ class CreateIntegratedShoppingCart extends CreateIntegratedService implements Cl
     /**
      * @var int
      */
-    protected $shoppingCartIntegrationId;
+    protected $clientId;
 
 
     public function __construct($data = [])
     {
         parent::__construct($data);
-
-        $this->shoppingCartIntegrationId   = AU::get($data['shoppingCartIntegrationId']);
+        $this->clientId                 = AU::get($data['clientId']);
     }
-
 
     public function validate()
     {
         parent::validate();
+        if (is_null($this->clientId))
+            throw new BadRequestHttpException('clientId is required');
 
-        if (is_null($this->shoppingCartIntegrationId))
-            throw new BadRequestHttpException('shoppingCartIntegrationId is required');
-
-        if (is_null(InputUtil::getInt($this->shoppingCartIntegrationId)))
-            throw new BadRequestHttpException('shoppingCartIntegrationId must be integer');
+        if (is_null(InputUtil::getInt($this->clientId)))
+            throw new BadRequestHttpException('clientId must be integer');
     }
 
-    public function clean()
+    public function clean ()
     {
         parent::clean();
-
-        $this->shoppingCartIntegrationId   = InputUtil::getInt($this->shoppingCartIntegrationId);
+        $this->clientId                 = InputUtil::getInt($this->clientId);
     }
 
     /**
@@ -51,7 +47,7 @@ class CreateIntegratedShoppingCart extends CreateIntegratedService implements Cl
     public function jsonSerialize ()
     {
         $object                         = parent::jsonSerialize();
-        $object['shoppingCartIntegrationId'] = $this->shoppingCartIntegrationId;
+        $object['clientId']             = $this->clientId;
 
         return $object;
     }
@@ -59,18 +55,17 @@ class CreateIntegratedShoppingCart extends CreateIntegratedService implements Cl
     /**
      * @return int
      */
-    public function getECommerceIntegrationId()
+    public function getClientId()
     {
-        return $this->shoppingCartIntegrationId;
+        return $this->clientId;
     }
 
     /**
-     * @param int $shoppingCartIntegrationId
+     * @param int $clientId
      */
-    public function setECommerceIntegrationId($shoppingCartIntegrationId)
+    public function setClientId($clientId)
     {
-        $this->shoppingCartIntegrationId = $shoppingCartIntegrationId;
+        $this->clientId = $clientId;
     }
-
 
 }

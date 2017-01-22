@@ -7,14 +7,19 @@ use App\Http\Requests\IntegratedShoppingCarts\CreateIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\DeleteIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\GetIntegratedShoppingCarts;
 use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
+use App\Http\Requests\Integrations\CreateIntegratedShoppingCart;
 use App\Http\Requests\Integrations\UpdateCredential;
 use App\Http\Requests\Integrations\UpdateIntegration;
 use App\Http\Requests\Integrations\UpdateIntegrationCredentials;
+use App\Models\CMS\Validation\ClientValidation;
+use App\Models\Integrations\Credential;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\IntegratedWebHook;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Models\Integrations\Validation\IntegratedWebHookValidation;
 use App\Models\Integrations\Validation\IntegrationWebHookValidation;
+use App\Models\Integrations\Validation\ShoppingCartApiValidation;
+use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
 use App\Repositories\Shopify\ShopifyWebHookRepository;
 use App\Services\CredentialService;
@@ -33,11 +38,17 @@ class IntegratedShoppingCartController extends BaseAuthController
     protected $integratedShoppingCartRepo;
 
     /**
+     * @var ClientRepository
+     */
+    protected $clientRepo;
+
+    /**
      * IntegratedShoppingCartController constructor.
      */
     public function __construct ()
     {
         $this->integratedShoppingCartRepo   = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
+        $this->clientRepo                   = EntityManager::getRepository('App\Models\CMS\Client');
     }
 
 
@@ -91,6 +102,58 @@ class IntegratedShoppingCartController extends BaseAuthController
             if (!$credentialService->validateCredentials())
                 throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
         }
+
+        $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
+        return response($integratedShoppingCart);
+    }
+
+    public function store (Request $request)
+    {
+        $createIntegratedShoppingCart       = new CreateIntegratedShoppingCart($request->input());
+        $createIntegratedShoppingCart->validate();
+        $createIntegratedShoppingCart->clean();
+
+        $integratedShoppingCart             = new IntegratedShoppingCart();
+        $integratedShoppingCart->setName($createIntegratedShoppingCart->getName());
+
+        $shoppingCartApiValidation          = new ShoppingCartApiValidation();
+        $shoppingCartIntegration            = $shoppingCartApiValidation->idExists($createIntegratedShoppingCart->getIntegrationId());
+        $integratedShoppingCart->setIntegration($shoppingCartIntegration);
+
+        $clientValidation                   = new ClientValidation($this->clientRepo);
+        $client                             = $clientValidation->idExists($createIntegratedShoppingCart->getClientId());
+        $integratedShoppingCart->setClient($client);
+
+        foreach ($createIntegratedShoppingCart->getCredentials() AS $createCredential)
+        {
+            $credential                     = new Credential();
+            $integrationCredential          = $shoppingCartIntegration->getIntegrationCredentialById($createCredential->getIntegrationCredentialId());
+            if (is_null($integrationCredential))
+                throw new BadRequestHttpException('integrationCredential not found');
+            $credential->setIntegrationCredential($integrationCredential);
+            $credential->setValue($createCredential->getValue());
+
+            if ($integratedShoppingCart->hasIntegrationCredential($integrationCredential))
+                throw new BadRequestHttpException('duplicate integrationCredential');
+
+            $integratedShoppingCart->addCredential($credential);
+        }
+
+        foreach ($integratedShoppingCart->getIntegration()->getIntegrationCredentials() AS $integrationCredential)
+        {
+            if ($integrationCredential->isRequired() && !$integratedShoppingCart->hasIntegrationCredential($integrationCredential))
+                throw new BadRequestHttpException($shoppingCartIntegration->getName() . ' ' . $integrationCredential->getName() . ' is required');
+        }
+
+        foreach ($createIntegratedShoppingCart->getWebHooks() AS $createWebHook)
+        {
+
+        }
+
+
+        $credentialService                  = new CredentialService($integratedShoppingCart);
+        if (!$credentialService->validateCredentials())
+            throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
 
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
         return response($integratedShoppingCart);
