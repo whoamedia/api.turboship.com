@@ -7,6 +7,8 @@ use App\Http\Requests\IntegratedShoppingCarts\CreateIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\DeleteIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\GetIntegratedShoppingCarts;
 use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
+use App\Http\Requests\Integrations\UpdateCredential;
+use App\Http\Requests\Integrations\UpdateIntegration;
 use App\Http\Requests\Integrations\UpdateIntegrationCredentials;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\IntegratedWebHook;
@@ -17,6 +19,7 @@ use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
 use App\Repositories\Shopify\ShopifyWebHookRepository;
 use App\Services\CredentialService;
 use Illuminate\Http\Request;
+use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -54,6 +57,42 @@ class IntegratedShoppingCartController extends BaseAuthController
     public function show (Request $request)
     {
         $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        return response($integratedShoppingCart);
+    }
+
+    public function update (Request $request)
+    {
+        $updateIntegration                  = new UpdateIntegration($request->input());
+        $updateIntegration->setId($request->route('id'));
+        $updateIntegration->validate();
+        $updateIntegration->clean();
+
+        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($updateIntegration->getId());
+        if (!is_null($updateIntegration->getName()))
+            $integratedShoppingCart->setName($updateIntegration->getName());
+
+        if ($request->has('credentials'))
+        {
+            $providedCredentials            = $request->input('credentials');
+            if (!AU::isArrays($providedCredentials) || empty($providedCredentials))
+                throw new BadRequestHttpException('credentials should be array of arrays');
+            foreach ($providedCredentials AS $item)
+            {
+                $updateCredential           = new UpdateCredential($item);
+                $updateCredential->validate();
+                $updateCredential->clean();
+
+                $integrationCredential          = $integratedShoppingCart->getCredentialById($updateCredential->getIntegrationCredentialId());
+                if (is_null($integrationCredential))
+                    throw new NotFoundHttpException('integrationCredentialId not found');
+                $integrationCredential->setValue($updateCredential->getValue());
+            }
+            $credentialService                  = new CredentialService($integratedShoppingCart);
+            if (!$credentialService->validateCredentials())
+                throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
+        }
+
+        $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
         return response($integratedShoppingCart);
     }
 
