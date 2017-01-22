@@ -55,6 +55,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
 
     //  Integration Operations
+    Route::get('/integrations', 'IntegrationController@index');
     Route::get('/integrations/shippingApis', 'IntegrationController@getShippingApis');
     Route::get('/integrations/shoppingCarts', 'IntegrationController@getShoppingCarts');
     Route::get('/integrations/{id}', 'IntegrationController@show');

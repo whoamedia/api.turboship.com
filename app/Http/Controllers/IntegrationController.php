@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetShippingApiIntegrations;
 use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
 use App\Http\Requests\Integrations\ShowIntegration;
@@ -47,6 +48,17 @@ class IntegrationController extends BaseAuthController
         $this->shippingApiIntegrationRepo=EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
         $this->shoppingCartIntegrationRepo=EntityManager::getRepository('App\Models\Integrations\ShoppingCartIntegration');
         $this->integrationValidation    = new IntegrationValidation();
+    }
+
+    public function index (Request $request)
+    {
+        $getIntegrations                = new GetIntegrations($request->input());
+        $getIntegrations->validate();
+        $getIntegrations->clean();
+
+        $query                          = $getIntegrations->jsonSerialize();
+        $results                        = $this->integrationRepo->where($query, false);
+        return response($results);
     }
 
     public function getShippingApis (Request $request)
