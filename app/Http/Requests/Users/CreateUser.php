@@ -4,12 +4,13 @@ namespace App\Http\Requests\Users;
 
 
 use App\Http\Requests\_Contracts\Validatable;
+use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Respect\Validation\Validator as v;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
-class CreateUser implements Validatable, \JsonSerializable
+class CreateUser extends BaseRequest implements Validatable, \JsonSerializable
 {
 
     /**
@@ -32,6 +33,11 @@ class CreateUser implements Validatable, \JsonSerializable
      */
     protected $password;
 
+    /**
+     * @var int|null
+     */
+    protected $clientId;
+
 
     public function __construct($data = [])
     {
@@ -39,6 +45,7 @@ class CreateUser implements Validatable, \JsonSerializable
         $this->lastName                 = AU::get($data['lastName']);
         $this->email                    = AU::get($data['email']);
         $this->password                 = AU::get($data['password']);
+        $this->clientId                 = AU::get($data['clientId']);
     }
 
     public function validate()
@@ -60,6 +67,13 @@ class CreateUser implements Validatable, \JsonSerializable
          */
         if (!v::email()->validate($this->email))
             throw new BadRequestHttpException('Invalid email');
+
+        if (!is_null($this->clientId))
+        {
+            $this->clientId             = parent::getInteger($this->clientId);
+            if (is_null($this->clientId))
+                throw new BadRequestHttpException('clientId is expected to be integer');
+        }
     }
 
     /**
@@ -71,6 +85,7 @@ class CreateUser implements Validatable, \JsonSerializable
         $object['lastName']             = $this->lastName;
         $object['email']                = $this->email;
         $object['password']             = $this->password;
+        $object['clientId']             = $this->clientId;
 
         return $object;
     }
@@ -137,6 +152,22 @@ class CreateUser implements Validatable, \JsonSerializable
     public function setPassword($password)
     {
         $this->password = $password;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param int|null $clientId
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
     }
 
 }

@@ -161,6 +161,20 @@ class Organization extends BaseModel implements \JsonSerializable
     }
 
     /**
+     * @param   Client $client
+     * @return  bool
+     */
+    public function hasClient (Client $client)
+    {
+        foreach ($this->getClients() AS $item)
+        {
+            if ($client->getId() == $item->getId())
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * @param Printer $printer
      */
     public function addPrinter (Printer $printer)

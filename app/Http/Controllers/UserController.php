@@ -9,7 +9,9 @@ use App\Http\Requests\Users\GetUsers;
 use App\Http\Requests\Users\UpdatePassword;
 use App\Http\Requests\Users\UpdateUser;
 use App\Models\CMS\User;
+use App\Models\CMS\Validation\ClientValidation;
 use App\Models\CMS\Validation\UserValidation;
+use App\Repositories\Doctrine\CMS\ClientRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -19,6 +21,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends BaseAuthController
 {
+
+    /**
+     * @var ClientRepository
+     */
+    private $clientRepo;
 
     /**
      * @var \App\Repositories\Doctrine\CMS\UserRepository
@@ -36,6 +43,7 @@ class UserController extends BaseAuthController
      */
     public function __construct (Request $request)
     {
+        $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->userRepo                 = EntityManager::getRepository('App\Models\CMS\User');
         $this->userValidation           = new UserValidation($this->userRepo);
     }
@@ -124,7 +132,25 @@ class UserController extends BaseAuthController
         $createUser->validate();
 
         $user                           = new User($createUser->jsonSerialize());
-        $user->setOrganization(\Auth::getUser()->getOrganization());
+
+        if (parent::authUserIsClient())
+        {
+            $user->setClient(parent::getAuthUser()->getClient());
+        }
+        else
+        {
+            if (!is_null($createUser->getClientId()))
+            {
+                $clientValidation       = new ClientValidation($this->clientRepo);
+                $client                 = $clientValidation->idExists($createUser->getClientId());
+                if (!parent::getAuthUser()->getOrganization()->hasClient($client))
+                    throw new BadRequestHttpException('Client not found');
+
+                $user->setClient($client);
+            }
+        }
+
+        $user->setOrganization(parent::getAuthUserOrganization());
 
         $user->validate();
 

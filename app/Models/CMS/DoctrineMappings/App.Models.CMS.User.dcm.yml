@@ -62,7 +62,7 @@ App\Models\CMS\User:
         name:         organizationId
         referencedColumnName: id
     client:
-      targetEntity:   Organization
+      targetEntity:   Client
       nullable:       true
       fetch:          EAGER
       joinColumn:
