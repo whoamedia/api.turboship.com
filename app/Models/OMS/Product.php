@@ -206,6 +206,20 @@ class Product extends BaseModel implements \JsonSerializable
     }
 
     /**
+     * @param   int     $id
+     * @return  Variant|null
+     */
+    public function getVariantById ($id)
+    {
+        foreach ($this->getVariants() AS $variant)
+        {
+            if ($variant->getId() == $id)
+                return $variant;
+        }
+        return null;
+    }
+
+    /**
      * @param Variant $variant
      */
     public function removeVariant (Variant $variant)
