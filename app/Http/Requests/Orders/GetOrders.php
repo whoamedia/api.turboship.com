@@ -126,7 +126,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->createdTo                = AU::get($data['createdTo']);
         $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
         $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
-        $this->sortField                = AU::get($data['sortField'], 'id');
+        $this->sortField                = AU::get($data['sortField'], 'orders.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
