@@ -8,6 +8,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Respect\Validation\Validator as v;
 
 class UpdateClientOptions extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
@@ -58,6 +59,12 @@ class UpdateClientOptions extends BaseRequest implements Cleanable, Validatable,
         {
             if (is_null(parent::getInteger($this->defaultIntegratedShippingApiId)))
                 throw new BadRequestHttpException('defaultIntegratedShippingApiId must be integer');
+        }
+
+        if (!is_null($this->defaultShipToPhone))
+        {
+            if (!v::phone()->validate($this->defaultShipToPhone))
+                throw new BadRequestHttpException('Invalid phone');
         }
     }
 
