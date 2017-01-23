@@ -34,7 +34,7 @@ class OrderRepository extends BaseRepository
         $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
-        $qb->orderBy($sort['sortField'], $sort['direction']);
+        $qb->orderBy($sort['orderBy'], $sort['direction']);
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -50,7 +50,7 @@ class OrderRepository extends BaseRepository
     {
         $sort                           = [];
         $data                           = is_array($data) ? $data : [];
-        $sort['sortField']              = AU::get($data['sortField'], 'orders.id');
+        $sort['orderBy']                = AU::get($data['orderBy'], 'orders.id');
         $sort['direction']              = AU::get($data['direction'], 'ASC');
 
         return $sort;

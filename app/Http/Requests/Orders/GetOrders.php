@@ -99,7 +99,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string
      */
-    protected $sortField;
+    protected $orderBy;
 
     /**
      * @var string
@@ -126,7 +126,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->createdTo                = AU::get($data['createdTo']);
         $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
         $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
-        $this->sortField                = AU::get($data['sortField'], 'orders.id');
+        $this->orderBy                  = AU::get($data['orderBy'], 'orders.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
@@ -176,7 +176,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['createdTo']            = $this->createdTo;
         $object['externalCreatedFrom']  = $this->externalCreatedFrom;
         $object['externalCreatedTo']    = $this->externalCreatedTo;
-        $object['sortField']            = $this->sortField;
+        $object['orderBy']            = $this->orderBy;
         $object['direction']            = $this->direction;
 
         return $object;
@@ -457,17 +457,17 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @return string
      */
-    public function getSortField()
+    public function getOrderBy()
     {
-        return $this->sortField;
+        return $this->orderBy;
     }
 
     /**
-     * @param string $sortField
+     * @param string $orderBy
      */
-    public function setSortField($sortField)
+    public function setOrderBy($orderBy)
     {
-        $this->sortField = $sortField;
+        $this->orderBy = $orderBy;
     }
 
     /**
