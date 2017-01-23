@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
+
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\BooleanUtil AS BU;
 
@@ -28,31 +29,17 @@ class OrderRepository extends BaseRepository
     public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   parent::buildPagination($query, $maxLimit, $maxPage);
-        $sort                       =   $this->buildSort($query);
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->select(['orders', 'items', 'shippingAddress', 'source', 'client', 'organization', 'status', 'shipmentStatus']);
 
-        $qb->addOrderBy($sort['orderBy'], $sort['direction']);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'orders.id'), AU::get($query['direction'], 'ASC'));
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
-    }
-
-    /**
-     * @param   array|null $data
-     * @return  array
-     */
-    private function buildSort ($data = null)
-    {
-        $sort                           = [];
-        $data                           = is_array($data) ? $data : [];
-        $sort['orderBy']                = AU::get($data['orderBy'], 'orders.id');
-        $sort['direction']              = AU::get($data['direction'], 'ASC');
-
-        return $sort;
     }
 
     /**
