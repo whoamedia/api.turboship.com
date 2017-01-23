@@ -32,6 +32,7 @@ class OrderRepository extends BaseRepository
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->select(['orders', 'items', 'shippingAddress', 'source', 'client', 'organization', 'status', 'shipmentStatus']);
 
         $qb->orderBy($sort['orderBy'], $sort['direction']);
 
@@ -96,8 +97,6 @@ class OrderRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->select(['orders', 'items', 'shippingAddress', 'source', 'client', 'organization', 'status', 'shipmentStatus']);
-
         $qb->from('App\Models\OMS\Order', 'orders')
             ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
             ->join('orders.shippingAddress', 'shippingAddress', Query\Expr\Join::ON)
