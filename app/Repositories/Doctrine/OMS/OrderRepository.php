@@ -34,8 +34,7 @@ class OrderRepository extends BaseRepository
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->select(['orders', 'items', 'shippingAddress', 'source', 'client', 'organization', 'status', 'shipmentStatus']);
 
-        $qb->orderBy('orders.externalId', $sort['direction']);
-
+        $qb->addOrderBy($sort['orderBy'], $sort['direction']);
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
