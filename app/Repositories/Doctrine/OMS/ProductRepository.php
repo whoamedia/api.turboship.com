@@ -41,6 +41,33 @@ class ProductRepository extends BaseRepository
     }
 
     /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT product.id) AS total',
+            'source.id AS source_id', 'source.name AS source_name',
+            'client.id AS client_id', 'client.name AS client_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('client');
+        $qb->addGroupBy('source');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'source'            =>  [],
+            'client'            =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
+    /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query
      * @return      QueryBuilder
@@ -51,7 +78,8 @@ class ProductRepository extends BaseRepository
             ->join('product.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
             ->leftJoin('product.variants', 'variants', Query\Expr\Join::ON)
-            ->leftJoin('product.aliases', 'aliases', Query\Expr\Join::ON);
+            ->leftJoin('product.aliases', 'aliases', Query\Expr\Join::ON)
+            ->join('aliases.source', 'source', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('product.id', $query['ids']));

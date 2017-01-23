@@ -40,6 +40,19 @@ class ProductController extends Controller
         return response($results);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getProducts                    = new GetProducts($request->input());
+        $getProducts->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getProducts->validate();
+        $getProducts->clean();
+
+        $query                          = $getProducts->jsonSerialize();
+        $results                        = $this->productRepo->getLexicon($query);
+
+        return response($results);
+    }
+
     public function show (Request $request)
     {
         $product                        = $this->getProductFromRoute($request->route('id'));
