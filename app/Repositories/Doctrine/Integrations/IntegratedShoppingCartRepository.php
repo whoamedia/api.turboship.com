@@ -29,7 +29,7 @@ class IntegratedShoppingCartRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['integratedShoppingCart']);
+        $qb->select(['integratedShoppingCart', 'integration', 'client', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

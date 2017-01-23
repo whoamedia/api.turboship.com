@@ -29,7 +29,7 @@ class UserRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['user']);
+        $qb->select(['user', 'organization', 'client']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

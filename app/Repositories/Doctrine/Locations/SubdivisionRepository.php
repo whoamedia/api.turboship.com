@@ -30,7 +30,7 @@ class SubdivisionRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['subdivision']);
+        $qb->select(['subdivision', 'country', 'subdivisionType']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

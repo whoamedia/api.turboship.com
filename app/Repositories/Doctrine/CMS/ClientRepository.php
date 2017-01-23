@@ -29,7 +29,7 @@ class ClientRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['client']);
+        $qb->select(['client', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

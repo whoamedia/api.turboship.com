@@ -29,7 +29,7 @@ class ShippingContainerRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shippingContainer']);
+        $qb->select(['shippingContainer', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

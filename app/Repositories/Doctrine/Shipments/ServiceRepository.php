@@ -30,7 +30,7 @@ class ServiceRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['service']);
+        $qb->select(['service', 'carrier']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->orderBy('service.id', 'ASC');
 

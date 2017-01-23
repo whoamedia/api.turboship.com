@@ -29,7 +29,7 @@ class VariantRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['variant']);
+        $qb->select(['variant', 'client', 'product', 'source']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

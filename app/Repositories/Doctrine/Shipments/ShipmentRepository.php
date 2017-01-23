@@ -30,7 +30,7 @@ class ShipmentRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shipment']);
+        $qb->select(['shipment', 'status', 'shippingContainer', 'postage', 'service', 'carrier', 'items', 'orderItem', 'orders', 'client', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));

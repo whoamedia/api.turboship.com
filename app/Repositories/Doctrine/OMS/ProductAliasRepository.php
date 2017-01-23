@@ -29,7 +29,7 @@ class ProductAliasRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['productAlias']);
+        $qb->select(['productAlias', 'client', 'product', 'source']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
