@@ -235,4 +235,25 @@ class Client extends BaseModel implements \JsonSerializable
     {
         return $this->shippers->toArray();
     }
+
+    /**
+     * @param Shipper $shipper
+     */
+    public function addShipper (Shipper $shipper)
+    {
+        $this->shippers->add($shipper);
+    }
+    /**
+     * @param Shipper $shipper
+     * @return bool
+     */
+    public function hasShipper (Shipper $shipper)
+    {
+        foreach ($this->getShippers() AS $item)
+        {
+            if ($item->getId() == $shipper->getId())
+                return true;
+        }
+        return false;
+    }
 }

@@ -100,6 +100,28 @@ class ClientController extends BaseAuthController
             }
         }
 
+        if (!is_null($updateClient->getOptions()))
+        {
+            if (!is_null($updateClient->getOptions()->getDefaultShipToPhone()))
+            {
+                $client->getOptions()->setDefaultShipToPhone($updateClient->getOptions()->getDefaultShipToPhone());
+            }
+            if (!is_null($updateClient->getOptions()->getDefaultShipperId()))
+            {
+                $shipperValidation              = new ShipperValidation();
+                $shipper                        = $shipperValidation->idExists($updateClient->getOptions()->getDefaultShipperId());
+                $client->getOptions()->setDefaultShipper($shipper);
+                if (!$client->hasShipper($shipper))
+                    $client->addShipper($shipper);
+            }
+            if (!is_null($updateClient->getOptions()->getDefaultIntegratedShippingApiId()))
+            {
+                $integratedShippingApiValidation= new IntegratedShippingApiValidation();
+                $integratedShippingApi          = $integratedShippingApiValidation->idExists($updateClient->getOptions()->getDefaultIntegratedShippingApiId());
+                $client->getOptions()->setDefaultIntegratedShippingApi($integratedShippingApi);
+            }
+        }
+
         $this->clientRepo->saveAndCommit($client);
         return response($client);
     }
@@ -121,6 +143,8 @@ class ClientController extends BaseAuthController
         $shipperValidation              = new ShipperValidation();
         $shipper                        = $shipperValidation->idExists($createClient->getOptions()->getDefaultShipperId());
         $client->getOptions()->setDefaultShipper($shipper);
+        if (!$client->hasShipper($shipper))
+            $client->addShipper($shipper);
 
         $integratedShippingApiValidation= new IntegratedShippingApiValidation();
         $integratedShippingApi          = $integratedShippingApiValidation->idExists($createClient->getOptions()->getDefaultIntegratedShippingApiId());
