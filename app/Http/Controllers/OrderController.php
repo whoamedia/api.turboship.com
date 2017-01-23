@@ -44,7 +44,6 @@ class OrderController extends BaseAuthController
             $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
 
         $query                          = $getOrders->jsonSerialize();
-        return response($query);
         $results                        = $this->orderRepo->where($query, false);
         return response($results);
     }
