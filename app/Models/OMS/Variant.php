@@ -172,7 +172,8 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['externalCreatedAt']    = $this->externalCreatedAt;
 
         $object['product']              = [
-            'id'                        => $this->product->getId()
+            'id'                        => $this->product->getId(),
+            'name'                      => $this->product->getName(),
         ];
 
         return $object;
