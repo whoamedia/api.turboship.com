@@ -55,6 +55,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::delete('/integratedShoppingCarts/{id}/webHooks/{integratedWebHookId}', 'IntegratedShoppingCartController@deleteIntegratedWebHook');
 
 
+    //  IntegratedShippingApi Operations
+    Route::get('/integratedShippingApis', 'IntegratedShippingApiController@index');
+    Route::get('/integratedShippingApis/{id}', 'IntegratedShippingApiController@show');
+
     //  Integration Operations
     Route::get('/integrations', 'IntegrationController@index');
     Route::get('/integrations/shippingApis', 'IntegrationController@getShippingApis');
