@@ -118,6 +118,18 @@ class ClientController extends BaseAuthController
         $client->setOrganization($this->getAuthUserOrganization());
         $client->validate();
 
+        $shipperValidation              = new ShipperValidation();
+        $shipper                        = $shipperValidation->idExists($createClient->getOptions()->getDefaultShipperId());
+        $client->getOptions()->setDefaultShipper($shipper);
+
+        $integratedShippingApiValidation= new IntegratedShippingApiValidation();
+        $integratedShippingApi          = $integratedShippingApiValidation->idExists($createClient->getOptions()->getDefaultIntegratedShippingApiId());
+        $client->getOptions()->setDefaultIntegratedShippingApi($integratedShippingApi);
+
+        if (!is_null($createClient->getOptions()->getDefaultShipToPhone()))
+            $client->getOptions()->setDefaultShipToPhone($createClient->getOptions()->getDefaultShipToPhone());
+
+
         $this->clientRepo->saveAndCommit($client);
 
         return response($client, 201);
