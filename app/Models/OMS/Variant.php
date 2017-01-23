@@ -166,10 +166,14 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['weight']               = $this->weight;
         $object['client']               = $this->client->jsonSerialize();
         $object['countryOfOrigin']      = $this->countryOfOrigin->jsonSerialize();
-        $object['source']            = $this->source->jsonSerialize();
+        $object['source']               = $this->source->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
+
+        $object['product']              = [
+            'id'                        => $this->product->getId()
+        ];
 
         return $object;
     }

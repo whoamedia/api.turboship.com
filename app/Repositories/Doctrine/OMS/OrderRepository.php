@@ -85,6 +85,8 @@ class OrderRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Order', 'orders')
             ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
+            ->leftJoin('items.variant', 'variant', Query\Expr\Join::ON)
+            ->leftJoin('variant.product', 'product', Query\Expr\Join::ON)
             ->join('orders.shippingAddress', 'shippingAddress', Query\Expr\Join::ON)
             ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
