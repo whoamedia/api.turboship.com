@@ -28,17 +28,32 @@ class OrderRepository extends BaseRepository
     public function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   parent::buildPagination($query, $maxLimit, $maxPage);
+        $sort                       =   $this->buildSort($query);
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
-        $qb->orderBy('orders.id', 'ASC');
+        $qb->orderBy($sort['sortField'], $sort['direction']);
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
+    }
+
+    /**
+     * @param   array|null $data
+     * @return  array
+     */
+    private function buildSort ($data = null)
+    {
+        $sort                           = [];
+        $data                           = is_array($data) ? $data : [];
+        $sort['sortField']              = AU::get($data['sortField'], 'orders.id');
+        $sort['direction']              = AU::get($data['direction'], 'ASC');
+
+        return $sort;
     }
 
     /**
@@ -84,6 +99,7 @@ class OrderRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Order', 'orders')
             ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
+            ->join('orders.shippingAddress', 'shippingAddress', Query\Expr\Join::ON)
             ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)

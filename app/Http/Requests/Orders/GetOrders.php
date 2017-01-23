@@ -96,6 +96,16 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $externalCreatedTo;
 
+    /**
+     * @var string
+     */
+    protected $sortField;
+
+    /**
+     * @var string
+     */
+    protected $direction;
+
 
     public function __construct($data = [])
     {
@@ -116,6 +126,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->createdTo                = AU::get($data['createdTo']);
         $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
         $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
+        $this->sortField                = AU::get($data['sortField'], 'id');
+        $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
     public function validate()
@@ -133,6 +145,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->externalCreatedFrom      = parent::validateDate($this->externalCreatedFrom, 'externalCreatedFrom');
         $this->externalCreatedTo        = parent::validateDate($this->externalCreatedTo, 'externalCreatedTo');
+
+        $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
     public function clean ()
@@ -162,6 +176,8 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['createdTo']            = $this->createdTo;
         $object['externalCreatedFrom']  = $this->externalCreatedFrom;
         $object['externalCreatedTo']    = $this->externalCreatedTo;
+        $object['sortField']            = $this->sortField;
+        $object['direction']            = $this->direction;
 
         return $object;
     }
@@ -436,6 +452,38 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setExternalCreatedTo($externalCreatedTo)
     {
         $this->externalCreatedTo = $externalCreatedTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSortField()
+    {
+        return $this->sortField;
+    }
+
+    /**
+     * @param string $sortField
+     */
+    public function setSortField($sortField)
+    {
+        $this->sortField = $sortField;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirection()
+    {
+        return $this->direction;
+    }
+
+    /**
+     * @param string $direction
+     */
+    public function setDirection($direction)
+    {
+        $this->direction = $direction;
     }
 
 }

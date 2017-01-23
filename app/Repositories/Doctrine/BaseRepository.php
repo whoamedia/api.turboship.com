@@ -51,7 +51,7 @@ class BaseRepository extends EntityRepository implements RepositoryInterface
      */
     protected function buildPagination($data = null, $maxLimit = 5000, $maxPage = 100)
     {
-        $data   =   is_array($data) ? $data : [];
+        $data                           =   is_array($data) ? $data : [];
 
         if (is_array($data))
         {
