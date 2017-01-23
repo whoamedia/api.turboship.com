@@ -145,7 +145,6 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->externalCreatedFrom      = parent::validateDate($this->externalCreatedFrom, 'externalCreatedFrom');
         $this->externalCreatedTo        = parent::validateDate($this->externalCreatedTo, 'externalCreatedTo');
-
         $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
@@ -176,7 +175,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['createdTo']            = $this->createdTo;
         $object['externalCreatedFrom']  = $this->externalCreatedFrom;
         $object['externalCreatedTo']    = $this->externalCreatedTo;
-        $object['orderBy']            = $this->orderBy;
+        $object['orderBy']              = $this->orderBy;
         $object['direction']            = $this->direction;
 
         return $object;

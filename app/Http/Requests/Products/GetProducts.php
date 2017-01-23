@@ -46,6 +46,20 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
      */
     protected $externalIds;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
+    /**
+     * @var string
+     */
+    protected $orderBy;
+
+    /**
+     * @var string
+     */
+    protected $direction;
 
     public function __construct($data = [])
     {
@@ -56,6 +70,9 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
         $this->variantIds               = AU::get($data['variantIds']);
         $this->variantSkus              = AU::get($data['variantSkus']);
         $this->externalIds              = AU::get($data['externalIds']);
+        $this->limit                    = AU::get($data['limit'], 80);
+        $this->orderBy                  = AU::get($data['orderBy'], 'product.id');
+        $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
     public function validate()
@@ -65,6 +82,7 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
         $this->organizationIds          = $this->validateIds($this->organizationIds, 'organizationIds');
         $this->aliasIds                 = $this->validateIds($this->aliasIds, 'aliasIds');
         $this->variantIds               = $this->validateIds($this->variantIds, 'variantIds');
+        $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
     /**
@@ -79,6 +97,9 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
         $object['variantIds']           = $this->variantIds;
         $object['variantSkus']          = $this->variantSkus;
         $object['externalIds']          = $this->externalIds;
+        $object['limit']                = $this->limit;
+        $object['orderBy']              = $this->orderBy;
+        $object['direction']            = $this->direction;
 
         return $object;
     }
@@ -199,6 +220,54 @@ class GetProducts extends BaseRequest implements Cleanable, Validatable, \JsonSe
     public function setExternalIds($externalIds)
     {
         $this->externalIds = $externalIds;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
+    /**
+     * @param string $orderBy
+     */
+    public function setOrderBy($orderBy)
+    {
+        $this->orderBy = $orderBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirection()
+    {
+        return $this->direction;
+    }
+
+    /**
+     * @param string $direction
+     */
+    public function setDirection($direction)
+    {
+        $this->direction = $direction;
     }
 
 }
