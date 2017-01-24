@@ -12,6 +12,7 @@ use App\Http\Requests\Shipments\VoidPostage;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\Validation\RateValidation;
+use App\Models\Shipments\Validation\ServiceValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
@@ -109,6 +110,13 @@ class ShipmentController extends BaseAuthController
         {
             $weight                     = $updateShipment->getWeight();
             $shipment->setWeight($weight);
+        }
+
+        if (!is_null($updateShipment->getServiceId()))
+        {
+            $serviceValidation          = new ServiceValidation();
+            $service                    = $serviceValidation->idExists($updateShipment->getServiceId());
+            $shipment->setService($service);
         }
 
         $this->shipmentRepo->saveAndCommit($shipment);

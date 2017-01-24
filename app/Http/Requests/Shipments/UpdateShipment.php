@@ -19,14 +19,19 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
     protected $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $shippingContainerId;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $weight;
+
+    /**
+     * @var int|null
+     */
+    protected $serviceId;
 
 
     public function __construct($data = [])
@@ -34,6 +39,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
         $this->id                       = AU::get($data['id']);
         $this->shippingContainerId      = AU::get($data['shippingContainerId']);
         $this->weight                   = AU::get($data['weight']);
+        $this->serviceId                = AU::get($data['serviceId']);
     }
 
     public function validate()
@@ -56,6 +62,12 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
                 throw new BadRequestHttpException('weight must be float');
         }
 
+        if (!is_null($this->serviceId))
+        {
+            if (is_null(InputUtil::getInt($this->serviceId)))
+                throw new BadRequestHttpException('serviceId must be integer');
+        }
+
     }
 
     public function clean ()
@@ -63,6 +75,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
         $this->id                       = InputUtil::getInt($this->id);
         $this->shippingContainerId      = InputUtil::getInt($this->shippingContainerId);
         $this->weight                   = InputUtil::getFloat($this->weight);
+        $this->serviceId                = InputUtil::getInt($this->serviceId);
     }
 
     /**
@@ -73,6 +86,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
         $object['id']                   = $this->id;
         $object['shippingContainerId']  = $this->shippingContainerId;
         $object['weight']               = $this->weight;
+        $object['serviceId']            = $this->serviceId;
 
         return $object;
     }
@@ -94,7 +108,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getShippingContainerId()
     {
@@ -102,7 +116,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
     }
 
     /**
-     * @param int $shippingContainerId
+     * @param int|null $shippingContainerId
      */
     public function setShippingContainerId($shippingContainerId)
     {
@@ -110,7 +124,7 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getWeight()
     {
@@ -118,11 +132,27 @@ class UpdateShipment extends BaseRequest implements Cleanable, Validatable, \Jso
     }
 
     /**
-     * @param float $weight
+     * @param float|null $weight
      */
     public function setWeight($weight)
     {
         $this->weight = $weight;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getServiceId()
+    {
+        return $this->serviceId;
+    }
+
+    /**
+     * @param int|null $serviceId
+     */
+    public function setServiceId($serviceId)
+    {
+        $this->serviceId = $serviceId;
     }
 
 }
