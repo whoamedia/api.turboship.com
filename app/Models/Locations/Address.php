@@ -125,6 +125,9 @@ class Address implements \JsonSerializable
             $this->email                = AU::get($data['email']);
             $this->country              = AU::get($data['country']);
             $this->subdivision          = AU::get($data['subdivision']);
+
+            if (!is_null($this->phone))
+                $this->setPhone($this->phone);
         }
     }
 
@@ -328,7 +331,7 @@ class Address implements \JsonSerializable
      */
     public function setPhone($phone)
     {
-        $this->phone = $phone;
+        $this->phone = substr($phone, 0, 99);
     }
 
     /**
