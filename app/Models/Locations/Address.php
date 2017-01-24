@@ -141,8 +141,10 @@ class Address implements \JsonSerializable
         $object['street2']              = $this->getStreet2();
         $object['city']                 = $this->getCity();
         $object['postalCode']           = $this->getPostalCode();
-        $object['countryCode']          = is_null($this->country) ? $this->countryCode : $this->country->getIso2();
-        $object['subdivisionCode']      = is_null($this->subdivision) ? $this->stateProvince : $this->subdivision->getLocalSymbol();
+        $object['countryCode']          = $this->countryCode;
+        $object['country']              = is_null($this->country) ? null : $this->country->jsonSerialize();
+        $object['stateProvince']        = $this->stateProvince;
+        $object['subdivision']          = is_null($this->subdivision) ? null : $this->subdivision->jsonSerialize();
         $object['phone']                = $this->getPhone();
         $object['email']                = $this->getEmail();
 

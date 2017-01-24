@@ -78,6 +78,18 @@ class ShipperController extends BaseAuthController
         return response($shipper->getAddress());
     }
 
+    public function updateAddress (Request $request)
+    {
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
+
+    }
+
+    public function updateReturnAddress (Request $request)
+    {
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
+
+    }
+
     public function showReturnAddress (Request $request)
     {
         $shipper                        = $this->getShipperFromRoute($request->route('id'));

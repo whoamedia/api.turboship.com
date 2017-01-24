@@ -118,7 +118,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/shippers/{id}', 'ShipperController@show');
     Route::put('/shippers/{id}', 'ShipperController@update');
     Route::get('/shippers/{id}/address', 'ShipperController@showAddress');
+    Route::put('/shippers/{id}/address', 'ShipperController@updateAddress');
     Route::get('/shippers/{id}/returnAddress', 'ShipperController@showReturnAddress');
+    Route::put('/shippers/{id}/returnAddress', 'ShipperController@updateReturnAddress');
     Route::get('/shippers/{id}/integratedShippingApis', 'ShipperController@getShippingApis');
     Route::get('/shippers/{id}/clients', 'ShipperController@getClients');
     Route::post('/shippers/{id}/clients/{clientId}', 'ShipperController@addClient');
