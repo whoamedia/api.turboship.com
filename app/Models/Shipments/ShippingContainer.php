@@ -104,6 +104,18 @@ class ShippingContainer implements \JsonSerializable
 
         if (is_null(InputUtil::getInt($this->weight)) && is_null(InputUtil::getFloat($this->weight)))
             throw new BadRequestHttpException('weight must be decimal');
+
+        if ($this->length <= 0)
+            throw new BadRequestHttpException('length must be positive');
+
+        if ($this->width <= 0)
+            throw new BadRequestHttpException('width must be positive');
+
+        if ($this->height <= 0)
+            throw new BadRequestHttpException('height must be positive');
+
+        if ($this->weight <= 0)
+            throw new BadRequestHttpException('weight must be positive');
     }
 
     /**
