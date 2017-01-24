@@ -185,6 +185,7 @@ class Order implements \JsonSerializable
         $object['externalId']           = $this->externalId;
         $object['externalWeight']       = $this->externalWeight;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
+        $object['canRunApprovalProcess']= $this->canRunApprovalProcess();
 
         $object['items']                = [];
         foreach ($this->getItems() AS $item)
