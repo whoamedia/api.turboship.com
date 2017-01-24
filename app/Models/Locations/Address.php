@@ -331,7 +331,7 @@ class Address implements \JsonSerializable
      */
     public function setPhone($phone)
     {
-        $this->phone = substr($phone, 0, 99);
+        $this->phone = substr($phone, 0, 19);
     }
 
     /**

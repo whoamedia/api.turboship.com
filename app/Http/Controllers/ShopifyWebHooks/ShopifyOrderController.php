@@ -87,7 +87,6 @@ class ShopifyOrderController extends BaseShopifyController
         }
         catch (\Exception $exception)
         {
-            dd($exception->getMessage());
             $this->shopifyWebHookLog->setErrorMessage($exception->getMessage());
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
         }
