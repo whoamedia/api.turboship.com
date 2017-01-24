@@ -152,6 +152,18 @@ class Address implements \JsonSerializable
     }
 
     /**
+     * @return Address
+     */
+    public function duplicate ()
+    {
+        $address                        = new Address($this->jsonSerialize());
+        $address->setCountry($this->country);
+        $address->setSubdivision($this->subdivision);
+
+        return $address;
+    }
+
+    /**
      * @return int
      */
     public function getId()
