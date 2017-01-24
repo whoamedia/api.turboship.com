@@ -93,10 +93,11 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
 
     public function validate()
     {
-        if (is_null($this->id))
-            throw new MissingMandatoryParametersException('id is required');
 
-        if (is_null(InputUtil::getInt($this->id)))
+        if (is_null($this->id))
+            throw new BadRequestHttpException('id is required');
+
+        if (is_null(parent::getInteger($this->id)))
             throw new BadRequestHttpException('id must be integer');
     }
 
