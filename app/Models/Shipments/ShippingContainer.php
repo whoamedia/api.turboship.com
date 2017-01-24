@@ -5,6 +5,8 @@ namespace App\Models\Shipments;
 
 use App\Models\CMS\Organization;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use jamesvweston\Utilities\InputUtil;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ShippingContainer implements \JsonSerializable
 {
@@ -68,6 +70,40 @@ class ShippingContainer implements \JsonSerializable
         $object['weight']               = $this->weight;
 
         return $object;
+    }
+
+    public function validate ()
+    {
+        if (is_null($this->name))
+            throw new BadRequestHttpException('name is required');
+
+        if (is_null($this->length))
+            throw new BadRequestHttpException('length is required');
+
+        if (is_null($this->width))
+            throw new BadRequestHttpException('width is required');
+
+        if (is_null($this->height))
+            throw new BadRequestHttpException('height is required');
+
+        if (is_null($this->weight))
+            throw new BadRequestHttpException('weight is required');
+
+
+        if (empty(trim($this->name)))
+            throw new BadRequestHttpException('name cannot be empty');
+
+        if (is_null(InputUtil::getInt($this->length)) && is_null(InputUtil::getFloat($this->length)))
+            throw new BadRequestHttpException('length must be decimal');
+
+        if (is_null(InputUtil::getInt($this->width)) && is_null(InputUtil::getFloat($this->width)))
+            throw new BadRequestHttpException('width must be decimal');
+
+        if (is_null(InputUtil::getInt($this->height)) && is_null(InputUtil::getFloat($this->height)))
+            throw new BadRequestHttpException('height must be decimal');
+
+        if (is_null(InputUtil::getInt($this->weight)) && is_null(InputUtil::getFloat($this->weight)))
+            throw new BadRequestHttpException('weight must be decimal');
     }
 
     /**

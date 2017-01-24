@@ -70,6 +70,7 @@ class ShippingContainerController extends BaseAuthController
         if (!is_null($updateShippingContainer->getWeight()))
             $shippingContainer->setWeight($updateShippingContainer->getWeight());
 
+        $shippingContainer->validate();
         $this->shippingContainerRepo->saveAndCommit($shippingContainer);
         return response ($shippingContainer);
     }
@@ -87,6 +88,8 @@ class ShippingContainerController extends BaseAuthController
         $query['organization']          = parent::getAuthUserOrganization();
 
         $shippingContainer              = new ShippingContainer($query);
+        $shippingContainer->validate();
+
         $this->shippingContainerRepo->saveAndCommit($shippingContainer);
 
         return response($shippingContainer, 201);
