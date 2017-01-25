@@ -64,7 +64,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
-    protected $shipmentStatus;
+    protected $statusIds;
 
     /**
      * @var string|null
@@ -108,7 +108,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->carrierIds               = AU::get($data['carrierIds']);
         $this->shippingContainerIds     = AU::get($data['shippingContainerIds']);
         $this->toAddressCountryIds      = AU::get($data['toAddressCountryIds']);
-        $this->shipmentStatus           = AU::get($data['shipmentStatus']);
+        $this->statusIds                = AU::get($data['statusIds']);
         $this->trackingNumbers          = AU::get($data['trackingNumbers']);
         $this->createdFrom              = AU::get($data['createdFrom']);
         $this->createdTo                = AU::get($data['createdTo']);
@@ -129,7 +129,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
         $this->shippingContainerIds     = parent::validateIds($this->shippingContainerIds, 'shippingContainerIds');
         $this->toAddressCountryIds      = parent::validateIds($this->toAddressCountryIds, 'toAddressCountryIds');
-        $this->shipmentStatus           = parent::validateShipmentStatus($this->shipmentStatus, 'shipmentStatus');
+        $this->statusIds                = parent::validateIds($this->statusIds, 'statusIds');
         $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->direction                = parent::validateOrderByDirection($this->direction);
@@ -155,7 +155,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $object['carrierIds']           = $this->carrierIds;
         $object['shippingContainerIds'] = $this->shippingContainerIds;
         $object['toAddressCountryIds']  = $this->toAddressCountryIds;
-        $object['shipmentStatus']       = $this->shipmentStatus;
+        $object['statusIds']            = $this->statusIds;
         $object['trackingNumbers']      = $this->trackingNumbers;
         $object['createdFrom']          = $this->createdFrom;
         $object['createdTo']            = $this->createdTo;
@@ -329,17 +329,17 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @return null|string
      */
-    public function getShipmentStatus()
+    public function getStatusIds()
     {
-        return $this->shipmentStatus;
+        return $this->statusIds;
     }
 
     /**
-     * @param null|string $shipmentStatus
+     * @param null|string $statusIds
      */
-    public function setShipmentStatus($shipmentStatus)
+    public function setStatusIds($statusIds)
     {
-        $this->shipmentStatus = $shipmentStatus;
+        $this->statusIds = $statusIds;
     }
 
     /**

@@ -125,13 +125,8 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['carrierIds'])))
             $qb->andWhere($qb->expr()->in('carrier.id', $query['carrierIds']));
 
-        if (!is_null(AU::get($query['shipmentStatus'])))
-        {
-            if ($query['shipmentStatus'] == 'shipped')
-                $qb->andWhere($qb->expr()->isNotNull('shipment.postage'));
-            else
-                $qb->andWhere($qb->expr()->isNull('shipment.postage'));
-        }
+        if (!is_null(AU::get($query['statusIds'])))
+            $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
 
         if (!is_null(AU::get($query['trackingNumbers'])))
         {
