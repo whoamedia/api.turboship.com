@@ -11,6 +11,7 @@ use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Address\AddressService;
 use App\Services\Order\OrderApprovalService;
+use App\Utilities\CountryUtility;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -79,6 +80,11 @@ class OrderController extends BaseAuthController
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
 
+        $test = [
+            'config' => (config('turboship.address.usps.validationEnabled') == false),
+            'country' => ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
+        ];
+        return response($test);
         if (!$order->canUpdate())
             throw new BadRequestHttpException('Order is in a status that cannot be updated');
 
