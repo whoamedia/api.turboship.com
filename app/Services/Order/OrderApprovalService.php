@@ -67,12 +67,12 @@ class OrderApprovalService
      */
     public function processOrder (Order $order)
     {
+        if (!$order->canRunApprovalProcess())
+            return $order;
+
         $this->mapAddresses($order->getProvidedAddress());
         $this->mapAddresses($order->getShippingAddress());
         $this->mapAddresses($order->getBillingAddress());
-
-        if (!$order->canRunApprovalProcess())
-            return $order;
 
         if (!$this->mapOrderItemSkus($order))
             return $order;
