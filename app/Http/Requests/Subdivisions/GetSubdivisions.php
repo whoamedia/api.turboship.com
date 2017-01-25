@@ -39,6 +39,16 @@ class GetSubdivisions implements Cleanable, Validatable, \JsonSerializable
     /**
      * @var string
      */
+    protected $namesLike;
+
+    /**
+     * @var string
+     */
+    protected $symbolsLike;
+
+    /**
+     * @var string
+     */
     protected $localSymbols;
 
     /**
@@ -65,7 +75,9 @@ class GetSubdivisions implements Cleanable, Validatable, \JsonSerializable
             $this->countryIds               = AU::get($data['countryIds']);
             $this->subdivisionTypeIds       = AU::get($data['subdivisionTypeIds']);
             $this->names                    = AU::get($data['names']);
+            $this->namesLike                = AU::get($data['namesLike']);
             $this->symbols                  = AU::get($data['symbols']);
+            $this->symbolsLike              = AU::get($data['symbolsLike']);
             $this->localSymbols             = AU::get($data['localSymbols']);
             $this->limit                    = AU::get($data['limit'], 80);
             $this->page                     = AU::get($data['page'], 1);
@@ -93,7 +105,9 @@ class GetSubdivisions implements Cleanable, Validatable, \JsonSerializable
         $object['countryIds']               = $this->countryIds;
         $object['subdivisionTypeIds']       = $this->subdivisionTypeIds;
         $object['names']                    = $this->names;
+        $object['namesLike']                = $this->namesLike;
         $object['symbols']                  = $this->symbols;
+        $object['symbolsLike']              = $this->symbolsLike;
         $object['localSymbols']             = $this->localSymbols;
         $object['limit']                    = $this->limit;
         $object['page']                     = $this->page;
@@ -228,6 +242,38 @@ class GetSubdivisions implements Cleanable, Validatable, \JsonSerializable
     public function setPage($page)
     {
         $this->page = $page;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamesLike()
+    {
+        return $this->namesLike;
+    }
+
+    /**
+     * @param string $namesLike
+     */
+    public function setNamesLike($namesLike)
+    {
+        $this->namesLike = $namesLike;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbolsLike()
+    {
+        return $this->symbolsLike;
+    }
+
+    /**
+     * @param string $symbolsLike
+     */
+    public function setSymbolsLike($symbolsLike)
+    {
+        $this->symbolsLike = $symbolsLike;
     }
 
 }
