@@ -144,8 +144,8 @@ class OrderController extends BaseAuthController
         if ($getOrders->getIsAddressError() == true)
             $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
 
+        $getOrders->setLimit(null);
         $query                          = $getOrders->jsonSerialize();
-
         $results                        = $this->orderRepo->where($query);
 
         foreach ($results AS $order)
