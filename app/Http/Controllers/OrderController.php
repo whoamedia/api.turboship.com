@@ -80,6 +80,13 @@ class OrderController extends BaseAuthController
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
 
+        $test = [
+            'config' => config('turboship.address.usps.validationEnabled'),
+            'country' => $order->getShippingAddress()->getCountry()->getIso2() != 'US',
+            'both' => (config('turboship.address.usps.validationEnabled') == false || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
+        ];
+        return response($test);
+
         if (!$order->canUpdate())
             throw new BadRequestHttpException('Order is in a status that cannot be updated');
 
@@ -91,6 +98,7 @@ class OrderController extends BaseAuthController
         $addressService                 = new AddressService();
         $address                        = $addressService->updateAddress($order->getShippingAddress(), $updateAddress);
         $address->validate();
+
         $order->setShippingAddress($address);
 
         $orderApprovalService           = new OrderApprovalService();
@@ -98,7 +106,6 @@ class OrderController extends BaseAuthController
 
 
         $this->orderRepo->saveAndCommit($order);
-
         return response($order);
     }
 

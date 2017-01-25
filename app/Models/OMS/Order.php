@@ -466,6 +466,12 @@ class Order implements \JsonSerializable
      */
     public function addStatus ($status)
     {
+        //  Perform check to make sure we're not accumulating a huge status history
+        if (!is_null($this->status))
+        {
+            if ($this->status->getId() == $status->getId())
+                return;
+        }
         $this->status                   = $status;
 
         $orderStatusHistory             = new OrderStatusHistory();
