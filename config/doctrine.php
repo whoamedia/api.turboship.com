@@ -163,7 +163,7 @@ return [
     |
     */
     'cache'                      => [
-        'default'      => env('DOCTRINE_CACHE', 'array'),
+        'default'      => strtoupper(config('app.env')) === 'LOCAL' ? 'array' : config('cache.default'),
         'namespace'    => null,
         'second_level' => false,
     ],
