@@ -70,25 +70,21 @@ class OrderApprovalService
         if (!$order->canRunApprovalProcess())
             return $order;
 
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "mapping addresses")');
-
         $this->mapAddresses($order->getProvidedAddress());
         $this->mapAddresses($order->getShippingAddress());
-        $this->mapAddresses($order->getBillingAddress());
 
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "mapOrderItemSkus")');
+        if (!is_null($order->getBillingAddress()))
+            $this->mapAddresses($order->getBillingAddress());
+
+
         if (!$this->mapOrderItemSkus($order))
             return $order;
 
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "processShippingAddress")');
         if (!$this->processShippingAddress($order))
             return $order;
 
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "validateShippingAddress")');
         if (!$this->validateShippingAddress($order))
             return $order;
-
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "true")');
 
         $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::PENDING_FULFILLMENT_ID);
         $order->addStatus($status);
@@ -198,8 +194,6 @@ class OrderApprovalService
      */
     public function validateShippingAddress (Order $order)
     {
-        $statusId = config('turboship.address.usps.validationEnabled') == true ? 1 : 0;
-        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $statusId . '")');
         //  Only run in production for US orders
         if (config('turboship.address.usps.validationEnabled') == false)
             return true;
