@@ -70,17 +70,6 @@ class SubdivisionRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        if (!is_null(AU::get($query['namesList'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $namesList                  = explode(',', $query['namesList']);
-            foreach ($namesList AS $name)
-            {
-                $orX->add($qb->expr()->eq('subdivision.name', $qb->expr()->literal($name)));
-            }
-            $qb->orWhere($orX);
-        }
-
         if (!is_null(AU::get($query['symbols'])))
         {
             $orX                    = $qb->expr()->orX();
@@ -92,17 +81,6 @@ class SubdivisionRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        if (!is_null(AU::get($query['symbolsLike'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $symbolsLike                = explode(',', $query['symbolsLike']);
-            foreach ($symbolsLike AS $symbol)
-            {
-                $orX->add($qb->expr()->eq('subdivision.symbol', $qb->expr()->literal($symbol)));
-            }
-            $qb->orWhere($orX);
-        }
-
         if (!is_null(AU::get($query['localSymbols'])))
         {
             $orX                    = $qb->expr()->orX();
@@ -110,6 +88,28 @@ class SubdivisionRepository extends BaseRepository
             foreach ($localSymbols AS $localSymbol)
             {
                 $orX->add($qb->expr()->eq('subdivision.localSymbol', $qb->expr()->literal($localSymbol)));
+            }
+            $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['symbolsLike'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $symbolsLike                = explode(',', $query['symbolsLike']);
+            foreach ($symbolsLike AS $symbol)
+            {
+                $orX->add($qb->expr()->like('subdivision.symbol', $qb->expr()->literal('%' . $symbol . '%')));
+            }
+            $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['namesLike'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $namesLike                  = explode(',', $query['namesLike']);
+            foreach ($namesLike AS $name)
+            {
+                $orX->add($qb->expr()->like('subdivision.name', $qb->expr()->literal('%' . $name . '%')));
             }
             $qb->andWhere($orX);
         }
