@@ -21,8 +21,8 @@ use App\Models\Integrations\Validation\IntegrationWebHookValidation;
 use App\Models\Integrations\Validation\ShoppingCartApiValidation;
 use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
-use App\Repositories\Shopify\ShopifyWebHookRepository;
 use App\Services\CredentialService;
+use App\Services\Shopify\ShopifyService;
 use Illuminate\Http\Request;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -215,7 +215,7 @@ class IntegratedShoppingCartController extends BaseAuthController
         $integrationWebHookValidation       = new IntegrationWebHookValidation();
         $integrationWebHookIds              = explode(',', $createIntegratedWebHook->getIntegrationWebHookIds());
 
-        $shopifyWebHookRepository           = new ShopifyWebHookRepository($integratedShoppingCart);
+        $shopifyService                     = new ShopifyService($integratedShoppingCart);
 
         foreach ($integrationWebHookIds AS $integrationWebHookId)
         {
@@ -233,7 +233,7 @@ class IntegratedShoppingCartController extends BaseAuthController
             $integratedWebHook              = new IntegratedWebHook();
             $integratedWebHook->setIntegratedService($integratedShoppingCart);
             $integratedWebHook->setIntegrationWebHook($integrationWebHook);
-            $shopifyWebHookRepository->createWebHook($integratedWebHook);
+            $shopifyService->createWebHook($integratedWebHook);
             $integratedShoppingCart->addIntegratedWebHook($integratedWebHook);
             $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
         }
@@ -257,8 +257,8 @@ class IntegratedShoppingCartController extends BaseAuthController
         if (!$integratedShoppingCart->hasIntegratedWebHook($integratedWebHook))
             throw new BadRequestHttpException('integratedShoppingCart does not have provided integratedWebHookId');
 
-        $shopifyWebHookRepository       = new ShopifyWebHookRepository($integratedShoppingCart);
-        $shopifyWebHookRepository->deleteWebHook($integratedWebHook->getExternalId());
+        $shopifyService                     = new ShopifyService($integratedShoppingCart);
+        $shopifyService->deleteWebHook($integratedWebHook->getExternalId());
 
         $integratedShoppingCart->removeIntegratedWebHook($integratedWebHook);
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
