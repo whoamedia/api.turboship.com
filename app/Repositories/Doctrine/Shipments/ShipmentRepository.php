@@ -94,7 +94,9 @@ class ShipmentRepository extends BaseRepository
             ->leftJoin('items.orderItem', 'orderItem', Query\Expr\Join::ON)
             ->leftJoin('orderItem.order', 'orders', Query\Expr\Join::ON)
             ->leftJoin('orders.client', 'client', Query\Expr\Join::ON)
-            ->leftJoin('client.organization', 'organization', Query\Expr\Join::ON);
+            ->leftJoin('client.organization', 'organization', Query\Expr\Join::ON)
+            ->leftJoin('shipment.toAddress', 'toAddress', Query\Expr\Join::ON)
+            ->leftJoin('toAddress.country', 'toCountry', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shipment.id', $query['ids']));
@@ -117,6 +119,12 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['orderItemIds'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['orderItemIds']));
 
+        if (!is_null(AU::get($query['serviceIds'])))
+            $qb->andWhere($qb->expr()->in('service.id', $query['serviceIds']));
+
+        if (!is_null(AU::get($query['carrierIds'])))
+            $qb->andWhere($qb->expr()->in('carrier.id', $query['carrierIds']));
+
         if (!is_null(AU::get($query['shipmentStatus'])))
         {
             if ($query['shipmentStatus'] == 'shipped')
@@ -137,11 +145,7 @@ class ShipmentRepository extends BaseRepository
         }
 
         if (!is_null(AU::get($query['toAddressCountryIds'])))
-        {
-            $qb->leftJoin('shipment.toAddress', 'toAddress', Query\Expr\Join::ON)
-                ->leftJoin('toAddress.country', 'toCountry', Query\Expr\Join::ON)
-                ->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
-        }
+            $qb->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
 
         if (!is_null(AU::get($query['createdFrom'])))
         {
