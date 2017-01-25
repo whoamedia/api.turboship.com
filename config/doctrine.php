@@ -163,7 +163,7 @@ return [
     |
     */
     'cache'                      => [
-        'default'      => strtoupper(config('app.env')) === 'LOCAL' ? 'array' : config('cache.default'),
+        'default'      => strtoupper(config('app.env')) === 'LOCAL' ? 'array' : 'file',
         'namespace'    => null,
         'second_level' => false,
     ],
