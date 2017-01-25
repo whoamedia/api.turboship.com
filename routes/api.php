@@ -80,6 +80,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/lexicon', 'OrderController@getLexicon');
     Route::get('/orders/approve', 'OrderController@approveOrders');
     Route::get('/orders/{id}', 'OrderController@show');
+    Route::put('/orders/{id}/shippingAddress', 'OrderController@updateShippingAddress');
     Route::get('/orders/{id}/statusHistory', 'OrderController@getStatusHistory');
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 

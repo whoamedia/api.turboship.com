@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Addresses\UpdateAddress;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Address\AddressService;
+use App\Services\Address\USPSAddressService;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
@@ -71,6 +74,31 @@ class OrderController extends BaseAuthController
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
         return response($order);
+    }
+
+    public function updateShippingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+
+        if (!$order->canUpdate())
+            throw new BadRequestHttpException('Order is in a status that cannot be updated');
+
+        $updateAddress                  = new UpdateAddress($request->input());
+        $updateAddress->setId($order->getShippingAddress()->getId());
+        $updateAddress->validate();
+        $updateAddress->clean();
+
+        $addressService                 = new AddressService();
+        $address                        = $addressService->updateAddress($order->getShippingAddress(), $updateAddress);
+        $address->validate();
+
+        $uspsAddressService             = new USPSAddressService();
+        $address                        = $uspsAddressService->validateAddress($address);
+
+        $order->setShippingAddress($address);
+        $this->orderRepo->saveAndCommit($order);
+
+        return response($address);
     }
 
     public function getStatusHistory (Request $request)

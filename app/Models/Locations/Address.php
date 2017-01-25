@@ -4,6 +4,7 @@ namespace App\Models\Locations;
 
 
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @SWG\Definition(@SWG\Xml())
@@ -164,6 +165,16 @@ class Address implements \JsonSerializable
         $address->setSubdivision($this->subdivision);
 
         return $address;
+    }
+
+
+    public function validate ()
+    {
+        if (!is_null($this->subdivision) && !is_null($this->country))
+        {
+            if ($this->subdivision->getCountry()->getId() != $this->country->getId())
+                throw new BadRequestHttpException('Subdivision does not belong to country');
+        }
     }
 
     /**
