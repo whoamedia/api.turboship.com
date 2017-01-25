@@ -71,6 +71,7 @@ class BaseShopifyController extends Controller
         $this->shopifyWebHookLog->setVerified($verified);
         $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integratedShoppingCart);
         $this->shopifyWebHookLog->setIncomingMessage($this->json);
+        $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
     }
 
     /**
