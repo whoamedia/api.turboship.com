@@ -18,7 +18,7 @@ class CreateUSPSTable extends Migration
             $table->increments('id')->unsigned();
 
             $table->integer('orderId')->unsigned()->index();
-            $table->integer('statusId')->unsigned()->index();
+            $table->string('message');
         });
 
 

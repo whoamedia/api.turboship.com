@@ -27,11 +27,6 @@ class OrderApprovalJob extends Job implements ShouldQueue
     private $orderRepo;
 
     /**
-     * @var OrderApprovalService
-     */
-    private $orderApprovalService;
-
-    /**
      * OrderApprovalJob constructor.
      * @param   int     $orderId
      */
@@ -46,8 +41,8 @@ class OrderApprovalJob extends Job implements ShouldQueue
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $order                          = $this->orderRepo->getOneById($this->orderId);
-        $this->orderApprovalService     = new OrderApprovalService();
-        $order                          = $this->orderApprovalService->processOrder($order);
+        $orderApprovalService           = new OrderApprovalService();
+        $order                          = $orderApprovalService->processOrder($order);
         $this->orderRepo->saveAndCommit($order);
     }
 }
