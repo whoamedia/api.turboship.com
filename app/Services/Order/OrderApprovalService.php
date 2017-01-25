@@ -192,6 +192,8 @@ class OrderApprovalService
      */
     public function validateShippingAddress (Order $order)
     {
+        $statusId = config('turboship.address.usps.validationEnabled') == true ? 1 : 0;
+        \DB::insert('INSERT INTO USPS (orderId, statusId) VALUES (' . $order->getId() . ', ' . $statusId . ')');
         //  Only run in production for US orders
         if (config('turboship.address.usps.validationEnabled') == false)
             return true;
