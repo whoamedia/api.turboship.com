@@ -91,6 +91,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
      */
     protected $direction;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
@@ -109,6 +114,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->createdTo                = AU::get($data['createdTo']);
         $this->orderBy                  = AU::get($data['orderBy'], 'shipment.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
+        $this->limit                    = AU::get($data['limit'], 80);
     }
 
     public function validate()
@@ -155,6 +161,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $object['createdTo']            = $this->createdTo;
         $object['orderBy']              = $this->orderBy;
         $object['direction']            = $this->direction;
+        $object['limit']                = $this->limit;
 
         return $object;
     }
@@ -413,6 +420,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setDirection($direction)
     {
         $this->direction = $direction;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
     }
 
 }
