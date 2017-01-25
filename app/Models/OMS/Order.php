@@ -161,7 +161,7 @@ class Order implements \JsonSerializable
         if (is_null($this->status))
         {
             $orderStatusUtility         = new OrderStatusUtility();
-            $this->status               = $orderStatusUtility->getCreated();
+            $this->addStatus($orderStatusUtility->getCreated());
         }
 
         if (is_null($this->shipmentStatus))

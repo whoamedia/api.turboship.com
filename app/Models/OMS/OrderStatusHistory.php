@@ -3,6 +3,7 @@
 namespace App\Models\OMS;
 
 
+use App\Models\CMS\User;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class OrderStatusHistory implements \JsonSerializable
@@ -24,6 +25,11 @@ class OrderStatusHistory implements \JsonSerializable
     protected $status;
 
     /**
+     * @var User|null
+     */
+    protected $createdBy;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -39,6 +45,7 @@ class OrderStatusHistory implements \JsonSerializable
 
         $this->order                    = AU::get($data['order']);
         $this->status                   = AU::get($data['status']);
+        $this->createdBy                = \Auth::getUser();
     }
 
     /**
@@ -48,6 +55,7 @@ class OrderStatusHistory implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['status']               = $this->status->jsonSerialize();
+        $object['createdBy']            = is_null($this->createdBy) ? null : $this->createdBy->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
 
         return $object;
@@ -91,6 +99,22 @@ class OrderStatusHistory implements \JsonSerializable
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param User|null $createdBy
+     */
+    public function setCreatedBy($createdBy)
+    {
+        $this->createdBy = $createdBy;
     }
 
     /**
