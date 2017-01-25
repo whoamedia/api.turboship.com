@@ -91,14 +91,15 @@ class OrderController extends BaseAuthController
         $addressService                 = new AddressService();
         $address                        = $addressService->updateAddress($order->getShippingAddress(), $updateAddress);
         $address->validate();
-
-        $uspsAddressService             = new USPSAddressService();
-        $address                        = $uspsAddressService->validateAddress($address);
-
         $order->setShippingAddress($address);
+
+        $orderApprovalService           = new OrderApprovalService();
+        $order                          = $orderApprovalService->processOrder($order);
+
+
         $this->orderRepo->saveAndCommit($order);
 
-        return response($address);
+        return response($order);
     }
 
     public function getStatusHistory (Request $request)
