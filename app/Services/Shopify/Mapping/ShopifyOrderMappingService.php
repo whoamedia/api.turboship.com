@@ -3,9 +3,9 @@
 namespace App\Services\Shopify\Mapping;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
-use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
+use jamesvweston\Shopify\Models\Responses\ShopifyAddress;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrderLineItem;
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
 use App\Models\OMS\Order;

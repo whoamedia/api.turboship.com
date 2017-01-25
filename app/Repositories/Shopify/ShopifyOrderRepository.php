@@ -3,8 +3,8 @@
 namespace App\Repositories\Shopify;
 
 
-use App\Integrations\Shopify\Models\Requests\GetShopifyOrderCount;
-use App\Integrations\Shopify\Models\Requests\GetShopifyOrders;
+use jamesvweston\Shopify\Models\Requests\GetShopifyOrderCount;
+use jamesvweston\Shopify\Models\Requests\GetShopifyOrders;
 
 class ShopifyOrderRepository extends BaseShopifyRepository
 {
@@ -13,7 +13,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
      * @param   int             $page
      * @param   int             $limit
      * @param   string|null     $sinceId
-     * @return  \App\Integrations\Shopify\Models\Responses\ShopifyOrder[]
+     * @return  \jamesvweston\Shopify\Models\Responses\ShopifyOrder[]
      */
     public function getImportCandidates ($page = 1, $limit = 250, $sinceId = null)
     {
@@ -29,7 +29,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         $getShopifyOrders->setPage($page);
         $getShopifyOrders->setLimit($limit);
 
-        $shopifyOrdersResponse          = $this->shopifyIntegration->orderApi->get($getShopifyOrders);
+        $shopifyOrdersResponse          = $this->shopifyClient->orderApi->get($getShopifyOrders);
         return $shopifyOrdersResponse;
     }
 
@@ -47,7 +47,7 @@ class ShopifyOrderRepository extends BaseShopifyRepository
         if (!is_null($sinceId))
             $getShopifyOrderCount->setSinceId($sinceId);
 
-        $shopifyOrderCountResponse      = $this->shopifyIntegration->orderApi->count($getShopifyOrderCount);
+        $shopifyOrderCountResponse      = $this->shopifyClient->orderApi->count($getShopifyOrderCount);
         return $shopifyOrderCountResponse;
     }
 

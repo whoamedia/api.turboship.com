@@ -2,9 +2,8 @@
 
 namespace App\Jobs\Shopify\Products;
 
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use Illuminate\Bus\Queueable;

@@ -6,10 +6,10 @@ namespace App\Services;
 use App\Integrations\EasyPost\EasyPostConfiguration;
 use App\Integrations\EasyPost\EasyPostIntegration;
 use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
-use App\Integrations\Shopify\Exceptions\ShopifyApiException;
-use App\Integrations\Shopify\Exceptions\ShopifyInvalidCredentialsException;
-use App\Integrations\Shopify\ShopifyConfiguration;
-use App\Integrations\Shopify\ShopifyIntegration;
+use jamesvweston\Shopify\Exceptions\ShopifyApiException;
+use jamesvweston\Shopify\Exceptions\ShopifyInvalidCredentialsException;
+use jamesvweston\Shopify\ShopifyConfiguration;
+use jamesvweston\Shopify\ShopifyClient;
 use App\Models\Integrations\Credential;
 use App\Models\Integrations\IntegratedService;
 use App\Repositories\Doctrine\Integrations\CredentialRepository;
@@ -85,7 +85,7 @@ class CredentialService
     {
         if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::SHOPIFY_ID)
         {
-            $service                    = $this->getShopifyIntegration();
+            $service                    = $this->getShopifyClient();
             try
             {
                 $service->webHookApi->get();
@@ -114,10 +114,10 @@ class CredentialService
     }
 
     /**
-     * @return ShopifyIntegration
+     * @return ShopifyClient
      * @throws BadRequestHttpException
      */
-    public function getShopifyIntegration ()
+    public function getShopifyClient ()
     {
         if ($this->integratedService->getIntegration()->getId() != IntegrationUtility::SHOPIFY_ID)
             throw new BadRequestHttpException('Integration not supported');
@@ -131,7 +131,7 @@ class CredentialService
         $shopifyConfiguration->setPassword($password);
         $shopifyConfiguration->setHostName($hostName);
 
-        return new ShopifyIntegration($shopifyConfiguration);
+        return new ShopifyClient($shopifyConfiguration);
     }
 
     /**

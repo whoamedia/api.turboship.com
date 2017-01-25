@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ShopifyWebHooks;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
 use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
 use App\Jobs\Shopify\Products\ShopifyDeleteProductJob;
 use App\Jobs\Shopify\Products\ShopifyUpdateProductJob;

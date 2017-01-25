@@ -2,10 +2,9 @@
 
 namespace App\Jobs\Shopify\Orders;
 
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Bus\Queueable;

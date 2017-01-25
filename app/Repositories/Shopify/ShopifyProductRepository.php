@@ -3,9 +3,9 @@
 namespace App\Repositories\Shopify;
 
 
-use App\Integrations\Shopify\Exceptions\ShopifyItemNotFoundException;
-use App\Integrations\Shopify\Models\Requests\GetShopifyProductCount;
-use App\Integrations\Shopify\Models\Requests\GetShopifyProducts;
+use jamesvweston\Shopify\Exceptions\ShopifyItemNotFoundException;
+use jamesvweston\Shopify\Models\Requests\GetShopifyProductCount;
+use jamesvweston\Shopify\Models\Requests\GetShopifyProducts;
 
 class ShopifyProductRepository extends BaseShopifyRepository
 {
@@ -14,7 +14,7 @@ class ShopifyProductRepository extends BaseShopifyRepository
      * @param   int             $page
      * @param   int             $limit
      * @param   string|null     $ids
-     * @return  \App\Integrations\Shopify\Models\Responses\ShopifyProduct[]
+     * @return  \jamesvweston\Shopify\Models\Responses\ShopifyProduct[]
      */
     public function getImportCandidates ($page = 1, $limit = 250, $ids = null)
     {
@@ -29,7 +29,7 @@ class ShopifyProductRepository extends BaseShopifyRepository
         $getShopifyProducts->setOrder('created_at desc');
 
 
-        $shopifyProductsResponse        = $this->shopifyIntegration->productApi->get($getShopifyProducts);
+        $shopifyProductsResponse        = $this->shopifyClient->productApi->get($getShopifyProducts);
 
         return $shopifyProductsResponse;
     }
@@ -44,19 +44,19 @@ class ShopifyProductRepository extends BaseShopifyRepository
         $getShopifyProducts->setIds($ids);
         $getShopifyProducts->setPublishedStatus('published');
 
-        $shopifyProductsResponse        = $this->shopifyIntegration->productApi->count($getShopifyProducts);
+        $shopifyProductsResponse        = $this->shopifyClient->productApi->count($getShopifyProducts);
         return $shopifyProductsResponse;
     }
 
     /**
      * @param   int     $id
-     * @return  \App\Integrations\Shopify\Models\Responses\ShopifyProduct|null
+     * @return  \jamesvweston\Shopify\Models\Responses\ShopifyProduct|null
      */
     public function show ($id)
     {
         try
         {
-            return $this->shopifyIntegration->productApi->show($id);
+            return $this->shopifyClient->productApi->show($id);
         }
         catch (ShopifyItemNotFoundException $shopifyItemNotFoundException)
         {

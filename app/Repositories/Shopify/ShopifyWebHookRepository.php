@@ -3,7 +3,7 @@
 namespace App\Repositories\Shopify;
 
 
-use App\Integrations\Shopify\Models\Requests\CreateShopifyWebHook;
+use jamesvweston\Shopify\Models\Requests\CreateShopifyWebHook;
 use App\Models\Integrations\IntegratedWebHook;
 
 class ShopifyWebHookRepository extends BaseShopifyRepository
@@ -26,7 +26,7 @@ class ShopifyWebHookRepository extends BaseShopifyRepository
         $address    = config('app.url') . '/webhooks/shopify/' . $this->integratedShoppingCart->getId() . '/' . $topic;
         $createShopifyWebHook->setAddress($address);
 
-        $response                       = $this->shopifyIntegration->webHookApi->create($createShopifyWebHook);
+        $response                       = $this->shopifyClient->webHookApi->create($createShopifyWebHook);
 
         $integratedWebHook->setExternalId($response->getId());
         $integratedWebHook->setUrl($response->getAddress());
@@ -36,6 +36,6 @@ class ShopifyWebHookRepository extends BaseShopifyRepository
 
     public function deleteWebHook ($id)
     {
-        return $this->shopifyIntegration->webHookApi->delete($id);
+        return $this->shopifyClient->webHookApi->delete($id);
     }
 }

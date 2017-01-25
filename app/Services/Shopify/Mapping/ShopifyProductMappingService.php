@@ -3,9 +3,9 @@
 namespace App\Services\Shopify\Mapping;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
-use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
-use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
+use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
+use jamesvweston\Shopify\Models\Responses\ShopifyProductImage;
+use jamesvweston\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
 use App\Models\OMS\Product;
 use App\Models\OMS\ProductAlias;

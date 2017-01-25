@@ -20,7 +20,8 @@
         "lucadegasperi/oauth2-server-laravel": "^5.2",
         "respect/validation": "^1.1",
         "pda/pheanstalk": "^3.1",
-        "maxbrokman/safe-queue": "^0.2.4"
+        "maxbrokman/safe-queue": "^0.2.4",
+        "jamesvweston/shopify-php": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

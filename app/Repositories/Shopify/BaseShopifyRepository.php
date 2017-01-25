@@ -7,8 +7,8 @@ use App\Models\CMS\Client;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Repositories\Doctrine\CMS\ClientRepository;
-use App\Integrations\Shopify\ShopifyConfiguration;
-use App\Integrations\Shopify\ShopifyIntegration;
+use jamesvweston\Shopify\ShopifyConfiguration;
+use jamesvweston\Shopify\ShopifyClient;
 use App\Services\CredentialService;
 use EntityManager;
 
@@ -16,9 +16,9 @@ class BaseShopifyRepository
 {
 
     /**
-     * @var ShopifyIntegration
+     * @var ShopifyClient
      */
-    protected $shopifyIntegration;
+    protected $shopifyClient;
 
     /**
      * @var Client
@@ -39,17 +39,17 @@ class BaseShopifyRepository
     /**
      * BaseShopifyRepository constructor.
      * @param IntegratedShoppingCart        $integratedShoppingCart
-     * @param ShopifyIntegration|null       $shopifyIntegration
+     * @param ShopifyClient|null       $shopifyClient
      */
-    public function __construct(IntegratedShoppingCart $integratedShoppingCart, $shopifyIntegration = null)
+    public function __construct(IntegratedShoppingCart $integratedShoppingCart, $shopifyClient = null)
     {
         $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->clientValidation         = new ClientValidation($this->clientRepo);
         $this->integratedShoppingCart   = $integratedShoppingCart;
         $this->client                   = $this->integratedShoppingCart->getClient();
 
-        if (!is_null($shopifyIntegration))
-            $this->shopifyIntegration   = $shopifyIntegration;
+        if (!is_null($shopifyClient))
+            $this->shopifyClient   = $shopifyClient;
         else
         {
             $credentialService          = new CredentialService($this->integratedShoppingCart);
@@ -62,24 +62,24 @@ class BaseShopifyRepository
             $shopifyConfiguration->setPassword($password);
             $shopifyConfiguration->setHostName($hostName);
 
-            $this->shopifyIntegration   = new ShopifyIntegration($shopifyConfiguration);
+            $this->shopifyClient   = new ShopifyClient($shopifyConfiguration);
         }
     }
 
     /**
-     * @return ShopifyIntegration
+     * @return ShopifyClient
      */
-    public function getShopifyIntegration()
+    public function getShopifyClient()
     {
-        return $this->shopifyIntegration;
+        return $this->shopifyClient;
     }
 
     /**
-     * @param ShopifyIntegration $shopifyIntegration
+     * @param ShopifyClient $shopifyClient
      */
-    public function setShopifyIntegration($shopifyIntegration)
+    public function setShopifyClient($shopifyClient)
     {
-        $this->shopifyIntegration = $shopifyIntegration;
+        $this->shopifyClient = $shopifyClient;
     }
 
 }

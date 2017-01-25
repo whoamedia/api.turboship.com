@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ShopifyWebHooks;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Shopify\Orders\ShopifyCancelOrderJob;
 use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
 use App\Jobs\Shopify\Orders\ShopifyDeleteOrderJob;
