@@ -75,6 +75,18 @@ class OrderController extends BaseAuthController
         return response($order);
     }
 
+    public function getProvidedShippingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        return response($order->getProvidedAddress());
+    }
+
+    public function getBillingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        return response($order->getBillingAddress());
+    }
+
     public function updateShippingAddress (Request $request)
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
