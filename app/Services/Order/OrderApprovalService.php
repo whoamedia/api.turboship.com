@@ -182,8 +182,9 @@ class OrderApprovalService
      */
     public function validateShippingAddress (Order $order)
     {
+        dd(config('turboship.address.usps.validationEnabled'));
         //  Only run in production for US orders
-        if (config('turboship.address.uspsValidation') == false || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
+        if (config('turboship.address.usps.validationEnabled') == false || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
             return true;
 
         $uspsAddressService             = new USPSAddressService();
