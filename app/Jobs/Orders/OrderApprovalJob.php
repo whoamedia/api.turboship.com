@@ -39,10 +39,12 @@ class OrderApprovalJob extends Job implements ShouldQueue
 
     public function handle()
     {
+        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (0, "start")');
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $order                          = $this->orderRepo->getOneById($this->orderId);
+        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "handle")');
         $orderApprovalService           = new OrderApprovalService();
-        $order                          = $orderApprovalService->processOrder($order);\DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "handle")');
+        $order                          = $orderApprovalService->processOrder($order);
         $this->orderRepo->saveAndCommit($order);
     }
 }
