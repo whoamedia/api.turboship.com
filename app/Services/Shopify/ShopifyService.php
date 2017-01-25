@@ -180,7 +180,6 @@ class ShopifyService
         $topic                          = $integratedWebHook->getIntegrationWebHook()->getTopic();
         $createShopifyWebHook->setTopic($topic);
 
-        //  config('app.url')       'https://dev-api.turboship.com'
         $address    = config('app.url') . '/webhooks/shopify/' . $this->integratedShoppingCart->getId() . '/' . $topic;
         $createShopifyWebHook->setAddress($address);
 

@@ -21,7 +21,7 @@ class USPSAddressService
     /**
      * @var string
      */
-    protected $devurl;
+    protected $devurl = "http://production.shippingapis.com/ShippingAPI.dll";
 
     /**
      * @var string
@@ -45,9 +45,8 @@ class USPSAddressService
 
     public function __construct()
     {
-        $this->devurl                   = "http://production.shippingapis.com/ShippingAPI.dll";
         $this->service                  = "Verify";
-        $this->userid                   = "842ATCOS7827";   //  789NUWEA6459    842ATCOS7827
+        $this->userid                   = config('turboship.usps.userId');
 
         $this->guzzle                   = new Client();
 

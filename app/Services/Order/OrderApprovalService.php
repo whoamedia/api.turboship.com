@@ -195,7 +195,7 @@ class OrderApprovalService
     public function validateShippingAddress (Order $order)
     {
         //  Only run in production for US orders
-        if (config('turboship.address.usps.validationEnabled') == false)
+        if (config('turboship.usps.validationEnabled') == false)
             return true;
         if ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
             return true;
