@@ -144,10 +144,16 @@ class ShipmentRepository extends BaseRepository
         }
 
         if (!is_null(AU::get($query['createdFrom'])))
-            $qb->andWhere($qb->expr()->gte('shipment.createdAt', $query['createdFrom']));
+        {
+            $qb->andWhere($qb->expr()->gte('shipment.createdAt', ':createdFrom'));
+            $qb->setParameter('createdFrom', $query['createdFrom'] . ' 00:00:00');
+        }
 
         if (!is_null(AU::get($query['createdTo'])))
-            $qb->andWhere($qb->expr()->lte('shipment.createdAt', $query['createdTo']));
+        {
+            $qb->andWhere($qb->expr()->lte('shipment.createdAt', ':createdTo'));
+            $qb->setParameter('createdTo', $query['createdTo'] . ' 23:59:59');
+        }
 
 
         return $qb;
