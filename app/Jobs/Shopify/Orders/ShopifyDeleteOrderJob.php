@@ -26,9 +26,9 @@ class ShopifyDeleteOrderJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
@@ -38,24 +38,25 @@ class ShopifyDeleteOrderJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyDeleteOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
      * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
         parent::__construct($integratedShoppingCartId, 'orders/delete', $shopifyWebHookLogId);
-        $this->shopifyOrder             = $shopifyOrder;
+        $this->jsonShopifyOrder             = $jsonShopifyOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+        $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
 
         if (is_null($order->getId()))
         {

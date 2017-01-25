@@ -22,9 +22,9 @@ class ShopifyCancelOrderJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
@@ -33,24 +33,25 @@ class ShopifyCancelOrderJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyCancelOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
      * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
         parent::__construct($integratedShoppingCartId, 'orders/cancel', $shopifyWebHookLogId);
-        $this->shopifyOrder             = $shopifyOrder;
+        $this->jsonShopifyOrder          = $jsonShopifyOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+        $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
         if (is_null($order->getId()))
         {
             //  The order was cancelled in Shopify but does not exist in our system. We shouldn't import it

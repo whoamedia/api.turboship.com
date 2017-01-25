@@ -8,6 +8,7 @@ use App\Http\Requests\Shopify\DownloadShopifyProducts;
 use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
 use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
 use App\Models\Integrations\IntegratedShoppingCart;
+use App\Models\Integrations\ShoppingCartIntegration;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
@@ -42,30 +43,38 @@ class ShopifyController extends BaseAuthController
      */
     private $productRepo;
 
+    /**
+     * @var ShoppingCartIntegration
+     */
+    private $shoppingCartIntegration;
 
-    public function __construct()
+
+    public function __construct(Request $request)
     {
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
         $this->orderItemRepo                = EntityManager::getRepository('App\Models\OMS\OrderItem');
         $this->orderApprovalService         = new OrderApprovalService();
         $this->productRepo                  = EntityManager::getRepository('App\Models\OMS\Product');
+        $this->shoppingCartIntegration      = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+
     }
 
     public function downloadOrders (Request $request)
     {
-        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        $shopifyOrderRepository         = new ShopifyOrderRepository($shoppingCartIntegration);
+        $shopifyOrderRepository             = new ShopifyOrderRepository($this->shoppingCartIntegration);
 
-        $total                          = $shopifyOrderRepository->getImportCandidatesCount();
-        $totalPages                     = (int)ceil($total / 250);
+        $total                              = $shopifyOrderRepository->getImportCandidatesCount();
+        $totalPages                         = (int)ceil($total / 250);
 
+        $shopifyOrderRepository->getShopifyClient()->getConfig()->setJsonOnly(true);
         for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
         {
             set_time_limit(60);
             $shopifyOrdersResponse          = $shopifyOrderRepository->getImportCandidates($currentPage, 250);
-            foreach ($shopifyOrdersResponse AS $shopifyOrder)
+            $orderArray                     = json_decode($shopifyOrdersResponse, true);
+            foreach ($orderArray AS $shopifyOrder)
             {
-                $job                        = (new ShopifyCreateOrderJob($shopifyOrder, $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
+                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
                 $this->dispatch($job);
             }
             usleep(250000);
@@ -75,14 +84,14 @@ class ShopifyController extends BaseAuthController
 
     public function downloadProducts (Request $request)
     {
-        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
+        $shopifyProductRepo             = new ShopifyProductRepository($this->shoppingCartIntegration);
         $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
 
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
-            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
+            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($this->shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
             $maxIds                     = 20;
+            $shopifyProductRepo->getShopifyClient()->getConfig()->setJsonOnly(true);
             for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
             {
                 set_time_limit(30);
@@ -90,9 +99,10 @@ class ShopifyController extends BaseAuthController
                 $externalIds            = implode(',', $externalIds);
 
                 $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
-                foreach ($shopifyProductsResponse AS $shopifyProduct)
+                $productArray                   = json_decode($shopifyProductsResponse, true);
+                foreach ($productArray AS $shopifyProduct)
                 {
-                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
+                    $job                        = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
                     $this->dispatch($job);
                 }
                 usleep(250000);
@@ -100,16 +110,18 @@ class ShopifyController extends BaseAuthController
         }
         else
         {
-            $total                      = $shopifyProductRepo->getImportCandidatesCount();
-            $totalPages                 = (int)ceil($total / 250);
+            $total                              = $shopifyProductRepo->getImportCandidatesCount();
+            $totalPages                         = (int)ceil($total / 250);
 
+            $shopifyProductRepo->getShopifyClient()->getConfig()->setJsonOnly(true);
             for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
             {
                 set_time_limit(60);
-                $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
-                foreach ($shopifyProductsResponse AS $shopifyProduct)
+                $shopifyProductsResponse        = $shopifyProductRepo->getImportCandidates($currentPage, 250);
+                $productArray                   = json_decode($shopifyProductsResponse, true);
+                foreach ($productArray AS $shopifyProduct)
                 {
-                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
+                    $job                        = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
                     $this->dispatch($job);
                 }
                 usleep(250000);

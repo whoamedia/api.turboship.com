@@ -27,9 +27,9 @@ class ShopifyOrderPaidJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
@@ -39,31 +39,32 @@ class ShopifyOrderPaidJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyImportOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
      * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/paid', $shopifyWebHookLog);
-        $this->shopifyOrder             = $shopifyOrder;
+        parent::__construct($integratedShoppingCartId, 'orders/paid', $shopifyWebHookLogId);
+        $this->jsonShopifyOrder         = $jsonShopifyOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        if (!$shopifyOrderMappingService->shouldImportOrder($this->shopifyOrder))
+        if (!$shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
         {
             $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
             return;
         }
 
-        $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+        $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
         $entityCreated                  = is_null($order->getId()) ? true : false;
         $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 

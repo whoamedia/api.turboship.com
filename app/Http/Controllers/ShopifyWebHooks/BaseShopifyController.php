@@ -17,6 +17,11 @@ class BaseShopifyController extends Controller
 {
 
     /**
+     * @var string
+     */
+    protected $json;
+
+    /**
      * @var Client
      */
     protected $client;
@@ -50,8 +55,9 @@ class BaseShopifyController extends Controller
 
     public function handleRequest (Request $request)
     {
-        $integratedShoppingCartId   = $request->route('id');
-        $this->integratedShoppingCart= $this->integratedShoppingCartRepo->getOneById($integratedShoppingCartId);
+        $this->json                     = json_encode($request->input(), true);
+        $integratedShoppingCartId       = $request->route('id');
+        $this->integratedShoppingCart   = $this->integratedShoppingCartRepo->getOneById($integratedShoppingCartId);
         $this->client                   = $this->integratedShoppingCart->getClient();
 
         $credentialService              = new CredentialService($this->integratedShoppingCart);
@@ -64,7 +70,7 @@ class BaseShopifyController extends Controller
         $verified                       = $this->verifyWebHook($request, $shopifySharedSecret);
         $this->shopifyWebHookLog->setVerified($verified);
         $this->shopifyWebHookLog->setIntegratedShoppingCart($this->integratedShoppingCart);
-        $this->shopifyWebHookLog->setIncomingMessage(json_encode($request->input(), true));
+        $this->shopifyWebHookLog->setIncomingMessage($this->json);
     }
 
     /**

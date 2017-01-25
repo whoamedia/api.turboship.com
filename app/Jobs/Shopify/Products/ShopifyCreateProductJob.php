@@ -17,9 +17,9 @@ class ShopifyCreateProductJob extends BaseShopifyJob implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var ShopifyProduct
+     * @var string
      */
-    private $shopifyProduct;
+    private $jsonShopifyProduct;
 
     /**
      * @var ProductRepository
@@ -28,14 +28,14 @@ class ShopifyCreateProductJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyImportProductJob constructor.
-     * @param   ShopifyProduct  $shopifyProduct
+     * @param   string  $jsonShopifyProduct
      * @param   int                         $integratedShoppingCartId
      * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyProduct, $integratedShoppingCartId, $shopifyWebHookLogId = null)
+    public function __construct($jsonShopifyProduct, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
         parent::__construct($integratedShoppingCartId, 'products/create', $shopifyWebHookLogId);
-        $this->shopifyProduct           = $shopifyProduct;
+        $this->jsonShopifyProduct       = $jsonShopifyProduct;
     }
 
     /**
@@ -45,18 +45,19 @@ class ShopifyCreateProductJob extends BaseShopifyJob implements ShouldQueue
      */
     public function handle()
     {
-        parent::initialize($this->shopifyProduct->getId());
+        $shopifyProduct                 = new ShopifyProduct(json_decode($this->jsonShopifyProduct, true));
+        parent::initialize($shopifyProduct->getId());
         $this->productRepo              = EntityManager::getRepository('App\Models\OMS\Product');
         $shopifyProductMappingService   = new ShopifyProductMappingService($this->integratedShoppingCart->getClient());
 
-        if (!$shopifyProductMappingService->shouldImport($this->shopifyProduct))
+        if (!$shopifyProductMappingService->shouldImport($shopifyProduct))
         {
             $this->shopifyWebHookLog->addNote('shouldImport Product was false');
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
             return;
         }
 
-        $product                        = $shopifyProductMappingService->handleMapping($this->shopifyProduct);
+        $product                        = $shopifyProductMappingService->handleMapping($shopifyProduct);
         $entityCreated                  = is_null($product->getId()) ? true : false;
         $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 
