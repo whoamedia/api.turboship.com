@@ -17,6 +17,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         \League\OAuth2\Server\Exception\AccessDeniedException::class,
         \League\OAuth2\Server\Exception\InvalidRequestException::class,
+        \League\OAuth2\Server\Exception\InvalidCredentialsException::class,
         \Illuminate\Auth\AuthenticationException::class,
         \Illuminate\Auth\Access\AuthorizationException::class,
         \Symfony\Component\HttpKernel\Exception\HttpException::class,
