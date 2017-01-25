@@ -15,6 +15,7 @@ use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Services\Address\USPSAddressService;
 use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
+use App\Utilities\CountryUtility;
 use App\Utilities\SourceUtility;
 use App\Utilities\OrderStatusUtility;
 use Respect\Validation\Validator as v;
@@ -183,7 +184,9 @@ class OrderApprovalService
     public function validateShippingAddress (Order $order)
     {
         //  Only run in production for US orders
-        if (config('turboship.address.usps.validationEnabled') == false || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
+        if (config('turboship.address.usps.validationEnabled') == false)
+            return true;
+        if ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
             return true;
 
         $uspsAddressService             = new USPSAddressService();
