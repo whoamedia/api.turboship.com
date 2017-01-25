@@ -205,42 +205,36 @@ class OrderApprovalService
         try
         {
             $uspsAddressService->validateAddress($order->getShippingAddress());
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . 0 . '")');
             return true;
         }
         catch (USPSApiErrorException $ex)
         {
             $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_ADDRESS_ID);
             $order->addStatus($status);
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $status->getId() . '")');
             return false;
         }
         catch (InvalidCityException $ex)
         {
             $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_CITY_ID);
             $order->addStatus($status);
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $status->getId() . '")');
             return false;
         }
         catch (InvalidSubdivisionException $ex)
         {
             $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
             $order->addStatus($status);
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $status->getId() . '")');
             return false;
         }
         catch (AddressNotFoundException $ex)
         {
             $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_ADDRESS_ID);
             $order->addStatus($status);
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $status->getId() . '")');
             return false;
         }
         catch (MultipleAddressesFoundException $ex)
         {
             $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::MULTIPLE_ADDRESSES_FOUND_ID);
             $order->addStatus($status);
-            \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "' . $status->getId() . '")');
             return false;
         }
     }
