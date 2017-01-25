@@ -81,8 +81,9 @@ class OrderController extends BaseAuthController
         $order                          = $this->getOrderFromRoute($request->route('id'));
 
         $test = [
-            'config' => (config('turboship.address.usps.validationEnabled') == false),
-            'country' => ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
+            'config' => (config('turboship.address.usps.validationEnabled')),
+            'country' => ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES),
+            'countryId' => $order->getShippingAddress()->getCountry()->getId(),
         ];
         return response($test);
         if (!$order->canUpdate())
