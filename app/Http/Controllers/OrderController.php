@@ -80,11 +80,16 @@ class OrderController extends BaseAuthController
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
 
-        $test = [
-            'config' => (config('turboship.address.usps.validationEnabled') != true),
-            'country' => ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES),
-            'countryId' => $order->getShippingAddress()->getCountry()->getId(),
-        ];
+
+
+        $test = [];
+
+        if (config('turboship.address.usps.validationEnabled') == false)
+            $test['config'] = 'returning because config';
+
+        if ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
+            $test['country'] = 'returning because country';
+
         return response($test);
         if (!$order->canUpdate())
             throw new BadRequestHttpException('Order is in a status that cannot be updated');
