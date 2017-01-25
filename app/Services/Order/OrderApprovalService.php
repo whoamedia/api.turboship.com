@@ -70,6 +70,8 @@ class OrderApprovalService
         if (!$order->canRunApprovalProcess())
             return $order;
 
+        \DB::insert('INSERT INTO USPS (orderId, message) VALUES (' . $order->getId() . ', "mapping addresses")');
+
         $this->mapAddresses($order->getProvidedAddress());
         $this->mapAddresses($order->getShippingAddress());
         $this->mapAddresses($order->getBillingAddress());
