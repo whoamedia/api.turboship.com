@@ -215,8 +215,6 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             return false;
         else if ($shopifyOrder->getFinancialStatus() != 'paid')
             return false;
-        else if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
-            return false;
         else
             return true;
     }
