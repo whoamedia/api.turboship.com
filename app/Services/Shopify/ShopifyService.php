@@ -103,7 +103,7 @@ class ShopifyService
         $getShopifyOrderCount->setFulfillmentStatus('shipped');
         $getShopifyOrderCount->setFinancialStatus('paid');
         $getShopifyOrderCount->setTest(false);
-        $getShopifyOrderCount->setStatus('any');
+        $getShopifyOrderCount->setStatus('closed');
 
         $shopifyOrderCountResponse      = $this->shopifyClient->orderApi->count($getShopifyOrderCount);
         return $shopifyOrderCountResponse;
@@ -120,7 +120,7 @@ class ShopifyService
         $getShopifyOrders->setFulfillmentStatus('shipped');
         $getShopifyOrders->setFinancialStatus('paid');
         $getShopifyOrders->setTest(false);
-        $getShopifyOrders->setStatus('any');
+        $getShopifyOrders->setStatus('closed');
 
         $getShopifyOrders->setOrder('created_at asc');
         $getShopifyOrders->setPage($page);
