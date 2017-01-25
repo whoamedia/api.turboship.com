@@ -37,6 +37,7 @@ App\Models\Shipments\Shipment:
       nullable:       true
       options:
         default:      null
+
   manyToOne:
     fromAddress:
       targetEntity:   App\Models\Locations\Address
@@ -58,6 +59,13 @@ App\Models\Shipments\Shipment:
       fetch:          EAGER
       joinColumn:
         name:         returnAddressId
+        referencedColumnName: id
+    shipper:
+      targetEntity:   Shipper
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         shipperId
         referencedColumnName: id
     service:
       targetEntity:   Service

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Support\GetOrderStatuses;
 use App\Http\Requests\Support\GetShipmentStatuses;
+use App\Http\Requests\Support\GetShippingContainerTypes;
 use App\Http\Requests\Support\GetSources;
 use App\Http\Requests\Support\GetSubdivisionTypes;
 use Illuminate\Http\Request;
@@ -27,6 +28,11 @@ class SupportController extends BaseAuthController
      * @var \App\Repositories\Doctrine\Support\ShipmentStatusRepository
      */
     private $shipmentStatusRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\Support\ShippingContainerTypeRepository
+     */
+    private $shippingContainerTypeRepo;
 
     /**
      * @var \App\Repositories\Doctrine\Locations\SubdivisionTypeRepository
@@ -80,5 +86,17 @@ class SupportController extends BaseAuthController
         $this->subdivisionTypeRepo      = EntityManager::getRepository('App\Models\Locations\SubdivisionType');
 
         return $this->subdivisionTypeRepo->where($query, false);
+    }
+
+    public function getShippingContainerTypes (Request $request)
+    {
+        $getShippingContainerTypes      = new GetShippingContainerTypes($request->input());
+        $getShippingContainerTypes->validate();
+        $getShippingContainerTypes->clean();
+
+        $query                          = $getShippingContainerTypes->jsonSerialize();
+        $this->shippingContainerTypeRepo= EntityManager::getRepository('App\Models\Support\ShippingContainerType');
+
+        return $this->shippingContainerTypeRepo->where($query, false);
     }
 }

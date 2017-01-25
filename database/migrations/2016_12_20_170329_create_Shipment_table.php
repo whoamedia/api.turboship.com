@@ -29,6 +29,8 @@ class CreateShipmentTable extends Migration
             $table->integer('serviceId')->unsigned()->index()->nullable()->default(NULL);
             $table->foreign('serviceId')->references('id')->on('Service');
 
+            $table->integer('shipperId')->unsigned()->index();
+
             $table->integer('postageId')->unsigned()->index()->nullable()->default(NULL);
 
             $table->integer('shippingContainerId')->unsigned()->index()->nullable()->default(NULL);

@@ -4,6 +4,7 @@ namespace App\Models\Shipments;
 
 
 use App\Models\CMS\Organization;
+use App\Models\Support\ShippingContainerType;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -42,6 +43,11 @@ class ShippingContainer implements \JsonSerializable
     protected $weight;
 
     /**
+     * @var ShippingContainerType
+     */
+    protected $shippingContainerType;
+
+    /**
      * @var Organization
      */
     protected $organization;
@@ -54,6 +60,7 @@ class ShippingContainer implements \JsonSerializable
         $this->width                    = AU::get($data['width']);
         $this->height                   = AU::get($data['height']);
         $this->weight                   = AU::get($data['weight']);
+        $this->shippingContainerType    = AU::get($data['shippingContainerType']);
         $this->organization             = AU::get($data['organization']);
     }
 
@@ -68,6 +75,7 @@ class ShippingContainer implements \JsonSerializable
         $object['width']                = $this->width;
         $object['height']               = $this->height;
         $object['weight']               = $this->weight;
+        $object['shippingContainerType']= $this->shippingContainerType->jsonSerialize();
 
         return $object;
     }
@@ -228,6 +236,22 @@ class ShippingContainer implements \JsonSerializable
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return ShippingContainerType
+     */
+    public function getShippingContainerType()
+    {
+        return $this->shippingContainerType;
+    }
+
+    /**
+     * @param ShippingContainerType $shippingContainerType
+     */
+    public function setShippingContainerType($shippingContainerType)
+    {
+        $this->shippingContainerType = $shippingContainerType;
     }
 
 }

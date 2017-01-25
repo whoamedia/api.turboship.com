@@ -165,12 +165,14 @@ class WhoaMediaSeeder extends Seeder
 
     private function shippingContainers ()
     {
+        $shippingContainerTypeValidation    = new \App\Models\Support\Validation\ShippingContainerTypeValidation();
         $c4                     = new ShippingContainer();
         $c4->setName('Box C4');
         $c4->setLength(11.50);
         $c4->setWidth(13.13);
         $c4->setHeight(2.38);
         $c4->setWeight(0.00);
+        $c4->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($c4);
 
         $A1                     = new ShippingContainer();
@@ -179,6 +181,7 @@ class WhoaMediaSeeder extends Seeder
         $A1->setWidth(16.00);
         $A1->setHeight(1.00);
         $A1->setWeight(0.00);
+        $A1->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($A1);
 
         $A2                     = new ShippingContainer();
@@ -187,6 +190,7 @@ class WhoaMediaSeeder extends Seeder
         $A2->setWidth(20.00);
         $A2->setHeight(1.00);
         $A2->setWeight(0.00);
+        $A2->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($A2);
 
         $C3                     = new ShippingContainer();
@@ -195,6 +199,7 @@ class WhoaMediaSeeder extends Seeder
         $C3->setWidth(7.00);
         $C3->setHeight(6.00);
         $C3->setWeight(0.00);
+        $C3->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($C3);
 
         $C5                     = new ShippingContainer();
@@ -203,6 +208,7 @@ class WhoaMediaSeeder extends Seeder
         $C5->setWidth(12.00);
         $C5->setHeight(8.00);
         $C5->setWeight(0.00);
+        $C5->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($C5);
 
         $C2                     = new ShippingContainer();
@@ -211,6 +217,7 @@ class WhoaMediaSeeder extends Seeder
         $C2->setWidth(15.13);
         $C2->setHeight(1.00);
         $C2->setWeight(0.00);
+        $C2->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($C2);
 
         $C1                     = new ShippingContainer();
@@ -219,6 +226,7 @@ class WhoaMediaSeeder extends Seeder
         $C1->setWidth(12.50);
         $C1->setHeight(1.00);
         $C1->setWeight(0.00);
+        $C1->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($C1);
 
         $B1                     = new ShippingContainer();
@@ -227,6 +235,7 @@ class WhoaMediaSeeder extends Seeder
         $B1->setWidth(9.00);
         $B1->setHeight(4.00);
         $B1->setWeight(0.00);
+        $B1->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B1);
 
         $B2                     = new ShippingContainer();
@@ -235,6 +244,7 @@ class WhoaMediaSeeder extends Seeder
         $B2->setWidth(10.00);
         $B2->setHeight(4.00);
         $B2->setWeight(0.00);
+        $B2->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B2);
 
         $B3                     = new ShippingContainer();
@@ -243,6 +253,7 @@ class WhoaMediaSeeder extends Seeder
         $B3->setWidth(12.00);
         $B3->setHeight(4.00);
         $B3->setWeight(0.00);
+        $B3->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B3);
 
         $B4                     = new ShippingContainer();
@@ -251,6 +262,7 @@ class WhoaMediaSeeder extends Seeder
         $B4->setWidth(12.00);
         $B4->setHeight(4.00);
         $B4->setWeight(0.00);
+        $B4->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B4);
 
         $B5                     = new ShippingContainer();
@@ -259,6 +271,7 @@ class WhoaMediaSeeder extends Seeder
         $B5->setWidth(12.00);
         $B5->setHeight(6.00);
         $B5->setWeight(0.00);
+        $B5->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B5);
 
         $B6                     = new ShippingContainer();
@@ -267,6 +280,7 @@ class WhoaMediaSeeder extends Seeder
         $B6->setWidth(4.00);
         $B6->setHeight(6.00);
         $B6->setWeight(0.00);
+        $B6->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B6);
 
         $this->organizationRepo->saveAndCommit($this->organization);

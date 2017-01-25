@@ -23,6 +23,11 @@ class Shipment implements \JsonSerializable
     protected $id;
 
     /**
+     * @var Shipper
+     */
+    protected $shipper;
+
+    /**
      * @var Address
      */
     protected $fromAddress;
@@ -100,6 +105,7 @@ class Shipment implements \JsonSerializable
         $this->rates                    = new ArrayCollection();
         $this->images                   = new ArrayCollection();
 
+        $this->shipper                  = AU::get($data['shipper']);
         $this->fromAddress              = AU::get($data['fromAddress']);
         $this->toAddress                = AU::get($data['toAddress']);
         $this->returnAddress            = AU::get($data['returnAddress']);
@@ -124,6 +130,7 @@ class Shipment implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['shipper']              = $this->shipper->jsonSerialize();
         $object['fromAddress']          = $this->fromAddress->jsonSerialize();
         $object['toAddress']            = $this->toAddress->jsonSerialize();
         $object['returnAddress']        = $this->returnAddress->jsonSerialize();
@@ -156,6 +163,22 @@ class Shipment implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return Shipper
+     */
+    public function getShipper()
+    {
+        return $this->shipper;
+    }
+
+    /**
+     * @param Shipper $shipper
+     */
+    public function setShipper($shipper)
+    {
+        $this->shipper = $shipper;
     }
 
     /**

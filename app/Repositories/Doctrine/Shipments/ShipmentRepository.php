@@ -30,7 +30,7 @@ class ShipmentRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shipment', 'status', 'shippingContainer', 'postage', 'service', 'carrier', 'items', 'orderItem', 'orders', 'client', 'organization']);
+        $qb->select(['shipment', 'status', 'shipper', 'shippingContainer', 'postage', 'service', 'carrier', 'items', 'orderItem', 'orders', 'client', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));
@@ -86,6 +86,7 @@ class ShipmentRepository extends BaseRepository
     {
         $qb->from('App\Models\Shipments\Shipment', 'shipment')
             ->join('shipment.status', 'status', Query\Expr\Join::ON)
+            ->join('shipment.shipper', 'shipper', Query\Expr\Join::ON)
             ->leftJoin('shipment.shippingContainer', 'shippingContainer', Query\Expr\Join::ON)
             ->leftJoin('shipment.postage', 'postage', Query\Expr\Join::ON)
             ->leftJoin('shipment.service', 'service', Query\Expr\Join::ON)
@@ -100,6 +101,9 @@ class ShipmentRepository extends BaseRepository
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shipment.id', $query['ids']));
+
+        if (!is_null(AU::get($query['shipperIds'])))
+            $qb->andWhere($qb->expr()->in('shipper.id', $query['shipperIds']));
 
         if (!is_null(AU::get($query['shippingContainerIds'])))
             $qb->andWhere($qb->expr()->in('shippingContainer.id', $query['shippingContainerIds']));

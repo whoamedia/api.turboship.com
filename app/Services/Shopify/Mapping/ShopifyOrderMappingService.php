@@ -74,6 +74,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         $order->setSource($this->shopifySource);
         $order->setClient($this->client);
 
+        $order->setName($shopifyOrder->getName());
         $order->setExternalId($shopifyOrder->getId());
         $order->setExternalCreatedAt($this->toDate($shopifyOrder->getCreatedAt()));
 

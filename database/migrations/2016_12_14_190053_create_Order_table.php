@@ -34,6 +34,7 @@ class CreateOrderTable extends Migration
 
 
             $table->string('externalId')->index();
+            $table->string('name')->index()->nullable()->default(null);
             $table->datetime('externalCreatedAt')->index();
             $table->decimal('externalWeight', 10, 2)->unsigned()->index()->nullable()->default(null);
             $table->decimal('basePrice', 10, 2)->unsigned()->index();

@@ -142,6 +142,17 @@ class OrderRepository extends BaseRepository
             $qb->setParameter('externalCreatedTo', $query['externalCreatedTo'] . ' 23:59:59');
         }
 
+        if (!is_null(AU::get($query['names'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $names                  = explode(',', $query['names']);
+            foreach ($names AS $name)
+            {
+                $orX->add($qb->expr()->eq('orders.name', $qb->expr()->literal($name)));
+            }
+            $qb->andWhere($orX);
+        }
+
         if (!is_null(AU::get($query['externalIds'])))
         {
             $orX                    = $qb->expr()->orX();

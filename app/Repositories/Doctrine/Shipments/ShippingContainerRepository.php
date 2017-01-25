@@ -29,7 +29,7 @@ class ShippingContainerRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shippingContainer', 'organization']);
+        $qb->select(['shippingContainer', 'organization', 'shippingContainerType']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -46,13 +46,17 @@ class ShippingContainerRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\ShippingContainer', 'shippingContainer')
-            ->join('shippingContainer.organization', 'organization', Query\Expr\Join::ON);
+            ->join('shippingContainer.organization', 'organization', Query\Expr\Join::ON)
+            ->join('shippingContainer.shippingContainerType', 'shippingContainerType', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shippingContainer.id', $query['ids']));
 
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
+
+        if (!is_null(AU::get($query['shippingContainerTypeIds'])))
+            $qb->andWhere($qb->expr()->in('shippingContainerType.id', $query['shippingContainerTypeIds']));
 
 
         $qb->orderBy('shippingContainer.id', 'ASC');

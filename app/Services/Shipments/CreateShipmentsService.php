@@ -74,6 +74,7 @@ class CreateShipmentsService
         foreach ($orders AS $order)
         {
             $shipment                   = new Shipment();
+            $shipment->setShipper($this->shipper);
             $shipment->setFromAddress($this->shipper->getAddress());
             $shipment->setReturnAddress($this->shipper->getReturnAddress());
             $shipment->setToAddress($order->getShippingAddress());

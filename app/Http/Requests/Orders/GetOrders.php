@@ -54,6 +54,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
+    protected $names;
+
+    /**
+     * @var string|null
+     */
     protected $itemSkus;
 
     /**
@@ -117,6 +122,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->statusIds                = AU::get($data['statusIds']);
         $this->shipmentStatusId         = AU::get($data['shipmentStatusId']);
         $this->externalIds              = AU::get($data['externalIds']);
+        $this->names                    = AU::get($data['names']);
         $this->itemSkus                 = AU::get($data['itemSkus']);
         $this->isAddressError           = AU::get($data['isAddressError']);
         $this->isSkuError               = AU::get($data['isSkuError']);
@@ -165,6 +171,7 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['sourceIds']            = $this->sourceIds;
         $object['statusIds']            = $this->statusIds;
         $object['shipmentStatusId']     = $this->shipmentStatusId;
+        $object['names']                = $this->names;
         $object['externalIds']          = $this->externalIds;
         $object['itemSkus']             = $this->itemSkus;
         $object['isAddressError']       = $this->isAddressError;
@@ -307,6 +314,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setExternalIds($externalIds)
     {
         $this->externalIds = $externalIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * @param null|string $names
+     */
+    public function setNames($names)
+    {
+        $this->names = $names;
     }
 
     /**

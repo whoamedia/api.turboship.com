@@ -27,6 +27,12 @@ class Order implements \JsonSerializable
     protected $externalId;
 
     /**
+     * Shopify name
+     * @var string|null
+     */
+    protected $name;
+
+    /**
      * Shopify subtotal_price
      * @var float
      */
@@ -132,6 +138,7 @@ class Order implements \JsonSerializable
         $this->statusHistory            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
+        $this->name                     = AU::get($data['name']);
         $this->externalWeight           = AU::get($data['externalWeight']);
         $this->basePrice                = AU::get($data['basePrice'], 0.00);
         $this->totalDiscount            = AU::get($data['totalDiscount'], 0.00);
@@ -182,6 +189,7 @@ class Order implements \JsonSerializable
         $object['status']               = $this->status->jsonSerialize();
         $object['shipmentStatus']       = $this->shipmentStatus->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+        $object['name']                 = $this->name;
         $object['externalId']           = $this->externalId;
         $object['externalWeight']       = $this->externalWeight;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
@@ -218,6 +226,22 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param null|string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**

@@ -22,11 +22,17 @@ class GetShippingContainers extends BaseRequest implements Cleanable, Validatabl
      */
     protected $organizationIds;
 
+    /**
+     * @var string|null
+     */
+    protected $shippingContainerTypeIds;
+
 
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
         $this->organizationIds          = AU::get($data['organizationIds']);
+        $this->shippingContainerTypeIds = AU::get($data['shippingContainerTypeIds']);
     }
 
     public function validate()
@@ -38,6 +44,7 @@ class GetShippingContainers extends BaseRequest implements Cleanable, Validatabl
     {
         $this->ids                      = InputUtil::getIdsString($this->ids);
         $this->organizationIds          = InputUtil::getIdsString($this->organizationIds);
+        $this->shippingContainerTypeIds = InputUtil::getIdsString($this->shippingContainerTypeIds);
     }
 
     /**
@@ -47,6 +54,7 @@ class GetShippingContainers extends BaseRequest implements Cleanable, Validatabl
     {
         $object['ids']                  = $this->ids;
         $object['organizationIds']      = $this->organizationIds;
+        $object['shippingContainerTypeIds'] = $this->shippingContainerTypeIds;
 
         return $object;
     }
@@ -81,6 +89,22 @@ class GetShippingContainers extends BaseRequest implements Cleanable, Validatabl
     public function setOrganizationIds($organizationIds)
     {
         $this->organizationIds = $organizationIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShippingContainerTypeIds()
+    {
+        return $this->shippingContainerTypeIds;
+    }
+
+    /**
+     * @param null|string $shippingContainerTypeIds
+     */
+    public function setShippingContainerTypeIds($shippingContainerTypeIds)
+    {
+        $this->shippingContainerTypeIds = $shippingContainerTypeIds;
     }
 
 }

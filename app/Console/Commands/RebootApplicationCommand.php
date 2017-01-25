@@ -33,7 +33,7 @@ class RebootApplicationCommand extends Command
      */
     public function handle()
     {
-        $this->deleteExternalWebHooks();
+        //  $this->deleteExternalWebHooks();
 
         try {
             $this->call('migrate:refresh', [
