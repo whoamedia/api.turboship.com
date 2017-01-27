@@ -31,6 +31,10 @@ class RebootApplicationCommand extends Command
      */
     public function handle()
     {
+        if (config('app.env' == 'dev'))
+        {
+            shell_exec('sudo /usr/sbin/service supervisor stop');
+        }
         try {
             $this->call('migrate:refresh', [
                 '--seed' => 1
@@ -47,6 +51,11 @@ class RebootApplicationCommand extends Command
             'clientId'      =>  'seloVYGtW6yFM1iz',
             'clientSecret'  =>  'b175ZuxK0041VTYU1fLJoxVT72CrqG1v'
         ]);
+
+        if (config('app.env' == 'dev'))
+        {
+            shell_exec('sudo /usr/sbin/service supervisor start');
+        }
     }
 
 }
