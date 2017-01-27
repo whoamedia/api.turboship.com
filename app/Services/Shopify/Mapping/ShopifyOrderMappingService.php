@@ -211,7 +211,12 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
      */
     public function shouldImportOrder (ShopifyOrder $shopifyOrder)
     {
-        return true;
+        if (is_null($shopifyOrder->getShippingAddress()))
+            return false;
+        else if ($shopifyOrder->isTest())
+            return false;
+        else
+            return true;
     }
 
     /**
