@@ -63,7 +63,7 @@ class ShippingContainerController extends BaseAuthController
         $json['organization']           = parent::getAuthUserOrganization();
 
         $shippingContainer              = new ShippingContainer($json);
-        $shippingContainer->getShippingContainerType($shippingContainerType);
+        $shippingContainer->setShippingContainerType($shippingContainerType);
         $shippingContainer->validate();
 
         $this->shippingContainerRepo->saveAndCommit($shippingContainer);
