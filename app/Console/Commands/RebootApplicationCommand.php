@@ -31,7 +31,7 @@ class RebootApplicationCommand extends Command
      */
     public function handle()
     {
-        if (config('app.env' == 'dev'))
+        if (config('app.env') == 'dev')
         {
             try
             {
@@ -66,7 +66,7 @@ class RebootApplicationCommand extends Command
         ]);
 
 
-        if (config('app.env' == 'dev'))
+        if (config('app.env') == 'dev')
         {
             try
             {
