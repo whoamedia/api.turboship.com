@@ -75,7 +75,7 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         $order->setClient($this->client);
 
         $order->setName($shopifyOrder->getName());
-        $order->setExternalId($shopifyOrder->getId());
+        $order->setExternalId(intval($shopifyOrder->getId()));
         $order->setExternalCreatedAt($this->toDate($shopifyOrder->getCreatedAt()));
 
         $weightGrams                        = $shopifyOrder->getTotalWeight();
@@ -119,9 +119,9 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         if (is_null($orderItem))
             $orderItem                  = new OrderItem();
 
-        $orderItem->setExternalId($shopifyOrderLineItem->getId());
-        $orderItem->setExternalProductId($shopifyOrderLineItem->getProductId());
-        $orderItem->setExternalVariantId($shopifyOrderLineItem->getVariantId());
+        $orderItem->setExternalId(intval($shopifyOrderLineItem->getId()));
+        $orderItem->setExternalProductId(intval($shopifyOrderLineItem->getProductId()));
+        $orderItem->setExternalVariantId(intval($shopifyOrderLineItem->getVariantId()));
         $orderItem->setExternalVariantTitle($shopifyOrderLineItem->getVariantTitle());
         $orderItem->setSku($shopifyOrderLineItem->getSku());
         $orderItem->setQuantityPurchased($shopifyOrderLineItem->getQuantity());

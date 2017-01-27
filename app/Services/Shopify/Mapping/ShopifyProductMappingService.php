@@ -109,7 +109,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
 
         $productAlias->setClient($this->client);
         $productAlias->setSource($this->shopifySource);
-        $productAlias->setExternalId($shopifyProduct->getId());
+        $productAlias->setExternalId(intval($shopifyProduct->getId()));
         $productAlias->setExternalCreatedAt($this->toDate($shopifyProduct->getCreatedAt()));
 
         return $productAlias;
@@ -149,7 +149,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         $variant->setTitle($shopifyVariant->getTitle());
         $variant->setPrice($shopifyVariant->getPrice());
         $variant->setBarcode($shopifyVariant->getBarcode());
-        $variant->setExternalId($shopifyVariant->getId());
+        $variant->setExternalId(intval($shopifyVariant->getId()));
         $variant->setExternalCreatedAt($this->toDate($shopifyVariant->getCreatedAt()));
 
         //  Convert grams to ounces
@@ -179,7 +179,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
             $image                          = new Image();
 
         $image->setSource($this->shopifySource);
-        $image->setExternalId($shopifyProductImage->getId());
+        $image->setExternalId(intval($shopifyProductImage->getId()));
         $image->setExternalCreatedAt($this->toDate($shopifyProductImage->getCreatedAt()));
         $image->setPath($shopifyProductImage->getSrc());
         return $image;
