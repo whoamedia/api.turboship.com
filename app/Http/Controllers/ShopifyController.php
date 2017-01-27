@@ -89,12 +89,9 @@ class ShopifyController extends BaseAuthController
         $total                              = $this->shopifyService->getOrdersShippedCount();
         $totalPages                         = (int)ceil($total / 250);
 
-        $currentPage                        = is_null($request->input('currentPage')) ? 1 : intval($request->input('currentPage'));
-        $maxPages                           = is_null($request->input('maxPages')) ? 100 : intval($request->input('maxPages'));
 
         $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
-        $maxPageCount                       = 0;
-        for ($page = $currentPage; $page <= $totalPages; $page++)
+        for ($page = 1; $page <= $totalPages; $page++)
         {
             set_time_limit(60);
             $shopifyOrdersResponse          = $this->shopifyService->getOrdersShipped($page, 250);
@@ -105,11 +102,6 @@ class ShopifyController extends BaseAuthController
                 $this->dispatch($job);
             }
             usleep(250000);
-
-            $maxPageCount++;
-
-            if ($maxPages == $maxPageCount)
-                return response('maxPages met');
         }
     }
 
