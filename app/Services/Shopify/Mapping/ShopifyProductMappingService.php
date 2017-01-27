@@ -73,6 +73,27 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
                 $product->addImage($image);
         }
 
+        /**
+         * If the product id is null we're creating it for the first time so don't do these checks
+         * See if there are any images that we need to delete locally
+         */
+        if (!is_null($product->getId()))
+        {
+            foreach ($product->getImages() AS $image)
+            {
+                $shopifyDeleted             = true;
+                foreach ($shopifyProduct->getImages() AS $shopifyProductImage)
+                {
+                    if (intval($image->getExternalId()) == intval($shopifyProductImage->getId()))
+                        $shopifyDeleted     = false;
+                }
+                if ($shopifyDeleted)
+                {
+                    $product->removeImage($image);
+                }
+            }
+        }
+
         return $product;
     }
 

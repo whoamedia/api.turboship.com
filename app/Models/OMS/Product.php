@@ -172,6 +172,9 @@ class Product extends BaseModel implements \JsonSerializable
         return $this->aliases->toArray();
     }
 
+    /**
+     * @param ProductAlias $productAlias
+     */
     public function removeAlias (ProductAlias $productAlias)
     {
         $this->aliases->removeElement($productAlias);
@@ -240,6 +243,11 @@ class Product extends BaseModel implements \JsonSerializable
     public function addImage (Image $image)
     {
         $this->images->add($image);
+    }
+
+    public function removeImage (Image $image)
+    {
+        $this->images->removeElement($image);
     }
 
 }
