@@ -57,6 +57,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  IntegratedShippingApi Operations
     Route::get('/integratedShippingApis', 'IntegratedShippingApiController@index');
+    Route::post('/integratedShippingApis', 'IntegratedShippingApiController@store');
     Route::get('/integratedShippingApis/{id}', 'IntegratedShippingApiController@show');
     Route::get('/integratedShippingApis/{id}/credentials', 'IntegratedShippingApiController@getCredentials');
     Route::put('/integratedShippingApis/{id}/credentials', 'IntegratedShippingApiController@updateCredentials');
