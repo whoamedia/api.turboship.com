@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\IntegratedShippingApis\GetIntegratedShippingApis;
-use App\Http\Requests\IntegratedShippingApis\ShowIntegratedShippingApi;
-use App\Models\Integrations\IntegratedShippingApi;
-use App\Models\Integrations\Validation\IntegratedShippingApiValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use EntityManager;
 use Illuminate\Http\Request;
 
-class IntegratedShippingApiController extends BaseAuthController
+class IntegratedShippingApiController extends BaseIntegratedServiceController
 {
 
     /**
@@ -22,6 +19,7 @@ class IntegratedShippingApiController extends BaseAuthController
 
     public function __construct()
     {
+        parent::__construct('IntegratedShippingApi');
         $this->integratedShippingApiRepo    = EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
     }
 
@@ -39,24 +37,4 @@ class IntegratedShippingApiController extends BaseAuthController
         return response($results);
     }
 
-
-    public function show (Request $request)
-    {
-        $showIntegratedShippingApi          = new ShowIntegratedShippingApi();
-        $showIntegratedShippingApi->setId($request->route('id'));
-
-        $integratedShippingApi              = $this->getIntegratedShippingApiFromRoute($showIntegratedShippingApi->getId());
-        return response($integratedShippingApi);
-    }
-
-    /**
-     * @param   int     $id
-     * @return  IntegratedShippingApi
-     */
-    public function getIntegratedShippingApiFromRoute ($id)
-    {
-        $integratedShippingApiValidation    = new IntegratedShippingApiValidation();
-        $integratedShippingApi              = $integratedShippingApiValidation->idExists($id);
-        return $integratedShippingApi;
-    }
 }

@@ -6,20 +6,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IntegratedShoppingCarts\CreateIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\DeleteIntegratedWebHook;
 use App\Http\Requests\IntegratedShoppingCarts\GetIntegratedShoppingCarts;
-use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
 use App\Http\Requests\Integrations\CreateIntegratedShoppingCart;
 use App\Http\Requests\Integrations\UpdateCredential;
 use App\Http\Requests\Integrations\UpdateIntegration;
-use App\Http\Requests\Integrations\UpdateIntegrationCredentials;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Integrations\Credential;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\IntegratedWebHook;
-use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Models\Integrations\Validation\IntegratedWebHookValidation;
 use App\Models\Integrations\Validation\IntegrationWebHookValidation;
 use App\Models\Integrations\Validation\ShoppingCartApiValidation;
-use App\Repositories\Doctrine\CMS\ClientRepository;
 use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
 use App\Services\CredentialService;
 use App\Services\Shopify\ShopifyService;
@@ -29,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class IntegratedShoppingCartController extends BaseAuthController
+class IntegratedShoppingCartController extends BaseIntegratedServiceController
 {
 
     /**
@@ -38,17 +34,12 @@ class IntegratedShoppingCartController extends BaseAuthController
     protected $integratedShoppingCartRepo;
 
     /**
-     * @var ClientRepository
-     */
-    protected $clientRepo;
-
-    /**
      * IntegratedShoppingCartController constructor.
      */
     public function __construct ()
     {
+        parent::__construct('IntegratedShoppingCart');
         $this->integratedShoppingCartRepo   = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
-        $this->clientRepo                   = EntityManager::getRepository('App\Models\CMS\Client');
     }
 
 
@@ -64,13 +55,6 @@ class IntegratedShoppingCartController extends BaseAuthController
         return response($results);
     }
 
-
-    public function show (Request $request)
-    {
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        return response($integratedShoppingCart);
-    }
-
     public function update (Request $request)
     {
         $updateIntegration                  = new UpdateIntegration($request->input());
@@ -78,7 +62,7 @@ class IntegratedShoppingCartController extends BaseAuthController
         $updateIntegration->validate();
         $updateIntegration->clean();
 
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($updateIntegration->getId());
+        $integratedShoppingCart             = parent::getIntegratedServiceFromRoute($updateIntegration->getId());
         if (!is_null($updateIntegration->getName()))
             $integratedShoppingCart->setName($updateIntegration->getName());
 
@@ -152,56 +136,7 @@ class IntegratedShoppingCartController extends BaseAuthController
 
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
 
-        foreach ($createIntegratedShoppingCart->getWebHooks() AS $createWebHook)
-        {
-
-        }
-
         return response($integratedShoppingCart);
-    }
-
-    public function getCredentials (Request $request)
-    {
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        return response($integratedShoppingCart->getCredentials());
-    }
-
-    public function updateCredentials (Request $request)
-    {
-        $updateIntegrationCredentials       = new UpdateIntegrationCredentials($request->input());
-        $updateIntegrationCredentials->setId($request->route('id'));
-        $updateIntegrationCredentials->validate();
-        $updateIntegrationCredentials->clean();
-
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($updateIntegrationCredentials->getId());
-        foreach ($updateIntegrationCredentials->getCredentials() AS $updateCredential)
-        {
-            $integrationCredential          = $integratedShoppingCart->getCredentialById($updateCredential->getIntegrationCredentialId());
-            if (is_null($integrationCredential))
-                throw new NotFoundHttpException('integrationCredentialId not found');
-
-            $integrationCredential->setValue($updateCredential->getValue());
-        }
-
-        $credentialService                  = new CredentialService($integratedShoppingCart);
-        if (!$credentialService->validateCredentials())
-            throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
-
-        $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
-        return response($integratedShoppingCart->getCredentials());
-    }
-
-    public function getWebHooks (Request $request)
-    {
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        return response($integratedShoppingCart->getIntegratedWebHooks());
-    }
-
-
-    public function getAvailableWebHooks (Request $request)
-    {
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        return response($integratedShoppingCart->getAvailableIntegratedWebHooks());
     }
 
 
@@ -212,7 +147,7 @@ class IntegratedShoppingCartController extends BaseAuthController
         $createIntegratedWebHook->validate();
         $createIntegratedWebHook->clean();
 
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        $integratedShoppingCart             = parent::getIntegratedServiceFromRoute($request->route('id'));
         $integrationWebHookValidation       = new IntegrationWebHookValidation();
         $integrationWebHookIds              = explode(',', $createIntegratedWebHook->getIntegrationWebHookIds());
 
@@ -251,7 +186,7 @@ class IntegratedShoppingCartController extends BaseAuthController
         $deleteIntegratedWebHook->validate();
         $deleteIntegratedWebHook->clean();
 
-        $integratedShoppingCart             = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        $integratedShoppingCart             = parent::getIntegratedServiceFromRoute($request->route('id'));
         $integratedWebHookValidation        = new IntegratedWebHookValidation();
 
         $integratedWebHook                  = $integratedWebHookValidation->idExists($deleteIntegratedWebHook->getIntegratedWebHookId());
@@ -267,18 +202,4 @@ class IntegratedShoppingCartController extends BaseAuthController
         return response ('', 204);
     }
 
-    /**
-     * @param   int     $id
-     * @return  IntegratedShoppingCart
-     */
-    private function getIntegratedShoppingCartFromRoute ($id)
-    {
-        $showIntegratedShoppingCart         = new ShowIntegratedShoppingCart();
-        $showIntegratedShoppingCart->setId($id);
-        $showIntegratedShoppingCart->validate();
-        $showIntegratedShoppingCart->clean();
-
-        $integratedShoppingCartValidation   = new IntegratedShoppingCartValidation();
-        return $integratedShoppingCartValidation->idExists($showIntegratedShoppingCart->getId());
-    }
 }

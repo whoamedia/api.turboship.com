@@ -58,6 +58,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  IntegratedShippingApi Operations
     Route::get('/integratedShippingApis', 'IntegratedShippingApiController@index');
     Route::get('/integratedShippingApis/{id}', 'IntegratedShippingApiController@show');
+    Route::get('/integratedShippingApis/{id}/credentials', 'IntegratedShippingApiController@getCredentials');
+    Route::put('/integratedShippingApis/{id}/credentials', 'IntegratedShippingApiController@updateCredentials');
+    Route::get('/integratedShippingApis/{id}/webHooks', 'IntegratedShippingApiController@getWebHooks');
+    Route::get('/integratedShippingApis/{id}/webHooks/available', 'IntegratedShippingApiController@getAvailableWebHooks');
+
 
     //  Integration Operations
     Route::get('/integrations', 'IntegrationController@index');

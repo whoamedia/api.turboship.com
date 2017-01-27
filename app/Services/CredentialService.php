@@ -96,7 +96,7 @@ class CredentialService
             }
             return true;
         }
-        else if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::SHOPIFY_ID)
+        else if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
         {
             $service                    = $this->getEasyPostIntegration();
             try
