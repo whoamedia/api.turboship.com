@@ -9,6 +9,7 @@ use App\Http\Requests\ShippingContainers\ShowShippingContainer;
 use App\Http\Requests\ShippingContainers\UpdateShippingContainer;
 use App\Models\Shipments\ShippingContainer;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Models\Support\Validation\ShippingContainerTypeValidation;
 use App\Repositories\Doctrine\Shipments\ShippingContainerRepository;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -46,6 +47,30 @@ class ShippingContainerController extends BaseAuthController
     }
 
 
+    public function create (Request $request)
+    {
+        $createShippingContainer        = new CreateShippingContainer($request->input());
+        $createShippingContainer->setOrganizationId(parent::getAuthUserOrganization()->getId());
+        $createShippingContainer->validate();
+        $createShippingContainer->clean();
+
+        $shippingContainerTypeValidation = new ShippingContainerTypeValidation();
+        $shippingContainerType          = $shippingContainerTypeValidation->idExists($createShippingContainer->getShippingContainerTypeId());
+
+        $json                           = $createShippingContainer->jsonSerialize();
+        unset($json['organizationId']);
+        unset($json['shippingContainerTypeId']);
+        $json['organization']           = parent::getAuthUserOrganization();
+
+        $shippingContainer              = new ShippingContainer($json);
+        $shippingContainer->getShippingContainerType($shippingContainerType);
+        $shippingContainer->validate();
+
+        $this->shippingContainerRepo->saveAndCommit($shippingContainer);
+
+        return response($shippingContainer, 201);
+    }
+
     public function update (Request $request)
     {
         $updateShippingContainer        = new UpdateShippingContainer($request->input());
@@ -54,6 +79,13 @@ class ShippingContainerController extends BaseAuthController
         $updateShippingContainer->clean();
 
         $shippingContainer              = $this->getShippingContainerFromRoute($updateShippingContainer->getId());
+
+        if (!is_null($updateShippingContainer->getShippingContainerTypeId()))
+        {
+            $shippingContainerTypeValidation = new ShippingContainerTypeValidation();
+            $shippingContainerType      = $shippingContainerTypeValidation->idExists($updateShippingContainer->getShippingContainerTypeId());
+            $shippingContainer->setShippingContainerType($shippingContainerType);
+        }
 
         if (!is_null($updateShippingContainer->getName()))
             $shippingContainer->setName($updateShippingContainer->getName());
@@ -73,26 +105,6 @@ class ShippingContainerController extends BaseAuthController
         $shippingContainer->validate();
         $this->shippingContainerRepo->saveAndCommit($shippingContainer);
         return response ($shippingContainer);
-    }
-
-
-    public function create (Request $request)
-    {
-        $createShippingContainer        = new CreateShippingContainer($request->input());
-        $createShippingContainer->setOrganizationId(parent::getAuthUserOrganization()->getId());
-        $createShippingContainer->validate();
-        $createShippingContainer->clean();
-
-        $query                          = $createShippingContainer->jsonSerialize();
-        unset($query['organizationId']);
-        $query['organization']          = parent::getAuthUserOrganization();
-
-        $shippingContainer              = new ShippingContainer($query);
-        $shippingContainer->validate();
-
-        $this->shippingContainerRepo->saveAndCommit($shippingContainer);
-
-        return response($shippingContainer, 201);
     }
 
     /**
