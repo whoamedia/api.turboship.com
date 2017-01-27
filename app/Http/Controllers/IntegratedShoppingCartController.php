@@ -145,17 +145,18 @@ class IntegratedShoppingCartController extends BaseAuthController
                 throw new BadRequestHttpException($shoppingCartIntegration->getName() . ' ' . $integrationCredential->getName() . ' is required');
         }
 
-        foreach ($createIntegratedShoppingCart->getWebHooks() AS $createWebHook)
-        {
-
-        }
-
 
         $credentialService                  = new CredentialService($integratedShoppingCart);
         if (!$credentialService->validateCredentials())
             throw new BadRequestHttpException('The provided ' . $integratedShoppingCart->getIntegration()->getName() . ' credentials are invalid');
 
         $this->integratedShoppingCartRepo->saveAndCommit($integratedShoppingCart);
+
+        foreach ($createIntegratedShoppingCart->getWebHooks() AS $createWebHook)
+        {
+
+        }
+
         return response($integratedShoppingCart);
     }
 
