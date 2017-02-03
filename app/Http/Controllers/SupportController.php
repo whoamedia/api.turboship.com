@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Support\GetOrderStatuses;
+use App\Http\Requests\Support\GetPrinterTypes;
 use App\Http\Requests\Support\GetShipmentStatuses;
 use App\Http\Requests\Support\GetShippingContainerTypes;
 use App\Http\Requests\Support\GetSources;
@@ -23,6 +24,11 @@ class SupportController extends BaseAuthController
      * @var \App\Repositories\Doctrine\OMS\OrderStatusRepository
      */
     private $orderStatusRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\WMS\PrinterTypeRepository
+     */
+    private $printerTypeRepo;
 
     /**
      * @var \App\Repositories\Doctrine\Support\ShipmentStatusRepository
@@ -98,5 +104,17 @@ class SupportController extends BaseAuthController
         $this->shippingContainerTypeRepo= EntityManager::getRepository('App\Models\Support\ShippingContainerType');
 
         return $this->shippingContainerTypeRepo->where($query, false);
+    }
+
+    public function getGetPrinterTypes (Request $request)
+    {
+        $getPrinterTypes                = new GetPrinterTypes($request->input());
+        $getPrinterTypes->validate();
+        $getPrinterTypes->clean();
+
+        $query                          = $getPrinterTypes->jsonSerialize();
+        $this->printerTypeRepo          = EntityManager::getRepository('App\Models\WMS\PrinterType');
+
+        return $this->printerTypeRepo->where($query, false);
     }
 }

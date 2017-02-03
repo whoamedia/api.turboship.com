@@ -158,6 +158,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Support Operations
     Route::get('/support/sources', 'SupportController@getSources');
     Route::get('/support/orderStatuses', 'SupportController@getOrderStatuses');
+    Route::get('/support/printerTypes', 'SupportController@getGetPrinterTypes');
     Route::get('/support/shipmentStatuses', 'SupportController@getShipmentStatuses');
     Route::get('/support/shippingContainerTypes', 'SupportController@getShippingContainerTypes');
     Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
