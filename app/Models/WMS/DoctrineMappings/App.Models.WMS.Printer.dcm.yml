@@ -22,8 +22,27 @@ App\Models\WMS\Printer:
       nullable:       false
       options:
         comment:      "Printer name"
+    description:
+      column:         description
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Printer description"
+    ipAddress:
+      column:         ipAddress
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Printer ipAddress"
 
   manyToOne:
+    printerType:
+      targetEntity:   App\Models\WMS\PrinterType
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         printerTypeId
+        referencedColumnName: id
     organization:
       targetEntity:   App\Models\CMS\Organization
       nullable:       false

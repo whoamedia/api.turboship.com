@@ -37,6 +37,13 @@ App\Models\OMS\Product:
         default:      CURRENT_datetime
 
   manyToOne:
+    image:
+      targetEntity:   App\Models\Support\Image
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         imageId
+        referencedColumnName: id
     client:
       targetEntity:   App\Models\CMS\Client
       nullable:       false

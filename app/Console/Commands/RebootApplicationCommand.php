@@ -31,24 +31,8 @@ class RebootApplicationCommand extends Command
      */
     public function handle()
     {
-        if (config('app.env') == 'dev')
+        try
         {
-            try
-            {
-                $process = new \Symfony\Component\Process\Process('sudo /usr/sbin/service supervisor stop');
-                $process->run();
-
-                if (!$process->isSuccessful()) {
-                    $this->info($process->getErrorOutput());
-                }
-            }
-            catch (\Exception $exception)
-            {
-                $this->info($exception->getMessage());
-            }
-        }
-
-        try {
             $this->call('migrate:refresh', [
                 '--seed' => 1
             ]);
@@ -64,24 +48,6 @@ class RebootApplicationCommand extends Command
             'clientId'      =>  'seloVYGtW6yFM1iz',
             'clientSecret'  =>  'b175ZuxK0041VTYU1fLJoxVT72CrqG1v'
         ]);
-
-
-        if (config('app.env') == 'dev')
-        {
-            try
-            {
-                $process = new \Symfony\Component\Process\Process('sudo /usr/sbin/service supervisor start');
-                $process->run();
-
-                if (!$process->isSuccessful()) {
-                    $this->info($process->getErrorOutput());
-                }
-            }
-            catch (\Exception $exception)
-            {
-                $this->info($exception->getMessage());
-            }
-        }
     }
 
 }

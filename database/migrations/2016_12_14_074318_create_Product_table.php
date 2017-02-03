@@ -19,6 +19,8 @@ class CreateProductTable extends Migration
             $table->string('name')->index();
             $table->text('description')->nullable()->default(NULL);
 
+            $table->integer('imageId')->unsigned()->index()->nullable()->default(NULL);
+
             $table->integer('clientId')->unsigned()->index();
             $table->foreign('clientId')->references('id')->on('Client');
 

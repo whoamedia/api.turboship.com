@@ -31,6 +31,11 @@ class Product extends BaseModel implements \JsonSerializable
     protected $description;
 
     /**
+     * @var Image|null
+     */
+    protected $image;
+
+    /**
      * @var Client
      */
     protected $client;
@@ -68,6 +73,7 @@ class Product extends BaseModel implements \JsonSerializable
 
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
+        $this->image                    = AU::get($data['image']);
         $this->client                   = AU::get($data['client']);
     }
 
@@ -78,6 +84,7 @@ class Product extends BaseModel implements \JsonSerializable
     {
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
+        $object['image']                = !is_null($this->image) ? $this->image->jsonSerialize() : null;
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
@@ -128,6 +135,22 @@ class Product extends BaseModel implements \JsonSerializable
     public function setDescription($description)
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return Image|null
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param Image|null $image
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
     }
 
     /**
@@ -239,6 +262,20 @@ class Product extends BaseModel implements \JsonSerializable
         return $this->images->toArray();
     }
 
+    /**
+     * @param   string      $externalId
+     * @return  Image|null
+     */
+    public function getImageByExternalId ($externalId)
+    {
+        foreach ($this->getImages() AS $image)
+        {
+            if ($image->getExternalId() == $externalId)
+                return $image;
+        }
+        return null;
+    }
+
 
     public function addImage (Image $image)
     {
@@ -247,6 +284,12 @@ class Product extends BaseModel implements \JsonSerializable
 
     public function removeImage (Image $image)
     {
+        //  If the image we are removing is the Product's primary image, set the primary image to null
+        if (!is_null($this->image))
+        {
+            if ($this->image->getId() == $image->getId())
+                $this->setImage(null);
+        }
         $this->images->removeElement($image);
     }
 

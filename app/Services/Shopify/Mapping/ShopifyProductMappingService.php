@@ -94,6 +94,13 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
             }
         }
 
+        if (!is_null($shopifyProduct->getImage()))
+        {
+            //  At this point our images should be mapped
+            $image                          = $product->getImageByExternalId($shopifyProduct->getImage()->getId());
+            $product->setImage($image);
+        }
+
         return $product;
     }
 
