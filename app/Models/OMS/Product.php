@@ -276,12 +276,17 @@ class Product extends BaseModel implements \JsonSerializable
         return null;
     }
 
-
+    /**
+     * @param Image $image
+     */
     public function addImage (Image $image)
     {
         $this->images->add($image);
     }
 
+    /**
+     * @param Image $image
+     */
     public function removeImage (Image $image)
     {
         //  If the image we are removing is the Product's primary image, set the primary image to null
