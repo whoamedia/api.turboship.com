@@ -181,4 +181,28 @@ class BaseRequest
         return $value;
     }
 
+    /**
+     * @param   string$ipAddress
+     * @return  bool
+     */
+    public function validateIpAddress ($ipAddress)
+    {
+        try
+        {
+            $host                       = gethostbyaddr($ipAddress);
+        }
+        catch (\ErrorException $exception)
+        {
+            if (preg_match("/Address is not a valid IPv4 or IPv6 address/", $exception->getMessage()))
+            {
+                throw new BadRequestHttpException('Address is not a valid IPv4 or IPv6 address');
+            }
+            else
+                throw new BadRequestHttpException($exception->getMessage());
+
+        }
+
+        return true;
+    }
+
 }

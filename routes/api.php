@@ -94,6 +94,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
 
+    //  Printer Operations
+    Route::get('/printers', 'PrinterController@index');
+    Route::post('/printers', 'PrinterController@store');
+    Route::get('/printers/{id}', 'PrinterController@show');
+    Route::put('/printers/{id}', 'PrinterController@update');
+
 
     //  Product Operations
     Route::get('/products', 'ProductController@index');
