@@ -53,7 +53,7 @@ class ShipmentController extends BaseAuthController
 
     public function __construct()
     {
-        $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
+        $this->clientValidation         = new ClientValidation();
         $this->shipperValidation        = new ShipperValidation();
         $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
         $this->integratedShippingApiRepo= EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');

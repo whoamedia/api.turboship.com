@@ -3,11 +3,10 @@
 namespace App\Models\CMS\Validation;
 
 
-use App\Models\CMS\Organization;
 use App\Repositories\Doctrine\CMS\ClientRepository;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\CMS\Client;
+use EntityManager;
 
 class ClientValidation
 {
@@ -18,9 +17,16 @@ class ClientValidation
     private $clientRepo;
 
 
-    public function __construct(ClientRepository $clientRepo)
+    /**
+     * ClientValidation constructor.
+     * @param ClientRepository|null $clientRepo
+     */
+    public function __construct($clientRepo = null)
     {
-        $this->clientRepo               = $clientRepo;
+        if (is_null($clientRepo))
+            $this->clientRepo           = EntityManager::getRepository('App\Models\CMS\Client');
+        else
+            $this->clientRepo           = $clientRepo;
     }
 
 
