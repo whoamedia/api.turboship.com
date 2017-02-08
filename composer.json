@@ -21,7 +21,8 @@
         "respect/validation": "^1.1",
         "pda/pheanstalk": "^3.1",
         "maxbrokman/safe-queue": "^0.2.4",
-        "jamesvweston/shopify-php": "dev-master"
+        "jamesvweston/shopify-php": "dev-master",
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

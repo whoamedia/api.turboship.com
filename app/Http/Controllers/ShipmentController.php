@@ -20,6 +20,8 @@ use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\ImageService;
+use App\Services\S3Service;
 use App\Services\Shipments\PostageService;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -210,6 +212,42 @@ class ShipmentController extends BaseAuthController
     {
         $shipment                       = $this->getShipment($request->route('id'));
         return response($shipment->getImages());
+    }
+
+    public function storeImages (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $files                          = $request->allFiles();
+        if (empty($files) || !is_array($files))
+            throw new BadRequestHttpException('files is required');
+
+        /**
+         * Let's validate everything first.
+         * This will prevent us from uploading to S3 if validation fails
+         */
+        foreach ($files AS $file)
+        {
+            if (!$file->isValid())
+                throw new BadRequestHttpException('files is required');
+
+            if (!preg_match('#^image#', $file->getMimeType()))
+                throw new BadRequestHttpException('Invalid mime type');
+        }
+
+        $imageService                   = new ImageService();
+
+        foreach ($files AS $file)
+        {
+            $filePath                   = $file->path();
+            $fileName                   = $file->getClientOriginalName();
+
+            $image                      = $imageService->handleImage($filePath, $fileName);
+            $shipment->addImage($image);
+        }
+
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response($shipment->getImages(), 201);
     }
 
     /**
