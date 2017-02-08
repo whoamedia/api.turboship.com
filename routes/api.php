@@ -18,6 +18,13 @@ Route::post('/oauth/access_token',
 Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 {
 
+    //  ACL operations
+    Route::get('/acl/permissions', 'ACLController@getPermissions');
+    Route::get('/acl/permissions/{id}', 'ACLController@showPermission');
+    Route::get('/acl/roles', 'ACLController@getRoles');
+    Route::get('/acl/roles/{id}', 'ACLController@showRole');
+
+
     //  Carrier operations
     Route::get('/carriers', 'CarrierController@index');
     Route::get('/carriers/{id}', 'CarrierController@show');
@@ -176,6 +183,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/users/me', 'UserController@me');
     Route::get('/users/{id}', 'UserController@show');
     Route::put('/users/{id}', 'UserController@update');
+    Route::get('/users/{id}/permissions', 'UserController@getPermissions');
+    Route::post('/users/{id}/permissions', 'UserController@createPermissions');
+    Route::delete('/users/{id}/permissions/{permissionId}', 'UserController@deletePermission');
     Route::post('/users', 'UserController@store');
     Route::put('/users/{id}/password', 'UserController@updatePassword');
 

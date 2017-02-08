@@ -8,6 +8,7 @@ use App\Http\Requests\Users\ShowUser;
 use App\Http\Requests\Users\GetUsers;
 use App\Http\Requests\Users\UpdatePassword;
 use App\Http\Requests\Users\UpdateUser;
+use App\Models\ACL\Validation\PermissionValidation;
 use App\Models\CMS\User;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\CMS\Validation\UserValidation;
@@ -186,6 +187,52 @@ class UserController extends BaseAuthController
     }
 
 
+    public function getPermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        return response($user->getPermissions());
+    }
+
+    public function createPermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionIds                  = $request->input('permissionIds');
+        if (is_null($permissionIds))
+            throw new BadRequestHttpException('permissionIds is required');
+
+        $permissionValidation           = new PermissionValidation();
+        $permissionIds                  = str_replace(' ', '', $permissionIds);
+        foreach (explode(',', $permissionIds) AS $id)
+        {
+            $permission                 = $permissionValidation->idExists($id);
+            if ($user->hasPermission($permission))
+                throw new BadRequestHttpException('User already has permission ' . $permission->getName());
+            $user->addPermission($permission);
+        }
+
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getPermissions(), 201);
+    }
+
+    public function deletePermission (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionId                   = $request->route('permissionId');
+        if (is_null($permissionId))
+            throw new BadRequestHttpException('permissionId is required');
+
+        $permissionValidation           = new PermissionValidation();
+        $permission                     = $permissionValidation->idExists($permissionId);
+
+        if (!$user->hasPermission($permission))
+            throw new BadRequestHttpException('User does not have permission ' . $permission->getName());
+
+        $user->removePermission($permission);
+        $this->userRepo->saveAndCommit($user);
+        return response('', 204);
+    }
     /**
      * @param   int     $id
      * @return  User

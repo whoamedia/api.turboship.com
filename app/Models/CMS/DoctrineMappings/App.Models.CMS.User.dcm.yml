@@ -68,3 +68,29 @@ App\Models\CMS\User:
       joinColumn:
         name:         clientId
         referencedColumnName: id
+
+  manyToMany:
+    permissions:
+      fetch:          LAZY
+      targetEntity:   App\Models\ACL\Permission
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         UserPermission
+        joinColumns:
+          userId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          permissionId:
+            referencedColumnName: id
+    roles:
+      fetch:          LAZY
+      targetEntity:   App\Models\ACL\Role
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         UserRole
+        joinColumns:
+          userId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          roleId:
+            referencedColumnName: id

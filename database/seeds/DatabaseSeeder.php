@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         /**
+         * ACL
+         */
+        $this->call(PermissionSeeder::class);
+
+
+        /**
          * Locations
          */
         $this->call(ContinentSeeder::class);

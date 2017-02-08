@@ -3,7 +3,10 @@
 namespace App\Models\CMS;
 
 
+use App\Models\ACL\Traits\HasPermissions;
+use App\Models\ACL\Traits\HasRoles;
 use App\Models\BaseModel;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Hash;
@@ -13,7 +16,10 @@ use Hash;
  */
 class User extends BaseModel implements Authenticatable, \JsonSerializable
 {
-    
+
+    use HasPermissions, HasRoles;
+
+
     /**
      * @SWG\Property(example="1")
      * @var int
@@ -68,6 +74,8 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
      */
     public function __construct($data = null)
     {
+        $this->permissions              = new ArrayCollection();
+        $this->roles                    = new ArrayCollection();
         $this->createdAt                = new \DateTime();
 
         if (is_array($data))

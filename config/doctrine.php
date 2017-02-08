@@ -29,6 +29,7 @@ return [
                 'App'
             ],
             'paths'         => [
+                base_path('app/Models/ACL/DoctrineMappings'),
                 base_path('app/Models/CMS/DoctrineMappings'),
                 base_path('app/Models/Locations/DoctrineMappings'),
                 base_path('app/Models/Logs/DoctrineMappings'),
