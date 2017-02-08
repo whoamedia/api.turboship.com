@@ -47,4 +47,10 @@ trait HasPermissions
     {
         return $this->permissions->contains($permission);
     }
+
+    public function emptyPermissions ()
+    {
+        $this->permissions->clear();
+    }
+
 }

@@ -22,7 +22,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/acl/permissions', 'ACLController@getPermissions');
     Route::get('/acl/permissions/{id}', 'ACLController@showPermission');
     Route::get('/acl/roles', 'ACLController@getRoles');
+    Route::post('/acl/roles', 'ACLController@createRole');
     Route::get('/acl/roles/{id}', 'ACLController@showRole');
+    Route::put('/acl/roles/{id}', 'ACLController@updateRole');
+    Route::get('/acl/roles/{id}/permissions', 'ACLController@getRolePermissions');
 
 
     //  Carrier operations
