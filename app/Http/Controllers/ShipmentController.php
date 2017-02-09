@@ -261,6 +261,9 @@ class ShipmentController extends BaseAuthController
         if (!$shipment->hasImage($image))
             throw new NotFoundHttpException('Shipment does not have provided image');
 
+        $s3Service                      = new S3Service();
+        $s3Service->delete($image->getPath());
+
         $shipment->removeImage($image);
         $this->shipmentRepo->saveAndCommit($shipment);
         return response('', 204);
