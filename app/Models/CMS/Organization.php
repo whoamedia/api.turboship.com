@@ -57,7 +57,7 @@ class Organization extends BaseModel implements \JsonSerializable
      * @var \DateTime
      */
     protected $createdAt;
-    
+
     
     /**
      * Organization constructor.

@@ -1,0 +1,4 @@
+App\Models\WMS\Tote:
+  type:               entity
+  table:              Tote
+  repositoryClass:    App\Repositories\Doctrine\WMS\ToteRepository

@@ -1,0 +1,40 @@
+App\Models\WMS\InventoryLocation:
+  type:               entity
+  table:              InventoryLocation
+  repositoryClass:    App\Repositories\Doctrine\WMS\InventoryLocationRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           inventoryLocationTypeId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\WMS\Bin
+      2:              App\Models\WMS\Tote
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'InventoryLocation id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    barCode:
+      column:         barCode
+      type:           string
+      nullable:       false
+      options:
+        comment:      "InventoryLocation barCode"
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

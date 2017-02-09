@@ -56,6 +56,15 @@ class WhoaMediaSeeder extends Seeder
      */
     private $shipper;
 
+    /**
+     * @var \App\Repositories\Doctrine\WMS\BinRepository
+     */
+    private $binRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\WMS\ToteRepository
+     */
+    private $toteRepo;
 
     public function run()
     {
@@ -65,6 +74,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo         = EntityManager::getRepository('App\Models\CMS\User');
         $this->organizationRepo = EntityManager::getRepository('App\Models\CMS\Organization');
         $this->shippingIntegrationRepo  = EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
+        $this->binRepo          = EntityManager::getRepository('App\Models\WMS\Bin');
+        $this->toteRepo         = EntityManager::getRepository('App\Models\WMS\Tote');
 
         $this->organization();
         $this->users();
@@ -74,6 +85,8 @@ class WhoaMediaSeeder extends Seeder
         $this->shippers();
         $this->printers();
         $this->easyPost();
+        $this->bins();
+        $this->totes();
     }
 
     private function organization ()
@@ -592,4 +605,35 @@ class WhoaMediaSeeder extends Seeder
         $this->clientRepo->saveAndCommit($this->client);
     }
 
+    private function bins ()
+    {
+        for( $aisle = 1; $aisle < 11; $aisle++ )
+        {
+            for( $section = 'A'; $section < 'G'; $section++ )
+            {
+                for( $row = 1; $row < 11; $row++ )
+                {
+                    for( $col = 1; $col < 11; $col++ )
+                    {
+                        $barcode = $aisle.$section.$row.$col;
+                        $bin    = new \App\Models\WMS\Bin();
+                        $bin->setOrganization($this->organization);
+                        $bin->setBarCode($barcode);
+                        $this->binRepo->save($bin);
+                    }
+                }
+            }
+        }
+    }
+
+    private function totes ()
+    {
+        for( $i = 7000; $i < 7200; $i++ )
+        {
+            $tote               = new \App\Models\WMS\Tote();
+            $tote->setBarCode($i);
+            $tote->setOrganization($this->organization);
+            $this->toteRepo->save($tote);
+        }
+    }
 }

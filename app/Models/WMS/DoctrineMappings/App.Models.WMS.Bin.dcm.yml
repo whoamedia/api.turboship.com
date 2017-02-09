@@ -1,0 +1,4 @@
+App\Models\WMS\Bin:
+  type:               entity
+  table:              Bin
+  repositoryClass:    App\Repositories\Doctrine\WMS\BinRepository

@@ -28,6 +28,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/acl/roles/{id}/permissions', 'ACLController@getRolePermissions');
 
 
+    //  Bin operations
+    Route::get('/bins', 'BinController@index');
+    Route::post('/bins', 'BinController@store');
+    Route::get('/bins/{id}', 'BinController@show');
+    Route::put('/bins/{id}', 'BinController@update');
+
+
     //  Carrier operations
     Route::get('/carriers', 'CarrierController@index');
     Route::get('/carriers/{id}', 'CarrierController@show');
@@ -179,6 +186,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/support/shipmentStatuses', 'SupportController@getShipmentStatuses');
     Route::get('/support/shippingContainerTypes', 'SupportController@getShippingContainerTypes');
     Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
+
+
+    //  Tote operations
+    Route::get('/totes', 'ToteController@index');
+    Route::post('/totes', 'ToteController@store');
+    Route::get('/totes/{id}', 'ToteController@show');
+    Route::put('/totes/{id}', 'ToteController@update');
 
 
     //  User Operations
