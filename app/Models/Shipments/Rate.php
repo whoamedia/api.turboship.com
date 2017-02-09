@@ -46,7 +46,7 @@ class Rate implements \JsonSerializable
     protected $rate;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $retailRate;
 
@@ -244,7 +244,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getRetailRate()
     {
@@ -252,7 +252,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @param float $retailRate
+     * @param float|null $retailRate
      */
     public function setRetailRate($retailRate)
     {

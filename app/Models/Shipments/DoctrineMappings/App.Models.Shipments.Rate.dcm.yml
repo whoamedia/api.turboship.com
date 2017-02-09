@@ -44,7 +44,7 @@ App\Models\Shipments\Rate:
     retailRate:
       column:         retailRate
       type:           decimal
-      nullable:       false
+      nullable:       true
       precision:      10
       scale:          2
       options:

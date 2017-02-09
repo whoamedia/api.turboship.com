@@ -33,7 +33,7 @@ class CreateRateTable extends Migration
             $table->decimal('rate', 10, 2);
 
 
-            $table->decimal('retailRate', 10, 2);
+            $table->decimal('retailRate', 10, 2)->nullable()->default(NULL);
             $table->decimal('listRate', 10, 2);
             $table->integer('deliveryDays')->unsigned();
             $table->datetime('deliveryDate');
