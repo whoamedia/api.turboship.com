@@ -90,6 +90,47 @@ class PermissionSeeder extends Seeder
 
 
             [
+                'name'          => 'SHIPPER.CREATE',
+                'description'   => 'Create Shippers',
+            ],
+            [
+                'name'          => 'SHIPPER.EDIT',
+                'description'   => 'Edit Shippers',
+            ],
+            [
+                'name'          => 'SHIPPER.VIEW',
+                'description'   => 'View Shippers',
+            ],
+
+
+            [
+                'name'          => 'SHIPPING_API.CREATE',
+                'description'   => 'Create Shipping Integrations',
+            ],
+            [
+                'name'          => 'SHIPPING_API.EDIT',
+                'description'   => 'Edit Shipping Integrations',
+            ],
+            [
+                'name'          => 'SHIPPING_API.VIEW',
+                'description'   => 'View Shipping Integrations',
+            ],
+
+            [
+                'name'          => 'SHOPPING_CART_API.CREATE',
+                'description'   => 'Create Shopping Cart Integrations',
+            ],
+            [
+                'name'          => 'SHOPPING_CART_API.EDIT',
+                'description'   => 'Edit Shopping Cart Integrations',
+            ],
+            [
+                'name'          => 'SHOPPING_CART_API.VIEW',
+                'description'   => 'View Shopping Cart Integrations',
+            ],
+
+
+            [
                 'name'          => 'USER.CREATE',
                 'description'   => 'Create Users',
             ],
