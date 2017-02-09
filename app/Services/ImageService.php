@@ -57,7 +57,6 @@ class ImageService
 
         try
         {
-            //  dd($filePath);
             /**
              * Use a standard of PNG encoding
              */

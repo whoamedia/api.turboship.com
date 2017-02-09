@@ -186,6 +186,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/users/me', 'UserController@me');
     Route::get('/users/{id}', 'UserController@show');
     Route::put('/users/{id}', 'UserController@update');
+    Route::post('/users/{id}/image', 'UserController@updateImage');
     Route::get('/users/{id}/permissions', 'UserController@getPermissions');
     Route::post('/users/{id}/permissions', 'UserController@createPermissions');
     Route::delete('/users/{id}/permissions/{permissionId}', 'UserController@deletePermission');

@@ -88,6 +88,9 @@ class WhoaMediaSeeder extends Seeder
 
     private function users()
     {
+        $sourceValidation       = new \App\Models\Support\Validation\SourceValidation();
+        $internalSource         = $sourceValidation->getInternal();
+        $imageService           = new \App\Services\ImageService();
         //  Edward
         $user                   = new User();
         $user->setFirstName('Edward');
@@ -95,6 +98,9 @@ class WhoaMediaSeeder extends Seeder
         $user->setEmail('eupton@whoamedia.com');
         $user->setPassword('password');
         $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/3.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
         $this->organizationRepo->saveAndCommit($user);
 
         //  James
@@ -104,6 +110,10 @@ class WhoaMediaSeeder extends Seeder
         $user->setEmail('james@turboship.com');
         $user->setPassword('password');
         $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/15.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
         $this->organizationRepo->saveAndCommit($user);
     }
 

@@ -6,12 +6,16 @@ namespace App\Models\OMS;
 use App\Models\BaseModel;
 use App\Models\CMS\Client;
 use App\Models\Support\Image;
+use App\Models\Support\Traits\HasImage;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Product extends BaseModel implements \JsonSerializable
 {
+
+    use HasImage;
+
 
     /**
      * @var int
@@ -29,11 +33,6 @@ class Product extends BaseModel implements \JsonSerializable
      * @var string|null
      */
     protected $description;
-
-    /**
-     * @var Image|null
-     */
-    protected $image;
 
     /**
      * @var Client
@@ -84,7 +83,7 @@ class Product extends BaseModel implements \JsonSerializable
     {
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
-        $object['image']                = !is_null($this->image) ? $this->image->jsonSerialize() : null;
+        $object['image']                = !is_null($this->image) ? $this->getImage()->jsonSerialize() : null;
         $object['client']               = $this->getClient()->jsonSerialize();
         $object['description']          = $this->description;
         $object['createdAt']            = $this->createdAt;
@@ -135,22 +134,6 @@ class Product extends BaseModel implements \JsonSerializable
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return Image|null
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
-     * @param Image|null $image
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
     }
 
     /**

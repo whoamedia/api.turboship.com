@@ -12,7 +12,9 @@ use App\Models\ACL\Validation\PermissionValidation;
 use App\Models\CMS\User;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\CMS\Validation\UserValidation;
+use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\CMS\ClientRepository;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -186,6 +188,32 @@ class UserController extends BaseAuthController
         return response($user);
     }
 
+    public function updateImage (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $file                           = $request->file('image');
+
+
+        if (is_null($file))
+            throw new BadRequestHttpException('image is required');
+
+        if (!$file->isValid())
+            throw new BadRequestHttpException('files is invalid');
+
+        if (!preg_match('#^image#', $file->getMimeType()))
+            throw new BadRequestHttpException('Invalid mime type');
+
+        $sourceValidation               = new SourceValidation();
+        $internalSource                 = $sourceValidation->getInternal();
+        $imageService                   = new ImageService();
+
+        $image                          = $imageService->handleImage($file->getPath() . '/' . $file->getBasename(), $file->getClientOriginalName());
+        $image->setSource($internalSource);
+
+        $user->setImage($image);
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getImage(), 201);
+    }
 
     public function getPermissions (Request $request)
     {

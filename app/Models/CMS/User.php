@@ -6,6 +6,7 @@ namespace App\Models\CMS;
 use App\Models\ACL\Traits\HasPermissions;
 use App\Models\ACL\Traits\HasRoles;
 use App\Models\BaseModel;
+use App\Models\Support\Traits\HasImage;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -17,7 +18,7 @@ use Hash;
 class User extends BaseModel implements Authenticatable, \JsonSerializable
 {
 
-    use HasPermissions, HasRoles;
+    use HasPermissions, HasRoles, HasImage;
 
 
     /**
@@ -86,6 +87,7 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
             $this->password             = AU::get($data['password']);
             $this->organization         = AU::get($data['organization']);
             $this->client               = AU::get($data['client']);
+            $this->image                = AU::get($data['image']);
         }
     }
 
@@ -105,7 +107,8 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
         $object['email']                = $this->getEmail();
         $object['organization']         = $this->organization->jsonSerialize();
         $object['client']               = is_null($this->client) ? null : $this->client->jsonSerialize();
-        
+        $object['image']                = !is_null($this->image) ? $this->getImage()->jsonSerialize() : null;
+
         return $object;
     }
 

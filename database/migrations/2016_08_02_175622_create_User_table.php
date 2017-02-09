@@ -20,7 +20,8 @@ class CreateUserTable extends Migration
             $table->string('email', 100)->unique();
             $table->string('password', 500);
             $table->integer('organizationId')->unsigned()->index();
-            
+
+            $table->integer('imageId')->unsigned()->index()->nullable()->default(NULL);
 
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index()->default(1);

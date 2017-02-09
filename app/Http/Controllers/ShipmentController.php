@@ -219,35 +219,28 @@ class ShipmentController extends BaseAuthController
     {
         $shipment                       = $this->getShipment($request->route('id'));
 
-        $files                          = $request->allFiles();
-        if (empty($files) || !is_array($files))
-            throw new BadRequestHttpException('files is required');
+        $file                           = $request->file('image');
 
-        /**
-         * Let's validate everything first.
-         * This will prevent us from uploading to S3 if validation fails
-         */
-        foreach ($files AS $file)
-        {
-            if (!$file->isValid())
-                throw new BadRequestHttpException('files is required');
 
-            if (!preg_match('#^image#', $file->getMimeType()))
-                throw new BadRequestHttpException('Invalid mime type');
-        }
+        if (is_null($file))
+            throw new BadRequestHttpException('image is required');
+
+        if (!$file->isValid())
+            throw new BadRequestHttpException('files is invalid');
+
+        if (!preg_match('#^image#', $file->getMimeType()))
+            throw new BadRequestHttpException('Invalid mime type');
+
         $sourceValidation               = new SourceValidation();
         $internalSource                 = $sourceValidation->getInternal();
         $imageService                   = new ImageService();
 
-        foreach ($files AS $file)
-        {
-            $filePath                   = $file->path();
-            $fileName                   = $file->getClientOriginalName();
+        $filePath                   = $file->path();
+        $fileName                   = $file->getClientOriginalName();
 
-            $image                      = $imageService->handleImage($filePath, $fileName);
-            $image->setSource($internalSource);
-            $shipment->addImage($image);
-        }
+        $image                      = $imageService->handleImage($filePath, $fileName);
+        $image->setSource($internalSource);
+        $shipment->addImage($image);
 
         $this->shipmentRepo->saveAndCommit($shipment);
         return response($shipment->getImages(), 201);

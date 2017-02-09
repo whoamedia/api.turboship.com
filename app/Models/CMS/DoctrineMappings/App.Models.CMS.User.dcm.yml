@@ -68,6 +68,14 @@ App\Models\CMS\User:
       joinColumn:
         name:         clientId
         referencedColumnName: id
+    image:
+      targetEntity:   App\Models\Support\Image
+      nullable:       true
+      fetch:          EAGER
+      cascade:        ["persist", "remove"]
+      joinColumn:
+        name:         imageId
+        referencedColumnName: id
 
   manyToMany:
     permissions:
