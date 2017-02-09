@@ -56,17 +56,17 @@ class Rate implements \JsonSerializable
     protected $listRate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $deliveryDays;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     protected $deliveryDateGuaranteed;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $deliveryDate;
 
@@ -276,7 +276,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDeliveryDays()
     {
@@ -284,7 +284,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @param int $deliveryDays
+     * @param int|null $deliveryDays
      */
     public function setDeliveryDays($deliveryDays)
     {
@@ -292,7 +292,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
     public function isDeliveryDateGuaranteed()
     {
@@ -300,7 +300,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @param bool $deliveryDateGuaranteed
+     * @param bool|null $deliveryDateGuaranteed
      */
     public function setDeliveryDateGuaranteed($deliveryDateGuaranteed)
     {
@@ -308,7 +308,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDeliveryDate()
     {
@@ -316,7 +316,7 @@ class Rate implements \JsonSerializable
     }
 
     /**
-     * @param \DateTime $deliveryDate
+     * @param \DateTime|null $deliveryDate
      */
     public function setDeliveryDate($deliveryDate)
     {

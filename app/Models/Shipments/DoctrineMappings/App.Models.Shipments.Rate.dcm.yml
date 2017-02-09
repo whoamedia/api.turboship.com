@@ -62,18 +62,18 @@ App\Models\Shipments\Rate:
     deliveryDays:
       column:         deliveryDays
       type:           integer
-      nullable:       false
+      nullable:       true
       options:
         unsigned:     true
         comment:      "Image deliveryDays"
     deliveryDate:
       column:         deliveryDate
       type:           datetime
-      nullable:       false
+      nullable:       true
     deliveryDateGuaranteed:
       column:         deliveryDateGuaranteed
       type:           boolean
-      nullable:       false
+      nullable:       true
     createdAt:
       column:         createdAt
       type:           datetime
