@@ -118,7 +118,10 @@ class ShopifyController extends BaseAuthController
     public function downloadProducts (Request $request)
     {
         $downloadShopifyProducts            = new DownloadShopifyProducts($request->input());
+        $downloadShopifyProducts->validate();
+        $downloadShopifyProducts->clean();
         $total                              = 0;
+
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
             $externalIdsResponse            = $this->orderItemRepo->getPendingExternalProductIds($this->shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
