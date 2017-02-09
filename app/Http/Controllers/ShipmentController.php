@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Rates\GetRates;
 use App\Http\Requests\Shipments\GetPostage;
 use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
@@ -21,6 +22,7 @@ use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Repositories\Doctrine\Shipments\RateRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\ImageService;
 use App\Services\S3Service;
@@ -53,6 +55,11 @@ class ShipmentController extends BaseAuthController
      * @var IntegratedShippingApiRepository
      */
     private $integratedShippingApiRepo;
+
+    /**
+     * @var RateRepository
+     */
+    private $rateRepo;
 
 
     public function __construct()
@@ -131,7 +138,18 @@ class ShipmentController extends BaseAuthController
     public function getRates (Request $request)
     {
         $shipment                       = $this->getShipment($request->route('id'));
-        return response ($shipment->getRates());
+
+        $getRates                       = new GetRates($request->input());
+        $getRates->setShipmentIds($shipment->getId());
+        $getRates->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+        $getRates->validate();
+        $getRates->clean();
+
+        $query                          = $getRates->jsonSerialize();
+        $this->rateRepo                 = EntityManager::getRepository('App\Models\Shipments\Rate');
+
+        $ratesResponse                  = $this->rateRepo->where($query, false);
+        return response ($ratesResponse);
     }
 
     public function createRates (Request $request)

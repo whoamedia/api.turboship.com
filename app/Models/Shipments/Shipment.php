@@ -9,6 +9,7 @@ use App\Models\Support\Image;
 use App\Models\Support\ShipmentStatus;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 use App\Models\Locations\Address;
