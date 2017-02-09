@@ -114,6 +114,138 @@ class WhoaMediaSeeder extends Seeder
         $image->setSource($internalSource);
         $user->setImage($image);
 
+        //  Miles
+        $user                   = new User();
+        $user->setFirstName('Miles');
+        $user->setLastName('Maximini');
+        $user->setEmail('miles@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/4.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Crystal
+        $user                   = new User();
+        $user->setFirstName('Crystal');
+        $user->setLastName('Buyalos');
+        $user->setEmail('crystal@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/5.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Ainsley
+        $user                   = new User();
+        $user->setFirstName('Ainsley');
+        $user->setLastName('Dougherty');
+        $user->setEmail('ainsley@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/6.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Cody
+        $user                   = new User();
+        $user->setFirstName('Cody');
+        $user->setLastName('Smith');
+        $user->setEmail('cody@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/7.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Corey
+        $user                   = new User();
+        $user->setFirstName('Corey');
+        $user->setLastName('Stallings');
+        $user->setEmail('corey@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/8.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Michael
+        $user                   = new User();
+        $user->setFirstName('Michael');
+        $user->setLastName('Ferrell');
+        $user->setEmail('michael@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/9.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Michael
+        $user                   = new User();
+        $user->setFirstName('Michael');
+        $user->setLastName('Woolcott');
+        $user->setEmail('michael.woolcott@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/11.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Thomas
+        $user                   = new User();
+        $user->setFirstName('Thomas');
+        $user->setLastName('Watson');
+        $user->setEmail('thomas@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/12.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Corey
+        $user                   = new User();
+        $user->setFirstName('Corey');
+        $user->setLastName('Webb');
+        $user->setEmail('thomas@whoamedia.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/13.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Shenouda
+        $user                   = new User();
+        $user->setFirstName('Shenouda');
+        $user->setLastName('Guergues');
+        $user->setEmail('shenouda@whoamedia.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/14.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Lane
+        $user                   = new User();
+        $user->setFirstName('Lane');
+        $user->setLastName('Norman');
+        $user->setEmail('lane@whoamedia.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/16.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
+        //  Travis
+        $user                   = new User();
+        $user->setFirstName('Travis');
+        $user->setLastName('Pence');
+        $user->setEmail('travis@cheapundies.com');
+        $user->setPassword('password');
+        $user->setOrganization($this->organization);
+        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/17.jpg');
+        $image->setSource($internalSource);
+        $user->setImage($image);
+
         $this->organizationRepo->saveAndCommit($user);
     }
 
