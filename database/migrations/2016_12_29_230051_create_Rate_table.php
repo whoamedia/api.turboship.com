@@ -34,7 +34,7 @@ class CreateRateTable extends Migration
 
 
             $table->decimal('retailRate', 10, 2)->nullable()->default(NULL);
-            $table->decimal('listRate', 10, 2);
+            $table->decimal('listRate', 10, 2)->nullable()->default(NULL);
             $table->integer('deliveryDays')->unsigned();
             $table->datetime('deliveryDate');
             $table->boolean('deliveryDateGuaranteed');
