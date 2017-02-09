@@ -72,6 +72,7 @@ App\Models\CMS\User:
       targetEntity:   App\Models\Support\Image
       nullable:       true
       fetch:          EAGER
+      mappedBy:       user
       cascade:        ["persist", "remove"]
       joinColumn:
         name:         imageId
