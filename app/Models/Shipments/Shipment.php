@@ -143,9 +143,13 @@ class Shipment implements \JsonSerializable
         $object['createdAt']            = $this->createdAt;
         $object['shippedAt']            = $this->shippedAt;
 
+
         $object['items']                = [];
         foreach ($this->getItems() AS $shipmentItem)
             $object['items'][]          = $shipmentItem->jsonSerialize();
+
+        $object['canShip']              = $this->canShip(true);
+        $object['canRate']              = $this->canRate(true);
 
         return $object;
     }
@@ -369,11 +373,32 @@ class Shipment implements \JsonSerializable
 
     /**
      * Can we safely ship this shipment?
+     * @param   bool    $safeReturn
      * @return bool
      */
-    public function canShip ()
+    public function canShip ($safeReturn = false)
     {
-        return true;
+        $exception                  = null;
+        if (empty($this->rates))
+            $exception              = new BadRequestHttpException('Shipment needs rates');
+        if (!is_null($this->postage))
+            $exception              = new BadRequestHttpException('Shipment already has postage');
+
+        try
+        {
+            $this->canRate();
+        }
+        catch (BadRequestHttpException $badRequestHttpException)
+        {
+            $exception              = $badRequestHttpException;
+        }
+
+        if (is_null($exception))
+            return true;
+        else if ($safeReturn)
+            return false;
+        else
+            throw $exception;
     }
 
     /**
@@ -419,19 +444,26 @@ class Shipment implements \JsonSerializable
 
     /**
      * Can we safely rate this Shipment?
+     * @param   bool    $safeReturn
      * @throws  BadRequestHttpException
      * @return  bool
      */
-    public function canRate ()
+    public function canRate ($safeReturn = false)
     {
+        $exception                  = null;
         if (is_null($this->getShippingContainer()))
-            throw new BadRequestHttpException('Shipment needs a ShippingContainer');
+            $exception              = new BadRequestHttpException('Shipment needs a ShippingContainer');
         else if (is_null($this->getWeight()) || $this->getWeight() <= 0)
-            throw new BadRequestHttpException('Shipment needs a weight');
+            $exception              = new BadRequestHttpException('Shipment needs a weight');
         else if (!is_null($this->getPostage()))
-            throw new BadRequestHttpException('Shipment already has postage');
-        else
+            $exception              = new BadRequestHttpException('Shipment already has postage');
+
+        if (is_null($exception))
             return true;
+        else if ($safeReturn)
+            return false;
+        else
+            throw $exception;
     }
 
     /**
