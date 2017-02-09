@@ -17,6 +17,7 @@ use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Models\Support\Validation\ShipmentStatusValidation;
+use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -234,7 +235,8 @@ class ShipmentController extends BaseAuthController
             if (!preg_match('#^image#', $file->getMimeType()))
                 throw new BadRequestHttpException('Invalid mime type');
         }
-
+        $sourceValidation               = new SourceValidation();
+        $internalSource                 = $sourceValidation->getInternal();
         $imageService                   = new ImageService();
 
         foreach ($files AS $file)
@@ -243,6 +245,7 @@ class ShipmentController extends BaseAuthController
             $fileName                   = $file->getClientOriginalName();
 
             $image                      = $imageService->handleImage($filePath, $fileName);
+            $image->setSource($internalSource);
             $shipment->addImage($image);
         }
 
