@@ -213,7 +213,7 @@ class ShipmentController extends BaseAuthController
 
         $postageService->handleOrderShippedLogic($shipment);
 
-        return response ($shipment->getPostage(), 201);
+        return response ($shipment, 201);
     }
 
     public function voidPostage (Request $request)
