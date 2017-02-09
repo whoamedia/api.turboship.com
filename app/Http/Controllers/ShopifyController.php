@@ -81,6 +81,10 @@ class ShopifyController extends BaseAuthController
             }
             usleep(250000);
         }
+        $response   = [
+            'total'                         => $total,
+        ];
+        return response($response);
     }
 
 
@@ -103,16 +107,22 @@ class ShopifyController extends BaseAuthController
             }
             usleep(250000);
         }
+
+        $response   = [
+            'total'                         => $total,
+        ];
+        return response($response);
     }
 
 
     public function downloadProducts (Request $request)
     {
         $downloadShopifyProducts            = new DownloadShopifyProducts($request->input());
-
+        $total                              = 0;
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
             $externalIdsResponse            = $this->orderItemRepo->getPendingExternalProductIds($this->shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
+            $total                          = sizeof($externalIdsResponse);
             $maxIds                         = 20;
             $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
             for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
@@ -150,6 +160,11 @@ class ShopifyController extends BaseAuthController
                 usleep(250000);
             }
         }
+
+        $response   = [
+            'total'                         => $total,
+        ];
+        return response($response);
     }
 
     /**
