@@ -35,12 +35,45 @@ App\Models\Shipments\Rate:
     rate:
       column:         rate
       type:           decimal
-      nullable:       true
+      nullable:       false
       precision:      10
       scale:          2
       options:
         unsigned:     true
         fixed:        false
+    retailRate:
+      column:         retailRate
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    listRate:
+      column:         listRate
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    deliveryDays:
+      column:         deliveryDays
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      "Image deliveryDays"
+    deliveryDate:
+      column:         deliveryDate
+      type:           datetime
+      nullable:       false
+    deliveryDateGuaranteed:
+      column:         deliveryDateGuaranteed
+      type:           boolean
+      nullable:       false
     createdAt:
       column:         createdAt
       type:           datetime

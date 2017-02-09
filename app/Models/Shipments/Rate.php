@@ -46,6 +46,31 @@ class Rate implements \JsonSerializable
     protected $rate;
 
     /**
+     * @var float
+     */
+    protected $retailRate;
+
+    /**
+     * @var float
+     */
+    protected $listRate;
+
+    /**
+     * @var int
+     */
+    protected $deliveryDays;
+
+    /**
+     * @var bool
+     */
+    protected $deliveryDateGuaranteed;
+
+    /**
+     * @var \DateTime
+     */
+    protected $deliveryDate;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -61,6 +86,11 @@ class Rate implements \JsonSerializable
         $this->externalShipmentId       = AU::get($data['externalShipmentId']);
         $this->externalId               = AU::get($data['externalId']);
         $this->rate                     = AU::get($data['rate']);
+        $this->retailRate               = AU::get($data['retailRate']);
+        $this->listRate                 = AU::get($data['listRate']);
+        $this->deliveryDays             = AU::get($data['deliveryDays']);
+        $this->deliveryDate             = AU::get($data['deliveryDate']);
+        $this->deliveryDateGuaranteed   = AU::get($data['deliveryDateGuaranteed']);
     }
 
     /**
@@ -70,10 +100,15 @@ class Rate implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         //  $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
-        $object['shippingApiService']    = $this->shippingApiService->jsonSerialize();
+        $object['shippingApiService']   = $this->shippingApiService->jsonSerialize();
         $object['externalShipmentId']   = $this->externalShipmentId;
         $object['externalId']           = $this->externalId;
         $object['rate']                 = $this->rate;
+        $object['retailRate']           = $this->retailRate;
+        $object['listRate']             = $this->listRate;
+        $object['deliveryDays']         = $this->deliveryDays;
+        $object['deliveryDate']         = $this->deliveryDate;
+        $object['deliveryDateGuaranteed']= $this->deliveryDateGuaranteed;
         $object['createdAt']            = $this->createdAt;
 
         return $object;
@@ -206,6 +241,86 @@ class Rate implements \JsonSerializable
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRetailRate()
+    {
+        return $this->retailRate;
+    }
+
+    /**
+     * @param float $retailRate
+     */
+    public function setRetailRate($retailRate)
+    {
+        $this->retailRate = $retailRate;
+    }
+
+    /**
+     * @return float
+     */
+    public function getListRate()
+    {
+        return $this->listRate;
+    }
+
+    /**
+     * @param float $listRate
+     */
+    public function setListRate($listRate)
+    {
+        $this->listRate = $listRate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeliveryDays()
+    {
+        return $this->deliveryDays;
+    }
+
+    /**
+     * @param int $deliveryDays
+     */
+    public function setDeliveryDays($deliveryDays)
+    {
+        $this->deliveryDays = $deliveryDays;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeliveryDateGuaranteed()
+    {
+        return $this->deliveryDateGuaranteed;
+    }
+
+    /**
+     * @param bool $deliveryDateGuaranteed
+     */
+    public function setDeliveryDateGuaranteed($deliveryDateGuaranteed)
+    {
+        $this->deliveryDateGuaranteed = $deliveryDateGuaranteed;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDeliveryDate()
+    {
+        return $this->deliveryDate;
+    }
+
+    /**
+     * @param \DateTime $deliveryDate
+     */
+    public function setDeliveryDate($deliveryDate)
+    {
+        $this->deliveryDate = $deliveryDate;
     }
 
 }

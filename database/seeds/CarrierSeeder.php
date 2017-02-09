@@ -34,12 +34,12 @@ class CarrierSeeder extends Seeder
             [
                 'id'        => CarrierUtility::UPS_MAIL_INNOVATIONS,
                 'name'      => 'UPS Mail Innovations',
-                'symbol'    => 'UPS_MAIL_INNOVATIONS',
+                'symbol'    => 'UPS MI',
             ],
             [
                 'id'        => CarrierUtility::DHL_GLOBAL_MAIL,
                 'name'      => 'DHL Global Mail',
-                'symbol'    => 'DHL_GLOBAL_MAIL',
+                'symbol'    => 'DHL GLBL',
             ],
             [
                 'id'        => CarrierUtility::FEDEX,

@@ -126,7 +126,11 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $rate->setExternalShipmentId($easyPostRate->getShipmentId());
         $rate->setIntegratedShippingApi($integratedShippingApi);
         $rate->setRate($easyPostRate->getRate());
-
+        $rate->setRetailRate($easyPostRate->getRetailRate());
+        $rate->setListRate($easyPostRate->getListRate());
+        $rate->setDeliveryDays($easyPostRate->getDeliveryDays());
+        $rate->setDeliveryDate($this->toDate($easyPostRate->getDeliveryDate()));
+        $rate->setDeliveryDateGuaranteed($easyPostRate->isDeliveryDateGuaranteed());
         $shippingApiService             = $this->getShippingApiService($easyPostRate->getCarrier(), $easyPostRate->getService());
         $rate->setShippingApiService($shippingApiService);
 

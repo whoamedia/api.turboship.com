@@ -31,6 +31,16 @@ class CreateRateTable extends Migration
             $table->string('externalId', 100)->index()->nullable()->default(null);
 
             $table->decimal('rate', 10, 2);
+
+
+            $table->decimal('retailRate', 10, 2);
+            $table->decimal('listRate', 10, 2);
+            $table->integer('deliveryDays')->unsigned();
+            $table->datetime('deliveryDate');
+            $table->boolean('deliveryDateGuaranteed');
+
+
+
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 
