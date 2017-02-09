@@ -243,6 +243,27 @@ class UserController extends BaseAuthController
         return response($user->getPermissions(), 201);
     }
 
+    public function updatePermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionIds                  = $request->input('permissionIds');
+        if (is_null($permissionIds))
+            throw new BadRequestHttpException('permissionIds is required');
+
+        $user->emptyPermissions();
+        $permissionValidation           = new PermissionValidation();
+        $permissionIds                  = str_replace(' ', '', $permissionIds);
+        foreach (explode(',', $permissionIds) AS $id)
+        {
+            $permission                 = $permissionValidation->idExists($id);
+            $user->addPermission($permission);
+        }
+
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getPermissions(), 201);
+    }
+
     public function deletePermission (Request $request)
     {
         $user                           = $this->getUserFromRoute($request->route('id'));
