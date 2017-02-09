@@ -136,12 +136,20 @@ class ShipmentController extends BaseAuthController
 
     public function createRates (Request $request)
     {
-        $rateShipment                  = new RateShipment($request->input());
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $rateShipment                   = new RateShipment($request->input());
         $rateShipment->setId($request->route('id'));
+
+        if (is_null($rateShipment->getIntegratedShippingApiId()))
+        {
+            if (!is_null($shipment->getClient()->getOptions()->getDefaultIntegratedShippingApi()))
+                $rateShipment->setIntegratedShippingApiId($shipment->getClient()->getOptions()->getDefaultIntegratedShippingApi()->getId());
+        }
+
         $rateShipment->validate();
         $rateShipment->clean();
 
-        $shipment                       = $this->getShipment($rateShipment->getId());
         $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
 
         $postageService                 = new PostageService($integratedShippingApi);
