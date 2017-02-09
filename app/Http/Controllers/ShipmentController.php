@@ -16,6 +16,7 @@ use App\Models\Shipments\Validation\ServiceValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
+use App\Models\Support\Validation\ImageValidation;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
@@ -244,6 +245,25 @@ class ShipmentController extends BaseAuthController
 
         $this->shipmentRepo->saveAndCommit($shipment);
         return response($shipment->getImages(), 201);
+    }
+
+    public function deleteImage (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $imageId                        = $request->route('imageId');
+        if (is_null($imageId))
+            throw new BadRequestHttpException('imageId is required');
+
+        $imageValidation                = new ImageValidation();
+        $image                          = $imageValidation->idExists($imageId);
+
+        if (!$shipment->hasImage($image))
+            throw new NotFoundHttpException('Shipment does not have provided image');
+
+        $shipment->removeImage($image);
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response('', 204);
     }
 
     /**

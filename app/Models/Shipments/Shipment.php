@@ -479,6 +479,23 @@ class Shipment implements \JsonSerializable
     }
 
     /**
+     * @param   Image $image
+     * @return  bool
+     */
+    public function hasImage (Image $image)
+    {
+        return $this->images->contains($image);
+    }
+
+    /**
+     * @param   Image $image
+     */
+    public function removeImage (Image $image)
+    {
+        $this->images->removeElement($image);
+    }
+
+    /**
      * @return ShipmentStatus
      */
     public function getStatus()

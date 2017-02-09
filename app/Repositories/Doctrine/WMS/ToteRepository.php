@@ -32,6 +32,8 @@ class ToteRepository extends BaseRepository
         $qb->select(['tote', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
+        $qb->addOrderBy(AU::get($query['orderBy'], 'tote.id'), AU::get($query['direction'], 'ASC'));
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
@@ -65,7 +67,6 @@ class ToteRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('tote.id', 'ASC');
         return $qb;
     }
 
