@@ -39,4 +39,18 @@ trait HasRoles
         $this->roles->removeElement($role);
     }
 
+    /**
+     * @param   Role $role
+     * @return  bool
+     */
+    public function hasRole (Role $role)
+    {
+        return $this->roles->contains($role);
+    }
+
+    public function emptyRoles ()
+    {
+        $this->roles->clear();
+    }
+
 }

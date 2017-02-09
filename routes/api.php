@@ -183,6 +183,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  User Operations
     Route::get('/users', 'UserController@index');
+    Route::post('/users', 'UserController@store');
     Route::get('/users/me', 'UserController@me');
     Route::get('/users/{id}', 'UserController@show');
     Route::put('/users/{id}', 'UserController@update');
@@ -191,7 +192,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/users/{id}/permissions', 'UserController@createPermissions');
     Route::put('/users/{id}/permissions', 'UserController@updatePermissions');
     Route::delete('/users/{id}/permissions/{permissionId}', 'UserController@deletePermission');
-    Route::post('/users', 'UserController@store');
+
+    Route::get('/users/{id}/roles', 'UserController@getRoles');
+    Route::post('/users/{id}/roles', 'UserController@createRoles');
+    Route::put('/users/{id}/roles', 'UserController@updateRoles');
+    Route::delete('/users/{id}/roles/{roleId}', 'UserController@deleteRole');
+
     Route::put('/users/{id}/password', 'UserController@updatePassword');
 
 });

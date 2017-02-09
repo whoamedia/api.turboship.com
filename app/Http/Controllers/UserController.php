@@ -9,6 +9,7 @@ use App\Http\Requests\Users\GetUsers;
 use App\Http\Requests\Users\UpdatePassword;
 use App\Http\Requests\Users\UpdateUser;
 use App\Models\ACL\Validation\PermissionValidation;
+use App\Models\ACL\Validation\RoleValidation;
 use App\Models\CMS\User;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\CMS\Validation\UserValidation;
@@ -279,6 +280,68 @@ class UserController extends BaseAuthController
             throw new BadRequestHttpException('User does not have permission ' . $permission->getName());
 
         $user->removePermission($permission);
+        $this->userRepo->saveAndCommit($user);
+        return response('', 204);
+    }
+
+    public function getRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        return response($user->getRoles());
+    }
+
+    public function createRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleIds                        = $request->input('roleIds');
+        if (is_null($roleIds))
+            throw new BadRequestHttpException('roleIds is required');
+
+        $roleValidation                 = new RoleValidation();
+        foreach (explode(',', $roleIds) AS $roleId)
+        {
+            $role                       = $roleValidation->idExists($roleId);
+            if ($user->hasRole($role))
+                throw new BadRequestHttpException('User already has role ' . $role->getName());
+
+            $user->addRole($role);
+        }
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getRoles(), 201);
+    }
+
+    public function updateRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleIds                        = $request->input('roleIds');
+        if (is_null($roleIds))
+            throw new BadRequestHttpException('roleIds is required');
+
+        $user->emptyRoles();
+        $roleValidation                 = new RoleValidation();
+        foreach (explode(',', $roleIds) AS $roleId)
+        {
+            $role                       = $roleValidation->idExists($roleId);
+            $user->addRole($role);
+        }
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getRoles(), 201);
+    }
+
+    public function deleteRole (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleId                         = $request->route('roleId');
+        if (is_null($roleId))
+            throw new BadRequestHttpException('roleId is required');
+
+        $roleValidation                 = new RoleValidation();
+        $role                           = $roleValidation->idExists($roleId);
+
+        if (!$user->hasRole($role))
+            throw new NotFoundHttpException('User does not have role ' . $role->getName());
+
+        $user->removeRole($role);
         $this->userRepo->saveAndCommit($user);
         return response('', 204);
     }

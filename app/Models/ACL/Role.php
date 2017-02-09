@@ -41,6 +41,7 @@ class Role implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
         $object['description']          = $this->description;
+        $object['permissions']          = $this->getPermissions();
 
         return $object;
     }
