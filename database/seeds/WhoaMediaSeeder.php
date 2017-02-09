@@ -113,6 +113,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/15.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Miles
         $user                   = new User();
@@ -124,6 +125,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/4.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Crystal
         $user                   = new User();
@@ -135,6 +137,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/5.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Ainsley
         $user                   = new User();
@@ -146,6 +149,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/6.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Cody
         $user                   = new User();
@@ -157,6 +161,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/7.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Corey
         $user                   = new User();
@@ -168,6 +173,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/8.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Michael
         $user                   = new User();
@@ -179,6 +185,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/9.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Michael
         $user                   = new User();
@@ -190,6 +197,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/11.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Thomas
         $user                   = new User();
@@ -201,6 +209,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/12.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Corey
         $user                   = new User();
@@ -212,6 +221,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/13.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Shenouda
         $user                   = new User();
@@ -223,6 +233,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/14.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Lane
         $user                   = new User();
@@ -234,6 +245,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/16.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         //  Travis
         $user                   = new User();
@@ -245,6 +257,7 @@ class WhoaMediaSeeder extends Seeder
         $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/17.jpg');
         $image->setSource($internalSource);
         $user->setImage($image);
+        $this->organizationRepo->saveAndCommit($user);
 
         $this->organizationRepo->saveAndCommit($user);
     }
