@@ -92,172 +92,172 @@ class WhoaMediaSeeder extends Seeder
         $internalSource         = $sourceValidation->getInternal();
         $imageService           = new \App\Services\ImageService();
         //  Edward
-        $user                   = new User();
-        $user->setFirstName('Edward');
-        $user->setLastName('Upton');
-        $user->setEmail('eupton@whoamedia.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/3.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Edward                 = new User();
+        $Edward->setFirstName('Edward');
+        $Edward->setLastName('Upton');
+        $Edward->setEmail('eupton@whoamedia.com');
+        $Edward->setPassword('password');
+        $Edward->setOrganization($this->organization);
+        $EdwardImage            = $imageService->handleImage('https://flow.turboship.com/images/users/3.jpg');
+        $EdwardImage->setSource($internalSource);
+        $Edward->setImage($EdwardImage);
+        $this->userRepo->saveAndCommit($Edward);
 
         //  James
-        $user                   = new User();
-        $user->setFirstName('James');
-        $user->setLastName('Weston');
-        $user->setEmail('james@turboship.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/15.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $James                   = new User();
+        $James->setFirstName('James');
+        $James->setLastName('Weston');
+        $James->setEmail('james@turboship.com');
+        $James->setPassword('password');
+        $James->setOrganization($this->organization);
+        $JamesImage             = $imageService->handleImage('https://flow.turboship.com/images/users/15.jpg');
+        $JamesImage->setSource($internalSource);
+        $James->setImage($JamesImage);
+        $this->userRepo->saveAndCommit($James);
 
         //  Miles
-        $user                   = new User();
-        $user->setFirstName('Miles');
-        $user->setLastName('Maximini');
-        $user->setEmail('miles@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/4.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Miles                   = new User();
+        $Miles->setFirstName('Miles');
+        $Miles->setLastName('Maximini');
+        $Miles->setEmail('miles@cheapundies.com');
+        $Miles->setPassword('password');
+        $Miles->setOrganization($this->organization);
+        $MilesImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/4.jpg');
+        $MilesImage->setSource($internalSource);
+        $Miles->setImage($MilesImage);
+        $this->userRepo->saveAndCommit($Miles);
 
         //  Crystal
-        $user                   = new User();
-        $user->setFirstName('Crystal');
-        $user->setLastName('Buyalos');
-        $user->setEmail('crystal@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/5.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Crystal                   = new User();
+        $Crystal->setFirstName('Crystal');
+        $Crystal->setLastName('Buyalos');
+        $Crystal->setEmail('crystal@cheapundies.com');
+        $Crystal->setPassword('password');
+        $Crystal->setOrganization($this->organization);
+        $CrystalImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/5.jpg');
+        $CrystalImage->setSource($internalSource);
+        $Crystal->setImage($CrystalImage);
+        $this->userRepo->saveAndCommit($Crystal);
 
         //  Ainsley
-        $user                   = new User();
-        $user->setFirstName('Ainsley');
-        $user->setLastName('Dougherty');
-        $user->setEmail('ainsley@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/6.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Ainsley                   = new User();
+        $Ainsley->setFirstName('Ainsley');
+        $Ainsley->setLastName('Dougherty');
+        $Ainsley->setEmail('ainsley@cheapundies.com');
+        $Ainsley->setPassword('password');
+        $Ainsley->setOrganization($this->organization);
+        $AinsleyImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/6.jpg');
+        $AinsleyImage->setSource($internalSource);
+        $Ainsley->setImage($AinsleyImage);
+        $this->userRepo->saveAndCommit($Ainsley);
 
         //  Cody
-        $user                   = new User();
-        $user->setFirstName('Cody');
-        $user->setLastName('Smith');
-        $user->setEmail('cody@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/7.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $CodySmith                   = new User();
+        $CodySmith->setFirstName('Cody');
+        $CodySmith->setLastName('Smith');
+        $CodySmith->setEmail('cody@cheapundies.com');
+        $CodySmith->setPassword('password');
+        $CodySmith->setOrganization($this->organization);
+        $CodySmithImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/7.jpg');
+        $CodySmithImage->setSource($internalSource);
+        $CodySmith->setImage($CodySmithImage);
+        $this->userRepo->saveAndCommit($CodySmith);
 
         //  Corey
-        $user                   = new User();
-        $user->setFirstName('Corey');
-        $user->setLastName('Stallings');
-        $user->setEmail('corey@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/8.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $CoreyStallings                   = new User();
+        $CoreyStallings->setFirstName('Corey');
+        $CoreyStallings->setLastName('Stallings');
+        $CoreyStallings->setEmail('corey@cheapundies.com');
+        $CoreyStallings->setPassword('password');
+        $CoreyStallings->setOrganization($this->organization);
+        $CoreyStallingsImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/8.jpg');
+        $CoreyStallingsImage->setSource($internalSource);
+        $CoreyStallings->setImage($CoreyStallingsImage);
+        $this->userRepo->saveAndCommit($CoreyStallings);
 
         //  Michael
-        $user                   = new User();
-        $user->setFirstName('Michael');
-        $user->setLastName('Ferrell');
-        $user->setEmail('michael@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/9.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $MichaelFerrell                   = new User();
+        $MichaelFerrell->setFirstName('Michael');
+        $MichaelFerrell->setLastName('Ferrell');
+        $MichaelFerrell->setEmail('michael@cheapundies.com');
+        $MichaelFerrell->setPassword('password');
+        $MichaelFerrell->setOrganization($this->organization);
+        $MichaelFerrellImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/9.jpg');
+        $MichaelFerrellImage->setSource($internalSource);
+        $MichaelFerrell->setImage($MichaelFerrellImage);
+        $this->userRepo->saveAndCommit($MichaelFerrell);
 
         //  Michael
-        $user                   = new User();
-        $user->setFirstName('Michael');
-        $user->setLastName('Woolcott');
-        $user->setEmail('michael.woolcott@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/11.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $MichaelWoolcott                   = new User();
+        $MichaelWoolcott->setFirstName('Michael');
+        $MichaelWoolcott->setLastName('Woolcott');
+        $MichaelWoolcott->setEmail('michael.woolcott@cheapundies.com');
+        $MichaelWoolcott->setPassword('password');
+        $MichaelWoolcott->setOrganization($this->organization);
+        $MichaelWoolcottImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/11.jpg');
+        $MichaelWoolcottImage->setSource($internalSource);
+        $MichaelWoolcott->setImage($MichaelWoolcottImage);
+        $this->userRepo->saveAndCommit($MichaelWoolcott);
 
         //  Thomas
-        $user                   = new User();
-        $user->setFirstName('Thomas');
-        $user->setLastName('Watson');
-        $user->setEmail('thomas@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/12.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $ThomasWatson                   = new User();
+        $ThomasWatson->setFirstName('Thomas');
+        $ThomasWatson->setLastName('Watson');
+        $ThomasWatson->setEmail('thomas@cheapundies.com');
+        $ThomasWatson->setPassword('password');
+        $ThomasWatson->setOrganization($this->organization);
+        $ThomasWatsonImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/12.jpg');
+        $ThomasWatsonImage->setSource($internalSource);
+        $ThomasWatson->setImage($ThomasWatsonImage);
+        $this->userRepo->saveAndCommit($ThomasWatson);
 
         //  Corey
-        $user                   = new User();
-        $user->setFirstName('Corey');
-        $user->setLastName('Webb');
-        $user->setEmail('thomas@whoamedia.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/13.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $CoreyWebb                   = new User();
+        $CoreyWebb->setFirstName('Corey');
+        $CoreyWebb->setLastName('Webb');
+        $CoreyWebb->setEmail('thomas@whoamedia.com');
+        $CoreyWebb->setPassword('password');
+        $CoreyWebb->setOrganization($this->organization);
+        $CoreyWebbImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/13.jpg');
+        $CoreyWebbImage->setSource($internalSource);
+        $CoreyWebb->setImage($CoreyWebbImage);
+        $this->userRepo->saveAndCommit($CoreyWebb);
 
         //  Shenouda
-        $user                   = new User();
-        $user->setFirstName('Shenouda');
-        $user->setLastName('Guergues');
-        $user->setEmail('shenouda@whoamedia.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/14.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Shenouda                   = new User();
+        $Shenouda->setFirstName('Shenouda');
+        $Shenouda->setLastName('Guergues');
+        $Shenouda->setEmail('shenouda@whoamedia.com');
+        $Shenouda->setPassword('password');
+        $Shenouda->setOrganization($this->organization);
+        $ShenoudaImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/14.jpg');
+        $ShenoudaImage->setSource($internalSource);
+        $Shenouda->setImage($ShenoudaImage);
+        $this->userRepo->saveAndCommit($Shenouda);
 
         //  Lane
-        $user                   = new User();
-        $user->setFirstName('Lane');
-        $user->setLastName('Norman');
-        $user->setEmail('lane@whoamedia.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/16.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $Lane                   = new User();
+        $Lane->setFirstName('Lane');
+        $Lane->setLastName('Norman');
+        $Lane->setEmail('lane@whoamedia.com');
+        $Lane->setPassword('password');
+        $Lane->setOrganization($this->organization);
+        $LaneImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/16.jpg');
+        $LaneImage->setSource($internalSource);
+        $Lane->setImage($LaneImage);
+        $this->userRepo->saveAndCommit($Lane);
 
         //  Travis
-        $user                   = new User();
-        $user->setFirstName('Travis');
-        $user->setLastName('Pence');
-        $user->setEmail('travis@cheapundies.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $image                  = $imageService->handleImage('https://flow.turboship.com/images/users/17.jpg');
-        $image->setSource($internalSource);
-        $user->setImage($image);
-        $this->userRepo->saveAndCommit($user);
+        $TravisPence                   = new User();
+        $TravisPence->setFirstName('Travis');
+        $TravisPence->setLastName('Pence');
+        $TravisPence->setEmail('travis@cheapundies.com');
+        $TravisPence->setPassword('password');
+        $TravisPence->setOrganization($this->organization);
+        $TravisPenceImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/17.jpg');
+        $TravisPenceImage->setSource($internalSource);
+        $TravisPence->setImage($TravisPenceImage);
+        $this->userRepo->saveAndCommit($TravisPence);
     }
 
     private function clients ()
