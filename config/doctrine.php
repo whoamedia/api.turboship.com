@@ -164,7 +164,7 @@ return [
     |
     */
     'cache'                      => [
-        'default'      => strtoupper(config('app.env')) === 'LOCAL' ? 'array' : env('CACHE_DRIVER', 'file'),
+        'default'      => 'array', //   strtoupper(config('app.env')) === 'LOCAL' ? 'array' : env('CACHE_DRIVER', 'file'),
         'namespace'    => null,
         'second_level' => false,
     ],
