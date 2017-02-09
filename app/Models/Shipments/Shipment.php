@@ -148,6 +148,7 @@ class Shipment implements \JsonSerializable
         foreach ($this->getItems() AS $shipmentItem)
             $object['items'][]          = $shipmentItem->jsonSerialize();
 
+        $object['postage']              = is_null($this->postage) ? null : $this->postage->jsonSerialize();
         $object['canShip']              = $this->canShip(true);
         $object['canRate']              = $this->canRate(true);
 
