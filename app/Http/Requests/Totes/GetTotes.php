@@ -27,12 +27,24 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
      */
     protected $barCodes;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
+    /**
+     * @var int
+     */
+    protected $page;
+
 
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
         $this->barCodes                 = AU::get($data['barCodes']);
         $this->organizationIds          = AU::get($data['organizationIds']);
+        $this->limit                    = AU::get($data['limit'], 80);
+        $this->page                     = AU::get($data['page'], 1);
     }
 
     public function validate()
@@ -49,6 +61,8 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
         $object['ids']                  = $this->ids;
         $object['barCodes']             = $this->barCodes;
         $object['organizationIds']      = $this->organizationIds;
+        $object['limit']                = $this->limit;
+        $object['page']                 = $this->page;
 
         return $object;
     }
@@ -105,6 +119,38 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function setBarCodes($barCodes)
     {
         $this->barCodes = $barCodes;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param int $page
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
     }
 
 }
