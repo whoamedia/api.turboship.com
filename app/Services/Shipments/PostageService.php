@@ -115,9 +115,11 @@ class PostageService
 
 
         $shipment->getPostage()->setVoidedAt(new \DateTime());
+        $rate                           = $shipment->getPostage()->getRate();
         $shipment->setShippedAt(null);
         $shipment->setPostage(null);
         $shipment->clearRates();
+        $shipment->addRate($rate);
 
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getPending());
