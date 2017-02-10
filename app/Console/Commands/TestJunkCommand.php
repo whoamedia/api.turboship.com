@@ -11,6 +11,9 @@ use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
 
+use App\Services\IPP\PrintIPP;
+use Storage;
+
 class TestJunkCommand extends Command
 {
 
@@ -37,7 +40,6 @@ class TestJunkCommand extends Command
         parent::__construct();
 
         $this->shipmentRepo                 = EntityManager::getRepository('App\Models\Shipments\Shipment');
-        $this->integratedShippingApiRepo    = EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
     }
 
     /**
@@ -47,21 +49,33 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $integratedShippingApi              = $this->integratedShippingApiRepo->getOneById(2);
-        $postageService                     = new PostageService($integratedShippingApi);
-        $shippingContainerValidation        = new ShippingContainerValidation();
+        $shipment                           = $this->shipmentRepo->getOneById(1);
+        $zplPath                            = 'https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20170210/1ccb4d4672884c0b85ef28d7bf579f5c.zpl';
+        $labelContents                      = file_get_contents($zplPath);
+        $path                               = 'label.zpl';
+        Storage::put($path, $labelContents);
 
-        $shipmentsResponse                  = $this->shipmentRepo->where([], true);
-        foreach ($shipmentsResponse AS $shipment)
+        $storagePrefix                      = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
+        $fullPath                           = $storagePrefix . ltrim(Storage::disk('local')->url($path), '/');
+
+        $l                          = [];
+
+        foreach (explode("\n", $labelContents) as $line)
         {
-            $this->info('On shipment id ' . $shipment->getId());
-            $shipment->setWeight(rand(20, 100) . '.' . rand(1, 99));
-            $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
-            $shipment->setShippingContainer($shippingContainer);
-
-            $postageService->rate($shipment);
-            $this->shipmentRepo->saveAndCommit($shipment);
+            if (!preg_match("/^\^FO10,560\^GFB,2040/", $line))
+                $l[]                = $line;
         }
+        $label                      = implode("\n", $l);
+
+        $print = new PrintIPP();
+        $print->setHost('208.73.141.38:631');
+        $print->setPrinterURI('/printers/ThermalLabel');
+        $print->setRawText();
+
+        $print->setData($label);
+
+        $result =  $print->printJob();
+        dd($result);
     }
 
 }
