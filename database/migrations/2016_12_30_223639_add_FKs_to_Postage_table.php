@@ -15,8 +15,6 @@ class AddFKsToPostageTable extends Migration
     {
         Schema::table('Postage', function (Blueprint $table)
         {
-            $table->foreign('integratedShippingApiId')->references('id')->on('IntegratedShippingApi');
-            $table->foreign('shippingApiServiceId')->references('id')->on('ShippingApiService');
             $table->foreign('rateId')->references('id')->on('Rate');
         });
     }
@@ -30,8 +28,6 @@ class AddFKsToPostageTable extends Migration
     {
         Schema::table('Postage', function (Blueprint $table)
         {
-            $table->dropForeign('postage_integratedshippingapiid_foreign');
-            $table->dropForeign('postage_shippingapiserviceid_foreign');
             $table->dropForeign('postage_rateid_foreign');
         });
     }

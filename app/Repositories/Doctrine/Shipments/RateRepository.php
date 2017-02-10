@@ -80,6 +80,14 @@ class RateRepository extends BaseRepository
         if (!is_null(AU::get($query['carrierIds'])))
             $qb->andWhere($qb->expr()->in('carrier.id', $query['carrierIds']));
 
+        if (!is_null(AU::get($query['isDeleted'])))
+        {
+            if ($query['isDeleted'])
+                $qb->andWhere($qb->expr()->isNotNull('rate.deletedAt'));
+            else
+                $qb->andWhere($qb->expr()->isNull('rate.deletedAt'));
+        }
+
         return $qb;
     }
 

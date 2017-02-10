@@ -56,9 +56,16 @@ class PostageService
             $shipment->clearRates();
 
         if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
-            return $this->rateEasyPost($shipment);
+            $this->rateEasyPost($shipment);
         else
             throw new UnsupportedException('Integration is unsupported');
+
+        foreach ($shipment->getRates() AS $rate)
+        {
+            $rate->setWeight($shipment->getWeight());
+        }
+
+        return $shipment;
     }
 
     /**
@@ -95,6 +102,8 @@ class PostageService
         else
             throw new UnsupportedException('Integration is unsupported');
 
+        $rate->setPurchased(true);
+        $shipment->getPostage()->setRate($rate);
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getFullyShipped());
         $shipment->setShippedAt(new \DateTime());
@@ -115,11 +124,9 @@ class PostageService
 
 
         $shipment->getPostage()->setVoidedAt(new \DateTime());
-        $rate                           = $shipment->getPostage()->getRate();
         $shipment->setShippedAt(null);
         $shipment->setPostage(null);
         $shipment->clearRates();
-        $shipment->addRate($rate);
 
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getPending());
@@ -217,18 +224,10 @@ class PostageService
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
         $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
         $postage                        = new Postage();
-        $postage->setRate($rate);
         $postage->setShipment($shipment);
-        $postage->setIntegratedShippingApi($this->integratedShippingApi);
-        $postage->setShippingApiService($rate->getShippingApiService());
         $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
-        $postage->setBasePrice($rate->getRate());
-        $postage->setTotalPrice($rate->getRate());
-        $postage->setWeight($shipment->getWeight());
         $postage->setTrackingNumber($easyPostShipment->getTrackingCode());
         $postage->setExternalId($easyPostShipment->getPostageLabel()->getId());
-        $postage->setExternalShipmentId($rate->getExternalShipmentId());
-        $postage->setExternalRateId($rate->getExternalId());
         $shipment->setPostage($postage);
 
         return $shipment;
@@ -241,7 +240,7 @@ class PostageService
     private function voidEasyPost (Shipment $shipment)
     {
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->void($shipment->getPostage()->getExternalShipmentId());
+        $easyPostShipmentRepo->void($shipment->getPostage()->getRate()->getExternalShipmentId());
 
         return $shipment;
     }

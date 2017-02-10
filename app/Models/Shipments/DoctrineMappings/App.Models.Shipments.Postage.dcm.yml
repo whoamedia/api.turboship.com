@@ -28,53 +28,6 @@ App\Models\Shipments\Postage:
       nullable:       true
       options:
         comment:      "Path to the label image"
-    weight:
-      column:         weight
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-    totalPrice:
-      column:         totalPrice
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-    basePrice:
-      column:         basePrice
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-    totalTaxes:
-      column:         totalTaxes
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-        default:      0.00
-    fuelSurcharge:
-      column:         fuelSurcharge
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-        default:      0.00
     createdAt:
       column:         createdAt
       type:           datetime
@@ -93,22 +46,6 @@ App\Models\Shipments\Postage:
       nullable:       true
       options:
         comment:      "Postage externalId"
-    externalShipmentId:
-      column:         externalShipmentId
-      type:           string
-      nullable:       true
-      length:         100
-      options:
-        fixed:        false
-        comment:      "Rate externalShipmentId"
-    externalRateId:
-      column:         externalRateId
-      type:           string
-      nullable:       true
-      length:         100
-      options:
-        fixed:        false
-        comment:      "Rate externalRateId"
 
   manyToOne:
     shipment:
@@ -124,18 +61,4 @@ App\Models\Shipments\Postage:
       fetch:          EAGER
       joinColumn:
         name:         rateId
-        referencedColumnName: id
-    integratedShippingApi:
-      targetEntity:   App\Models\Integrations\IntegratedShippingApi
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         integratedShippingApiId
-        referencedColumnName: id
-    shippingApiService:
-      targetEntity:   App\Models\Integrations\ShippingApiService
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         shippingApiServiceId
         referencedColumnName: id

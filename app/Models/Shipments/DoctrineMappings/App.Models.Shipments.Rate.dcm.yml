@@ -32,13 +32,51 @@ App\Models\Shipments\Rate:
       options:
         fixed:        false
         comment:      "Rate externalId"
-    rate:
-      column:         rate
+    weight:
+      column:         weight
       type:           decimal
       nullable:       false
       precision:      10
       scale:          2
       options:
+        unsigned:     true
+        fixed:        false
+    total:
+      column:         total
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    base:
+      column:         base
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    tax:
+      column:         tax
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        default:      0.00
+        unsigned:     true
+        fixed:        false
+    fuelSurcharge:
+      column:         fuelSurcharge
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        default:      0.00
         unsigned:     true
         fixed:        false
     retailRate:
@@ -74,6 +112,18 @@ App\Models\Shipments\Rate:
       column:         deliveryDateGuaranteed
       type:           boolean
       nullable:       true
+    purchased:
+      column:         purchased
+      type:           boolean
+      nullable:       false
+      options:
+        default:      false
+    deletedAt:
+      column:         deletedAt
+      type:           datetime
+      nullable:       true
+      options:
+        default:      null
     createdAt:
       column:         createdAt
       type:           datetime

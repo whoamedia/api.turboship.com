@@ -416,7 +416,8 @@ class Shipment implements \JsonSerializable
      */
     public function getRates ()
     {
-        return $this->rates->toArray();
+        $criteria = Criteria::create()->where(Criteria::expr()->isNull('deletedAt'));
+        return $this->rates->matching($criteria)->toArray();
     }
 
     /**
@@ -431,7 +432,10 @@ class Shipment implements \JsonSerializable
 
     public function clearRates ()
     {
-        $this->rates->clear();
+        foreach ($this->getRates() AS $rate)
+        {
+            $rate->setDeletedAt(new \DateTime());
+        }
     }
 
     /**
@@ -440,7 +444,10 @@ class Shipment implements \JsonSerializable
      */
     public function hasRate (Rate $rate)
     {
-        return $this->rates->contains($rate);
+        $criteria = Criteria::create()
+                        ->where(Criteria::expr()->isNull('deletedAt'))
+                        ->andWhere(Criteria::expr()->eq('id', $rate->getId()));
+        return empty($this->rates->matching($criteria)) ? false : true;
     }
 
     /**

@@ -18,10 +18,8 @@ use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Models\Support\Validation\ImageValidation;
-use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
-use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\RateRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\ImageService;
@@ -175,7 +173,6 @@ class ShipmentController extends BaseAuthController
 
         $this->shipmentRepo->saveAndCommit($shipment);
 
-
         return response($shipment->getRates(), 201);
     }
 
@@ -226,7 +223,7 @@ class ShipmentController extends BaseAuthController
         $shipment                       = $this->getShipment($voidPostage->getId());
         $shipment->canVoidPostage();
 
-        $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
+        $postageService                 = new PostageService($shipment->getPostage()->getRate()->getIntegratedShippingApi());
         $postageService->void($shipment);
         $this->shipmentRepo->saveAndCommit($shipment);
 

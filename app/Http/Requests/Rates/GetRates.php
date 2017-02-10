@@ -47,6 +47,11 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     protected $carrierIds;
 
     /**
+     * @var bool|null
+     */
+    protected $isDeleted;
+
+    /**
      * @var string
      */
     protected $orderBy;
@@ -72,6 +77,7 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
         $this->serviceIds               = AU::get($data['serviceIds']);
         $this->serviceIds               = AU::get($data['serviceIds']);
         $this->carrierIds               = AU::get($data['carrierIds']);
+        $this->isDeleted                = AU::get($data['isDeleted']);
         $this->orderBy                  = AU::get($data['orderBy'], 'rate.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
         $this->limit                    = AU::get($data['limit'], 80);
@@ -86,6 +92,7 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
         $this->shippingApiServiceIds    = parent::validateIds($this->shippingApiServiceIds, 'shippingApiServiceIds');
         $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
         $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
+        $this->isDeleted                = parent::validateBoolean($this->isDeleted, 'isDeleted');
         $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
@@ -106,6 +113,7 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
         $object['shippingApiServiceIds']= $this->shippingApiServiceIds;
         $object['serviceIds']           = $this->serviceIds;
         $object['carrierIds']           = $this->carrierIds;
+        $object['isDeleted']            = $this->isDeleted;
         $object['orderBy']              = $this->orderBy;
         $object['direction']            = $this->direction;
         $object['limit']                = $this->limit;
@@ -223,6 +231,22 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function setCarrierIds($carrierIds)
     {
         $this->carrierIds = $carrierIds;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isDeleted()
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * @param bool|null $isDeleted
+     */
+    public function setIsDeleted($isDeleted)
+    {
+        $this->isDeleted = $isDeleted;
     }
 
     /**
