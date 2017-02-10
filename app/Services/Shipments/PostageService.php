@@ -215,6 +215,7 @@ class PostageService
         $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
         $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
         $postage                        = new Postage();
+        $postage->setRate($rate);
         $postage->setShipment($shipment);
         $postage->setIntegratedShippingApi($this->integratedShippingApi);
         $postage->setShippingApiService($rate->getShippingApiService());

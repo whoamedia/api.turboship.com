@@ -23,6 +23,9 @@ class CreatePostageTable extends Migration
             $table->integer('shipmentId')->unsigned()->index();
             $table->foreign('shipmentId')->references('id')->on('Shipment');
 
+            $table->integer('rateId')->unsigned()->index();
+            $table->foreign('rateId')->references('id')->on('Rate');
+
             $table->integer('integratedShippingApiId')->unsigned()->index();
 
             $table->integer('shippingApiServiceId')->unsigned()->index();

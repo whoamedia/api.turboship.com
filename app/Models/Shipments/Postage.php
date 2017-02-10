@@ -16,6 +16,11 @@ class Postage implements \JsonSerializable
     protected $id;
 
     /**
+     * @var Rate
+     */
+    protected $rate;
+
+    /**
      * @var string
      */
     protected $trackingNumber;
@@ -94,6 +99,7 @@ class Postage implements \JsonSerializable
     {
         $this->createdAt                = new \DateTime();
 
+        $this->rate                     = AU::get($data['rate']);
         $this->trackingNumber           = AU::get($data['trackingNumber']);
         $this->labelPath                = AU::get($data['labelPath']);
         $this->weight                   = AU::get($data['weight']);
@@ -115,6 +121,7 @@ class Postage implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['rate']                 = $this->rate->jsonSerialize();
         $object['trackingNumber']       = $this->trackingNumber;
         $object['labelPath']            = $this->labelPath;
         $object['weight']               = $this->weight;
@@ -147,6 +154,22 @@ class Postage implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return Rate
+     */
+    public function getRate()
+    {
+        return $this->rate;
+    }
+
+    /**
+     * @param Rate $rate
+     */
+    public function setRate($rate)
+    {
+        $this->rate = $rate;
     }
 
     /**
