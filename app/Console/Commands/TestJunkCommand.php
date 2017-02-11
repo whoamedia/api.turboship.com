@@ -4,14 +4,17 @@ namespace App\Console\Commands;
 
 
 use App\Jobs\Shipments\AutomatedShippingJob;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
 use App\Models\Hardware\Validation\PrinterValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
 use App\Repositories\Doctrine\Shipments\PostageRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\IPP\IPPService;
 use App\Services\PrinterService;
 use App\Services\Shipments\PostageService;
+use App\Services\Shopify\ShopifyService;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
@@ -45,12 +48,18 @@ class TestJunkCommand extends Command
      */
     private $postageRepo;
 
+    /**
+     * @var IntegratedShoppingCartRepository
+     */
+    private $integratedShoppingCartRepo;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->shipmentRepo                 = EntityManager::getRepository('App\Models\Shipments\Shipment');
         $this->postageRepo                  = EntityManager::getRepository('App\Models\Shipments\Postage');
+        $this->integratedShoppingCartRepo   = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
     }
 
     /**
@@ -60,46 +69,28 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
+        $shoppingCartIntegration            = $this->integratedShoppingCartRepo->getOneById(1);
+        $shopifyService                     = new ShopifyService($shoppingCartIntegration);
+        $total                              = $shopifyService->getOrdersShippedCount();
 
-        for ($i = 11; $i < 100; $i++)
+        $this->info('Found ' . $total . ' results');
+        $totalPages                         = (int)ceil($total / 250);
+
+
+        $shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
+        for ($page = 1; $page <= $totalPages; $page++)
         {
-            $shipment                       = $this->shipmentRepo->getOneById($i);
-            if (is_null($shipment))
-                continue;
-
-            $automatedShippingJob               = new AutomatedShippingJob($i);
-            $automatedShippingJob->handle();
+            $this->info('On page ' . $page);
+            set_time_limit(60);
+            $shopifyOrdersResponse          = $shopifyService->getOrdersShipped($page, 250);
+            $orderArray                     = json_decode($shopifyOrdersResponse, true);
+            foreach ($orderArray AS $shopifyOrder)
+            {
+                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
+                $this->dispatch($job);
+            }
+            usleep(250000);
         }
-
-
-        DIE;
-        $zplPath                            = 'https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20170210/1ccb4d4672884c0b85ef28d7bf579f5c.zpl';
-        $labelContents                      = file_get_contents($zplPath);
-        $path                               = 'label.zpl';
-        Storage::put($path, $labelContents);
-
-        $storagePrefix                      = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix();
-        $fullPath                           = $storagePrefix . ltrim(Storage::disk('local')->url($path), '/');
-
-        $l                          = [];
-
-        foreach (explode("\n", $labelContents) as $line)
-        {
-            if (!preg_match("/^\^FO10,560\^GFB,2040/", $line))
-                $l[]                = $line;
-        }
-        $label                      = implode("\n", $l);
-
-        $print = new PrintIPP();
-        $print->setPort('631');
-        $print->setHost('208.73.141.38');
-        $print->setPrinterURI('/printers/ThermalLabel');
-        //  $print->setRawText();
-
-        $print->setData($label);
-
-        $result =  $print->printJob();
-        dd($result);
     }
 
 }
