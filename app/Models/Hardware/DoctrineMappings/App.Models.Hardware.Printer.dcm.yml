@@ -1,7 +1,13 @@
-App\Models\WMS\Printer:
+App\Models\Hardware\Printer:
   type:               entity
   table:              Printer
-  repositoryClass:    App\Repositories\Doctrine\WMS\PrinterRepository
+  repositoryClass:    App\Repositories\Doctrine\Hardware\PrinterRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           printerTypeId
+      type:           integer
+  discriminatorMap:
+      1:              CUPSPrinter
 
   id:
     id:
@@ -28,21 +34,8 @@ App\Models\WMS\Printer:
       nullable:       true
       options:
         comment:      "Printer description"
-    ipAddress:
-      column:         ipAddress
-      type:           string
-      nullable:       false
-      options:
-        comment:      "Printer ipAddress"
 
   manyToOne:
-    printerType:
-      targetEntity:   App\Models\WMS\PrinterType
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         printerTypeId
-        referencedColumnName: id
     organization:
       targetEntity:   App\Models\CMS\Organization
       nullable:       false

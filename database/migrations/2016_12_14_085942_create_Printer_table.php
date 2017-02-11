@@ -18,7 +18,6 @@ class CreatePrinterTable extends Migration
             $table->increments('id')->unsigned();
             $table->string('name')->index();
             $table->string('description')->nullable()->default(null);
-            $table->string('ipAddress');
 
             $table->integer('printerTypeId')->unsigned()->index();
             $table->integer('organizationId')->unsigned()->index();
@@ -27,7 +26,6 @@ class CreatePrinterTable extends Migration
 
         Schema::table('Printer', function (Blueprint $table)
         {
-            $table->foreign('printerTypeId')->references('id')->on('PrinterType');
             $table->foreign('organizationId')->references('id')->on('Organization');
         });
     }

@@ -6,7 +6,7 @@ namespace App\Models\CMS;
 use App\Models\BaseModel;
 use App\Models\Shipments\Shipper;
 use App\Models\Shipments\ShippingContainer;
-use App\Models\WMS\Printer;
+use App\Models\Hardware\Printer;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 

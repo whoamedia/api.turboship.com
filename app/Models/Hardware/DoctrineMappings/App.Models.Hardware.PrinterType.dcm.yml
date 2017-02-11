@@ -1,7 +1,7 @@
-App\Models\WMS\PrinterType:
+App\Models\Hardware\PrinterType:
   type:               entity
   table:              PrinterType
-  repositoryClass:    App\Repositories\Doctrine\WMS\PrinterTypeRepository
+  repositoryClass:    App\Repositories\Doctrine\Hardware\PrinterTypeRepository
 
   id:
     id:

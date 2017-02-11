@@ -505,77 +505,87 @@ class WhoaMediaSeeder extends Seeder
 
     private function printers ()
     {
-        $printerTypeValidation  = new \App\Models\WMS\Validation\PrinterTypeValidation();
+        $printerTypeValidation  = new \App\Models\Hardware\Validation\PrinterTypeValidation();
         $cupsPrinterType        = $printerTypeValidation->getCUPSServer();
 
-        $ZM400                  = new \App\Models\WMS\Printer();
+        $ZM400                  = new \App\Models\Hardware\CUPSPrinter();
         $ZM400->setName('ZM400');
         $ZM400->setDescription('Barcode Printer');
-        $ZM400->setIpAddress('192.168.1.82');
-        $ZM400->setPrinterType($cupsPrinterType);
+        $ZM400->setAddress('192.168.1.82');
+        $ZM400->setPort('631');
+        $ZM400->setFormat('ZPL');
         $this->organization->addPrinter($ZM400);
 
-        $PeelerPrinter          = new \App\Models\WMS\Printer();
+        $PeelerPrinter          = new \App\Models\Hardware\CUPSPrinter();
         $PeelerPrinter->setName('PeelerPrinter');
         $PeelerPrinter->setDescription('Thermal Label');
-        $PeelerPrinter->setIpAddress('192.168.1.82');
-        $PeelerPrinter->setPrinterType($cupsPrinterType);
+        $PeelerPrinter->setAddress('192.168.1.82');
+        $PeelerPrinter->setPort('631');
+        $PeelerPrinter->setFormat('ZPL');
         $this->organization->addPrinter($PeelerPrinter);
 
-        $ManualInvoice          = new \App\Models\WMS\Printer();
+        $ManualInvoice          = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Invoice beside shipping station');
-        $ManualInvoice->setIpAddress('192.168.1.82');
-        $ManualInvoice->setPrinterType($cupsPrinterType);
+        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
 
-        $Invoice                = new \App\Models\WMS\Printer();
+        $Invoice                = new \App\Models\Hardware\CUPSPrinter();
         $Invoice->setName('Invoice');
         $Invoice->setDescription('Conveyor Invoice');
-        $Invoice->setIpAddress('192.168.1.82');
-        $Invoice->setPrinterType($cupsPrinterType);
+        $Invoice->setAddress('192.168.1.82');
+        $Invoice->setPort('631');
+        $Invoice->setFormat('ZPL');
         $this->organization->addPrinter($Invoice);
 
-        $Datamax1               = new \App\Models\WMS\Printer();
+        $Datamax1               = new \App\Models\Hardware\CUPSPrinter();
         $Datamax1->setName('Datamax1');
         $Datamax1->setDescription('Bagger');
-        $Datamax1->setIpAddress('192.168.1.82');
-        $Datamax1->setPrinterType($cupsPrinterType);
+        $Datamax1->setAddress('192.168.1.82');
+        $Datamax1->setPort('631');
+        $Datamax1->setFormat('ZPL');
         $this->organization->addPrinter($Datamax1);
 
-        $PlainPaper             = new \App\Models\WMS\Printer();
+        $PlainPaper             = new \App\Models\Hardware\CUPSPrinter();
         $PlainPaper->setName('PlainPaper');
         $PlainPaper->setDescription('Printer on grey table');
-        $PlainPaper->setIpAddress('192.168.1.82');
-        $PlainPaper->setPrinterType($cupsPrinterType);
+        $PlainPaper->setAddress('192.168.1.82');
+        $PlainPaper->setPort('631');
+        $PlainPaper->setFormat('ZPL');
         $this->organization->addPrinter($PlainPaper);
 
-        $PeelerPrinter2         = new \App\Models\WMS\Printer();
+        $PeelerPrinter2         = new \App\Models\Hardware\CUPSPrinter();
         $PeelerPrinter2->setName('PeelerPrinter2');
         $PeelerPrinter2->setDescription('Second thermal label');
-        $PeelerPrinter2->setIpAddress('192.168.1.82');
-        $PeelerPrinter2->setPrinterType($cupsPrinterType);
+        $PeelerPrinter2->setAddress('192.168.1.82');
+        $PeelerPrinter2->setPort('631');
+        $PeelerPrinter2->setFormat('ZPL');
         $this->organization->addPrinter($PeelerPrinter2);
 
-        $ManualInvoice         = new \App\Models\WMS\Printer();
+        $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Report printer');
-        $ManualInvoice->setIpAddress('192.168.1.82');
-        $ManualInvoice->setPrinterType($cupsPrinterType);
+        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
 
-        $ManualInvoice         = new \App\Models\WMS\Printer();
+        $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Invoice at shipping station');
-        $ManualInvoice->setIpAddress('192.168.1.82');
-        $ManualInvoice->setPrinterType($cupsPrinterType);
+        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
 
-        $ThermalLabel         = new \App\Models\WMS\Printer();
+        $ThermalLabel         = new \App\Models\Hardware\CUPSPrinter();
         $ThermalLabel->setName('ThermalLabel');
         $ThermalLabel->setDescription('Front Office Thermal Label');
-        $ThermalLabel->setIpAddress('192.168.1.82');
-        $ThermalLabel->setPrinterType($cupsPrinterType);
+        $ThermalLabel->setAddress('192.168.1.82');
+        $ThermalLabel->setPort('631');
+        $ThermalLabel->setFormat('ZPL');
         $this->organization->addPrinter($ThermalLabel);
 
         $this->organizationRepo->saveAndCommit($this->organization);

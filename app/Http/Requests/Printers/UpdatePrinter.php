@@ -10,7 +10,7 @@ use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UpdatePrinter extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+abstract class UpdatePrinter extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -28,24 +28,12 @@ class UpdatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
      */
     protected $description;
 
-    /**
-     * @var string|null
-     */
-    protected $ipAddress;
-
-    /**
-     * @var int|null
-     */
-    protected $printerTypeId;
-
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
-        $this->ipAddress                = AU::get($data['ipAddress']);
-        $this->printerTypeId            = AU::get($data['printerTypeId']);
     }
 
     public function validate()
@@ -69,8 +57,6 @@ class UpdatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
         $object['description']          = $this->description;
-        $object['ipAddress']            = $this->ipAddress;
-        $object['printerTypeId']        = $this->printerTypeId;
 
         return $object;
     }
@@ -121,38 +107,6 @@ class UpdatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getIpAddress()
-    {
-        return $this->ipAddress;
-    }
-
-    /**
-     * @param null|string $ipAddress
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ipAddress = $ipAddress;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getPrinterTypeId()
-    {
-        return $this->printerTypeId;
-    }
-
-    /**
-     * @param int|null $printerTypeId
-     */
-    public function setPrinterTypeId($printerTypeId)
-    {
-        $this->printerTypeId = $printerTypeId;
     }
 
 }

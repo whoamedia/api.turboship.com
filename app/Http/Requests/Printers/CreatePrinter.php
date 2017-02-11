@@ -9,7 +9,7 @@ use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+abstract class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -23,11 +23,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
     protected $description;
 
     /**
-     * @var string
-     */
-    protected $ipAddress;
-
-    /**
      * @var int
      */
     protected $printerTypeId;
@@ -37,7 +32,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
     {
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
-        $this->ipAddress                = AU::get($data['ipAddress']);
         $this->printerTypeId            = AU::get($data['printerTypeId']);
     }
 
@@ -49,9 +43,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
         if (is_null($this->description))
             throw new BadRequestHttpException('description is required');
 
-        if (is_null($this->ipAddress))
-            throw new BadRequestHttpException('ipAddress is required');
-
         if (is_null($this->printerTypeId))
             throw new BadRequestHttpException('printerTypeId is required');
 
@@ -61,11 +52,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
 
         if (empty(trim($this->description)))
             throw new BadRequestHttpException('description cannot be empty');
-
-        if (empty(trim($this->ipAddress)))
-            throw new BadRequestHttpException('ipAddress cannot be empty');
-
-        parent::validateIpAddress($this->ipAddress);
 
         $this->printerTypeId            = parent::getInteger($this->printerTypeId);
         if (is_null($this->printerTypeId))
@@ -83,7 +69,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
     {
         $object['name']                 = $this->name;
         $object['description']          = $this->description;
-        $object['ipAddress']            = $this->ipAddress;
         $object['printerTypeId']        = $this->printerTypeId;
 
         return $object;
@@ -119,22 +104,6 @@ class CreatePrinter extends BaseRequest implements Cleanable, Validatable, \Json
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIpAddress()
-    {
-        return $this->ipAddress;
-    }
-
-    /**
-     * @param string $ipAddress
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ipAddress = $ipAddress;
     }
 
     /**

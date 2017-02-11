@@ -137,6 +137,7 @@ class http_class
             $error = sprintf(_("Cannot resolve url: %s"), $url);
             $ip = gethostbyname($url);
             $ip = @gethostbyaddr($ip);
+
             if (!$ip)
             {
                 return $this->_HttpError($error, E_USER_WARNING);
@@ -149,7 +150,9 @@ class http_class
                 }
             }
         }
+
         $this->connection = @fsockopen($transport_type . $url, $port, $errno, $errstr, $this->timeout);
+
         $error =
             sprintf(_('Unable to connect to "%s%s port %s": %s'), $transport_type,
                 $url, $port, $errstr);

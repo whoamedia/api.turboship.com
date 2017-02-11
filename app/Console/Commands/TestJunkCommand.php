@@ -68,7 +68,8 @@ class TestJunkCommand extends Command
         $label                      = implode("\n", $l);
 
         $print = new PrintIPP();
-        $print->setHost('208.73.141.38:631');
+        $print->setPort('631');
+        $print->setHost('208.73.141.38');
         $print->setPrinterURI('/printers/ThermalLabel');
         $print->setRawText();
 

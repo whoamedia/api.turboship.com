@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\Printers\CreatePrinter;
+use App\Http\Requests\Printers\CreateCUPSPrinter;
 use App\Http\Requests\Printers\GetPrinters;
 use App\Http\Requests\Printers\ShowPrinter;
-use App\Http\Requests\Printers\UpdatePrinter;
-use App\Models\WMS\Printer;
-use App\Models\WMS\Validation\PrinterTypeValidation;
-use App\Repositories\Doctrine\WMS\PrinterRepository;
+use App\Http\Requests\Printers\UpdateCUPSPrinter;
+use App\Models\Hardware\CUPSPrinter;
+use App\Models\Hardware\PrinterType;
+use App\Models\Hardware\Validation\PrinterTypeValidation;
+use App\Repositories\Doctrine\Hardware\PrinterRepository;
+use App\Utilities\PrinterTypeUtility;
 use Illuminate\Http\Request;
 use EntityManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PrinterController extends BaseAuthController
@@ -22,10 +25,16 @@ class PrinterController extends BaseAuthController
      */
     private $printerRepo;
 
+    /**
+     * @var PrinterTypeValidation
+     */
+    private $printerTypeValidation;
+
 
     public function __construct()
     {
-        $this->printerRepo              = EntityManager::getRepository('App\Models\WMS\Printer');
+        $this->printerRepo              = EntityManager::getRepository('App\Models\Hardware\Printer');
+        $this->printerTypeValidation    = new PrinterTypeValidation();
     }
 
 
@@ -44,20 +53,23 @@ class PrinterController extends BaseAuthController
 
     public function store (Request $request)
     {
-        $createPrinter                  = new CreatePrinter($request->input());
-        $createPrinter->validate();
-        $createPrinter->clean();
+        $printerType                    = $this->validatePrinterType($request->input('printerTypeId'));
 
-        $printer                        = new Printer($createPrinter->jsonSerialize());
-        $printer->setOrganization(parent::getAuthUserOrganization());
+        if ($printerType->getId() == PrinterTypeUtility::CUPS_SERVER)
+        {
+            $createCupsPrinter          = new CreateCUPSPrinter($request->input());
+            $createCupsPrinter->validate();
+            $createCupsPrinter->clean();
 
-        $printerTypeValidation          = new PrinterTypeValidation();
-        $printerType                    = $printerTypeValidation->idExists($createPrinter->getPrinterTypeId());
-        $printer->setPrinterType($printerType);
+            $cupsPrinter                = new CUPSPrinter($createCupsPrinter->jsonSerialize());
+            $cupsPrinter->setOrganization(parent::getAuthUserOrganization());
 
-        $this->printerRepo->saveAndCommit($printer);
+            $this->printerRepo->saveAndCommit($cupsPrinter);
+            return response($cupsPrinter, 201);
+        }
+        else
+            throw new BadRequestHttpException('printerTypeId not supported');
 
-        return response($printer, 201);
     }
 
     public function show (Request $request)
@@ -69,32 +81,54 @@ class PrinterController extends BaseAuthController
     public function update (Request $request)
     {
         $printer                        = $this->getPrinterFromRoute($request->route('id'));
-        $updatePrinter                  = new UpdatePrinter($request->input());
-        $updatePrinter->setId($printer->getId());
-        $updatePrinter->validate();
-        $updatePrinter->clean();
 
-        if (!is_null($updatePrinter->getName()))
-            $printer->setName($updatePrinter->getName());
-
-        if (!is_null($updatePrinter->getDescription()))
-            $printer->setDescription($updatePrinter->getDescription());
-
-        if (!is_null($updatePrinter->getIpAddress()))
-            $printer->setIpAddress($updatePrinter->getIpAddress());
-
-        if (!is_null($updatePrinter->getPrinterTypeId()))
+        if ($printer->getObject() == 'CUPSPrinter')
         {
-            $printerTypeValidation      = new PrinterTypeValidation();
-            $printerType                = $printerTypeValidation->idExists($updatePrinter->getPrinterTypeId());
-            $printer->setPrinterType($printerType);
+            $updateCUPSPrinter              = new UpdateCUPSPrinter($request->input());
+            $updateCUPSPrinter->setId($printer->getId());
+            $updateCUPSPrinter->validate();
+            $updateCUPSPrinter->clean();
+
+            if (!is_null($updateCUPSPrinter->getName()))
+                $printer->setName($updateCUPSPrinter->getName());
+
+            if (!is_null($updateCUPSPrinter->getDescription()))
+                $printer->setDescription($updateCUPSPrinter->getDescription());
+
+            if (!is_null($updateCUPSPrinter->getAddress()))
+                $printer->setAddress($updateCUPSPrinter->getAddress());
+
+            if (!is_null($updateCUPSPrinter->getPort()))
+                $printer->setPort($updateCUPSPrinter->getPort());
+
+            if (!is_null($updateCUPSPrinter->getFormat()))
+                $printer->setFormat($updateCUPSPrinter->getFormat());
         }
+        else
+            throw new BadRequestHttpException('printerTypeId not supported');
 
 
         $this->printerRepo->saveAndCommit($printer);
         return response($printer);
     }
 
+    /**
+     * @param   int     $printerTypeId
+     * @return  PrinterType
+     */
+    private function validatePrinterType ($printerTypeId)
+    {
+        if (is_null($printerTypeId))
+            throw new BadRequestHttpException('printerType id is required');
+
+        $printerType                    = $this->printerTypeValidation->idExists($printerTypeId);
+        return $printerType;
+    }
+
+    /**
+     * @param   int $id
+     * @return  CUPSPrinter
+     */
     private function getPrinterFromRoute ($id)
     {
         $showPrinter                    = new ShowPrinter();

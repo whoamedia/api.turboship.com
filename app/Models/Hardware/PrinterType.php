@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\WMS;
+namespace App\Models\Hardware;
 
 
 /**

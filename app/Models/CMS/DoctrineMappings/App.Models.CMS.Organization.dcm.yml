@@ -41,7 +41,7 @@ App\Models\CMS\Organization:
       mappedBy:       organization
       cascade:        ["persist", "remove"]
     printers:
-      targetEntity:   App\Models\WMS\Printer
+      targetEntity:   App\Models\Hardware\Printer
       mappedBy:       organization
       cascade:        ["persist", "remove"]
     shippingContainers:

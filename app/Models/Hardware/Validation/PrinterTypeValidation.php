@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\WMS\Validation;
+namespace App\Models\Hardware\Validation;
 
-use App\Models\WMS\PrinterType;
-use App\Repositories\Doctrine\WMS\PrinterTypeRepository;
+use App\Models\Hardware\PrinterType;
+use App\Repositories\Doctrine\Hardware\PrinterTypeRepository;
 use App\Utilities\PrinterTypeUtility;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,7 +19,7 @@ class PrinterTypeValidation
 
     public function __construct()
     {
-        $this->printerTypeRepo              = EntityManager::getRepository('App\Models\WMS\PrinterType');
+        $this->printerTypeRepo              = EntityManager::getRepository('App\Models\Hardware\PrinterType');
     }
 
     /**

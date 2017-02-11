@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Models\WMS;
-
+namespace App\Models\Hardware;
 
 use App\Models\CMS\Organization;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class Printer implements \JsonSerializable
+abstract class Printer implements \JsonSerializable
 {
 
     /**
@@ -25,16 +24,6 @@ class Printer implements \JsonSerializable
     protected $description;
 
     /**
-     * @var string
-     */
-    protected $ipAddress;
-
-    /**
-     * @var PrinterType
-     */
-    protected $printerType;
-
-    /**
      * @var Organization
      */
     protected $organization;
@@ -44,8 +33,6 @@ class Printer implements \JsonSerializable
     {
         $this->name                     = AU::get($data['name']);
         $this->description              = AU::get($data['description']);
-        $this->ipAddress                = AU::get($data['ipAddress']);
-        $this->printerType              = AU::get($data['printerType']);
         $this->organization             = AU::get($data['organization']);
     }
 
@@ -57,13 +44,16 @@ class Printer implements \JsonSerializable
         $object['id']                   = $this->getId();
         $object['name']                 = $this->getName();
         $object['description']          = $this->description;
-        $object['ipAddress']            = $this->ipAddress;
-        $object['printerType']          = $this->printerType->jsonSerialize();
         $object['organization']         = $this->organization->jsonSerialize();
+        $object['object']               = $this->getObject();
 
         return $object;
     }
 
+    /**
+     * @return string
+     */
+    abstract function getObject();
 
     /**
      * @return int
@@ -103,38 +93,6 @@ class Printer implements \JsonSerializable
     public function setDescription($description)
     {
         $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIpAddress()
-    {
-        return $this->ipAddress;
-    }
-
-    /**
-     * @param string $ipAddress
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ipAddress = $ipAddress;
-    }
-
-    /**
-     * @return PrinterType
-     */
-    public function getPrinterType()
-    {
-        return $this->printerType;
-    }
-
-    /**
-     * @param PrinterType $printerType
-     */
-    public function setPrinterType($printerType)
-    {
-        $this->printerType = $printerType;
     }
 
     /**

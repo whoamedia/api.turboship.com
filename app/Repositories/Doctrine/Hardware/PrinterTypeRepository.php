@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Doctrine\WMS;
+namespace App\Repositories\Doctrine\Hardware;
 
 
-use App\Models\WMS\PrinterType;
+use App\Models\Hardware\PrinterType;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
@@ -45,7 +45,7 @@ class PrinterTypeRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\WMS\PrinterType', 'printerType');
+        $qb->from('App\Models\Hardware\PrinterType', 'printerType');
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('printerType.id', $query['ids']));
