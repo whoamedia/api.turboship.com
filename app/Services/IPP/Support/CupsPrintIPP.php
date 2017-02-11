@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\IPP;
+namespace App\Services\IPP\Support;
 
 
 class CupsPrintIPP extends ExtendedPrintIPP

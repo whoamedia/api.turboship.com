@@ -511,7 +511,7 @@ class WhoaMediaSeeder extends Seeder
         $ZM400                  = new \App\Models\Hardware\CUPSPrinter();
         $ZM400->setName('ZM400');
         $ZM400->setDescription('Barcode Printer');
-        $ZM400->setAddress('192.168.1.82');
+        $ZM400->setAddress('208.73.141.38');
         $ZM400->setPort('631');
         $ZM400->setFormat('ZPL');
         $this->organization->addPrinter($ZM400);
@@ -519,7 +519,7 @@ class WhoaMediaSeeder extends Seeder
         $PeelerPrinter          = new \App\Models\Hardware\CUPSPrinter();
         $PeelerPrinter->setName('PeelerPrinter');
         $PeelerPrinter->setDescription('Thermal Label');
-        $PeelerPrinter->setAddress('192.168.1.82');
+        $PeelerPrinter->setAddress('208.73.141.38');
         $PeelerPrinter->setPort('631');
         $PeelerPrinter->setFormat('ZPL');
         $this->organization->addPrinter($PeelerPrinter);
@@ -527,7 +527,7 @@ class WhoaMediaSeeder extends Seeder
         $ManualInvoice          = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Invoice beside shipping station');
-        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setAddress('208.73.141.38');
         $ManualInvoice->setPort('631');
         $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
@@ -535,7 +535,7 @@ class WhoaMediaSeeder extends Seeder
         $Invoice                = new \App\Models\Hardware\CUPSPrinter();
         $Invoice->setName('Invoice');
         $Invoice->setDescription('Conveyor Invoice');
-        $Invoice->setAddress('192.168.1.82');
+        $Invoice->setAddress('208.73.141.38');
         $Invoice->setPort('631');
         $Invoice->setFormat('ZPL');
         $this->organization->addPrinter($Invoice);
@@ -543,7 +543,7 @@ class WhoaMediaSeeder extends Seeder
         $Datamax1               = new \App\Models\Hardware\CUPSPrinter();
         $Datamax1->setName('Datamax1');
         $Datamax1->setDescription('Bagger');
-        $Datamax1->setAddress('192.168.1.82');
+        $Datamax1->setAddress('208.73.141.38');
         $Datamax1->setPort('631');
         $Datamax1->setFormat('ZPL');
         $this->organization->addPrinter($Datamax1);
@@ -551,7 +551,7 @@ class WhoaMediaSeeder extends Seeder
         $PlainPaper             = new \App\Models\Hardware\CUPSPrinter();
         $PlainPaper->setName('PlainPaper');
         $PlainPaper->setDescription('Printer on grey table');
-        $PlainPaper->setAddress('192.168.1.82');
+        $PlainPaper->setAddress('208.73.141.38');
         $PlainPaper->setPort('631');
         $PlainPaper->setFormat('ZPL');
         $this->organization->addPrinter($PlainPaper);
@@ -559,7 +559,7 @@ class WhoaMediaSeeder extends Seeder
         $PeelerPrinter2         = new \App\Models\Hardware\CUPSPrinter();
         $PeelerPrinter2->setName('PeelerPrinter2');
         $PeelerPrinter2->setDescription('Second thermal label');
-        $PeelerPrinter2->setAddress('192.168.1.82');
+        $PeelerPrinter2->setAddress('208.73.141.38');
         $PeelerPrinter2->setPort('631');
         $PeelerPrinter2->setFormat('ZPL');
         $this->organization->addPrinter($PeelerPrinter2);
@@ -567,7 +567,7 @@ class WhoaMediaSeeder extends Seeder
         $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Report printer');
-        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setAddress('208.73.141.38');
         $ManualInvoice->setPort('631');
         $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
@@ -575,7 +575,7 @@ class WhoaMediaSeeder extends Seeder
         $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
         $ManualInvoice->setName('ManualInvoice');
         $ManualInvoice->setDescription('Invoice at shipping station');
-        $ManualInvoice->setAddress('192.168.1.82');
+        $ManualInvoice->setAddress('208.73.141.38');
         $ManualInvoice->setPort('631');
         $ManualInvoice->setFormat('ZPL');
         $this->organization->addPrinter($ManualInvoice);
@@ -583,7 +583,7 @@ class WhoaMediaSeeder extends Seeder
         $ThermalLabel         = new \App\Models\Hardware\CUPSPrinter();
         $ThermalLabel->setName('ThermalLabel');
         $ThermalLabel->setDescription('Front Office Thermal Label');
-        $ThermalLabel->setAddress('192.168.1.82');
+        $ThermalLabel->setAddress('208.73.141.38');
         $ThermalLabel->setPort('631');
         $ThermalLabel->setFormat('ZPL');
         $this->organization->addPrinter($ThermalLabel);

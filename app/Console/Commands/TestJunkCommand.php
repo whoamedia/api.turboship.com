@@ -3,15 +3,19 @@
 namespace App\Console\Commands;
 
 
+use App\Models\Hardware\Validation\PrinterValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\Shipments\PostageRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\IPP\IPPService;
+use App\Services\PrinterService;
 use App\Services\Shipments\PostageService;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
 
-use App\Services\IPP\PrintIPP;
+use App\Services\IPP\Support\PrintIPP;
 use Storage;
 
 class TestJunkCommand extends Command
@@ -35,11 +39,17 @@ class TestJunkCommand extends Command
      */
     private $integratedShippingApiRepo;
 
+    /**
+     * @var PostageRepository
+     */
+    private $postageRepo;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->shipmentRepo                 = EntityManager::getRepository('App\Models\Shipments\Shipment');
+        $this->postageRepo                  = EntityManager::getRepository('App\Models\Shipments\Postage');
     }
 
     /**
@@ -49,7 +59,20 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $shipment                           = $this->shipmentRepo->getOneById(1);
+
+        $printerValidation      = new PrinterValidation();
+        $printer                = $printerValidation->idExists(10);
+
+        $postage                = $this->postageRepo->getOneById(1);
+
+        $PrinterService         = new PrinterService();
+        $PrinterService->printLabel($postage, $printer);
+
+
+
+
+
+        DIE;
         $zplPath                            = 'https://easypost-files.s3-us-west-2.amazonaws.com/files/postage_label/20170210/1ccb4d4672884c0b85ef28d7bf579f5c.zpl';
         $labelContents                      = file_get_contents($zplPath);
         $path                               = 'label.zpl';
@@ -71,7 +94,7 @@ class TestJunkCommand extends Command
         $print->setPort('631');
         $print->setHost('208.73.141.38');
         $print->setPrinterURI('/printers/ThermalLabel');
-        $print->setRawText();
+        //  $print->setRawText();
 
         $print->setData($label);
 

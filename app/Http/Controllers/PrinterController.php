@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Printers\CreateCUPSPrinter;
 use App\Http\Requests\Printers\GetPrinters;
+use App\Http\Requests\Printers\PrintPostageLabel;
+use App\Http\Requests\Printers\PrintShipmentLabel;
 use App\Http\Requests\Printers\ShowPrinter;
 use App\Http\Requests\Printers\UpdateCUPSPrinter;
 use App\Models\Hardware\CUPSPrinter;
 use App\Models\Hardware\PrinterType;
 use App\Models\Hardware\Validation\PrinterTypeValidation;
+use App\Models\Shipments\Validation\PostageValidation;
+use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Repositories\Doctrine\Hardware\PrinterRepository;
+use App\Services\PrinterService;
 use App\Utilities\PrinterTypeUtility;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -111,6 +116,47 @@ class PrinterController extends BaseAuthController
         $this->printerRepo->saveAndCommit($printer);
         return response($printer);
     }
+
+    public function printShipmentLabel (Request $request)
+    {
+        $printShipmentLabel             = new PrintShipmentLabel();
+        $printShipmentLabel->setId($request->route('id'));
+        $printShipmentLabel->setShipmentId($request->route('shipmentId'));
+        $printShipmentLabel->validate();
+        $printShipmentLabel->clean();
+
+        $printer                        = $this->getPrinterFromRoute($printShipmentLabel->getId());
+        $shipmentValidation             = new ShipmentValidation();
+        $shipment                       = $shipmentValidation->idExists($printShipmentLabel->getShipmentId());
+
+        if (is_null($shipment->getPostage()))
+            throw new BadRequestHttpException('Shipment does not have postage');
+
+        $printerService                 = new PrinterService();
+        $printerService->printLabel($shipment->getPostage(), $printer);
+
+        return response('', 200);
+    }
+
+    public function printPostageLabel (Request $request)
+    {
+        $printPostageLabel             = new PrintPostageLabel();
+        $printPostageLabel->setId($request->route('id'));
+        $printPostageLabel->setPostageId($request->route('postageId'));
+        $printPostageLabel->validate();
+        $printPostageLabel->clean();
+
+        $printer                        = $this->getPrinterFromRoute($printPostageLabel->getId());
+        $postageValidation              = new PostageValidation();
+        $postage                        = $postageValidation->idExists($printPostageLabel->getPostageId());
+
+        $printerService                 = new PrinterService();
+        $printerService->printLabel($postage, $printer);
+
+        return response('', 200);
+    }
+
+
 
     /**
      * @param   int     $printerTypeId

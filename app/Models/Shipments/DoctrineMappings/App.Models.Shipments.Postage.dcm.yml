@@ -19,15 +19,21 @@ App\Models\Shipments\Postage:
     trackingNumber:
       column:         trackingNumber
       type:           string
-      nullable:       true
+      nullable:       false
       options:
         comment:      "Postage trackingNumber"
     labelPath:
       column:         labelPath
       type:           string
-      nullable:       true
+      nullable:       false
       options:
         comment:      "Path to the label image"
+    zplPath:
+      column:         zplPath
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Path to the ZPL label"
     createdAt:
       column:         createdAt
       type:           datetime
@@ -62,3 +68,8 @@ App\Models\Shipments\Postage:
       joinColumn:
         name:         rateId
         referencedColumnName: id
+
+
+  entityListeners:
+    App\Listeners\PostageListener:
+      postPersist:  [postPersistHandler]

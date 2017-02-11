@@ -46,4 +46,14 @@ class EasyPostShipmentRepository extends BaseEasyPostRepository
             throw new BadRequestHttpException($exception->getMessage());
         }
     }
+
+    /**
+     * @param   string    $easyPostShipmentId
+     * @param   string    $format
+     * @return  \App\Integrations\EasyPost\Models\Responses\EasyPostShipment
+     */
+    public function updateLabelFormat ($easyPostShipmentId, $format = 'ZPL')
+    {
+        return $this->easyPostIntegration->shipmentApi->convertLabel($easyPostShipmentId, $format);
+    }
 }

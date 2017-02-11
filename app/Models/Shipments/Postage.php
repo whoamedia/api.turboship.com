@@ -29,6 +29,11 @@ class Postage implements \JsonSerializable
     protected $labelPath;
 
     /**
+     * @var string|null
+     */
+    protected $zplPath;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -55,6 +60,7 @@ class Postage implements \JsonSerializable
         $this->rate                     = AU::get($data['rate']);
         $this->trackingNumber           = AU::get($data['trackingNumber']);
         $this->labelPath                = AU::get($data['labelPath']);
+        $this->zplPath                  = AU::get($data['zplPath']);
         $this->shipment                 = AU::get($data['shipment']);
         $this->externalId               = AU::get($data['externalId']);
     }
@@ -137,6 +143,22 @@ class Postage implements \JsonSerializable
     public function setLabelPath($labelPath)
     {
         $this->labelPath = $labelPath;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getZplPath()
+    {
+        return $this->zplPath;
+    }
+
+    /**
+     * @param null|string $zplPath
+     */
+    public function setZplPath($zplPath)
+    {
+        $this->zplPath = $zplPath;
     }
 
     /**

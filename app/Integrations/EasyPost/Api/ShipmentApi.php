@@ -92,7 +92,7 @@ class ShipmentApi extends BaseApi
             'file_format'               => $fileFormat,
         ];
 
-        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id . '/label', $request);
+        $response                       = parent::makeHttpRequest('get', $this->path . '/' . $id . '/label', null, $request);
         return new EasyPostShipment($response);
     }
 

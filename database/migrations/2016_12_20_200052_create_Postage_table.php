@@ -19,6 +19,7 @@ class CreatePostageTable extends Migration
 
             $table->string('trackingNumber', 100)->index();
             $table->string('labelPath');
+            $table->string('zplPath')->nullable()->default(null);
             $table->integer('shipmentId')->unsigned()->index();
             $table->foreign('shipmentId')->references('id')->on('Shipment');
             $table->integer('rateId')->unsigned()->index();

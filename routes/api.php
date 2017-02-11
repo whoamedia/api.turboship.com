@@ -116,7 +116,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/printers', 'PrinterController@store');
     Route::get('/printers/{id}', 'PrinterController@show');
     Route::put('/printers/{id}', 'PrinterController@update');
-
+    Route::get('/printers/{id}/shipments/{shipmentId}/label', 'PrinterController@printShipmentLabel');
+    Route::get('/printers/{id}/postage/{postageId}/label', 'PrinterController@printPostageLabel');
 
     //  Product Operations
     Route::get('/products', 'ProductController@index');
