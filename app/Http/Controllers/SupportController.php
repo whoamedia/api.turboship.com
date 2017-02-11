@@ -26,7 +26,7 @@ class SupportController extends BaseAuthController
     private $orderStatusRepo;
 
     /**
-     * @var \App\Repositories\Doctrine\WMS\PrinterTypeRepository
+     * @var \App\Repositories\Doctrine\Hardware\PrinterTypeRepository
      */
     private $printerTypeRepo;
 
@@ -113,7 +113,7 @@ class SupportController extends BaseAuthController
         $getPrinterTypes->clean();
 
         $query                          = $getPrinterTypes->jsonSerialize();
-        $this->printerTypeRepo          = EntityManager::getRepository('App\Models\WMS\PrinterType');
+        $this->printerTypeRepo          = EntityManager::getRepository('App\Models\Hardware\PrinterType');
 
         return $this->printerTypeRepo->where($query, false);
     }
