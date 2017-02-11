@@ -130,3 +130,8 @@ App\Models\Shipments\Shipment:
         inverseJoinColumns:
           imageId:
             referencedColumnName: id
+
+  entityListeners:
+    App\Listeners\ShipmentListener:
+      postPersist:  [postPersistHandler]
+      postUpdate:   [postUpdateHandler]

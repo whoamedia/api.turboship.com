@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 
+use App\Jobs\Shipments\AutomatedShippingJob;
 use App\Models\Hardware\Validation\PrinterValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
@@ -60,16 +61,15 @@ class TestJunkCommand extends Command
     public function handle()
     {
 
-        $printerValidation      = new PrinterValidation();
-        $printer                = $printerValidation->idExists(10);
+        for ($i = 11; $i < 100; $i++)
+        {
+            $shipment                       = $this->shipmentRepo->getOneById($i);
+            if (is_null($shipment))
+                continue;
 
-        $postage                = $this->postageRepo->getOneById(1);
-
-        $PrinterService         = new PrinterService();
-        $PrinterService->printLabel($postage, $printer);
-
-
-
+            $automatedShippingJob               = new AutomatedShippingJob($i);
+            $automatedShippingJob->handle();
+        }
 
 
         DIE;
