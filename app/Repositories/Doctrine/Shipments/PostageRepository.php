@@ -30,7 +30,7 @@ class PostageRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['postage', 'rate']);
+        $qb->select(['postage', 'rate', 'integratedShippingApi', 'shippingApiService', 'service', 'carrier', 'shipment']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         $qb->addOrderBy(AU::get($query['orderBy'], 'postage.id'), AU::get($query['direction'], 'ASC'));
