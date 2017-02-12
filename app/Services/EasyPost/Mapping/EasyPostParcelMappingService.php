@@ -3,7 +3,7 @@
 namespace App\Services\EasyPost\Mapping;
 
 
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostParcel;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostParcel;
 use App\Models\Shipments\ShippingContainer;
 
 class EasyPostParcelMappingService extends BaseEasyPostMappingService

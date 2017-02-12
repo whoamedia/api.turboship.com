@@ -4,11 +4,8 @@ namespace App\Jobs\Shipments;
 
 
 use App\Jobs\Job;
-use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
-use App\Repositories\Doctrine\Shipments\ShipperRepository;
 use App\Repositories\Doctrine\Shipments\ShippingContainerRepository;
-use App\Services\Shipments\CreateShipmentsService;
 use App\Services\Shipments\PostageService;
 use App\Utilities\CarrierUtility;
 use App\Utilities\ShipmentStatusUtility;

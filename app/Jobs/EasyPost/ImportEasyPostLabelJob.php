@@ -2,9 +2,10 @@
 
 namespace App\Jobs\EasyPost;
 
+
 use App\Jobs\Job;
 use App\Repositories\Doctrine\Shipments\PostageRepository;
-use App\Repositories\EasyPost\EasyPostShipmentRepository;
+use App\Services\EasyPost\EasyPostService;
 use App\Services\S3Service;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -34,9 +35,9 @@ class ImportEasyPostLabelJob extends Job implements ShouldQueue
     private $postageRepo;
 
     /**
-     * @var EasyPostShipmentRepository
+     * @var EasyPostService
      */
-    private $easyPostShipmentRepository;
+    private $easyPostService;
 
     /**
      * OrderApprovalJob constructor.
@@ -56,9 +57,9 @@ class ImportEasyPostLabelJob extends Job implements ShouldQueue
         $this->postageRepo              = EntityManager::getRepository('App\Models\Shipments\Postage');
         $postage                        = $this->postageRepo->getOneById($this->postageId);
 
-        $this->easyPostShipmentRepository= new EasyPostShipmentRepository($postage->getRate()->getIntegratedShippingApi());
+        $this->easyPostService          = new EasyPostService($postage->getRate()->getIntegratedShippingApi());
 
-        $easyPostShipment               = $this->easyPostShipmentRepository->updateLabelFormat($postage->getRate()->getExternalShipmentId(), $this->format);
+        $easyPostShipment               = $this->easyPostService->updateLabelFormat($postage->getRate()->getExternalShipmentId(), $this->format);
         $labelUrl                       = $easyPostShipment->getPostageLabel()->getLabelZplUrl();
         $labelContents                  = file_get_contents($labelUrl);
 

@@ -3,10 +3,10 @@
 namespace App\Services\EasyPost\Mapping;
 
 
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsInfo;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
-use App\Integrations\EasyPost\Models\Responses\EasyPostRate;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostCustomsInfo;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostShipment;
+use jamesvweston\EasyPost\Models\Responses\EasyPostRate;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Shipments\Rate;
 use App\Models\Shipments\Shipment;

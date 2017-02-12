@@ -22,7 +22,8 @@
         "pda/pheanstalk": "^3.1",
         "maxbrokman/safe-queue": "^0.2.4",
         "jamesvweston/shopify-php": "dev-master",
-        "intervention/image": "^2.3"
+        "intervention/image": "^2.3",
+        "jamesvweston/easypost-php": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

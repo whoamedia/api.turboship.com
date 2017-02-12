@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
+use jamesvweston\EasyPost\Exceptions\EasyPostApiException;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;

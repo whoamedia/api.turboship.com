@@ -10,7 +10,7 @@ use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Repositories\EasyPost\EasyPostShipmentRepository;
+use App\Services\EasyPost\EasyPostService;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Utilities\IntegrationUtility;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -74,10 +74,10 @@ class PostageService
      */
     private function rateEasyPost (Shipment $shipment)
     {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
+        $easyPostService                = new EasyPostService($this->integratedShippingApi);
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
         $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
-        $easyPostShipment               = $easyPostShipmentRepo->rate($createEasyPostShipment);
+        $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
 
         foreach ($easyPostShipment->getRates() AS $easyPostRate)
         {
@@ -136,8 +136,8 @@ class PostageService
 
     public function handleOrderShippedLogic (Shipment $shipment)
     {
-        $shipmentStatusValidation   = new ShipmentStatusValidation();
-        $orderCollection            = new ArrayCollection();
+        $shipmentStatusValidation       = new ShipmentStatusValidation();
+        $orderCollection                = new ArrayCollection();
 
         foreach ($shipment->getItems() AS $shipmentItem)
         {
@@ -161,11 +161,11 @@ class PostageService
         $orders                         = $orderCollection->toArray();
         foreach ($orders AS $order)
         {
-            $shipmentStatus         = $shipmentStatusValidation->getFullyShipped();
+            $shipmentStatus             = $shipmentStatusValidation->getFullyShipped();
             foreach ($order->getItems() AS $orderItem)
             {
                 if ($orderItem->getQuantityToFulfill() != $orderItem->getQuantityShipped())
-                    $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
+                    $shipmentStatus     = $shipmentStatusValidation->getPartiallyShipped();
 
                 $orderItem->setShipmentStatus($shipmentStatus);
             }
@@ -177,8 +177,8 @@ class PostageService
 
     public function handleOrderVoidedLogic (Shipment $shipment)
     {
-        $shipmentStatusValidation   = new ShipmentStatusValidation();
-        $orderCollection            = new ArrayCollection();
+        $shipmentStatusValidation       = new ShipmentStatusValidation();
+        $orderCollection                = new ArrayCollection();
 
         foreach ($shipment->getItems() AS $shipmentItem)
         {
@@ -200,7 +200,7 @@ class PostageService
         $orders                         = $orderCollection->toArray();
         foreach ($orders AS $order)
         {
-            $shipmentStatus         = $shipmentStatusValidation->getPending();
+            $shipmentStatus             = $shipmentStatusValidation->getPending();
             foreach ($order->getItems() AS $orderItem)
             {
                 if ($orderItem->getQuantityShipped() > 0)
@@ -221,8 +221,8 @@ class PostageService
      */
     private function purchaseEasyPost (Shipment $shipment, Rate $rate)
     {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
+        $easyPostService                = new EasyPostService($this->integratedShippingApi);
+        $easyPostShipment               = $easyPostService->purchasePostage($rate->getExternalShipmentId(), $rate->getExternalId());
         $postage                        = new Postage();
         $postage->setShipment($shipment);
         $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
@@ -239,8 +239,8 @@ class PostageService
      */
     private function voidEasyPost (Shipment $shipment)
     {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipmentRepo->void($shipment->getPostage()->getRate()->getExternalShipmentId());
+        $easyPostService           = new EasyPostService($this->integratedShippingApi);
+        $easyPostService->voidPostage($shipment->getPostage()->getRate()->getExternalShipmentId());
 
         return $shipment;
     }

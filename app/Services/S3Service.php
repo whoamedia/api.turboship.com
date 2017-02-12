@@ -5,7 +5,6 @@ namespace App\Services;
 
 use AWS;
 use Aws\S3\Exception\S3Exception;
-use Config;
 
 class S3Service
 {

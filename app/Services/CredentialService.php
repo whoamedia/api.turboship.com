@@ -3,11 +3,9 @@
 namespace App\Services;
 
 
-use App\Integrations\EasyPost\EasyPostConfiguration;
-use App\Integrations\EasyPost\EasyPostIntegration;
-use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
-use jamesvweston\Shopify\Exceptions\ShopifyApiException;
-use jamesvweston\Shopify\Exceptions\ShopifyInvalidCredentialsException;
+use jamesvweston\EasyPost\EasyPostConfiguration;
+use jamesvweston\EasyPost\EasyPostClient;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use jamesvweston\Shopify\ShopifyConfiguration;
 use jamesvweston\Shopify\ShopifyClient;
 use App\Models\Integrations\Credential;
@@ -98,7 +96,7 @@ class CredentialService
         }
         else if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
         {
-            $service                    = $this->getEasyPostIntegration();
+            $service                    = $this->getEasyPostClient();
             try
             {
                 $service->shipmentApi->get();
@@ -135,10 +133,10 @@ class CredentialService
     }
 
     /**
-     * @return EasyPostIntegration
+     * @return EasyPostClient
      * @throws BadRequestHttpException
      */
-    public function getEasyPostIntegration ()
+    public function getEasyPostClient ()
     {
         if ($this->integratedService->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
             throw new BadRequestHttpException('Integration not supported');
@@ -147,7 +145,7 @@ class CredentialService
 
         $easyPostConfiguration      = new EasyPostConfiguration();
         $easyPostConfiguration->setApiKey($apiKey);
-        return new EasyPostIntegration($easyPostConfiguration);
+        return new EasyPostClient($easyPostConfiguration);
     }
 
 }
