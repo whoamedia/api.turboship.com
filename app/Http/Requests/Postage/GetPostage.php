@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Rates;
+namespace App\Http\Requests\Postage;
 
 
 use App\Http\Requests\_Contracts\Cleanable;
@@ -8,7 +8,7 @@ use App\Http\Requests\_Contracts\Validatable;
 use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -19,17 +19,17 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     /**
      * @var string|null
      */
-    protected $clientIds;
-
-    /**
-     * @var string|null
-     */
-    protected $organizationIds;
-
-    /**
-     * @var string|null
-     */
     protected $shipmentIds;
+
+    /**
+     * @var string|null
+     */
+    protected $rateIds;
+
+    /**
+     * @var string|null
+     */
+    protected $integratedShippingApiIds;
 
     /**
      * @var string|null
@@ -49,7 +49,27 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     /**
      * @var bool|null
      */
-    protected $isDeleted;
+    protected $isVoided;
+
+    /**
+     * @var string|null
+     */
+    protected $externalIds;
+
+    /**
+     * @var string|null
+     */
+    protected $trackingNumbers;
+
+    /**
+     * @var string|null
+     */
+    protected $createdFrom;
+
+    /**
+     * @var string|null
+     */
+    protected $createdTo;
 
     /**
      * @var string
@@ -70,14 +90,18 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
-        $this->clientIds                = AU::get($data['clientIds']);
-        $this->organizationIds          = AU::get($data['organizationIds']);
         $this->shipmentIds              = AU::get($data['shipmentIds']);
+        $this->rateIds                  = AU::get($data['rateIds']);
+        $this->integratedShippingApiIds = AU::get($data['integratedShippingApiIds']);
         $this->shippingApiServiceIds    = AU::get($data['shippingApiServiceIds']);
         $this->serviceIds               = AU::get($data['serviceIds']);
         $this->carrierIds               = AU::get($data['carrierIds']);
-        $this->isDeleted                = AU::get($data['isDeleted']);
-        $this->orderBy                  = AU::get($data['orderBy'], 'rate.id');
+        $this->externalIds              = AU::get($data['externalIds']);
+        $this->trackingNumbers          = AU::get($data['trackingNumbers']);
+        $this->isVoided                 = AU::get($data['isVoided']);
+        $this->createdFrom              = AU::get($data['createdFrom']);
+        $this->createdTo                = AU::get($data['createdTo']);
+        $this->orderBy                  = AU::get($data['orderBy'], 'postage.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
         $this->limit                    = AU::get($data['limit'], 80);
     }
@@ -85,19 +109,18 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function validate()
     {
         $this->ids                      = parent::validateIds($this->ids, 'ids');
-        $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
-        $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->shipmentIds              = parent::validateIds($this->shipmentIds, 'shipmentIds');
+        $this->rateIds                  = parent::validateIds($this->rateIds, 'rateIds');
+        $this->integratedShippingApiIds = parent::validateIds($this->integratedShippingApiIds, 'integratedShippingApiIds');
         $this->shippingApiServiceIds    = parent::validateIds($this->shippingApiServiceIds, 'shippingApiServiceIds');
         $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
         $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
-        $this->isDeleted                = parent::validateBoolean($this->isDeleted, 'isDeleted');
+        $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
+        $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->direction                = parent::validateOrderByDirection($this->direction);
-    }
 
-    public function clean ()
-    {
-
+        if (!is_null($this->isVoided))
+            $this->isVoided             = parent::validateBoolean($this->isVoided, 'isVoided');
     }
 
     /**
@@ -106,18 +129,27 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function jsonSerialize ()
     {
         $object['ids']                  = $this->ids;
-        $object['clientIds']            = $this->clientIds;
-        $object['organizationIds']      = $this->organizationIds;
         $object['shipmentIds']          = $this->shipmentIds;
+        $object['rateIds']              = $this->rateIds;
+        $object['integratedShippingApiIds']= $this->integratedShippingApiIds;
         $object['shippingApiServiceIds']= $this->shippingApiServiceIds;
         $object['serviceIds']           = $this->serviceIds;
         $object['carrierIds']           = $this->carrierIds;
-        $object['isDeleted']            = $this->isDeleted;
+        $object['isVoided']             = $this->isVoided;
+        $object['externalIds']          = $this->externalIds;
+        $object['trackingNumbers']      = $this->trackingNumbers;
+        $object['createdFrom']          = $this->createdFrom;
+        $object['createdTo']            = $this->createdTo;
         $object['orderBy']              = $this->orderBy;
         $object['direction']            = $this->direction;
         $object['limit']                = $this->limit;
 
         return $object;
+    }
+
+    public function clean ()
+    {
+
     }
 
     /**
@@ -139,38 +171,6 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     /**
      * @return null|string
      */
-    public function getClientIds()
-    {
-        return $this->clientIds;
-    }
-
-    /**
-     * @param null|string $clientIds
-     */
-    public function setClientIds($clientIds)
-    {
-        $this->clientIds = $clientIds;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getOrganizationIds()
-    {
-        return $this->organizationIds;
-    }
-
-    /**
-     * @param null|string $organizationIds
-     */
-    public function setOrganizationIds($organizationIds)
-    {
-        $this->organizationIds = $organizationIds;
-    }
-
-    /**
-     * @return null|string
-     */
     public function getShipmentIds()
     {
         return $this->shipmentIds;
@@ -182,6 +182,38 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function setShipmentIds($shipmentIds)
     {
         $this->shipmentIds = $shipmentIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRateIds()
+    {
+        return $this->rateIds;
+    }
+
+    /**
+     * @param null|string $rateIds
+     */
+    public function setRateIds($rateIds)
+    {
+        $this->rateIds = $rateIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIntegratedShippingApiIds()
+    {
+        return $this->integratedShippingApiIds;
+    }
+
+    /**
+     * @param null|string $integratedShippingApiIds
+     */
+    public function setIntegratedShippingApiIds($integratedShippingApiIds)
+    {
+        $this->integratedShippingApiIds = $integratedShippingApiIds;
     }
 
     /**
@@ -235,17 +267,81 @@ class GetRates extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     /**
      * @return bool|null
      */
-    public function isDeleted()
+    public function getIsVoided()
     {
-        return $this->isDeleted;
+        return $this->isVoided;
     }
 
     /**
-     * @param bool|null $isDeleted
+     * @param bool|null $isVoided
      */
-    public function setIsDeleted($isDeleted)
+    public function setIsVoided($isVoided)
     {
-        $this->isDeleted = $isDeleted;
+        $this->isVoided = $isVoided;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalIds()
+    {
+        return $this->externalIds;
+    }
+
+    /**
+     * @param null|string $externalIds
+     */
+    public function setExternalIds($externalIds)
+    {
+        $this->externalIds = $externalIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTrackingNumbers()
+    {
+        return $this->trackingNumbers;
+    }
+
+    /**
+     * @param null|string $trackingNumbers
+     */
+    public function setTrackingNumbers($trackingNumbers)
+    {
+        $this->trackingNumbers = $trackingNumbers;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreatedFrom()
+    {
+        return $this->createdFrom;
+    }
+
+    /**
+     * @param null|string $createdFrom
+     */
+    public function setCreatedFrom($createdFrom)
+    {
+        $this->createdFrom = $createdFrom;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreatedTo()
+    {
+        return $this->createdTo;
+    }
+
+    /**
+     * @param null|string $createdTo
+     */
+    public function setCreatedTo($createdTo)
+    {
+        $this->createdTo = $createdTo;
     }
 
     /**
