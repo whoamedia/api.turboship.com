@@ -150,7 +150,7 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['itemSkus'])))
         {
             if (!$itemsJoined)
-                $qb->leftJoin('items.variant', 'variant', Query\Expr\Join::ON);
+                $qb->leftJoin('orders.items', 'items', Query\Expr\Join::ON);
 
             $orX                    = $qb->expr()->orX();
             $itemSkus               = explode(',', $query['itemSkus']);
