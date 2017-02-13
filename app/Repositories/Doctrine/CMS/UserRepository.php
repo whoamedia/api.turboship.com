@@ -31,6 +31,7 @@ class UserRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['user', 'organization', 'client']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'user.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -91,7 +92,6 @@ class UserRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('user.id', 'ASC');
         return $qb;
     }
     
