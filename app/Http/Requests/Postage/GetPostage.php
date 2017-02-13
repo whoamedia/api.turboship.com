@@ -19,6 +19,11 @@ class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSer
     /**
      * @var string|null
      */
+    protected $shipperIds;
+
+    /**
+     * @var string|null
+     */
     protected $shipmentIds;
 
     /**
@@ -90,6 +95,7 @@ class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSer
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
+        $this->shipperIds               = AU::get($data['shipperIds']);
         $this->shipmentIds              = AU::get($data['shipmentIds']);
         $this->rateIds                  = AU::get($data['rateIds']);
         $this->integratedShippingApiIds = AU::get($data['integratedShippingApiIds']);
@@ -109,6 +115,7 @@ class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSer
     public function validate()
     {
         $this->ids                      = parent::validateIds($this->ids, 'ids');
+        $this->shipperIds               = parent::validateIds($this->shipperIds, 'shipperIds');
         $this->shipmentIds              = parent::validateIds($this->shipmentIds, 'shipmentIds');
         $this->rateIds                  = parent::validateIds($this->rateIds, 'rateIds');
         $this->integratedShippingApiIds = parent::validateIds($this->integratedShippingApiIds, 'integratedShippingApiIds');
@@ -129,6 +136,7 @@ class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSer
     public function jsonSerialize ()
     {
         $object['ids']                  = $this->ids;
+        $object['shipperIds']           = $this->shipperIds;
         $object['shipmentIds']          = $this->shipmentIds;
         $object['rateIds']              = $this->rateIds;
         $object['integratedShippingApiIds']= $this->integratedShippingApiIds;
@@ -166,6 +174,22 @@ class GetPostage extends BaseRequest implements Cleanable, Validatable, \JsonSer
     public function setIds($ids)
     {
         $this->ids = $ids;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShipperIds()
+    {
+        return $this->shipperIds;
+    }
+
+    /**
+     * @param null|string $shipperIds
+     */
+    public function setShipperIds($shipperIds)
+    {
+        $this->shipperIds = $shipperIds;
     }
 
     /**

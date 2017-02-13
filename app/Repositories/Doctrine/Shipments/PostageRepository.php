@@ -42,6 +42,36 @@ class PostageRepository extends BaseRepository
     }
 
     /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT postage.id) AS total',
+            'shipper.id AS shipper_id', 'shipper.name AS shipper_name',
+            'carrier.id AS carrier_id', 'carrier.name AS carrier_name',
+            'service.id AS service_id', 'service.name AS service_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('shipper');
+        $qb->addGroupBy('carrier');
+        $qb->addGroupBy('service');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'shipper'           =>  [],
+            'carrier'           =>  [],
+            'service'           =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
+    /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query
      * @return      QueryBuilder
@@ -51,6 +81,7 @@ class PostageRepository extends BaseRepository
         $qb->from('App\Models\Shipments\Postage', 'postage')
             ->join('postage.rate', 'rate', Query\Expr\Join::ON)
             ->join('rate.integratedShippingApi', 'integratedShippingApi', Query\Expr\Join::ON)
+            ->join('integratedShippingApi.shipper', 'shipper', Query\Expr\Join::ON)
             ->join('rate.shippingApiService', 'shippingApiService', Query\Expr\Join::ON)
             ->join('shippingApiService.service', 'service', Query\Expr\Join::ON)
             ->join('service.carrier', 'carrier', Query\Expr\Join::ON)

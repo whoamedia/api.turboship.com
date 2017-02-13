@@ -39,6 +39,18 @@ class PostageController extends BaseAuthController
         return response($results);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getPostage                     = new GetPostage($request->input());
+        $getPostage->validate();
+        $getPostage->clean();
+
+        $query                          = $getPostage->jsonSerialize();
+        $results                        = $this->postageRepo->getLexicon($query);
+
+        return response($results);
+    }
+
     public function show (Request $request)
     {
         $postage                        = $this->getPostageFromRoute($request->route('id'));

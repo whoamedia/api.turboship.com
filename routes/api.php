@@ -113,6 +113,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Postage Operations
     Route::get('/postage', 'PostageController@index');
+    Route::get('/postage/lexicon', 'PostageController@getLexicon');
     Route::get('/postage/{id}', 'PostageController@show');
 
 
