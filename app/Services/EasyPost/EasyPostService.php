@@ -3,10 +3,12 @@
 namespace App\Services\EasyPost;
 
 
+use App\Exceptions\Integrations\IntegrationNotRespondingException;
 use jamesvweston\EasyPost\EasyPostConfiguration;
 use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
+use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
 use jamesvweston\EasyPost\Models\Requests\CreateEasyPostShipment;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -43,7 +45,14 @@ class EasyPostService
      */
     public function rateShipment (CreateEasyPostShipment $createEasyPostShipment)
     {
-        return $this->easyPostClient->shipmentApi->create($createEasyPostShipment);
+        try
+        {
+            return $this->easyPostClient->shipmentApi->create($createEasyPostShipment);
+        }
+        catch (EasyPostServiceUnavailableException $exception)
+        {
+            throw new IntegrationNotRespondingException($exception->getMessage());
+        }
 
     }
 
@@ -54,7 +63,14 @@ class EasyPostService
      */
     public function purchasePostage ($easyPostShipmentId, $easyPostRateId)
     {
-        return $this->easyPostClient->shipmentApi->buy($easyPostShipmentId, $easyPostRateId);
+        try
+        {
+            return $this->easyPostClient->shipmentApi->buy($easyPostShipmentId, $easyPostRateId);
+        }
+        catch (EasyPostServiceUnavailableException $exception)
+        {
+            throw new IntegrationNotRespondingException($exception->getMessage());
+        }
     }
 
     /**
@@ -72,6 +88,10 @@ class EasyPostService
         {
             throw new BadRequestHttpException($exception->getMessage());
         }
+        catch (EasyPostServiceUnavailableException $exception)
+        {
+            throw new IntegrationNotRespondingException($exception->getMessage());
+        }
     }
 
     /**
@@ -81,6 +101,13 @@ class EasyPostService
      */
     public function updateLabelFormat ($easyPostShipmentId, $format = 'ZPL')
     {
-        return $this->easyPostClient->shipmentApi->convertLabel($easyPostShipmentId, $format);
+        try
+        {
+            return $this->easyPostClient->shipmentApi->convertLabel($easyPostShipmentId, $format);
+        }
+        catch (EasyPostServiceUnavailableException $exception)
+        {
+            throw new IntegrationNotRespondingException($exception->getMessage());
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use jamesvweston\EasyPost\Exceptions\EasyPostApiException;
+
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -24,6 +24,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        \App\Exceptions\Integrations\IntegrationNotRespondingException::class,
     ];
 
     /**
