@@ -5,16 +5,11 @@ namespace App\Http\Requests\Printers;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
-use App\Http\Requests\BaseRequest;
+use App\Http\Requests\BaseGet;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class GetPrinters extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class GetPrinters extends BaseGet implements Cleanable, Validatable, \JsonSerializable
 {
-
-    /**
-     * @var string|null
-     */
-    protected $ids;
 
     /**
      * @var string|null
@@ -33,7 +28,8 @@ class GetPrinters extends BaseRequest implements Cleanable, Validatable, \JsonSe
 
     public function __construct($data = [])
     {
-        $this->ids                      = AU::get($data['ids']);
+        parent::__construct('printer.id', $data);
+
         $this->names                    = AU::get($data['names']);
         $this->printerTypeIds           = AU::get($data['printerTypeIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
@@ -41,7 +37,8 @@ class GetPrinters extends BaseRequest implements Cleanable, Validatable, \JsonSe
 
     public function validate()
     {
-        $this->ids                      = parent::validateIds($this->ids, 'ids');
+        parent::validate();
+
         $this->printerTypeIds           = parent::validateIds($this->printerTypeIds, 'printerTypeIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
     }
@@ -51,7 +48,7 @@ class GetPrinters extends BaseRequest implements Cleanable, Validatable, \JsonSe
      */
     public function jsonSerialize ()
     {
-        $object['ids']                  = $this->ids;
+        $object                         = parent::jsonSerialize();
         $object['names']                = $this->names;
         $object['printerTypeIds']       = $this->printerTypeIds;
         $object['organizationIds']      = $this->organizationIds;

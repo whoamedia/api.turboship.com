@@ -31,6 +31,7 @@ class PrinterRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['printer', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'printer.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -65,7 +66,6 @@ class PrinterRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('printer.id', 'ASC');
         return $qb;
     }
 
