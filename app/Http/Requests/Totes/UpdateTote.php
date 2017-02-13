@@ -23,11 +23,17 @@ class UpdateTote extends BaseRequest implements Cleanable, Validatable, \JsonSer
      */
     protected $barCode;
 
+    /**
+     * @var float|null
+     */
+    protected $weight;
+
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
         $this->barCode                  = AU::get($data['barCode']);
+        $this->weight               = AU::get($data['weight']);
     }
 
     public function validate()
@@ -37,6 +43,15 @@ class UpdateTote extends BaseRequest implements Cleanable, Validatable, \JsonSer
 
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
+
+        if (!is_null($this->weight))
+        {
+            if (is_null(parent::getInteger($this->weight)) && is_null(parent::getFloat($this->weight)))
+                throw new BadRequestHttpException('weight must be a number');
+
+            if ($this->weight <= 0)
+                throw new BadRequestHttpException('weight must be positive');
+        }
     }
 
     public function clean ()
@@ -51,6 +66,7 @@ class UpdateTote extends BaseRequest implements Cleanable, Validatable, \JsonSer
     {
         $object['id']                   = $this->id;
         $object['barCode']              = $this->barCode;
+        $object['weight']               = $this->weight;
 
         return $object;
     }
@@ -85,6 +101,22 @@ class UpdateTote extends BaseRequest implements Cleanable, Validatable, \JsonSer
     public function setBarCode($barCode)
     {
         $this->barCode = $barCode;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param float|null $weight
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
     }
 
 }

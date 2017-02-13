@@ -88,6 +88,9 @@ class ToteController extends BaseAuthController
             $tote->setBarCode($updateTote->getBarCode());
         }
 
+        if (!is_null($updateTote->getWeight()))
+            $tote->setWeight($updateTote->getWeight());
+
         $this->toteRepo->saveAndCommit($tote);
         return response($tote);
     }

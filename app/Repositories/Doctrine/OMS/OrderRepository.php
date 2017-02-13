@@ -161,7 +161,6 @@ class OrderRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-
         if (!is_null(AU::get($query['createdFrom'])))
         {
             $qb->andWhere($qb->expr()->gte('orders.createdAt', ':createdFrom'));

@@ -642,8 +642,10 @@ class WhoaMediaSeeder extends Seeder
         {
             $tote               = new \App\Models\WMS\Tote();
             $tote->setBarCode($i);
+            $tote->setWeight(4.5);
             $tote->setOrganization($this->organization);
             $this->toteRepo->save($tote);
         }
     }
+
 }

@@ -16,6 +16,7 @@ class CreateToteTable extends Migration
         Schema::create('Tote', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
+            $table->decimal('weight', 10, 2)->unsigned();
         });
     }
 

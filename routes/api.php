@@ -135,8 +135,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
 
     //  Scanning operations
-    Route::get('/scanning/variants/inventory/{barCode}', 'ScanningController@showVariantInventory');
-    Route::post('/scanning/variants/inventory', 'ScanningController@createVariantInventory');
+    Route::get('/scanning/inventory/variants/{barCode}', 'ScanningController@showVariantInventory');
+    Route::post('/scanning/inventory/variants', 'ScanningController@createVariantInventory');
     Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
     Route::get('/scanning/totes/{barCode}', 'ScanningController@showTote');
 
@@ -180,6 +180,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::put('/shippingContainers/{id}', 'ShippingContainerController@update');
     Route::post('/shippingContainers', 'ShippingContainerController@create');
 
+
+    //  ShippingContainer operations
+    Route::get('/shippingStations', 'ShippingStationController@index');
+    Route::get('/shippingStations/{id}', 'ShippingStationController@show');
+    Route::put('/shippingStations/{id}', 'ShippingStationController@update');
+    Route::post('/shippingStations', 'ShippingStationController@create');
+    Route::get('/shippingStations/{id}/shipments/{shipmentId}/label', 'ShippingStationController@printShipmentPostageLabel');
 
     //  Shopify Operations
     Route::post('/shopify/{id}/orders/download', 'ShopifyController@downloadOrders');
