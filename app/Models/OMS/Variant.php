@@ -10,6 +10,7 @@ use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
 use App\Utilities\CountryUtility;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
@@ -79,6 +80,11 @@ class Variant extends BaseModel implements \JsonSerializable
     protected $weight;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $inventory;
+
+    /**
      * Shopify id
      * @var string
      */
@@ -102,6 +108,7 @@ class Variant extends BaseModel implements \JsonSerializable
      */
     public function __construct($data = [])
     {
+        $this->inventory                = new ArrayCollection();
         $this->createdAt                = new \DateTime();
         $this->externalCreatedAt        = new \DateTime();  // Default it so the field doesn't have to be nullable
 

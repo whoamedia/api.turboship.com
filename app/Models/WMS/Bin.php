@@ -3,7 +3,7 @@
 namespace App\Models\WMS;
 
 
-class Bin extends InventoryLocation
+class Bin extends InventoryLocation implements \JsonSerializable
 {
 
 }

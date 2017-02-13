@@ -1,14 +1,13 @@
-App\Models\WMS\InventoryLocation:
+App\Models\WMS\Inventory:
   type:               entity
-  table:              InventoryLocation
-  repositoryClass:    App\Repositories\Doctrine\WMS\InventoryLocationRepository
+  table:              Inventory
+  repositoryClass:    App\Repositories\Doctrine\WMS\InventoryRepository
   inheritanceType:    JOINED
   discriminatorColumn:
-      name:           inventoryLocationTypeId
+      name:           inventoryTypeId
       type:           integer
   discriminatorMap:
-      1:              App\Models\WMS\Bin
-      2:              App\Models\WMS\Tote
+      1:              App\Models\WMS\VariantInventory
 
   id:
     id:
@@ -17,7 +16,7 @@ App\Models\WMS\InventoryLocation:
       nullable:       false
       options:
         unsigned:     true
-        comment:      'InventoryLocation id'
+        comment:      'Inventory id'
       id:             true
       generator:
         strategy:     IDENTITY
@@ -28,7 +27,7 @@ App\Models\WMS\InventoryLocation:
       type:           string
       nullable:       false
       options:
-        comment:      "InventoryLocation barCode"
+        comment:      "Inventory barCode"
 
   manyToOne:
     organization:
@@ -38,9 +37,11 @@ App\Models\WMS\InventoryLocation:
       joinColumn:
         name:         organizationId
         referencedColumnName: id
-
-  oneToMany:
-    inventory:
-      targetEntity:   Inventory
-      mappedBy:       inventoryLocation
-      cascade:        ["persist", "remove"]
+    inventoryLocation:
+      targetEntity:   InventoryLocation
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     inventory
+      joinColumn:
+        name:         inventoryLocationId
+        referencedColumnName: id

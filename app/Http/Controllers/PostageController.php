@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Postage\GetPostage;
+use App\Http\Requests\Postage\ShowPostage;
+use App\Models\Shipments\Postage;
+use App\Models\Shipments\Validation\PostageValidation;
 use App\Repositories\Doctrine\Shipments\PostageRepository;
 use EntityManager;
 use Illuminate\Http\Request;
@@ -34,5 +37,28 @@ class PostageController extends BaseAuthController
         $results                        = $this->postageRepo->where($query, false);
 
         return response($results);
+    }
+
+    public function show (Request $request)
+    {
+        $postage                        = $this->getPostageFromRoute($request->route('id'));
+        return response($postage);
+    }
+
+    /**
+     * @param   int     $id
+     * @return  Postage
+     */
+    private function getPostageFromRoute ($id)
+    {
+        $showPostage                    = new ShowPostage();
+        $showPostage->setId($id);
+        $showPostage->validate();
+        $showPostage->clean();
+
+        $postageValidation              = new PostageValidation();
+        $postage                        = $postageValidation->idExists($id);
+
+        return $postage;
     }
 }

@@ -111,6 +111,12 @@ App\Models\OMS\Variant:
         name:         sourceId
         referencedColumnName: id
 
+  oneToMany:
+    inventory:
+      targetEntity:   App\Models\WMS\VariantInventory
+      mappedBy:       variant
+      cascade:        ["persist", "remove"]
+
   entityListeners:
     App\Listeners\VariantListener:
       postPersist:  [postPersistHandler]

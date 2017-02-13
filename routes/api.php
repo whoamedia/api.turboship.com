@@ -113,6 +113,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Postage Operations
     Route::get('/postage', 'PostageController@index');
+    Route::get('/postage/{id}', 'PostageController@show');
 
 
     //  Printer Operations
@@ -132,6 +133,12 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products/{id}/variants/{variantId}', 'ProductController@showVariant');
     Route::get('/products/{id}', 'ProductController@show');
 
+
+    //  Scanning operations
+    Route::get('/scanning/variants/inventory/{barCode}', 'ScanningController@showVariantInventory');
+    Route::post('/scanning/variants/inventory', 'ScanningController@createVariantInventory');
+    Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
+    Route::get('/scanning/totes/{barCode}', 'ScanningController@showTote');
 
     //  Service operations
     Route::get('/services', 'ServiceController@index');

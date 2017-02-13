@@ -3,7 +3,7 @@
 namespace App\Models\WMS;
 
 
-class Tote extends InventoryLocation
+class Tote extends InventoryLocation implements \JsonSerializable
 {
 
 }

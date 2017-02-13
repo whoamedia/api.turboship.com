@@ -32,7 +32,7 @@ class OrderRepository extends BaseRepository
 
         $qb                         =   $this->_em->createQueryBuilder();
         $qb                         =   $this->buildQueryConditions($qb, $query);
-        $qb->select(['orders', 'items', 'shippingAddress', 'source', 'client', 'organization', 'status', 'shipmentStatus']);
+        $qb->select(['orders', 'source', 'client', 'status', 'shipmentStatus']);
 
         $qb->addOrderBy(AU::get($query['orderBy'], 'orders.id'), AU::get($query['direction'], 'ASC'));
 
@@ -84,30 +84,21 @@ class OrderRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\Order', 'orders')
-            ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
-            ->leftJoin('items.variant', 'variant', Query\Expr\Join::ON)
-            ->leftJoin('variant.product', 'product', Query\Expr\Join::ON)
-            ->join('orders.shippingAddress', 'shippingAddress', Query\Expr\Join::ON)
-            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
-            ->join('client.organization', 'organization', Query\Expr\Join::ON)
+            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.status', 'status', Query\Expr\Join::ON)
             ->join('orders.shipmentStatus', 'shipmentStatus', Query\Expr\Join::ON);
 
+        $itemsJoined = $variantsJoined = $productJoined = $organizationJoined = false;
+
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orders.id', $query['ids']));
-
-        if (!is_null(AU::get($query['itemIds'])))
-            $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
 
         if (!is_null(AU::get($query['sourceIds'])))
             $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
-
-        if (!is_null(AU::get($query['organizationIds'])))
-            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
@@ -118,28 +109,12 @@ class OrderRepository extends BaseRepository
         if (!is_null(AU::get($query['isError'])))
             $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));
 
-        if (!is_null(AU::get($query['createdFrom'])))
+        if (!is_null(AU::get($query['organizationIds'])))
         {
-            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':createdFrom'));
-            $qb->setParameter('createdFrom', $query['createdFrom'] . ' 00:00:00');
-        }
+            if (!$organizationJoined)
+                $qb->join('client.organization', 'organization', Query\Expr\Join::ON);
 
-        if (!is_null(AU::get($query['createdTo'])))
-        {
-            $qb->andWhere($qb->expr()->lte('orders.createdAt', ':createdTo'));
-            $qb->setParameter('createdTo', $query['createdTo'] . ' 23:59:59');
-        }
-
-        if (!is_null(AU::get($query['externalCreatedFrom'])))
-        {
-            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedFrom'));
-            $qb->setParameter('externalCreatedFrom', $query['externalCreatedFrom'] . ' 00:00:00');
-        }
-
-        if (!is_null(AU::get($query['externalCreatedTo'])))
-        {
-            $qb->andWhere($qb->expr()->lte('orders.externalCreatedAt', ':externalCreatedTo'));
-            $qb->setParameter('externalCreatedTo', $query['externalCreatedTo'] . ' 23:59:59');
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
         }
 
         if (!is_null(AU::get($query['names'])))
@@ -164,8 +139,19 @@ class OrderRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
+        if (!is_null(AU::get($query['itemIds'])))
+        {
+            if (!$itemsJoined)
+                $qb->leftJoin('items.variant', 'variant', Query\Expr\Join::ON);
+
+            $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
+        }
+
         if (!is_null(AU::get($query['itemSkus'])))
         {
+            if (!$itemsJoined)
+                $qb->leftJoin('items.variant', 'variant', Query\Expr\Join::ON);
+
             $orX                    = $qb->expr()->orX();
             $itemSkus               = explode(',', $query['itemSkus']);
             foreach ($itemSkus AS $sku)
@@ -176,8 +162,29 @@ class OrderRepository extends BaseRepository
         }
 
 
+        if (!is_null(AU::get($query['createdFrom'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':createdFrom'));
+            $qb->setParameter('createdFrom', $query['createdFrom'] . ' 00:00:00');
+        }
+
+        if (!is_null(AU::get($query['createdTo'])))
+        {
+            $qb->andWhere($qb->expr()->lte('orders.createdAt', ':createdTo'));
+            $qb->setParameter('createdTo', $query['createdTo'] . ' 23:59:59');
+        }
+
         if (!is_null(AU::get($query['externalCreatedFrom'])))
-            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', $query['externalCreatedFrom']));
+        {
+            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedFrom'));
+            $qb->setParameter('externalCreatedFrom', $query['externalCreatedFrom'] . ' 00:00:00');
+        }
+
+        if (!is_null(AU::get($query['externalCreatedTo'])))
+        {
+            $qb->andWhere($qb->expr()->lte('orders.externalCreatedAt', ':externalCreatedTo'));
+            $qb->setParameter('externalCreatedTo', $query['externalCreatedTo'] . ' 23:59:59');
+        }
 
         return $qb;
     }

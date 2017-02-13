@@ -4,13 +4,10 @@ namespace App\Models\WMS;
 
 
 use App\Models\CMS\Organization;
-use App\Models\WMS\Traits\HasInventory;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-abstract class InventoryLocation implements \JsonSerializable
+abstract class Inventory implements \JsonSerializable
 {
-
-    use HasInventory;
 
     /**
      * @var int
@@ -27,11 +24,17 @@ abstract class InventoryLocation implements \JsonSerializable
      */
     protected $organization;
 
+    /**
+     * @var InventoryLocation
+     */
+    protected $inventoryLocation;
+
 
     public function __construct($data = [])
     {
         $this->barCode                  = AU::get($data['barCode']);
         $this->organization             = AU::get($data['organization']);
+        $this->inventoryLocation        = AU::get($data['inventoryLocation']);
     }
 
     /**
@@ -41,6 +44,7 @@ abstract class InventoryLocation implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['barCode']              = $this->barCode;
+        $object['inventoryLocation']    = $this->inventoryLocation;
 
         return $object;
     }
@@ -91,6 +95,22 @@ abstract class InventoryLocation implements \JsonSerializable
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return InventoryLocation
+     */
+    public function getInventoryLocation()
+    {
+        return $this->inventoryLocation;
+    }
+
+    /**
+     * @param InventoryLocation $inventoryLocation
+     */
+    public function setInventoryLocation($inventoryLocation)
+    {
+        $this->inventoryLocation = $inventoryLocation;
     }
 
 }
