@@ -39,6 +39,26 @@ class VariantValidation
     }
 
     /**
+     * @param   int     $organizationId
+     * @param   string  $barcode
+     * @return  Variant
+     */
+    public function barCodeExists ($organizationId, $barcode)
+    {
+        $query              = [
+            'organizationIds'           => $organizationId,
+            'barCodes'                  => $barcode,
+        ];
+
+        $results                        = $this->variantRepo->where($query);
+
+        if (sizeof($results) == 0)
+            throw new NotFoundHttpException('Variant not found');
+
+        return $results[0];
+    }
+
+    /**
      * @param   Variant     $variant
      * @throws  BadRequestHttpException
      * @return  bool

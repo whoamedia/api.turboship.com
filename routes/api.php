@@ -136,10 +136,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
 
     //  Scanning operations
-    Route::get('/scanning/inventory/variants/{barCode}', 'ScanningController@showVariantInventory');
-    Route::post('/scanning/inventory/variants', 'ScanningController@createVariantInventory');
     Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
     Route::get('/scanning/totes/{barCode}', 'ScanningController@showTote');
+    Route::get('/scanning/variants/{barCode}', 'ScanningController@showVariant');
+
 
     //  Service operations
     Route::get('/services', 'ServiceController@index');

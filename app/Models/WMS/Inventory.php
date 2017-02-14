@@ -15,11 +15,6 @@ abstract class Inventory implements \JsonSerializable
     protected $id;
 
     /**
-     * @var string
-     */
-    protected $barCode;
-
-    /**
      * @var Organization
      */
     protected $organization;
@@ -32,7 +27,6 @@ abstract class Inventory implements \JsonSerializable
 
     public function __construct($data = [])
     {
-        $this->barCode                  = AU::get($data['barCode']);
         $this->organization             = AU::get($data['organization']);
         $this->inventoryLocation        = AU::get($data['inventoryLocation']);
     }
@@ -43,7 +37,6 @@ abstract class Inventory implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['barCode']              = $this->barCode;
         $object['inventoryLocation']    = $this->inventoryLocation;
 
         return $object;
@@ -63,22 +56,6 @@ abstract class Inventory implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBarCode()
-    {
-        return $this->barCode;
-    }
-
-    /**
-     * @param string $barCode
-     */
-    public function setBarCode($barCode)
-    {
-        $this->barCode = $barCode;
     }
 
     /**

@@ -21,11 +21,8 @@ class CreateInventoryTable extends Migration
             $table->integer('inventoryLocationId')->unsigned()->index();
             $table->foreign('inventoryLocationId')->references('id')->on('InventoryLocation');
 
-            $table->string('barCode', 150)->index();
             $table->integer('organizationId')->unsigned()->index();
             $table->foreign('organizationId')->references('id')->on('Organization');
-
-            $table->unique(['barCode', 'organizationId', 'inventoryTypeId']);
         });
     }
 

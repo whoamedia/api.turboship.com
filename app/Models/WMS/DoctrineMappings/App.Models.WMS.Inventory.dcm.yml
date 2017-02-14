@@ -21,14 +21,6 @@ App\Models\WMS\Inventory:
       generator:
         strategy:     IDENTITY
 
-  fields:
-    barCode:
-      column:         barCode
-      type:           string
-      nullable:       false
-      options:
-        comment:      "Inventory barCode"
-
   manyToOne:
     organization:
       targetEntity:   App\Models\CMS\Organization

@@ -62,17 +62,6 @@ class VariantInventoryRepository extends BaseRepository
         if (!is_null(AU::get($query['inventoryLocationIds'])))
             $qb->andWhere($qb->expr()->in('inventoryLocation.id', $query['inventoryLocationIds']));
 
-        if (!is_null(AU::get($query['barCodes'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $barCodes               = explode(',', $query['barCodes']);
-            foreach ($barCodes AS $barCode)
-            {
-                $orX->add($qb->expr()->eq('variantInventory.barCode', $qb->expr()->literal($barCode)));
-            }
-            $qb->andWhere($orX);
-        }
-
         $qb->orderBy('variantInventory.id', 'ASC');
         return $qb;
     }

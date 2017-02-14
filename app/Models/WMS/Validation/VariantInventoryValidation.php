@@ -30,39 +30,16 @@ class VariantInventoryValidation
     }
 
     /**
-     * @param   int     $organizationId
-     * @param   string  $barcode
+     * @param   int     $id
      * @return  VariantInventory
      */
-    public function barCodeExists ($organizationId, $barcode)
+    public function idExists ($id)
     {
-        $query          = [
-            'organizationIds'       => $organizationId,
-            'barCodes'              => $barcode,
-        ];
+        $variantInventory                   = $this->variantInventoryRepo->getOneById($id);
+        if (is_null($variantInventory))
+            throw new NotFoundHttpException('VariantInventory not found');
 
-        $results                        = $this->variantInventoryRepo->where($query);
-
-        if (sizeof($results) != 1)
-            throw new NotFoundHttpException('Variant inventory not found');
-
-        return $results[0];
+        return $variantInventory;
     }
 
-    /**
-     * @param   int     $organizationId
-     * @param   string  $barcode
-     */
-    public function barCodeDoesNotExist ($organizationId, $barcode)
-    {
-        $query          = [
-            'organizationIds'       => $organizationId,
-            'barCodes'              => $barcode,
-        ];
-
-        $results                        = $this->variantInventoryRepo->where($query);
-
-        if (sizeof($results) != 0)
-            throw new NotFoundHttpException('barCode already exists');
-    }
 }
