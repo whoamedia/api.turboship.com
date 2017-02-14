@@ -64,21 +64,25 @@ class BinRepository extends BaseRepository
 
         $lexicon = [
             'aisle'         =>  [
+                'displayField'  => 'Aisles',
                 'searchField'   => 'aisles',
                 'type'          => 'string',
                 'values'        => [],
             ],
             'section'       =>  [
+                'displayField'  => 'Sections',
                 'searchField'   => 'sections',
                 'type'          => 'string',
                 'values'        => [],
             ],
             'row'           =>  [
+                'displayField'  => 'Rows',
                 'searchField'   => 'rows',
                 'type'          => 'string',
                 'values'        => [],
             ],
             'col'           =>  [
+                'displayField'  => 'Columns',
                 'searchField'   => 'cols',
                 'type'          => 'string',
                 'values'        => [],

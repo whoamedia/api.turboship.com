@@ -108,7 +108,14 @@ class BaseRepository extends EntityRepository implements RepositoryInterface
             }
         }
 
-        return $lexicon;
+        $formattedLexicon               = [];
+        $lexiconKeySet                  = array_keys($lexicon);
+        foreach ($lexiconKeySet AS $lexiconKey)
+        {
+            $formattedLexicon[]         = $lexicon[$lexiconKey];
+        }
+
+        return $formattedLexicon;
     }
 
 }

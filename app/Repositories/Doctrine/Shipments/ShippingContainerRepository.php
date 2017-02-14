@@ -59,6 +59,7 @@ class ShippingContainerRepository extends BaseRepository
 
         $lexicon = [
             'shippingContainerType' =>  [
+                'displayField'  => 'Shipping Container Types',
                 'searchField'   => 'shippingContainerTypeIds',
                 'type'          => 'integer',
                 'values'        => [],

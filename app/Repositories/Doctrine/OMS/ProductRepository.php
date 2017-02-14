@@ -61,11 +61,13 @@ class ProductRepository extends BaseRepository
 
         $lexicon = [
             'source'            =>  [
+                'displayField'  => 'Sources',
                 'searchField'   => 'sourceIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'client'            =>  [
+                'displayField'  => 'Clients',
                 'searchField'   => 'clientIds',
                 'type'          => 'integer',
                 'values'        => [],

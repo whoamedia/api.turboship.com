@@ -68,26 +68,31 @@ class ShipmentRepository extends BaseRepository
 
         $lexicon = [
             'shippingContainer' =>  [
+                'displayField'  => 'Shipping Containers',
                 'searchField'   => 'shippingContainerIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'carrier'           =>  [
+                'displayField'  => 'Carriers',
                 'searchField'   => 'carrierIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'service'           =>  [
+                'displayField'  => 'Services',
                 'searchField'   => 'serviceIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'client'            =>  [
+                'displayField'  => 'Clients',
                 'searchField'   => 'clientIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'status'            =>  [
+                'displayField'  => 'Statuses',
                 'searchField'   => 'statusIds',
                 'type'          => 'integer',
                 'values'        => [],

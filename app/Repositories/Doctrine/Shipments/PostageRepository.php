@@ -64,16 +64,19 @@ class PostageRepository extends BaseRepository
 
         $lexicon = [
             'shipper'           =>  [
+                'displayField'  => 'Shippers',
                 'searchField'   => 'shipperIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'carrier'           =>  [
+                'displayField'  => 'Carriers',
                 'searchField'   => 'carrierIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
             'service'           =>  [
+                'displayField'  => 'Services',
                 'searchField'   => 'serviceIds',
                 'type'          => 'integer',
                 'values'        => [],
