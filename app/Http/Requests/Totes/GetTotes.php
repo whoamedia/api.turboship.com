@@ -5,17 +5,11 @@ namespace App\Http\Requests\Totes;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
-use App\Http\Requests\BaseRequest;
+use App\Http\Requests\BaseGet;
 use jamesvweston\Utilities\ArrayUtil AS AU;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class GetTotes extends BaseGet implements Cleanable, Validatable, \JsonSerializable
 {
-
-    /**
-     * @var string|null
-     */
-    protected $ids;
 
     /**
      * @var string|null
@@ -27,29 +21,18 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
      */
     protected $barCodes;
 
-    /**
-     * @var int
-     */
-    protected $limit;
-
-    /**
-     * @var int
-     */
-    protected $page;
-
-
     public function __construct($data = [])
     {
-        $this->ids                      = AU::get($data['ids']);
+        parent::__construct('tote.id', $data);
+
         $this->barCodes                 = AU::get($data['barCodes']);
         $this->organizationIds          = AU::get($data['organizationIds']);
-        $this->limit                    = AU::get($data['limit'], 80);
-        $this->page                     = AU::get($data['page'], 1);
     }
 
     public function validate()
     {
-        $this->ids                      = parent::validateIds($this->ids, 'ids');
+        parent::validate();
+
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
     }
 
@@ -58,35 +41,17 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
      */
     public function jsonSerialize ()
     {
-        $object['ids']                  = $this->ids;
+        $object                         = parent::jsonSerialize();
         $object['barCodes']             = $this->barCodes;
         $object['organizationIds']      = $this->organizationIds;
-        $object['limit']                = $this->limit;
-        $object['page']                 = $this->page;
 
         return $object;
     }
 
     public function clean()
     {
-        $this->ids                      = parent::getCommaSeparatedIds($this->ids);
+        parent::clean();
         $this->organizationIds          = parent::getCommaSeparatedIds($this->organizationIds);
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getIds()
-    {
-        return $this->ids;
-    }
-
-    /**
-     * @param null|string $ids
-     */
-    public function setIds($ids)
-    {
-        $this->ids = $ids;
     }
 
     /**
@@ -119,38 +84,6 @@ class GetTotes extends BaseRequest implements Cleanable, Validatable, \JsonSeria
     public function setBarCodes($barCodes)
     {
         $this->barCodes = $barCodes;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @param int $limit
-     */
-    public function setLimit($limit)
-    {
-        $this->limit = $limit;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPage()
-    {
-        return $this->page;
-    }
-
-    /**
-     * @param int $page
-     */
-    public function setPage($page)
-    {
-        $this->page = $page;
     }
 
 }
