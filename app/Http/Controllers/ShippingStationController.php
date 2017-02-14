@@ -74,9 +74,24 @@ class ShippingStationController extends BaseAuthController
         $shippingStation->setOrganization(parent::getAuthUserOrganization());
         $shippingStation->setName($createShippingStation->getName());
 
-        $printerValidation              = new PrinterValidation();
-        $printer                        = $printerValidation->idExists($createShippingStation->getPrinterId());
-        $shippingStation->setPrinter($printer);
+        if (!is_null($createShippingStation->getPrinterId()))
+        {
+            $printerValidation          = new PrinterValidation();
+            $printer                    = $printerValidation->idExists($createShippingStation->getPrinterId());
+            /**
+             * Ensure that the printer is not assigned to another shipping station
+             */
+            $query      = [
+                'organizationIds'       => parent::getAuthUserOrganization()->getId(),
+                'printerIds'            => $printer->getId(),
+            ];
+            $checkResults               = $this->shippingStationRepo->where($query);
+            if (sizeof($checkResults) != 0)
+                throw new BadRequestHttpException('Printer is already assigned to another Shipping Station');
+
+            $shippingStation->setPrinter($printer);
+        }
+
 
         $this->shippingStationRepo->saveAndCommit($shippingStation);
         return response($shippingStation, 201);
@@ -98,6 +113,17 @@ class ShippingStationController extends BaseAuthController
         {
             $printerValidation          = new PrinterValidation();
             $printer                    = $printerValidation->idExists($updateShippingStation->getPrinterId());
+
+            $query      = [
+                'organizationIds'       => parent::getAuthUserOrganization()->getId(),
+                'printerIds'            => $printer->getId(),
+            ];
+            $checkResults               = $this->shippingStationRepo->where($query);
+            foreach ($checkResults AS $check)
+            {
+                if ($check->getId() != $shippingStation->getId())
+                    throw new BadRequestHttpException('Printer is already assigned to another Shipping Station');
+            }
             $shippingStation->setPrinter($printer);
         }
 

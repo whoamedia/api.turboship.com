@@ -24,7 +24,7 @@ App\Models\Hardware\ShippingStation:
   manyToOne:
     printer:
       targetEntity:   Printer
-      nullable:       false
+      nullable:       true
       fetch:          EAGER
       joinColumn:
         name:         printerId

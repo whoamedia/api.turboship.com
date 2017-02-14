@@ -22,7 +22,7 @@ class CreateShippingStationTable extends Migration
             $table->integer('organizationId')->unsigned()->index();
             $table->foreign('organizationId')->references('id')->on('Organization');
 
-            $table->integer('printerId')->unsigned()->index();
+            $table->integer('printerId')->unsigned()->index()->nullable()->default(null);
             $table->foreign('printerId')->references('id')->on('Printer');
         });
 

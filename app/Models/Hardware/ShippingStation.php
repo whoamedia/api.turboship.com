@@ -26,7 +26,7 @@ class ShippingStation implements \JsonSerializable
     protected $organization;
 
     /**
-     * @var Printer
+     * @var Printer|null
      */
     protected $printer;
 
@@ -46,7 +46,7 @@ class ShippingStation implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
         $object['organization']         = $this->organization->jsonSerialize();
-        $object['printer']              = $this->printer->jsonSerialize();
+        $object['printer']              = !is_null($this->printer) ? $this->printer->jsonSerialize() : null;
 
         return $object;
     }
@@ -100,7 +100,7 @@ class ShippingStation implements \JsonSerializable
     }
 
     /**
-     * @return Printer
+     * @return Printer|null
      */
     public function getPrinter()
     {
@@ -108,7 +108,7 @@ class ShippingStation implements \JsonSerializable
     }
 
     /**
-     * @param Printer $printer
+     * @param Printer|null $printer
      */
     public function setPrinter($printer)
     {

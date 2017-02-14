@@ -18,7 +18,7 @@ class CreateShippingStation extends BaseRequest implements Cleanable, Validatabl
     protected $name;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $printerId;
 
@@ -47,10 +47,11 @@ class CreateShippingStation extends BaseRequest implements Cleanable, Validatabl
         else if (is_null(parent::getInteger($this->organizationId)))
             throw new BadRequestHttpException('organizationId expected to be integer');
 
-        if (is_null($this->printerId))
-            throw new BadRequestHttpException('printerId is required');
-        else if (is_null(parent::getInteger($this->printerId)))
-            throw new BadRequestHttpException('printerId expected to be integer');
+        if (!is_null($this->printerId))
+        {
+            if (is_null(parent::getInteger($this->printerId)))
+                throw new BadRequestHttpException('printerId expected to be integer');
+        }
 
     }
 
@@ -88,7 +89,7 @@ class CreateShippingStation extends BaseRequest implements Cleanable, Validatabl
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getPrinterId()
     {
@@ -96,7 +97,7 @@ class CreateShippingStation extends BaseRequest implements Cleanable, Validatabl
     }
 
     /**
-     * @param int $printerId
+     * @param int|null $printerId
      */
     public function setPrinterId($printerId)
     {

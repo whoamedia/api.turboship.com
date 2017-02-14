@@ -31,7 +31,7 @@ class ShippingStationRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->select(['shippingStation', 'organization', 'printer']);
-        $qb->addOrderBy(AU::get($query['orderBy'], 'shippingStations.id'), AU::get($query['direction'], 'ASC'));
+        $qb->addOrderBy(AU::get($query['orderBy'], 'shippingStation.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -48,7 +48,7 @@ class ShippingStationRepository extends BaseRepository
     {
         $qb->from('App\Models\Hardware\ShippingStation', 'shippingStation')
             ->join('shippingStation.organization', 'organization', Query\Expr\Join::ON)
-            ->join('shippingStation.printer', 'printer', Query\Expr\Join::ON);
+            ->leftJoin('shippingStation.printer', 'printer', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shippingStation.id', $query['ids']));
