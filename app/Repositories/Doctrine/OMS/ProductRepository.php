@@ -60,8 +60,16 @@ class ProductRepository extends BaseRepository
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'source'            =>  [],
-            'client'            =>  [],
+            'source'            =>  [
+                'searchField'   => 'sourceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'client'            =>  [
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);

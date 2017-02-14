@@ -66,10 +66,26 @@ class OrderRepository extends BaseRepository
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'source'            =>  [],
-            'client'            =>  [],
-            'status'            =>  [],
-            'shipmentStatus'    =>  [],
+            'source'            =>  [
+                'searchField'   => 'sourceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'client'            =>  [
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'status'            =>  [
+                'searchField'   => 'statusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'shipmentStatus'    =>  [
+                'searchField'   => 'shipmentStatusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);

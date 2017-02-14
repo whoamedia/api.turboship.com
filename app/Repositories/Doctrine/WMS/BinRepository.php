@@ -40,6 +40,55 @@ class BinRepository extends BaseRepository
     }
 
     /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT bin.id) AS total',
+            'bin.aisle AS aisle_id', 'bin.aisle AS aisle_name',
+            'bin.section AS section_id', 'bin.section AS section_name',
+            'bin.row AS row_id', 'bin.row AS row_name',
+            'bin.col AS col_id', 'bin.col AS col_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('bin.aisle');
+        $qb->addGroupBy('bin.section');
+        $qb->addGroupBy('bin.row');
+        $qb->addGroupBy('bin.col');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'aisle'         =>  [
+                'searchField'   => 'aisles',
+                'type'          => 'string',
+                'values'        => [],
+            ],
+            'section'       =>  [
+                'searchField'   => 'sections',
+                'type'          => 'string',
+                'values'        => [],
+            ],
+            'row'           =>  [
+                'searchField'   => 'rows',
+                'type'          => 'string',
+                'values'        => [],
+            ],
+            'col'           =>  [
+                'searchField'   => 'cols',
+                'type'          => 'string',
+                'values'        => [],
+            ],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
+    /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query
      * @return      QueryBuilder

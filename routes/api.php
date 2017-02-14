@@ -30,6 +30,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Bin operations
     Route::get('/bins', 'BinController@index');
+    Route::get('/bins/lexicon', 'BinController@getLexicon');
     Route::post('/bins', 'BinController@store');
     Route::get('/bins/{id}', 'BinController@show');
     Route::put('/bins/{id}', 'BinController@update');

@@ -44,6 +44,16 @@ class BinController extends BaseAuthController
         return response($results);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getBins                        = new GetBins($request->input());
+        $getBins->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+        $query                          = $getBins->jsonSerialize();
+
+        $results                        = $this->binRepo->getLexicon($query);
+        return response($results);
+    }
+
     public function store (Request $request)
     {
         $createBin                      = new CreateBin($request->input());

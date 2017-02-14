@@ -63,9 +63,21 @@ class PostageRepository extends BaseRepository
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'shipper'           =>  [],
-            'carrier'           =>  [],
-            'service'           =>  [],
+            'shipper'           =>  [
+                'searchField'   => 'shipperIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'carrier'           =>  [
+                'searchField'   => 'carrierIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'service'           =>  [
+                'searchField'   => 'serviceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);

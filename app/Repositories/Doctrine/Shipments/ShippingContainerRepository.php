@@ -58,7 +58,11 @@ class ShippingContainerRepository extends BaseRepository
         $result                     =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'shippingContainerType' =>  [],
+            'shippingContainerType' =>  [
+                'searchField'   => 'shippingContainerTypeIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);
