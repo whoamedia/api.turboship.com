@@ -142,6 +142,9 @@ class ShippingStationController extends BaseAuthController
 
         $shippingStation                = $this->shippingStationValidation->idExists($printShipmentPostageLabel->getId());
 
+        if (is_null($shippingStation->getPrinter()))
+            throw new BadRequestHttpException('Shipping Station has not printer');
+
         $shipmentValidation             = new ShipmentValidation();
         $shipment                       = $shipmentValidation->idExists($printShipmentPostageLabel->getShipmentId());
         if (is_null($shipment->getPostage()))
