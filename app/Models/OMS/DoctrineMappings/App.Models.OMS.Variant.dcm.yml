@@ -22,8 +22,8 @@ App\Models\OMS\Variant:
       nullable:       false
       options:
         comment:      "Variant title"
-    barcode:
-      column:         barcode
+    barCode:
+      column:         barCode
       type:           string
       nullable:       false
       options:

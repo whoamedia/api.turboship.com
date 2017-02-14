@@ -59,7 +59,7 @@ class Variant extends BaseModel implements \JsonSerializable
      * Shopify barcode
      * @var string;
      */
-    protected $barcode;
+    protected $barCode;
 
     /**
      * The original unmodified sku
@@ -118,7 +118,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $this->source                   = AU::get($data['source']);
         $this->title                    = AU::get($data['title']);
         $this->price                    = AU::get($data['price']);
-        $this->barcode                  = AU::get($data['barcode']);
+        $this->barCode                  = AU::get($data['barCode']);
         $this->originalSku              = AU::get($data['originalSku']);
         $this->sku                      = AU::get($data['sku']);
         $this->weight                   = AU::get($data['weight']);
@@ -141,8 +141,8 @@ class Variant extends BaseModel implements \JsonSerializable
         if (is_null($this->price) || empty(trim($this->price)))
             throw new MissingMandatoryParametersException('price is required');
 
-        if (is_null($this->barcode) || empty(trim($this->barcode)))
-            throw new MissingMandatoryParametersException('barcode is required');
+        if (is_null($this->barCode) || empty(trim($this->barCode)))
+            throw new MissingMandatoryParametersException('barCode is required');
 
         if (is_null($this->sku) || empty(trim($this->sku)))
             throw new MissingMandatoryParametersException('sku is required');
@@ -167,7 +167,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['title']                = $this->title;
         $object['price']                = $this->price;
-        $object['barcode']              = $this->barcode;
+        $object['barCode']              = $this->barCode;
         $object['sku']                  = $this->sku;
         $object['originalSku']          = $this->originalSku;
         $object['weight']               = $this->weight;
@@ -295,15 +295,15 @@ class Variant extends BaseModel implements \JsonSerializable
      */
     public function getBarcode()
     {
-        return $this->barcode;
+        return $this->barCode;
     }
 
     /**
-     * @param string $barcode
+     * @param string $barCode
      */
-    public function setBarcode($barcode)
+    public function setBarcode($barCode)
     {
-        $this->barcode = $barcode;
+        $this->barCode = $barCode;
     }
 
     /**

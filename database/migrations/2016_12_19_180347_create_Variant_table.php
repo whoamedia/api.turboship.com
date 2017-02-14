@@ -30,7 +30,7 @@ class CreateVariantTable extends Migration
             $table->foreign('countryOfOriginId')->references('id')->on('Country');
 
             $table->string('title');
-            $table->string('barcode')->index();
+            $table->string('barCode')->index();
             $table->string('originalSku')->nullable()->default(null);
             $table->string('sku')->index();
             $table->decimal('price', 10, 2)->unsigned();

@@ -84,6 +84,18 @@ class VariantRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
+        if (!is_null(AU::get($query['barCodes'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $barCodes                   = explode(',', $query['barCodes']);
+
+            foreach ($barCodes AS $barCode)
+            {
+                $orX->add($qb->expr()->eq('variant.barCode', $qb->expr()->literal(trim($barCode))));
+            }
+            $qb->andWhere($orX);
+        }
+
         $qb->orderBy('variant.id', 'ASC');
         return $qb;
     }
