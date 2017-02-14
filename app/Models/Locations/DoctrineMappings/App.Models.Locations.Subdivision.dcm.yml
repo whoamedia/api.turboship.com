@@ -20,12 +20,6 @@ App\Models\Locations\Subdivision:
         name:         subdivisionTypeId
         referencedColumnName: id
 
-  oneToMany:
-    altNames:
-      targetEntity:   SubdivisionAltName
-      mappedBy:       subdivision
-      cascade:        ["persist", "remove"]
-
   id:
     id:
       column:         id

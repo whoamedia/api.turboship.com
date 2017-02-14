@@ -75,11 +75,6 @@ class Country implements \JsonSerializable
      */
     protected $subdivisions;
 
-    /**
-     * @var ArrayCollection
-     */
-    protected $postalDistricts;
-
 
     /**
      * @return mixed
@@ -189,11 +184,4 @@ class Country implements \JsonSerializable
         return $this->subdivisions->toArray();
     }
 
-    /**
-     * @return PostalDistrict[]
-     */
-    public function getPostalDistricts()
-    {
-        return $this->postalDistricts->toArray();
-    }
 }

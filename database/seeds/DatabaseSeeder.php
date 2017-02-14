@@ -24,9 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CountrySeeder::class);
         $this->call(SubdivisionTypeSeeder::class);
         $this->call(SubdivisionSeeder::class);
-        $this->call(SubdivisionAltNameSeeder::class);
-        $this->call(PostalDistrictSeeder::class);
-        $this->call(PostalDistrictSubdivisionSeeder::class);
 
 
         /**
