@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\Models\CMS\User;
+use \App\Models\CMS\Staff;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 use App\Utilities\IntegrationCredentialUtility;
 use App\Models\Integrations\IntegratedShoppingCart;
@@ -112,7 +112,8 @@ class WhoaMediaSeeder extends Seeder
         $internalSource         = $sourceValidation->getInternal();
         $imageService           = new \App\Services\ImageService();
         //  Edward
-        $Edward                 = new User();
+        $Edward                 = new Staff();
+        $Edward->generateBarCode();
         $Edward->setFirstName('Edward');
         $Edward->setLastName('Upton');
         $Edward->setEmail('eupton@whoamedia.com');
@@ -124,7 +125,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Edward);
 
         //  James
-        $James                   = new User();
+        $James                   = new Staff();
+        $James->generateBarCode();
         $James->setFirstName('James');
         $James->setLastName('Weston');
         $James->setEmail('james@turboship.com');
@@ -136,7 +138,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($James);
 
         //  Miles
-        $Miles                   = new User();
+        $Miles                   = new Staff();
+        $Miles->generateBarCode();
         $Miles->setFirstName('Miles');
         $Miles->setLastName('Maximini');
         $Miles->setEmail('miles@cheapundies.com');
@@ -148,7 +151,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Miles);
 
         //  Crystal
-        $Crystal                   = new User();
+        $Crystal                   = new Staff();
+        $Crystal->generateBarCode();
         $Crystal->setFirstName('Crystal');
         $Crystal->setLastName('Buyalos');
         $Crystal->setEmail('crystal@cheapundies.com');
@@ -160,7 +164,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Crystal);
 
         //  Ainsley
-        $Ainsley                   = new User();
+        $Ainsley                   = new Staff();
+        $Ainsley->generateBarCode();
         $Ainsley->setFirstName('Ainsley');
         $Ainsley->setLastName('Dougherty');
         $Ainsley->setEmail('ainsley@cheapundies.com');
@@ -172,7 +177,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Ainsley);
 
         //  Cody
-        $CodySmith                   = new User();
+        $CodySmith                   = new Staff();
+        $CodySmith->generateBarCode();
         $CodySmith->setFirstName('Cody');
         $CodySmith->setLastName('Smith');
         $CodySmith->setEmail('cody@cheapundies.com');
@@ -184,7 +190,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($CodySmith);
 
         //  Corey
-        $CoreyStallings                   = new User();
+        $CoreyStallings                   = new Staff();
+        $CoreyStallings->generateBarCode();
         $CoreyStallings->setFirstName('Corey');
         $CoreyStallings->setLastName('Stallings');
         $CoreyStallings->setEmail('corey@cheapundies.com');
@@ -196,7 +203,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($CoreyStallings);
 
         //  Michael
-        $MichaelFerrell                   = new User();
+        $MichaelFerrell                   = new Staff();
+        $MichaelFerrell->generateBarCode();
         $MichaelFerrell->setFirstName('Michael');
         $MichaelFerrell->setLastName('Ferrell');
         $MichaelFerrell->setEmail('michael@cheapundies.com');
@@ -208,7 +216,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($MichaelFerrell);
 
         //  Michael
-        $MichaelWoolcott                   = new User();
+        $MichaelWoolcott                   = new Staff();
+        $MichaelWoolcott->generateBarCode();
         $MichaelWoolcott->setFirstName('Michael');
         $MichaelWoolcott->setLastName('Woolcott');
         $MichaelWoolcott->setEmail('michael.woolcott@cheapundies.com');
@@ -220,7 +229,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($MichaelWoolcott);
 
         //  Thomas
-        $ThomasWatson                   = new User();
+        $ThomasWatson                   = new Staff();
+        $ThomasWatson->generateBarCode();
         $ThomasWatson->setFirstName('Thomas');
         $ThomasWatson->setLastName('Watson');
         $ThomasWatson->setEmail('thomas@cheapundies.com');
@@ -232,7 +242,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($ThomasWatson);
 
         //  Corey
-        $CoreyWebb                   = new User();
+        $CoreyWebb                   = new Staff();
+        $CoreyWebb->generateBarCode();
         $CoreyWebb->setFirstName('Corey');
         $CoreyWebb->setLastName('Webb');
         $CoreyWebb->setEmail('thomas@whoamedia.com');
@@ -244,7 +255,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($CoreyWebb);
 
         //  Shenouda
-        $Shenouda                   = new User();
+        $Shenouda                   = new Staff();
+        $Shenouda->generateBarCode();
         $Shenouda->setFirstName('Shenouda');
         $Shenouda->setLastName('Guergues');
         $Shenouda->setEmail('shenouda@whoamedia.com');
@@ -256,7 +268,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Shenouda);
 
         //  Lane
-        $Lane                   = new User();
+        $Lane                   = new Staff();
+        $Lane->generateBarCode();
         $Lane->setFirstName('Lane');
         $Lane->setLastName('Norman');
         $Lane->setEmail('lane@whoamedia.com');
@@ -268,7 +281,8 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo->saveAndCommit($Lane);
 
         //  Travis
-        $TravisPence                   = new User();
+        $TravisPence                   = new Staff();
+        $TravisPence->generateBarCode();
         $TravisPence->setFirstName('Travis');
         $TravisPence->setLastName('Pence');
         $TravisPence->setEmail('travis@cheapundies.com');

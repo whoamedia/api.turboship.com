@@ -4,23 +4,19 @@ namespace App\Models\WMS;
 
 
 use App\Models\CMS\Organization;
+use App\Models\Support\Traits\HasBarcode;
 use App\Models\WMS\Traits\HasInventory;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 abstract class InventoryLocation implements \JsonSerializable
 {
 
-    use HasInventory;
+    use HasInventory, HasBarcode;
 
     /**
      * @var int
      */
     protected $id;
-
-    /**
-     * @var string
-     */
-    protected $barCode;
 
     /**
      * @var Organization
@@ -59,22 +55,6 @@ abstract class InventoryLocation implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBarCode()
-    {
-        return $this->barCode;
-    }
-
-    /**
-     * @param string $barCode
-     */
-    public function setBarCode($barCode)
-    {
-        $this->barCode = $barCode;
     }
 
     /**

@@ -1,0 +1,12 @@
+App\Models\CMS\Staff:
+  type:               entity
+  table:              Staff
+  repositoryClass:    App\Repositories\Doctrine\CMS\StaffRepository
+
+  fields:
+    barCode:
+      column:         barCode
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Staff barCode"

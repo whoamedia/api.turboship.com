@@ -2,6 +2,13 @@ App\Models\CMS\User:
   type:               entity
   table:              User
   repositoryClass:    App\Repositories\Doctrine\CMS\UserRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           userTypeId
+      type:           integer
+  discriminatorMap:
+      1:              User
+      2:              Staff
 
   id:
     id:

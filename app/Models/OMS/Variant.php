@@ -9,6 +9,7 @@ use App\Models\Locations\Country;
 use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
+use App\Models\Support\Traits\HasBarcode;
 use App\Utilities\CountryUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -17,6 +18,9 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 
 class Variant extends BaseModel implements \JsonSerializable
 {
+
+    use HasBarcode;
+
 
     /**
      * @var int
@@ -54,12 +58,6 @@ class Variant extends BaseModel implements \JsonSerializable
      * @var float
      */
     protected $price;
-
-    /**
-     * Shopify barcode
-     * @var string;
-     */
-    protected $barCode;
 
     /**
      * The original unmodified sku
@@ -288,22 +286,6 @@ class Variant extends BaseModel implements \JsonSerializable
     public function setPrice($price)
     {
         $this->price = $price;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBarcode()
-    {
-        return $this->barCode;
-    }
-
-    /**
-     * @param string $barCode
-     */
-    public function setBarcode($barCode)
-    {
-        $this->barCode = $barCode;
     }
 
     /**
