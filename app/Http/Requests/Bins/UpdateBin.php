@@ -23,11 +23,35 @@ class UpdateBin extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $barCode;
 
+    /**
+     * @var string|null
+     */
+    protected $aisle;
+
+    /**
+     * @var string|null
+     */
+    protected $section;
+
+    /**
+     * @var string|null
+     */
+    protected $row;
+
+    /**
+     * @var string|null
+     */
+    protected $col;
+
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
         $this->barCode                  = AU::get($data['barCode']);
+        $this->aisle                    = AU::get($data['aisle']);
+        $this->section                  = AU::get($data['section']);
+        $this->row                      = AU::get($data['row']);
+        $this->col                      = AU::get($data['col']);
     }
 
     public function validate()
@@ -51,6 +75,10 @@ class UpdateBin extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     {
         $object['id']                   = $this->id;
         $object['barCode']              = $this->barCode;
+        $object['aisle']                = $this->aisle;
+        $object['section']              = $this->section;
+        $object['row']                  = $this->row;
+        $object['col']                  = $this->col;
 
         return $object;
     }
@@ -85,6 +113,70 @@ class UpdateBin extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setBarCode($barCode)
     {
         $this->barCode = $barCode;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAisle()
+    {
+        return $this->aisle;
+    }
+
+    /**
+     * @param null|string $aisle
+     */
+    public function setAisle($aisle)
+    {
+        $this->aisle = $aisle;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSection()
+    {
+        return $this->section;
+    }
+
+    /**
+     * @param null|string $section
+     */
+    public function setSection($section)
+    {
+        $this->section = $section;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRow()
+    {
+        return $this->row;
+    }
+
+    /**
+     * @param null|string $row
+     */
+    public function setRow($row)
+    {
+        $this->row = $row;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCol()
+    {
+        return $this->col;
+    }
+
+    /**
+     * @param null|string $col
+     */
+    public function setCol($col)
+    {
+        $this->col = $col;
     }
 
 }

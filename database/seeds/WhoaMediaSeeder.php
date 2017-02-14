@@ -66,6 +66,11 @@ class WhoaMediaSeeder extends Seeder
      */
     private $toteRepo;
 
+    /**
+     * @var \App\Repositories\Doctrine\WMS\PortableBinRepository
+     */
+    private $portableBinRepo;
+
     public function run()
     {
         $this->clientRepo       = EntityManager::getRepository('App\Models\CMS\Client');
@@ -76,6 +81,7 @@ class WhoaMediaSeeder extends Seeder
         $this->shippingIntegrationRepo  = EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
         $this->binRepo          = EntityManager::getRepository('App\Models\WMS\Bin');
         $this->toteRepo         = EntityManager::getRepository('App\Models\WMS\Tote');
+        $this->portableBinRepo  = EntityManager::getRepository('App\Models\WMS\PortableBin');
 
         $this->organization();
         $this->users();
@@ -87,6 +93,7 @@ class WhoaMediaSeeder extends Seeder
         $this->easyPost();
         $this->bins();
         $this->totes();
+        $this->portableBins();
     }
 
     private function organization ()
@@ -625,10 +632,13 @@ class WhoaMediaSeeder extends Seeder
                 {
                     for( $col = 1; $col < 11; $col++ )
                     {
-                        $barcode = $aisle.$section.$row.$col;
                         $bin    = new \App\Models\WMS\Bin();
+                        $bin->setAisle($aisle);
+                        $bin->setSection($section);
+                        $bin->setRow($row);
+                        $bin->setCol($col);
                         $bin->setOrganization($this->organization);
-                        $bin->setBarCode($barcode);
+                        $bin->setBarCode(\Illuminate\Support\Str::random(20));
                         $this->binRepo->save($bin);
                     }
                 }
@@ -648,4 +658,14 @@ class WhoaMediaSeeder extends Seeder
         }
     }
 
+    private function portableBins ()
+    {
+        for( $i = 0; $i < 20; $i++ )
+        {
+            $portableBin        = new \App\Models\WMS\PortableBin();
+            $portableBin->setBarCode(\Illuminate\Support\Str::random(20));
+            $portableBin->setOrganization($this->organization);
+            $this->portableBinRepo->save($portableBin);
+        }
+    }
 }

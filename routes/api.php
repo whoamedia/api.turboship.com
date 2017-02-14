@@ -111,6 +111,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
 
+    //  PortableBin operations
+    Route::get('/portableBins', 'PortableBinController@index');
+    Route::post('/portableBins', 'PortableBinController@store');
+    Route::get('/portableBins/{id}', 'PortableBinController@show');
+    Route::put('/portableBins/{id}', 'PortableBinController@update');
+
+
     //  Postage Operations
     Route::get('/postage', 'PostageController@index');
     Route::get('/postage/lexicon', 'PostageController@getLexicon');
@@ -137,6 +144,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Scanning operations
     Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
+    Route::get('/scanning/portableBins/{barCode}', 'ScanningController@showPortableBin');
     Route::get('/scanning/totes/{barCode}', 'ScanningController@showTote');
     Route::get('/scanning/variants/{barCode}', 'ScanningController@showVariant');
 

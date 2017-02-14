@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBinTable extends Migration
+class CreatePortableBinTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,9 @@ class CreateBinTable extends Migration
      */
     public function up()
     {
-        Schema::create('Bin', function (Blueprint $table)
+        Schema::create('PortableBin', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->string('aisle', 150)->index();
-            $table->string('section', 150)->index();
-            $table->string('row', 150)->index();
-            $table->string('col', 150)->index();
-
-            $table->unique(['aisle', 'section', 'row', 'col'], 'bin_unique_constraints');
         });
     }
 
@@ -32,6 +26,6 @@ class CreateBinTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Bin');
+        Schema::drop('PortableBin');
     }
 }

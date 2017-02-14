@@ -20,6 +20,26 @@ class GetBins extends BaseGet implements Cleanable, Validatable, \JsonSerializab
      */
     protected $barCodes;
 
+    /**
+     * @var string|null
+     */
+    protected $aisles;
+
+    /**
+     * @var string|null
+     */
+    protected $sections;
+
+    /**
+     * @var string|null
+     */
+    protected $rows;
+
+    /**
+     * @var string|null
+     */
+    protected $cols;
+
 
     public function __construct($data = [])
     {
@@ -27,6 +47,10 @@ class GetBins extends BaseGet implements Cleanable, Validatable, \JsonSerializab
 
         $this->barCodes                 = AU::get($data['barCodes']);
         $this->organizationIds          = AU::get($data['organizationIds']);
+        $this->aisles                   = AU::get($data['aisles']);
+        $this->sections                 = AU::get($data['sections']);
+        $this->rows                     = AU::get($data['rows']);
+        $this->cols                     = AU::get($data['cols']);
     }
 
     public function validate()
@@ -44,6 +68,10 @@ class GetBins extends BaseGet implements Cleanable, Validatable, \JsonSerializab
         $object                         = parent::jsonSerialize();
         $object['barCodes']             = $this->barCodes;
         $object['organizationIds']      = $this->organizationIds;
+        $object['aisles']               = $this->aisles;
+        $object['sections']             = $this->sections;
+        $object['rows']                 = $this->rows;
+        $object['cols']                 = $this->cols;
 
         return $object;
     }
@@ -84,6 +112,70 @@ class GetBins extends BaseGet implements Cleanable, Validatable, \JsonSerializab
     public function setBarCodes($barCodes)
     {
         $this->barCodes = $barCodes;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAisles()
+    {
+        return $this->aisles;
+    }
+
+    /**
+     * @param null|string $aisles
+     */
+    public function setAisles($aisles)
+    {
+        $this->aisles = $aisles;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSections()
+    {
+        return $this->sections;
+    }
+
+    /**
+     * @param null|string $sections
+     */
+    public function setSections($sections)
+    {
+        $this->sections = $sections;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRows()
+    {
+        return $this->rows;
+    }
+
+    /**
+     * @param null|string $rows
+     */
+    public function setRows($rows)
+    {
+        $this->rows = $rows;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCols()
+    {
+        return $this->cols;
+    }
+
+    /**
+     * @param null|string $cols
+     */
+    public function setCols($cols)
+    {
+        $this->cols = $cols;
     }
 
 }

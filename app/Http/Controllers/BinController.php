@@ -8,9 +8,9 @@ use App\Http\Requests\Bins\GetBins;
 use App\Http\Requests\Bins\ShowBin;
 use App\Http\Requests\Bins\UpdateBin;
 use App\Models\WMS\Bin;
+use App\Models\WMS\Validation\BinValidation;
 use Illuminate\Http\Request;
 use EntityManager;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BinController extends BaseAuthController
@@ -21,10 +21,16 @@ class BinController extends BaseAuthController
      */
     private $binRepo;
 
+    /**
+     * @var BinValidation
+     */
+    private $binValidation;
+
 
     public function __construct ()
     {
         $this->binRepo                  = EntityManager::getRepository('App\Models\WMS\Bin');
+        $this->binValidation            = new BinValidation();
     }
 
 
@@ -44,16 +50,10 @@ class BinController extends BaseAuthController
         $createBin->validate();
         $createBin->clean();
 
-        $binQuery       = [
-            'organizationIds'           => parent::getAuthUserOrganization()->getId(),
-            'barCodes'                  => $createBin->getBarCode(),
-        ];
-        $binResults                     = $this->binRepo->where($binQuery);
-        if (sizeof($binResults) != 0)
-            throw new BadRequestHttpException('Bin barCode must be unique');
-
+        $this->binValidation->barCodeDoesNotExist(parent::getAuthUserOrganization()->getId(), $createBin->getBarCode());
         $json                           = $createBin->jsonSerialize();
         $bin                            = new Bin($json);
+        $this->binValidation->uniqueRackLocation($bin);
         $bin->setOrganization(parent::getAuthUserOrganization());
 
         $this->binRepo->saveAndCommit($bin);
@@ -77,16 +77,23 @@ class BinController extends BaseAuthController
 
         if (!is_null($updateBin->getBarCode()) && $bin->getBarCode() != $updateBin->getBarCode())
         {
-            $binQuery       = [
-                'organizationIds'       => parent::getAuthUserOrganization()->getId(),
-                'barCodes'              => $updateBin->getBarCode(),
-            ];
-            $binResults                 = $this->binRepo->where($binQuery);
-            if (sizeof($binResults) != 0)
-                throw new BadRequestHttpException('Bin barCode must be unique');
-
+            $this->binValidation->barCodeDoesNotExist(parent::getAuthUserOrganization()->getId(), $updateBin->getBarCode());
             $bin->setBarCode($updateBin->getBarCode());
         }
+
+        if (!is_null($updateBin->getAisle()))
+            $bin->setAisle($updateBin->getAisle());
+
+        if (!is_null($updateBin->getSection()))
+            $bin->setSection($updateBin->getSection());
+
+        if (!is_null($updateBin->getRow()))
+            $bin->setRow($updateBin->getRow());
+
+        if (!is_null($updateBin->getCol()))
+            $bin->setCol($updateBin->getCol());
+
+        $this->binValidation->uniqueRackLocation($bin);
 
         $this->binRepo->saveAndCommit($bin);
         return response($bin);

@@ -3,7 +3,7 @@
 namespace App\Repositories\Doctrine\WMS;
 
 
-use App\Models\WMS\Bin;
+use App\Models\WMS\PortableBin;
 use App\Repositories\Doctrine\BaseRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 
-class BinRepository extends BaseRepository
+class PortableBinRepository extends BaseRepository
 {
 
     use Paginatable;
@@ -22,16 +22,16 @@ class BinRepository extends BaseRepository
      * @param       bool                    $ignorePagination   If true will not return pagination
      * @param       int|null                $maxLimit           If provided limit is greater than this value, set is to this value
      * @param       int|null                $maxPage            If the provided page is greater than this value, restrict it to this value
-     * @return      Bin[]|LengthAwarePaginator
+     * @return      PortableBin[]|LengthAwarePaginator
      */
     function where ($query, $ignorePagination = true, $maxLimit = 5000, $maxPage = 100)
     {
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['bin', 'organization']);
+        $qb->select(['portableBin', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
-        $qb->addOrderBy(AU::get($query['orderBy'], 'bin.id'), AU::get($query['direction'], 'ASC'));
+        $qb->addOrderBy(AU::get($query['orderBy'], 'portableBin.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -46,11 +46,11 @@ class BinRepository extends BaseRepository
      */
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
-        $qb->from('App\Models\WMS\Bin', 'bin')
-            ->join('bin.organization', 'organization', Query\Expr\Join::ON);
+        $qb->from('App\Models\WMS\PortableBin', 'portableBin')
+            ->join('portableBin.organization', 'organization', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
-            $qb->andWhere($qb->expr()->in('bin.id', $query['ids']));
+            $qb->andWhere($qb->expr()->in('portableBin.id', $query['ids']));
 
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
@@ -61,51 +61,7 @@ class BinRepository extends BaseRepository
             $barCodes               = explode(',', $query['barCodes']);
             foreach ($barCodes AS $barCode)
             {
-                $orX->add($qb->expr()->eq('bin.barCode', $qb->expr()->literal($barCode)));
-            }
-            $qb->andWhere($orX);
-        }
-
-        if (!is_null(AU::get($query['aisles'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $aisles                 = explode(',', $query['aisles']);
-            foreach ($aisles AS $aisle)
-            {
-                $orX->add($qb->expr()->eq('bin.aisle', $qb->expr()->literal($aisle)));
-            }
-            $qb->andWhere($orX);
-        }
-
-        if (!is_null(AU::get($query['sections'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $sections               = explode(',', $query['sections']);
-            foreach ($sections AS $section)
-            {
-                $orX->add($qb->expr()->eq('bin.section', $qb->expr()->literal($section)));
-            }
-            $qb->andWhere($orX);
-        }
-
-        if (!is_null(AU::get($query['rows'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $rows                   = explode(',', $query['rows']);
-            foreach ($rows AS $row)
-            {
-                $orX->add($qb->expr()->eq('bin.row', $qb->expr()->literal($row)));
-            }
-            $qb->andWhere($orX);
-        }
-
-        if (!is_null(AU::get($query['cols'])))
-        {
-            $orX                    = $qb->expr()->orX();
-            $cols                   = explode(',', $query['cols']);
-            foreach ($cols AS $col)
-            {
-                $orX->add($qb->expr()->eq('bin.col', $qb->expr()->literal($col)));
+                $orX->add($qb->expr()->eq('portableBin.barCode', $qb->expr()->literal($barCode)));
             }
             $qb->andWhere($orX);
         }
@@ -115,7 +71,7 @@ class BinRepository extends BaseRepository
 
     /**
      * @param   int         $id
-     * @return  Bin|null
+     * @return  PortableBin|null
      */
     public function getOneById($id)
     {

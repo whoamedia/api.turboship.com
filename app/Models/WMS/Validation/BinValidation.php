@@ -73,4 +73,32 @@ class BinValidation
             throw new NotFoundHttpException('Bin barCode already exists');
     }
 
+    /**
+     * @param   Bin $bin
+     * @return  bool
+     */
+    public function uniqueRackLocation (Bin $bin)
+    {
+        $query          = [
+            'aisles'                => $bin->getAisle(),
+            'sections'              => $bin->getSection(),
+            'rows'                  => $bin->getRow(),
+            'cols'                  => $bin->getCol()
+        ];
+
+        $results                    = $this->binRepo->where($query);
+
+        if (sizeof($results) == 0)
+            return true;
+
+
+        foreach ($results AS $binCheck)
+        {
+            if ($binCheck->getId() != $bin->getId())
+                throw new NotFoundHttpException('The Bin rack location already exists');
+        }
+
+        return true;
+    }
+
 }

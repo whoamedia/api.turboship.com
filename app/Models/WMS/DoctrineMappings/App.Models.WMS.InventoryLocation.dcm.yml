@@ -9,6 +9,7 @@ App\Models\WMS\InventoryLocation:
   discriminatorMap:
       1:              App\Models\WMS\Bin
       2:              App\Models\WMS\Tote
+      3:              App\Models\WMS\PortableBin
 
   id:
     id:

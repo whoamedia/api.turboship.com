@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Scanning\ShowScannedBin;
+use App\Http\Requests\Scanning\ShowScannedPortableBin;
 use App\Http\Requests\Scanning\ShowScannedTote;
 use App\Http\Requests\Scanning\ShowScannedVariant;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\WMS\Validation\BinValidation;
+use App\Models\WMS\Validation\PortableBinValidation;
 use App\Models\WMS\Validation\ToteValidation;
 use Illuminate\Http\Request;
 
@@ -58,6 +60,20 @@ class ScanningController extends BaseAuthController
         $toteValidation                 = new ToteValidation();
         $tote                           = $toteValidation->barCodeExists(parent::getAuthUserOrganization()->getId(), $barCode);
         return response($tote);
+    }
+
+    public function showPortableBin (Request $request)
+    {
+        $showScannedPortableBin         = new ShowScannedPortableBin();
+        $showScannedPortableBin->setBarCode($request->route('barCode'));
+        $showScannedPortableBin->validate();
+        $showScannedPortableBin->clean();
+
+        $barCode                        = $showScannedPortableBin->getBarCode();
+        $portableBinValidation          = new PortableBinValidation();
+        $portableBin                    = $portableBinValidation->barCodeExists(parent::getAuthUserOrganization()->getId(), $barCode);
+
+        return response($portableBin);
     }
 
 }
