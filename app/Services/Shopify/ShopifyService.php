@@ -122,7 +122,7 @@ class ShopifyService
         $getShopifyOrders->setTest(false);
         $getShopifyOrders->setStatus('closed');
 
-        $getShopifyOrders->setOrder('created_at asc');
+        $getShopifyOrders->setOrder('created_at desc');
         $getShopifyOrders->setPage($page);
         $getShopifyOrders->setLimit($limit);
 

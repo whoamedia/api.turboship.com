@@ -80,7 +80,7 @@ class TestJunkCommand extends Command
         $shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
         for ($page = 1; $page <= $totalPages; $page++)
         {
-            $this->info('On page ' . $page);
+            $this->info('On page ' . $page . ' of ' . $totalPages);
             set_time_limit(60);
             $shopifyOrdersResponse          = $shopifyService->getOrdersShipped($page, 250);
             $orderArray                     = json_decode($shopifyOrdersResponse, true);
