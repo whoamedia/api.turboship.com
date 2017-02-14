@@ -41,6 +41,30 @@ class ShippingContainerRepository extends BaseRepository
     }
 
     /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT shippingContainer.id) AS total',
+            'shippingContainerType.id AS shippingContainerType_id', 'shippingContainerType.name AS shippingContainerType_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('shippingContainerType');
+
+        $result                     =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'shippingContainerType' =>  [],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
+
+    /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query
      * @return      QueryBuilder

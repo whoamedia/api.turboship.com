@@ -40,6 +40,16 @@ class ShippingContainerController extends BaseAuthController
         return response($results);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getShippingContainers          = new GetShippingContainers($request->input());
+        $getShippingContainers->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+
+        $query                          = $getShippingContainers->jsonSerialize();
+        $results                        = $this->shippingContainerRepo->getLexicon($query);
+        return response($results);
+    }
+
     public function show (Request $request)
     {
         $shippingContainer              = $this->getShippingContainerFromRoute($request->route('id'));
