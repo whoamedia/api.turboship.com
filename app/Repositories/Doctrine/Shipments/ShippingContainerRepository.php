@@ -32,6 +32,8 @@ class ShippingContainerRepository extends BaseRepository
         $qb->select(['shippingContainer', 'organization', 'shippingContainerType']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
+        $qb->addOrderBy(AU::get($query['orderBy'], 'shippingContainer.id'), AU::get($query['direction'], 'ASC'));
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
@@ -58,8 +60,6 @@ class ShippingContainerRepository extends BaseRepository
         if (!is_null(AU::get($query['shippingContainerTypeIds'])))
             $qb->andWhere($qb->expr()->in('shippingContainerType.id', $query['shippingContainerTypeIds']));
 
-
-        $qb->orderBy('shippingContainer.id', 'ASC');
         return $qb;
     }
 
