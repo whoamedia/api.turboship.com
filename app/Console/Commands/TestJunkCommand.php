@@ -86,8 +86,16 @@ class TestJunkCommand extends Command
             $orderArray                     = json_decode($shopifyOrdersResponse, true);
             foreach ($orderArray AS $shopifyOrder)
             {
-                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
-                $this->dispatch($job);
+                try
+                {
+                    $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
+                    $this->dispatch($job);
+                }
+                catch (\Pheanstalk\Exception)
+                {
+                    continue;
+                }
+
             }
             usleep(250000);
         }
