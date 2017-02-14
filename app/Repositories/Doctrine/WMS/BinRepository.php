@@ -31,6 +31,7 @@ class BinRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['bin', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'bin.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -65,7 +66,6 @@ class BinRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('bin.id', 'ASC');
         return $qb;
     }
 
