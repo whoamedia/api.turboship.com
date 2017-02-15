@@ -125,14 +125,14 @@ class ShopifyController extends BaseAuthController
             $externalIdsResponse            = $this->orderItemRepo->getPendingExternalProductIds($this->integratedShoppingCart->getClient()->getId(), SourceUtility::SHOPIFY_ID);
             $total                          = sizeof($externalIdsResponse);
 
-            $job                            = (new DownloadShopifyProductsJob($this->integratedShoppingCart->getId(), true, $downloadShopifyProducts->getImportVariantInventory()))->onQueue('shopifyProducts');
+            $job                            = (new DownloadShopifyProductsJob($this->integratedShoppingCart->getId(), true, $downloadShopifyProducts->getImportVariantInventory()))->onQueue('shopifyBulkImports');
             $this->dispatch($job);
         }
         else
         {
             $total                          = $this->shopifyService->getProductImportCandidatesCount();
 
-            $job                            = (new DownloadShopifyProductsJob($this->integratedShoppingCart->getId(), false, $downloadShopifyProducts->getImportVariantInventory()))->onQueue('shopifyProducts');
+            $job                            = (new DownloadShopifyProductsJob($this->integratedShoppingCart->getId(), false, $downloadShopifyProducts->getImportVariantInventory()))->onQueue('shopifyBulkImports');
             $this->dispatch($job);
         }
 
