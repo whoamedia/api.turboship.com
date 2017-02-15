@@ -19,6 +19,11 @@ abstract class InventoryLocation implements \JsonSerializable
     protected $id;
 
     /**
+     * @var int
+     */
+    protected $totalQuantity;
+
+    /**
      * @var Organization
      */
     protected $organization;
@@ -33,6 +38,7 @@ abstract class InventoryLocation implements \JsonSerializable
     {
         $this->inventory                = new ArrayCollection();
         $this->barCode                  = AU::get($data['barCode']);
+        $this->totalQuantity            = AU::get($data['totalQuantity'], 0);
         $this->organization             = AU::get($data['organization']);
     }
 
@@ -43,6 +49,7 @@ abstract class InventoryLocation implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['barCode']              = $this->barCode;
+        $object['totalQuantity']        = $this->totalQuantity;
 
         return $object;
     }
@@ -61,6 +68,22 @@ abstract class InventoryLocation implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalQuantity()
+    {
+        return $this->totalQuantity;
+    }
+
+    /**
+     * @param int $totalQuantity
+     */
+    public function setTotalQuantity($totalQuantity)
+    {
+        $this->totalQuantity = $totalQuantity;
     }
 
     /**

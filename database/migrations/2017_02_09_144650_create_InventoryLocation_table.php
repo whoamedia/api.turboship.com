@@ -17,6 +17,7 @@ class CreateInventoryLocationTable extends Migration
         {
             $table->increments('id')->unsigned();
             $table->string('barCode', 150)->index();
+            $table->integer('totalQuantity')->unsigned()->index();
             $table->integer('inventoryLocationTypeId')->unsigned()->index();
 
             $table->integer('organizationId')->unsigned()->index();

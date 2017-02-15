@@ -30,6 +30,13 @@ App\Models\WMS\InventoryLocation:
       nullable:       false
       options:
         comment:      "InventoryLocation barCode"
+    totalQuantity:
+      column:         totalQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "InventoryLocation totalQuantity"
+        default:      0
 
   manyToOne:
     organization:

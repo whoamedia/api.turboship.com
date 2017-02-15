@@ -15,7 +15,7 @@ class CreateVariantInventoryTable extends Migration
     {
         Schema::create('VariantInventory', function (Blueprint $table)
         {
-            $table->increments('id')->unsigned();
+            $table->bigIncrements('id')->unsigned();
             $table->integer('variantId')->unsigned()->index();
             $table->foreign('variantId')->references('id')->on('Variant');
         });

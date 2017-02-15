@@ -10,7 +10,10 @@ use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
 use App\Models\Support\Traits\HasBarcode;
+use App\Models\WMS\Bin;
+use App\Models\WMS\VariantInventory;
 use App\Utilities\CountryUtility;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
@@ -89,6 +92,11 @@ class Variant extends BaseModel implements \JsonSerializable
     protected $externalCreatedAt;
 
     /**
+     * @var ArrayCollection
+     */
+    protected $inventory;
+
+    /**
      * Shopify inventory_quantity
      * @var int
      */
@@ -121,6 +129,7 @@ class Variant extends BaseModel implements \JsonSerializable
      */
     public function __construct($data = [])
     {
+        $this->inventory                = new ArrayCollection();
         $this->createdAt                = new \DateTime();
         $this->externalCreatedAt        = new \DateTime();  // Default it so the field doesn't have to be nullable
 
@@ -459,6 +468,28 @@ class Variant extends BaseModel implements \JsonSerializable
     public function setReservedQuantity($reservedQuantity)
     {
         $this->reservedQuantity = $reservedQuantity;
+    }
+
+    /**
+     * @return VariantInventory[]
+     */
+    public function getInventory ()
+    {
+        return $this->inventory->toArray();
+    }
+
+    /**
+     * @param   VariantInventory $inventory
+     * @throws  \Exception
+     */
+    public function addInventory ($inventory)
+    {
+        if (is_null($inventory->getInventoryLocation()))
+            throw new \Exception('InventoryLocation must be set to VariantInventory prior to adding it to Variant');
+
+        $inventory->setVariant($this);
+        $inventory->setOrganization($this->getClient()->getOrganization());
+        $this->inventory->add($inventory);
     }
 
 }

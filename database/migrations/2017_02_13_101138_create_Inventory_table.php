@@ -15,7 +15,7 @@ class CreateInventoryTable extends Migration
     {
         Schema::create('Inventory', function (Blueprint $table)
         {
-            $table->increments('id')->unsigned();
+            $table->bigIncrements('id')->unsigned();
             $table->integer('inventoryTypeId')->unsigned()->index();
 
             $table->integer('inventoryLocationId')->unsigned()->index();
