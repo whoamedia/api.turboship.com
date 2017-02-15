@@ -184,19 +184,16 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
 
         if ($importVariantInventory && is_null($variant->getId()))
         {
+            $binQuery       = [
+                'organizationIds'       => $variant->getClient()->getOrganization()->getId(),
+            ];
+            $bins                       = $this->binRepo->where($binQuery);
+
             for ($i = 0; $i < $shopifyVariant->getInventoryQuantity(); $i++)
             {
                 $variantInventory           = new VariantInventory();
                 $variantInventory->setVariant($variant);
                 $variantInventory->setOrganization($variant->getClient()->getOrganization());
-
-                $binQuery       = [
-                    'organizationIds'       => $variant->getClient()->getOrganization()->getId(),
-                ];
-                $bins                       = $this->binRepo->where($binQuery);
-
-                if (empty($bins))
-                    break;
 
                 $index                      = rand(0, sizeof($bins) - 1);
                 $variantInventory->setInventoryLocation($bins[$index]);
