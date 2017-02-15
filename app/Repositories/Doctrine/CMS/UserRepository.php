@@ -65,7 +65,7 @@ class UserRepository extends BaseRepository
             $firstNames                  = explode(',', $query['firstNames']);
             foreach ($firstNames AS $name)
             {
-                $orX->add($qb->expr()->LIKE('user.firstName', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->eq('user.firstName', $qb->expr()->literal(trim($name))));
             }
             $qb->andWhere($orX);
         }
@@ -76,7 +76,7 @@ class UserRepository extends BaseRepository
             $lastNames                  = explode(',', $query['lastNames']);
             foreach ($lastNames AS $name)
             {
-                $orX->add($qb->expr()->LIKE('user.lastName', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->eq('user.lastName', $qb->expr()->literal(trim($name))));
             }
             $qb->andWhere($orX);
         }
@@ -87,7 +87,7 @@ class UserRepository extends BaseRepository
             $emails                  = explode(',', $query['emails']);
             foreach ($emails AS $name)
             {
-                $orX->add($qb->expr()->LIKE('user.email', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->eq('user.email', $qb->expr()->literal(trim($name))));
             }
             $qb->andWhere($orX);
         }
