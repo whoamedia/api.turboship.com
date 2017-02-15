@@ -37,7 +37,10 @@ class CreateVariantTable extends Migration
             $table->decimal('weight', 10, 2)->unsigned();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
             $table->string('externalId')->index();
+            $table->integer('externalInventoryQuantity')->unsigned()->index()->default(0);
             $table->datetime('externalCreatedAt')->index();
+
+
             $table->unique(['clientId', 'sku']);
         });
     }

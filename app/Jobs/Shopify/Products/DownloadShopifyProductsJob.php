@@ -32,11 +32,6 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
     private $pendingSku;
 
     /**
-     * @var bool
-     */
-    private $importVariantInventory;
-
-    /**
      * @var IntegratedShoppingCartRepository
      */
     private $integratedShoppingCartRepo;
@@ -56,13 +51,12 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
      */
     private $orderItemRepo;
 
-    public function __construct($integratedShoppingCartId, $pendingSku = false, $importVariantInventory = false)
+    public function __construct($integratedShoppingCartId, $pendingSku = false)
     {
         parent::__construct();
 
         $this->integratedShoppingCartId = $integratedShoppingCartId;
         $this->pendingSku               = $pendingSku;
-        $this->importVariantInventory   = $importVariantInventory;
     }
 
     public function handle ()
@@ -101,7 +95,7 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
             $productArray               = json_decode($shopifyProductsResponse, true);
             foreach ($productArray AS $shopifyProduct)
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null, $this->importVariantInventory))->onQueue('shopifyProducts');
+                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
                 $this->dispatch($job);
             }
             usleep(250000);
@@ -121,7 +115,7 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
             $productArray               = json_decode($shopifyProductsResponse, true);
             foreach ($productArray AS $shopifyProduct)
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null, $this->importVariantInventory))->onQueue('shopifyProducts');
+                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
                 $this->dispatch($job);
             }
             usleep(250000);

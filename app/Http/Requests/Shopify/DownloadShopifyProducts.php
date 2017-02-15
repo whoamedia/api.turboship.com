@@ -17,16 +17,10 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
      */
     protected $pendingSku;
 
-    /**
-     * @var bool
-     */
-    protected $importVariantInventory;
-
 
     public function __construct($data = [])
     {
         $this->pendingSku               = AU::get($data['pendingSku']);
-        $this->importVariantInventory   = AU::get($data['importVariantInventory']);
     }
 
     public function validate()
@@ -38,14 +32,11 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
         $this->pendingSku               = BU::getBooleanValue($this->pendingSku);
         $this->pendingSku               = is_null($this->pendingSku) ? false : $this->pendingSku;
 
-        $this->importVariantInventory   = BU::getBooleanValue($this->importVariantInventory);
-        $this->importVariantInventory   = is_null($this->importVariantInventory) ? false : $this->importVariantInventory;
     }
 
     public function jsonSerialize()
     {
         $object['pendingSku']           = $this->pendingSku;
-        $object['importVariantInventory']   = $this->importVariantInventory;
 
         return $object;
     }
@@ -64,22 +55,6 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
     public function setPendingSku($pendingSku)
     {
         $this->pendingSku = $pendingSku;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getImportVariantInventory()
-    {
-        return $this->importVariantInventory;
-    }
-
-    /**
-     * @param bool $importVariantInventory
-     */
-    public function setImportVariantInventory($importVariantInventory)
-    {
-        $this->importVariantInventory = $importVariantInventory;
     }
 
 }

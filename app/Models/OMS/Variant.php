@@ -91,6 +91,12 @@ class Variant extends BaseModel implements \JsonSerializable
     protected $externalCreatedAt;
 
     /**
+     * Shopify inventory_quantity
+     * @var int
+     */
+    protected $externalInventoryQuantity;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -117,6 +123,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $this->sku                      = AU::get($data['sku']);
         $this->weight                   = AU::get($data['weight']);
         $this->externalId               = AU::get($data['externalId']);
+        $this->externalInventoryQuantity= AU::get($data['externalInventoryQuantity'], 0);
 
         if (is_null($this->countryOfOrigin))
         {
@@ -372,5 +379,20 @@ class Variant extends BaseModel implements \JsonSerializable
         $this->externalCreatedAt = $externalCreatedAt;
     }
 
+    /**
+     * @return int
+     */
+    public function getExternalInventoryQuantity()
+    {
+        return $this->externalInventoryQuantity;
+    }
+
+    /**
+     * @param int $externalInventoryQuantity
+     */
+    public function setExternalInventoryQuantity($externalInventoryQuantity)
+    {
+        $this->externalInventoryQuantity = $externalInventoryQuantity;
+    }
 
 }

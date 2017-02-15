@@ -27,22 +27,15 @@ class ShopifyCreateProductJob extends BaseShopifyJob implements ShouldQueue
     private $productRepo;
 
     /**
-     * @var bool
-     */
-    private $importVariantInventory;
-
-    /**
      * ShopifyImportProductJob constructor.
      * @param   string  $jsonShopifyProduct
      * @param   int                         $integratedShoppingCartId
      * @param   int|null                    $shopifyWebHookLogId
-     * @param   bool                        $importVariantInventory
      */
-    public function __construct($jsonShopifyProduct, $integratedShoppingCartId, $shopifyWebHookLogId = null, $importVariantInventory = false)
+    public function __construct($jsonShopifyProduct, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
         parent::__construct($integratedShoppingCartId, 'products/create', $shopifyWebHookLogId);
         $this->jsonShopifyProduct       = $jsonShopifyProduct;
-        $this->importVariantInventory   = $importVariantInventory;
     }
 
     /**
@@ -64,7 +57,7 @@ class ShopifyCreateProductJob extends BaseShopifyJob implements ShouldQueue
             return;
         }
 
-        $product                        = $shopifyProductMappingService->handleMapping($shopifyProduct, $this->importVariantInventory);
+        $product                        = $shopifyProductMappingService->handleMapping($shopifyProduct);
         $entityCreated                  = is_null($product->getId()) ? true : false;
         $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 

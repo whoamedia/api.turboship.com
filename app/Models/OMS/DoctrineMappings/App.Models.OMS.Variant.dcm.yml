@@ -79,6 +79,13 @@ App\Models\OMS\Variant:
       options:
         comment:      "When the Variant was created on an integrated system"
         default:      CURRENT_datetime
+    externalInventoryQuantity:
+      column:         externalInventoryQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "Variant externalInventoryQuantity"
+        default:      0
 
   manyToOne:
     product:
