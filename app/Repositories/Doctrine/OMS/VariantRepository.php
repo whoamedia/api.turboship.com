@@ -54,8 +54,8 @@ class VariantRepository extends BaseRepository
         ]);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
-        $qb->addGroupBy('source');
         $qb->addGroupBy('client');
+        $qb->addGroupBy('source');
 
         $result                                 =       $qb->getQuery()->getResult();
 
@@ -66,9 +66,9 @@ class VariantRepository extends BaseRepository
                 'type'          => 'integer',
                 'values'        => [],
             ],
-            'status'            =>  [
-                'displayField'  => 'Statuses',
-                'searchField'   => 'statusIds',
+            'source'            =>  [
+                'displayField'  => 'Sources',
+                'searchField'   => 'sourceIds',
                 'type'          => 'integer',
                 'values'        => [],
             ],
