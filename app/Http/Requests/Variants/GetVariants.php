@@ -34,6 +34,11 @@ class GetVariants extends BaseGet implements Cleanable, Validatable, \JsonSerial
     /**
      * @var string|null
      */
+    protected $externalids;
+
+    /**
+     * @var string|null
+     */
     protected $skus;
 
     /**
@@ -50,6 +55,7 @@ class GetVariants extends BaseGet implements Cleanable, Validatable, \JsonSerial
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->productIds               = AU::get($data['productIds']);
         $this->sourceIds                = AU::get($data['sourceIds']);
+        $this->externalids              = AU::get($data['externalids']);
         $this->skus                     = AU::get($data['skus']);
         $this->barCodes                 = AU::get($data['barCodes']);
     }
@@ -74,6 +80,7 @@ class GetVariants extends BaseGet implements Cleanable, Validatable, \JsonSerial
         $object['organizationIds']      = $this->organizationIds;
         $object['productIds']           = $this->productIds;
         $object['sourceIds']            = $this->sourceIds;
+        $object['externalids']          = $this->externalids;
         $object['skus']                 = $this->skus;
         $object['barCodes']             = $this->barCodes;
 
@@ -152,6 +159,22 @@ class GetVariants extends BaseGet implements Cleanable, Validatable, \JsonSerial
     public function setSourceIds($sourceIds)
     {
         $this->sourceIds = $sourceIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalids()
+    {
+        return $this->externalids;
+    }
+
+    /**
+     * @param null|string $externalids
+     */
+    public function setExternalids($externalids)
+    {
+        $this->externalids = $externalids;
     }
 
     /**
