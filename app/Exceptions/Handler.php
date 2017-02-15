@@ -26,6 +26,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Validation\ValidationException::class,
         \App\Exceptions\Integrations\IntegrationNotRespondingException::class,
         \App\Exceptions\Integrations\IntegrationThrottledException::class,
+        \App\Exceptions\Integrations\IntegrationInvalidCredentialsException::class,
     ];
 
     /**

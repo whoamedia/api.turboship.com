@@ -3,12 +3,14 @@
 namespace App\Services\EasyPost;
 
 
+use App\Exceptions\Integrations\IntegrationInvalidCredentialsException;
 use App\Exceptions\Integrations\IntegrationNotRespondingException;
 use App\Exceptions\Integrations\IntegrationThrottledException;
 use jamesvweston\EasyPost\EasyPostConfiguration;
 use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUserThrottledException;
@@ -81,6 +83,10 @@ class EasyPostService
         {
             throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
+        catch (EasyPostInvalidCredentialsException $exception)
+        {
+            throw new IntegrationInvalidCredentialsException('Invalid EasyPost credentials');
+        }
     }
 
     /**
@@ -106,6 +112,10 @@ class EasyPostService
         {
             throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
+        catch (EasyPostInvalidCredentialsException $exception)
+        {
+            throw new IntegrationInvalidCredentialsException('Invalid EasyPost credentials');
+        }
     }
 
     /**
@@ -126,6 +136,10 @@ class EasyPostService
         catch (EasyPostUserThrottledException $exception)
         {
             throw new IntegrationThrottledException('The EasyPost API user has been throttled');
+        }
+        catch (EasyPostInvalidCredentialsException $exception)
+        {
+            throw new IntegrationInvalidCredentialsException('Invalid EasyPost credentials');
         }
     }
 }
