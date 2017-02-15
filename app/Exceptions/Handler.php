@@ -25,6 +25,7 @@ class Handler extends ExceptionHandler
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
         \App\Exceptions\Integrations\IntegrationNotRespondingException::class,
+        \App\Exceptions\Integrations\IntegrationThrottledException::class,
     ];
 
     /**

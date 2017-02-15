@@ -4,12 +4,14 @@ namespace App\Services\EasyPost;
 
 
 use App\Exceptions\Integrations\IntegrationNotRespondingException;
+use App\Exceptions\Integrations\IntegrationThrottledException;
 use jamesvweston\EasyPost\EasyPostConfiguration;
 use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
+use jamesvweston\EasyPost\Exceptions\EasyPostUserThrottledException;
 use jamesvweston\EasyPost\Models\Requests\CreateEasyPostShipment;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -53,6 +55,10 @@ class EasyPostService
         {
             throw new IntegrationNotRespondingException($exception->getMessage());
         }
+        catch (EasyPostUserThrottledException $exception)
+        {
+            throw new IntegrationThrottledException('The EasyPost API user has been throttled');
+        }
 
     }
 
@@ -70,6 +76,10 @@ class EasyPostService
         catch (EasyPostServiceUnavailableException $exception)
         {
             throw new IntegrationNotRespondingException($exception->getMessage());
+        }
+        catch (EasyPostUserThrottledException $exception)
+        {
+            throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
     }
 
@@ -92,6 +102,10 @@ class EasyPostService
         {
             throw new IntegrationNotRespondingException($exception->getMessage());
         }
+        catch (EasyPostUserThrottledException $exception)
+        {
+            throw new IntegrationThrottledException('The EasyPost API user has been throttled');
+        }
     }
 
     /**
@@ -108,6 +122,10 @@ class EasyPostService
         catch (EasyPostServiceUnavailableException $exception)
         {
             throw new IntegrationNotRespondingException($exception->getMessage());
+        }
+        catch (EasyPostUserThrottledException $exception)
+        {
+            throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
     }
 }
