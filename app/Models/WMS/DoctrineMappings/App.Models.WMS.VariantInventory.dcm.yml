@@ -8,7 +8,6 @@ App\Models\WMS\VariantInventory:
       targetEntity:   App\Models\OMS\Variant
       nullable:       false
       fetch:          EAGER
-      inversedBy:     inventory
       joinColumn:
         name:         variantId
         referencedColumnName: id

@@ -38,6 +38,9 @@ class CreateVariantTable extends Migration
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
             $table->string('externalId')->index();
             $table->integer('externalInventoryQuantity')->unsigned()->index()->default(0);
+            $table->integer('totalQuantity')->unsigned()->index()->default(0);
+            $table->integer('readyQuantity')->unsigned()->index()->default(0);
+            $table->integer('reservedQuantity')->unsigned()->index()->default(0);
             $table->datetime('externalCreatedAt')->index();
 
 

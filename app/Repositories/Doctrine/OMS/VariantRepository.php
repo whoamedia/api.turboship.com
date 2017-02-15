@@ -77,6 +77,18 @@ class VariantRepository extends BaseRepository
         return $this->buildLexicon($lexicon, $result);
     }
 
+    public function getSyncableVariants ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select(['variant.id']);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->andWhere($qb->expr()->gt('variant.externalInventoryQuantity', 0));
+
+        $qb->addOrderBy(AU::get($query['orderBy'], 'variant.id'), AU::get($query['direction'], 'ASC'));
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query

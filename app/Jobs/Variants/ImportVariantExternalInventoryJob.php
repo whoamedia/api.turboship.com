@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Jobs\Orders\Variants;
+namespace App\Jobs\Variants;
 
 
 use App\Jobs\Job;
+use App\Models\WMS\Bin;
 use App\Models\WMS\VariantInventory;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Repositories\Doctrine\WMS\BinRepository;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,6 +36,11 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     private $variantRepo;
 
     /**
+     * @var VariantInventoryRepository
+     */
+    private $variantInventoryRepo;
+
+    /**
      * @var BinRepository
      */
     private $binRepo;
@@ -50,6 +57,7 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     public function handle()
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
         $this->binRepo                  = EntityManager::getRepository('App\Models\WMS\Bin');
 
         $variant                        = $this->variantRepo->getOneById($this->variantId);
@@ -62,19 +70,22 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
 
         $binResults                     = $this->binRepo->where($binQuery);
         $index                          = rand(0, sizeof($binResults) - 1);
+        $bin                            = $binResults[$index];
 
-        $variant->emptyInventory();
+
+        /**
+         * Need to delete all VariantInventory that has this Variant id
+         */
 
         for ($i = 0; $i < $variant->getExternalInventoryQuantity(); $i++)
         {
             $variantInventory           = new VariantInventory();
             $variantInventory->setVariant($variant);
-            $variantInventory->setInventoryLocation($binResults[$index]);
             $variantInventory->setOrganization($variant->getClient()->getOrganization());
-            $variant->addInventory($variantInventory);
+            $bin->addInventory($variantInventory);
         }
 
-        $this->variantRepo->saveAndCommit($variant);
+        $this->binRepo->saveAndCommit($bin);
     }
 
 }

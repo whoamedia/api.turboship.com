@@ -31,6 +31,15 @@ trait HasInventory
     }
 
     /**
+     * @param   Inventory       $inventory
+     * @return  bool
+     */
+    public function hasInventory($inventory)
+    {
+        return $this->inventory->contains($inventory);
+    }
+
+    /**
      * @param Inventory $inventory
      */
     public function removeInventory ($inventory)

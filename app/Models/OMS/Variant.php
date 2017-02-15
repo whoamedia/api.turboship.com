@@ -10,9 +10,7 @@ use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
 use App\Models\Support\Traits\HasBarcode;
-use App\Models\WMS\Traits\HasVariantInventory;
 use App\Utilities\CountryUtility;
-use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
@@ -20,7 +18,7 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 class Variant extends BaseModel implements \JsonSerializable
 {
 
-    use HasBarcode, HasVariantInventory;
+    use HasBarcode;
 
 
     /**
@@ -97,6 +95,21 @@ class Variant extends BaseModel implements \JsonSerializable
     protected $externalInventoryQuantity;
 
     /**
+     * @var int
+     */
+    protected $totalQuantity;
+
+    /**
+     * @var int
+     */
+    protected $readyQuantity;
+
+    /**
+     * @var int
+     */
+    protected $reservedQuantity;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -108,7 +121,6 @@ class Variant extends BaseModel implements \JsonSerializable
      */
     public function __construct($data = [])
     {
-        $this->inventory                = new ArrayCollection();
         $this->createdAt                = new \DateTime();
         $this->externalCreatedAt        = new \DateTime();  // Default it so the field doesn't have to be nullable
 
@@ -124,6 +136,9 @@ class Variant extends BaseModel implements \JsonSerializable
         $this->weight                   = AU::get($data['weight']);
         $this->externalId               = AU::get($data['externalId']);
         $this->externalInventoryQuantity= AU::get($data['externalInventoryQuantity'], 0);
+        $this->totalQuantity            = AU::get($data['totalQuantity'], 0);
+        $this->readyQuantity            = AU::get($data['readyQuantity'], 0);
+        $this->reservedQuantity         = AU::get($data['reservedQuantity'], 0);
 
         if (is_null($this->countryOfOrigin))
         {
@@ -178,6 +193,9 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['createdAt']            = $this->createdAt;
         $object['externalId']           = $this->externalId;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
+        $object['totalQuantity']        = $this->totalQuantity;
+        $object['readyQuantity']        = $this->readyQuantity;
+        $object['reservedQuantity']     = $this->reservedQuantity;
 
         $object['product']              = [
             'id'                        => $this->product->getId(),
@@ -393,6 +411,54 @@ class Variant extends BaseModel implements \JsonSerializable
     public function setExternalInventoryQuantity($externalInventoryQuantity)
     {
         $this->externalInventoryQuantity = $externalInventoryQuantity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalQuantity()
+    {
+        return $this->totalQuantity;
+    }
+
+    /**
+     * @param int $totalQuantity
+     */
+    public function setTotalQuantity($totalQuantity)
+    {
+        $this->totalQuantity = $totalQuantity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReadyQuantity()
+    {
+        return $this->readyQuantity;
+    }
+
+    /**
+     * @param int $readyQuantity
+     */
+    public function setReadyQuantity($readyQuantity)
+    {
+        $this->readyQuantity = $readyQuantity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReservedQuantity()
+    {
+        return $this->reservedQuantity;
+    }
+
+    /**
+     * @param int $reservedQuantity
+     */
+    public function setReservedQuantity($reservedQuantity)
+    {
+        $this->reservedQuantity = $reservedQuantity;
     }
 
 }

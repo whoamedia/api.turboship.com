@@ -5,13 +5,13 @@ namespace App\Models\WMS;
 
 use App\Models\CMS\Organization;
 use App\Models\Support\Traits\HasBarcode;
-use App\Models\WMS\Traits\HasInventory;
+use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 abstract class InventoryLocation implements \JsonSerializable
 {
 
-    use HasInventory, HasBarcode;
+    use HasBarcode;
 
     /**
      * @var int
@@ -23,9 +23,15 @@ abstract class InventoryLocation implements \JsonSerializable
      */
     protected $organization;
 
+    /**
+     * @var ArrayCollection
+     */
+    protected $inventory;
+
 
     public function __construct($data = [])
     {
+        $this->inventory                = new ArrayCollection();
         $this->barCode                  = AU::get($data['barCode']);
         $this->organization             = AU::get($data['organization']);
     }
@@ -71,6 +77,40 @@ abstract class InventoryLocation implements \JsonSerializable
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return Inventory[]
+     */
+    public function getInventory ()
+    {
+        return $this->inventory->toArray();
+    }
+
+    /**
+     * @param Inventory $inventory
+     */
+    public function addInventory ($inventory)
+    {
+        $inventory->setInventoryLocation($this);
+        $this->inventory->add($inventory);
+    }
+
+    /**
+     * @param   Inventory       $inventory
+     * @return  bool
+     */
+    public function hasInventory($inventory)
+    {
+        return $this->inventory->contains($inventory);
+    }
+
+    /**
+     * @param Inventory $inventory
+     */
+    public function removeInventory ($inventory)
+    {
+        $this->inventory->removeElement($inventory);
     }
 
 }
