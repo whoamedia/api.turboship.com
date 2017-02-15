@@ -3,6 +3,8 @@
 namespace App\Services\Shopify\Mapping;
 
 
+use App\Models\WMS\VariantInventory;
+use App\Repositories\Doctrine\WMS\BinRepository;
 use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
 use jamesvweston\Shopify\Models\Responses\ShopifyProductImage;
 use jamesvweston\Shopify\Models\Responses\ShopifyVariant;
@@ -34,6 +36,11 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
      */
     protected $variantRepo;
 
+    /**
+     * @var BinRepository
+     */
+    protected $binRepo;
+
 
     public function __construct(Client $client)
     {
@@ -42,13 +49,15 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         $this->imageRepo                    = EntityManager::getRepository('App\Models\Support\Image');
         $this->productAliasRepo             = EntityManager::getRepository('App\Models\OMS\ProductAlias');
         $this->variantRepo                  = EntityManager::getRepository('App\Models\OMS\Variant');
+        $this->binRepo                      = EntityManager::getRepository('App\Models\WMS\Bin');
     }
 
     /**
      * @param   ShopifyProduct $shopifyProduct
+     * @param   bool            $importVariantInventory
      * @return  Product
      */
-    public function handleMapping (ShopifyProduct $shopifyProduct)
+    public function handleMapping (ShopifyProduct $shopifyProduct, $importVariantInventory = false)
     {
         $productAlias                       = $this->findLocalProductAlias($shopifyProduct);
         $productAlias                       = $this->toLocalProductAlias($shopifyProduct, $productAlias);
@@ -60,7 +69,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         foreach ($shopifyProduct->getVariants() AS $shopifyVariant)
         {
             $variant                        = $this->findLocalVariant($shopifyVariant);
-            $variant                        = $this->toVariant($shopifyVariant, $variant);
+            $variant                        = $this->toVariant($shopifyVariant, $variant, $importVariantInventory);
             if (is_null($variant->getId()))
                 $product->addVariant($variant);
         }
@@ -142,11 +151,12 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
 
     /**
      * Creates or updates a Variant
-     * @param   ShopifyVariant $shopifyVariant
+     * @param   ShopifyVariant  $shopifyVariant
+     * @param   bool            $importVariantInventory
      * @param   Variant $variant
      * @return  Variant
      */
-    public function toVariant (ShopifyVariant $shopifyVariant, Variant $variant = null)
+    public function toVariant (ShopifyVariant $shopifyVariant, Variant $variant = null, $importVariantInventory = false)
     {
         if (is_null($variant))
             $variant                        = new Variant();
@@ -171,6 +181,28 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         $variant->setOriginalSku($shopifyVariant->getSku());
         $sku                                = $this->shopifyMappingExceptionService->getShopifySku($this->client, $shopifyVariant->getSku(), $shopifyVariant->getId());
         $variant->setSku($sku);
+
+        if ($importVariantInventory && is_null($variant->getId()))
+        {
+            for ($i = 0; $i < $shopifyVariant->getInventoryQuantity(); $i++)
+            {
+                $variantInventory           = new VariantInventory();
+                $variantInventory->setVariant($variant);
+                $variantInventory->setOrganization($variant->getClient()->getOrganization());
+
+                $binQuery       = [
+                    'organizationIds'       => $variant->getClient()->getOrganization()->getId(),
+                ];
+                $bins                       = $this->binRepo->where($binQuery);
+
+                if (empty($bins))
+                    break;
+
+                $index                      = rand(0, sizeof($bins) - 1);
+                $variantInventory->setInventoryLocation($bins[$index]);
+                $variant->addInventory($variantInventory);
+            }
+        }
 
         return $variant;
     }
