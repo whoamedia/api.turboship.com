@@ -32,10 +32,49 @@ class VariantRepository extends BaseRepository
         $qb->select(['variant', 'client', 'product', 'source']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
+        $qb->addOrderBy(AU::get($query['orderBy'], 'variant.id'), AU::get($query['direction'], 'ASC'));
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
+    }
+
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT variant.id) AS total',
+            'source.id AS source_id', 'source.name AS source_name',
+            'client.id AS client_id', 'client.name AS client_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('source');
+        $qb->addGroupBy('client');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'client'            =>  [
+                'displayField'  => 'Clients',
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'status'            =>  [
+                'displayField'  => 'Statuses',
+                'searchField'   => 'statusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
     }
 
     /**
@@ -47,6 +86,7 @@ class VariantRepository extends BaseRepository
     {
         $qb->from('App\Models\OMS\Variant', 'variant')
             ->join('variant.client', 'client', Query\Expr\Join::ON)
+            ->join('client.organization', 'organization', Query\Expr\Join::ON)
             ->join('variant.product', 'product', Query\Expr\Join::ON)
             ->join('variant.source', 'source', Query\Expr\Join::ON);
 
@@ -55,6 +95,9 @@ class VariantRepository extends BaseRepository
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
+
+        if (!is_null(AU::get($query['organizationIds'])))
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
         if (!is_null(AU::get($query['productIds'])))
             $qb->andWhere($qb->expr()->in('product.id', $query['productIds']));
@@ -96,7 +139,6 @@ class VariantRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('variant.id', 'ASC');
         return $qb;
     }
 

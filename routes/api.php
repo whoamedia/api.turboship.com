@@ -238,13 +238,17 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/users/{id}/permissions', 'UserController@createPermissions');
     Route::put('/users/{id}/permissions', 'UserController@updatePermissions');
     Route::delete('/users/{id}/permissions/{permissionId}', 'UserController@deletePermission');
-
     Route::get('/users/{id}/roles', 'UserController@getRoles');
     Route::post('/users/{id}/roles', 'UserController@createRoles');
     Route::put('/users/{id}/roles', 'UserController@updateRoles');
     Route::delete('/users/{id}/roles/{roleId}', 'UserController@deleteRole');
-
     Route::put('/users/{id}/password', 'UserController@updatePassword');
+
+
+    //  Variant Operations
+    Route::get('/variants', 'VariantController@index');
+    Route::get('/variants/lexicon', 'VariantController@getLexicon');
+
 
 });
 
