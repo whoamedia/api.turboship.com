@@ -101,7 +101,7 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
             $productArray               = json_decode($shopifyProductsResponse, true);
             foreach ($productArray AS $shopifyProduct)
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId()))->onQueue('shopifyProducts');
+                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null, $this->importVariantInventory))->onQueue('shopifyProducts');
                 $this->dispatch($job);
             }
             usleep(250000);
@@ -121,7 +121,7 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
             $productArray               = json_decode($shopifyProductsResponse, true);
             foreach ($productArray AS $shopifyProduct)
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId()))->onQueue('shopifyProducts');
+                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null, $this->importVariantInventory))->onQueue('shopifyProducts');
                 $this->dispatch($job);
             }
             usleep(250000);
