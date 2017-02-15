@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Variants\GetVariants;
+use App\Jobs\Orders\Variants\ImportVariantExternalInventoryJob;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use EntityManager;
 use Illuminate\Http\Request;
@@ -45,5 +46,22 @@ class VariantController extends BaseAuthController
         $query                          = $getVariants->jsonSerialize();
         $results                        = $this->variantRepo->getLexicon($query);
         return response($results);
+    }
+
+    public function syncExternalInventory (Request $request)
+    {
+        $getVariants                    = new GetVariants($request->input());
+        $getVariants->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+        $getVariants->validate();
+        $getVariants->clean();
+
+        $query                          = $getVariants->jsonSerialize();
+
+        $variantResults                 = $this->variantRepo->where($query);
+        foreach ($variantResults AS $variant)
+        {
+            $job                        = (new ImportVariantExternalInventoryJob($variant->getId(), $request->input('binId')))->onQueue('variantExternalInventorySync');
+            $this->dispatch($job);
+        }
     }
 }

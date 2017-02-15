@@ -248,6 +248,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Variant Operations
     Route::get('/variants', 'VariantController@index');
     Route::get('/variants/lexicon', 'VariantController@getLexicon');
+    Route::get('/variants/externalInventory/sync', 'VariantController@syncExternalInventory');
 
 
 });

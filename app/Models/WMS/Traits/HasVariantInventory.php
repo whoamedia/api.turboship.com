@@ -38,4 +38,9 @@ trait HasVariantInventory
         $this->inventory->removeElement($inventory);
     }
 
+    public function emptyInventory ()
+    {
+        $this->inventory->clear();
+    }
+
 }
