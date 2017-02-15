@@ -20,6 +20,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  ACL operations
     Route::get('/acl/permissions', 'ACLController@getPermissions');
+    Route::get('/acl/permissions/lexicon', 'ACLController@getPermissionLexicon');
     Route::get('/acl/permissions/{id}', 'ACLController@showPermission');
     Route::get('/acl/roles', 'ACLController@getRoles');
     Route::post('/acl/roles', 'ACLController@createRole');

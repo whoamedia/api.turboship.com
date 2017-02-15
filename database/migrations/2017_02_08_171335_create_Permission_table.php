@@ -16,6 +16,7 @@ class CreatePermissionTable extends Migration
         Schema::create('Permission', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
+            $table->string('entity')->index();
             $table->string('name', 100)->unique();
             $table->string('description');
         });

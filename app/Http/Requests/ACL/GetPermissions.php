@@ -5,16 +5,16 @@ namespace App\Http\Requests\ACL;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
-use App\Http\Requests\BaseRequest;
+use App\Http\Requests\BaseGet;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class GetPermissions extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
+class GetPermissions extends BaseGet implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
      * @var string|null
      */
-    protected $ids;
+    protected $entities;
 
     /**
      * @var string|null
@@ -24,13 +24,15 @@ class GetPermissions extends BaseRequest implements Cleanable, Validatable, \Jso
 
     public function __construct($data = [])
     {
-        $this->ids                      = AU::get($data['ids']);
+        parent::__construct('permission.id', $data);
+
+        $this->entities                 = AU::get($data['entities']);
         $this->names                    = AU::get($data['names']);
     }
 
     public function validate()
     {
-        $this->ids                      = parent::validateIds($this->ids, 'ids');
+        parent::validate();
     }
 
     /**
@@ -38,7 +40,8 @@ class GetPermissions extends BaseRequest implements Cleanable, Validatable, \Jso
      */
     public function jsonSerialize ()
     {
-        $object['ids']                  = $this->ids;
+        $object                         = parent::jsonSerialize();
+        $object['entities']             = $this->entities;
         $object['names']                = $this->names;
 
         return $object;
@@ -46,23 +49,23 @@ class GetPermissions extends BaseRequest implements Cleanable, Validatable, \Jso
 
     public function clean ()
     {
-
+        parent::clean();
     }
 
     /**
      * @return null|string
      */
-    public function getIds()
+    public function getEntities()
     {
-        return $this->ids;
+        return $this->entities;
     }
 
     /**
-     * @param null|string $ids
+     * @param null|string $entities
      */
-    public function setIds($ids)
+    public function setEntities($entities)
     {
-        $this->ids = $ids;
+        $this->entities = $entities;
     }
 
     /**

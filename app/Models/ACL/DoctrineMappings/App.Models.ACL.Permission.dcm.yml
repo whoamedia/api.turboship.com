@@ -16,6 +16,13 @@ App\Models\ACL\Permission:
         strategy:     IDENTITY
 
   fields:
+    entity:
+      column:         entity
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "Permission entity"
     name:
       column:         name
       type:           string

@@ -31,6 +31,7 @@ class PermissionRepository extends BaseRepository
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select(['permission']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'permission.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -38,6 +39,35 @@ class PermissionRepository extends BaseRepository
             return $this->paginate($qb->getQuery(), $pagination['limit']);
     }
 
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT permission.id) AS total',
+            'permission.entity AS entity_id', 'permission.entity AS entity_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('permission.entity');
+        $qb->addGroupBy('permission.name');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'entity'         =>  [
+                'displayField'  => 'Entities',
+                'searchField'   => 'entities',
+                'type'          => 'string',
+                'values'        => [],
+            ],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
+    }
     /**
      * @param       QueryBuilder            $qb
      * @param       []                      $query
@@ -51,19 +81,28 @@ class PermissionRepository extends BaseRepository
             $qb->andWhere($qb->expr()->in('permission.id', $query['ids']));
 
 
-        if (!is_null(AU::get($query['names'])))
+        if (!is_null(AU::get($query['entities'])))
         {
             $orX                    = $qb->expr()->orX();
-            $names                  = explode(',', $query['names']);
-
-            foreach ($names AS $name)
+            $entities                   = explode(',', $query['entities']);
+            foreach ($entities AS $entity)
             {
-                $orX->add($qb->expr()->LIKE('permission.name', $qb->expr()->literal('%' . trim($name) . '%')));
+                $orX->add($qb->expr()->eq('permission.entity', $qb->expr()->literal($entity)));
             }
             $qb->andWhere($orX);
         }
 
-        $qb->orderBy('permission.id', 'ASC');
+        if (!is_null(AU::get($query['names'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $names                   = explode(',', $query['names']);
+            foreach ($names AS $name)
+            {
+                $orX->add($qb->expr()->eq('permission.name', $qb->expr()->literal($name)));
+            }
+            $qb->andWhere($orX);
+        }
+
         return $qb;
     }
 

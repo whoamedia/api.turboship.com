@@ -49,6 +49,15 @@ class ACLController extends BaseAuthController
         return response($results);
     }
 
+    public function getPermissionLexicon (Request $request)
+    {
+        $getPermissions                 = new GetPermissions($request->input());
+        $query                          = $getPermissions->jsonSerialize();
+
+        $results                        = $this->permissionRepo->getLexicon($query);
+        return response($results);
+    }
+
 
     public function showPermission (Request $request)
     {

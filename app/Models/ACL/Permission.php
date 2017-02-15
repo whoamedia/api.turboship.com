@@ -14,6 +14,11 @@ class Permission implements \JsonSerializable
     /**
      * @var string
      */
+    protected $entity;
+
+    /**
+     * @var string
+     */
     protected $name;
 
     /**
@@ -28,6 +33,7 @@ class Permission implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['entity']               = $this->entity;
         $object['name']                 = $this->name;
         $object['description']          = $this->description;
 
@@ -48,6 +54,22 @@ class Permission implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param string $entity
+     */
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
     }
 
     /**
