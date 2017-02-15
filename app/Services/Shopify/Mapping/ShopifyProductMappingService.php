@@ -158,7 +158,9 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         $variant->setBarcode($shopifyVariant->getBarcode());
         $variant->setExternalId(intval($shopifyVariant->getId()));
         $variant->setExternalCreatedAt($this->toDate($shopifyVariant->getCreatedAt()));
-        $variant->setExternalInventoryQuantity($shopifyVariant->getInventoryQuantity());
+
+        if ($shopifyVariant->getInventoryQuantity() != -1)
+            $variant->setExternalInventoryQuantity($shopifyVariant->getInventoryQuantity());
 
         //  Convert grams to ounces
         $grams                              = $shopifyVariant->getGrams();
