@@ -29,8 +29,8 @@ trait HasBarcode
         $this->barCode = $barCode;
     }
 
-    public function generateBarCode ()
+    public function generateBarCode ($characters = 150)
     {
-        $this->barCode = Str::random(150);
+        $this->barCode = Str::random($characters);
     }
 }

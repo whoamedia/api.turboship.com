@@ -108,6 +108,7 @@ class User extends BaseModel implements Authenticatable, \JsonSerializable
         $object['organization']         = $this->organization->jsonSerialize();
         $object['client']               = is_null($this->client) ? null : $this->client->jsonSerialize();
         $object['image']                = !is_null($this->image) ? $this->getImage()->jsonSerialize() : null;
+        $object['object']               = 'User';
 
         return $object;
     }

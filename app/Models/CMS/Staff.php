@@ -25,6 +25,7 @@ class Staff extends User implements \JsonSerializable
     {
         $object                     = parent::jsonSerialize();
         $object['barCode']          = $this->barCode;
+        $object['object']           = 'Staff';
 
         return $object;
     }
