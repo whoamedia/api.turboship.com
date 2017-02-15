@@ -10,6 +10,7 @@ use App\Models\Locations\Validation\CountryValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
 use App\Models\Support\Traits\HasBarcode;
+use App\Models\WMS\Traits\HasVariantInventory;
 use App\Utilities\CountryUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 class Variant extends BaseModel implements \JsonSerializable
 {
 
-    use HasBarcode;
+    use HasBarcode, HasVariantInventory;
 
 
     /**
@@ -76,11 +77,6 @@ class Variant extends BaseModel implements \JsonSerializable
      * @var float
      */
     protected $weight;
-
-    /**
-     * @var ArrayCollection
-     */
-    protected $inventory;
 
     /**
      * Shopify id
