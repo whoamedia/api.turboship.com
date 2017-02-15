@@ -65,17 +65,10 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
         $this->integratedShoppingCart   = $this->integratedShoppingCartRepo->getOneById($this->integratedShoppingCartId);
         $this->shopifyService           = new ShopifyService($this->integratedShoppingCart);
 
-        try
-        {
-            if ($this->pendingSku)
-                $this->downloadPendingSku();
-            else
-                $this->downloadAllProducts();
-        }
-        catch (\Exception $exception)
-        {
-            //  Do nothing
-        }
+        if ($this->pendingSku)
+            $this->downloadPendingSku();
+        else
+            $this->downloadAllProducts();
     }
 
     private function downloadPendingSku ()
