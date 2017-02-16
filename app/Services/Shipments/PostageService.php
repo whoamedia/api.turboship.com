@@ -59,6 +59,11 @@ class PostageService
      */
     public function rate (Shipment $shipment, $clearRates = true)
     {
+        \Bugsnag::leaveBreadcrumb('PostageService rate', null,
+            [
+                'shipmentId'    => $shipment->getId(),
+            ]);
+
         $shipment->canRate();
 
         if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
@@ -95,6 +100,12 @@ class PostageService
      */
     public function purchase (Shipment $shipment, Rate $rate)
     {
+        \Bugsnag::leaveBreadcrumb('PostageService purchase', null,
+            [
+                'shipmentId'    => $shipment->getId(),
+                'rateId'        => $rate->getId(),
+            ]);
+
         $shipment->canPurchasePostage($rate);
 
         if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)

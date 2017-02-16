@@ -76,39 +76,28 @@ class AutomatedShippingJob extends Job implements ShouldQueue
 
 
 
-        try
+        if (empty($shipment->getRates()))
         {
-            if (empty($shipment->getRates()))
-            {
-                $postageService->rate($shipment);
-            }
-
-
-            $candidateRates                 = [];
-            foreach ($shipment->getRates() AS $rate)
-            {
-                if ($rate->getShippingApiService()->getService()->getCarrier()->getId() == CarrierUtility::UPS_MAIL_INNOVATIONS)
-                    continue;
-
-                $candidateRates[]           = $rate;
-            }
-
-            $index                          = rand(0, sizeof($candidateRates) - 1);
-            $rate                           = $candidateRates[$index];
-
-
-            $postageService->purchase($shipment, $rate);
-            $this->shipmentRepo->saveAndCommit($shipment);
-            $postageService->handleOrderShippedLogic($shipment);
+            $postageService->rate($shipment);
         }
-        catch (EasyPostCustomsInfoException $exception)
+
+
+        $candidateRates                 = [];
+        foreach ($shipment->getRates() AS $rate)
         {
-            \Bugsnag::leaveBreadcrumb('request', null,
-                [
-                    'shipmentId' => $this->shipmentId,
-                ]);
-            throw $exception;
+            if ($rate->getShippingApiService()->getService()->getCarrier()->getId() == CarrierUtility::UPS_MAIL_INNOVATIONS)
+                continue;
+
+            $candidateRates[]           = $rate;
         }
+
+        $index                          = rand(0, sizeof($candidateRates) - 1);
+        $rate                           = $candidateRates[$index];
+
+
+        $postageService->purchase($shipment, $rate);
+        $this->shipmentRepo->saveAndCommit($shipment);
+        $postageService->handleOrderShippedLogic($shipment);
     }
 
 }
