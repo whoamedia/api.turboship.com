@@ -101,7 +101,7 @@ class DownloadShopifyOrdersJob extends Job implements ShouldQueue
             $orderArray                     = json_decode($shopifyOrdersResponse, true);
             foreach ($orderArray AS $shopifyOrder)
             {
-                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId(), $this->shippedOrders))->onQueue('shopifyOrders');
+                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId(), null, $this->shippedOrders))->onQueue('shopifyOrders');
                 $this->dispatch($job);
             }
         }

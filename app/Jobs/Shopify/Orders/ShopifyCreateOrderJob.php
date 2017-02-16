@@ -61,12 +61,14 @@ class ShopifyCreateOrderJob extends BaseShopifyJob implements ShouldQueue
         $shouldImportOrder              = $shopifyOrderMappingService->shouldImportOrder($shopifyOrder);
         $importOverride                 = $shopifyOrderMappingService->shouldImportOrder($shopifyOrder, $this->importShippedOrder);
 
-        if (!$shouldImportOrder)
+        if (!$shouldImportOrder && !$importOverride)
             $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
         else
         {
             if ($this->importShippedOrder && $importOverride)
+            {
                 $this->shopifyWebHookLog->addNote('Import shipped order override was successful');
+            }
 
             $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
             $entityCreated                  = is_null($order->getId()) ? true : false;
