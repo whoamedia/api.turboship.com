@@ -95,6 +95,12 @@ class ToteController extends BaseAuthController
         return response($tote);
     }
 
+    public function getInventory (Request $request)
+    {
+        $tote                           = $this->getToteFromRoute($request->route('id'));
+        return response($tote->getInventory());
+    }
+
     /**
      * @param   int     $id
      * @return  Tote

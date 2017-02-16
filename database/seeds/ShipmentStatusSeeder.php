@@ -37,7 +37,7 @@ class ShipmentStatusSeeder extends Seeder
             ],
             [
                 'id'    => ShipmentStatusUtility::FULLY_SHIPPED,
-                'name'  => 'Fully Complete',
+                'name'  => 'Fully Shipped',
                 'isError' => false
             ],
 

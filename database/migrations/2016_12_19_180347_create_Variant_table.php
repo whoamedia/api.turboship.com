@@ -45,6 +45,7 @@ class CreateVariantTable extends Migration
 
 
             $table->unique(['clientId', 'sku']);
+            $table->unique(['clientId', 'barCode']);
         });
     }
 

@@ -92,6 +92,12 @@ class PortableBinController extends BaseAuthController
         return response($bin);
     }
 
+    public function getInventory (Request $request)
+    {
+        $portableBin                    = $this->getPortableBinFromRoute($request->route('id'));
+        return response($portableBin->getInventory());
+    }
+
     /**
      * @param   int     $id
      * @return  PortableBin

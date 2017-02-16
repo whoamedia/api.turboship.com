@@ -35,6 +35,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/bins', 'BinController@store');
     Route::get('/bins/{id}', 'BinController@show');
     Route::put('/bins/{id}', 'BinController@update');
+    Route::get('/bins/{id}/inventory', 'BinController@getInventory');
 
 
     //  Carrier operations
@@ -118,6 +119,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/portableBins', 'PortableBinController@store');
     Route::get('/portableBins/{id}', 'PortableBinController@show');
     Route::put('/portableBins/{id}', 'PortableBinController@update');
+    Route::get('/portableBins/{id}/inventory', 'PortableBinController@getInventory');
 
 
     //  Postage Operations
@@ -224,6 +226,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::post('/totes', 'ToteController@store');
     Route::get('/totes/{id}', 'ToteController@show');
     Route::put('/totes/{id}', 'ToteController@update');
+    Route::get('/totes/{id}/inventory', 'ToteController@getInventory');
 
 
     //  User Operations

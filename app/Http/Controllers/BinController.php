@@ -109,6 +109,12 @@ class BinController extends BaseAuthController
         return response($bin);
     }
 
+    public function getInventory (Request $request)
+    {
+        $bin                            = $this->getBinFromRoute($request->route('id'));
+        return response($bin->getInventory());
+    }
+
     /**
      * @param   int     $id
      * @return  Bin
