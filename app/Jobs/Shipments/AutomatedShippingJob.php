@@ -14,6 +14,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use EntityManager;
+use jamesvweston\EasyPost\Exceptions\EasyPostCustomsInfoException;
 
 class AutomatedShippingJob extends Job implements ShouldQueue
 {
@@ -73,28 +74,41 @@ class AutomatedShippingJob extends Job implements ShouldQueue
             $shipment->setWeight(rand(4, 100) . '.' . rand(10, 99));
         }
 
-        if (empty($shipment->getRates()))
+
+
+        try
         {
-            $postageService->rate($shipment);
+            if (empty($shipment->getRates()))
+            {
+                $postageService->rate($shipment);
+            }
+
+
+            $candidateRates                 = [];
+            foreach ($shipment->getRates() AS $rate)
+            {
+                if ($rate->getShippingApiService()->getService()->getCarrier()->getId() == CarrierUtility::UPS_MAIL_INNOVATIONS)
+                    continue;
+
+                $candidateRates[]           = $rate;
+            }
+
+            $index                          = rand(0, sizeof($candidateRates) - 1);
+            $rate                           = $candidateRates[$index];
+
+
+            $postageService->purchase($shipment, $rate);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            $postageService->handleOrderShippedLogic($shipment);
         }
-
-
-        $candidateRates                 = [];
-        foreach ($shipment->getRates() AS $rate)
+        catch (EasyPostCustomsInfoException $exception)
         {
-            if ($rate->getShippingApiService()->getService()->getCarrier()->getId() == CarrierUtility::UPS_MAIL_INNOVATIONS)
-                continue;
-
-            $candidateRates[]           = $rate;
+            \Bugsnag::leaveBreadcrumb('request', null,
+                [
+                    'shipmentId' => $this->shipmentId,
+                ]);
+            throw $exception;
         }
-
-        $index                          = rand(0, sizeof($candidateRates) - 1);
-        $rate                           = $candidateRates[$index];
-
-
-        $postageService->purchase($shipment, $rate);
-        $this->shipmentRepo->saveAndCommit($shipment);
-        $postageService->handleOrderShippedLogic($shipment);
     }
 
 }

@@ -10,7 +10,6 @@ use jamesvweston\EasyPost\EasyPostConfiguration;
 use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
-use jamesvweston\EasyPost\Exceptions\EasyPostCustomsInfoException;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
@@ -62,11 +61,6 @@ class EasyPostService
         {
             throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
-        catch (EasyPostCustomsInfoException $exception)
-        {
-            \Bugsnag::leaveBreadcrumb('request', null, $createEasyPostShipment->jsonSerialize());
-            throw $exception;
-        }
 
     }
 
@@ -92,15 +86,6 @@ class EasyPostService
         catch (EasyPostInvalidCredentialsException $exception)
         {
             throw new IntegrationInvalidCredentialsException('Invalid EasyPost credentials');
-        }
-        catch (EasyPostCustomsInfoException $exception)
-        {
-            \Bugsnag::leaveBreadcrumb('request', null,
-                [
-                    'easyPostShipmentId' => $easyPostShipmentId,
-                    'easyPostRateId' => $easyPostRateId
-                ]);
-            throw $exception;
         }
     }
 
