@@ -3,6 +3,7 @@
 namespace App\Jobs\Shopify\Orders;
 
 
+use App\Services\Order\OrderApprovalService;
 use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Jobs\Shopify\BaseShopifyJob;
@@ -79,8 +80,9 @@ class ShopifyOrderPaidJob extends BaseShopifyJob implements ShouldQueue
         $this->shopifyWebHookLog->setEntityId($order->getId());
         $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
 
-        $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
-        $this->dispatch($job);
+        $orderApprovalService           = new OrderApprovalService();
+        $order                          = $orderApprovalService->processOrder($order);
+        $this->orderRepo->saveAndCommit($order);
     }
 
 }

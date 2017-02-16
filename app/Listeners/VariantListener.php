@@ -6,6 +6,7 @@ namespace App\Listeners;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Variant;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -52,6 +53,7 @@ class VariantListener
     private function findOrders ($clientId, $sku)
     {
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
+        $orderApprovalService           = new OrderApprovalService();
 
         $orderQuery     = [
             'clientIds'                 => $clientId,
@@ -62,8 +64,8 @@ class VariantListener
         $result                         = $this->orderRepo->where($orderQuery);
         foreach ($result AS $order)
         {
-            $job                            = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
-            $this->dispatch($job);
+            $order                          = $orderApprovalService->processOrder($order);
+            $this->orderRepo->saveAndCommit($order);
         }
     }
 
