@@ -206,10 +206,11 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     }
 
     /**
-     * @param   ShopifyOrder $shopifyOrder
+     * @param   ShopifyOrder    $shopifyOrder
+     * @param   bool            $importShippedOrder
      * @return  bool
      */
-    public function shouldImportOrder (ShopifyOrder $shopifyOrder)
+    public function shouldImportOrder (ShopifyOrder $shopifyOrder, $importShippedOrder = false)
     {
         if (is_null($shopifyOrder->getShippingAddress()))
             return false;
@@ -217,7 +218,13 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
             return false;
         else if ($shopifyOrder->getFinancialStatus() != 'paid')
             return false;
-        else if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
+
+
+        if ($importShippedOrder)
+            return true;
+
+
+        if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
             return false;
         else
             return true;

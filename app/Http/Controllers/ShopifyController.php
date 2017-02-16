@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
 use App\Http\Requests\Shopify\DownloadShopifyProducts;
-use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Jobs\Shopify\Orders\DownloadShopifyOrdersJob;
 use App\Jobs\Shopify\Products\DownloadShopifyProductsJob;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
@@ -17,6 +17,7 @@ use App\Services\Shopify\ShopifyService;
 use App\Utilities\SourceUtility;
 use Illuminate\Http\Request;
 use EntityManager;
+use jamesvweston\Utilities\BooleanUtil;
 
 class ShopifyController extends BaseAuthController
 {
@@ -64,48 +65,15 @@ class ShopifyController extends BaseAuthController
 
     public function downloadOrders (Request $request)
     {
-        $total                              = $this->shopifyService->getOrderImportCandidatesCount();
-        $totalPages                         = (int)ceil($total / 250);
+        $shipped                            = BooleanUtil::getBooleanValue($request->input('shipped'));
 
-        $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
-        for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
-        {
-            set_time_limit(60);
-            $shopifyOrdersResponse          = $this->shopifyService->getOrderImportCandidates($currentPage, 250);
-            $orderArray                     = json_decode($shopifyOrdersResponse, true);
-            foreach ($orderArray AS $shopifyOrder)
-            {
-                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId()))->onQueue('shopifyOrders');
-                $this->dispatch($job);
-            }
-            usleep(250000);
-        }
-        $response   = [
-            'total'                         => $total,
-        ];
-        return response($response);
-    }
+        if ($shipped)
+            $total                          = $this->shopifyService->getOrdersShippedCount();
+        else
+            $total                          = $this->shopifyService->getOrderImportCandidatesCount();
 
-
-    public function downloadShippedOrders (Request $request)
-    {
-        $total                              = $this->shopifyService->getOrdersShippedCount();
-        $totalPages                         = (int)ceil($total / 250);
-
-
-        $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
-        for ($page = 1; $page <= $totalPages; $page++)
-        {
-            set_time_limit(60);
-            $shopifyOrdersResponse          = $this->shopifyService->getOrdersShipped($page, 250);
-            $orderArray                     = json_decode($shopifyOrdersResponse, true);
-            foreach ($orderArray AS $shopifyOrder)
-            {
-                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId()))->onQueue('shopifyOrders');
-                $this->dispatch($job);
-            }
-            usleep(250000);
-        }
+        $job                                = (new DownloadShopifyOrdersJob($this->integratedShoppingCart->getId(), $shipped))->onQueue('shopifyBulkImports');
+        $this->dispatch($job);
 
         $response   = [
             'total'                         => $total,
