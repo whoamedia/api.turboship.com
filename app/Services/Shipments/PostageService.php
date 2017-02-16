@@ -244,6 +244,12 @@ class PostageService
         $easyPostService                = new EasyPostService($this->integratedShippingApi);
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
         $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
+
+        \Bugsnag::leaveBreadcrumb('PostageService rateEasyPost', null,
+            [
+                'createEasyPostShipment'    => $createEasyPostShipment->jsonSerialize(),
+            ]);
+
         $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
 
         foreach ($easyPostShipment->getRates() AS $easyPostRate)
