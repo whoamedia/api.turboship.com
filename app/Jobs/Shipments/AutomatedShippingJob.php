@@ -69,10 +69,7 @@ class AutomatedShippingJob extends Job implements ShouldQueue
         }
 
 
-        if (is_null($shipment->getWeight()))
-        {
-            $shipment->setWeight(rand(4, 100) . '.' . rand(10, 99));
-        }
+        $shipment->setWeight($shipment->getEstimatedWeight());
 
 
 

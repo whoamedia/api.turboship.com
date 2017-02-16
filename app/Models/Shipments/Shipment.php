@@ -552,4 +552,27 @@ class Shipment implements \JsonSerializable
         $this->status = $status;
     }
 
+    /**
+     * @return float
+     */
+    public function getEstimatedWeight ()
+    {
+        $weight                 = 0.00;
+        if (!is_null($this->shippingContainer))
+            $weight             += $this->shippingContainer->getWeight();
+
+        foreach ($this->getItems() AS $item)
+        {
+            if (!is_null($item->getOrderItem()))
+            {
+                if (!is_null($item->getOrderItem()->getVariant()))
+                {
+                    $weight     += $item->getOrderItem()->getVariant()->getWeight() * $item->getQuantity();
+                }
+            }
+        }
+
+        return $weight;
+    }
+
 }
