@@ -3,6 +3,7 @@
 namespace App\Services\EasyPost;
 
 
+use App\Exceptions\Address\InvalidStreet1Exception;
 use App\Exceptions\Integrations\IntegrationInvalidCredentialsException;
 use App\Exceptions\Integrations\IntegrationNotRespondingException;
 use App\Exceptions\Integrations\IntegrationThrottledException;
@@ -11,6 +12,7 @@ use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidStreet1Exception;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUserThrottledException;
@@ -61,6 +63,11 @@ class EasyPostService
         {
             throw new IntegrationThrottledException('The EasyPost API user has been throttled');
         }
+        catch (EasyPostInvalidStreet1Exception $exception)
+        {
+            throw new InvalidStreet1Exception();
+        }
+
 
     }
 
@@ -86,6 +93,10 @@ class EasyPostService
         catch (EasyPostInvalidCredentialsException $exception)
         {
             throw new IntegrationInvalidCredentialsException('Invalid EasyPost credentials');
+        }
+        catch (EasyPostInvalidStreet1Exception $exception)
+        {
+            throw new InvalidStreet1Exception();
         }
     }
 
