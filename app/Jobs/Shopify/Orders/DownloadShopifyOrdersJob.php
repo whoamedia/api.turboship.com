@@ -96,13 +96,20 @@ class DownloadShopifyOrdersJob extends Job implements ShouldQueue
         $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
         for ($page = 1; $page <= $totalPages; $page++)
         {
-            set_time_limit(60);
-            $shopifyOrdersResponse          = $this->shopifyService->getOrdersShipped($page, 250);
-            $orderArray                     = json_decode($shopifyOrdersResponse, true);
-            foreach ($orderArray AS $shopifyOrder)
+            try
             {
-                $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId(), null, $this->shippedOrders))->onQueue('shopifyOrders');
-                $this->dispatch($job);
+                set_time_limit(60);
+                $shopifyOrdersResponse      = $this->shopifyService->getOrdersShipped($page, 250);
+                $orderArray                 = json_decode($shopifyOrdersResponse, true);
+                foreach ($orderArray AS $shopifyOrder)
+                {
+                    $job                    = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $this->integratedShoppingCart->getId(), null, $this->shippedOrders))->onQueue('shopifyOrders');
+                    $this->dispatch($job);
+                }
+            }
+            catch (\Pheanstalk\Exception\ServerException $exception)
+            {
+                continue;
             }
         }
     }
