@@ -76,13 +76,12 @@ class ShopifyOrderPaidJob extends BaseShopifyJob implements ShouldQueue
             return;
         }
 
+        $orderApprovalService           = new OrderApprovalService();
+        $orderApprovalService->processOrder($order);
+
         $this->orderRepo->saveAndCommit($order);
         $this->shopifyWebHookLog->setEntityId($order->getId());
         $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-
-        $orderApprovalService           = new OrderApprovalService();
-        $order                          = $orderApprovalService->processOrder($order);
-        $this->orderRepo->saveAndCommit($order);
     }
 
 }

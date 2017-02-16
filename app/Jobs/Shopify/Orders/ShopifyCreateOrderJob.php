@@ -75,12 +75,12 @@ class ShopifyCreateOrderJob extends BaseShopifyJob implements ShouldQueue
             $entityCreated                  = is_null($order->getId()) ? true : false;
             $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 
-            $this->orderRepo->saveAndCommit($order);
-            $this->shopifyWebHookLog->setEntityId($order->getId());
 
             $orderApprovalService           = new OrderApprovalService();
-            $order                          = $orderApprovalService->processOrder($order);
+            $orderApprovalService->processOrder($order);
             $this->orderRepo->saveAndCommit($order);
+
+            $this->shopifyWebHookLog->setEntityId($order->getId());
         }
         $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
     }
