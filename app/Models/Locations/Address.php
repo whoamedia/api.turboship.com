@@ -3,6 +3,7 @@
 namespace App\Models\Locations;
 
 
+use App\Utilities\SubdivisionTypeUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -399,6 +400,22 @@ class Address implements \JsonSerializable
     public function setSubdivision($subdivision)
     {
         $this->subdivision = $subdivision;
+    }
+
+    /**
+     * Does this address require customs if it is shipping from a US location ?
+     * @return bool
+     */
+    public function requiresUSCustoms ()
+    {
+        if ($this->country->getIso2() != 'US')
+            return true;
+        else if (is_null($this->subdivision))
+            return false;
+        else if ($this->subdivision->getSubdivisionType()->getId() == SubdivisionTypeUtility::ARMED_FORCES)
+            return true;
+        else
+            return false;
     }
 
 }

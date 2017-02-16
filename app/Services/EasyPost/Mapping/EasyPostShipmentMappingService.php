@@ -48,7 +48,7 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
     public function handleMapping (Shipment $shipment)
     {
         $createEasyPostShipment         = $this->toEasyPostShipment($shipment);
-        if ($createEasyPostShipment->getToAddress()->getCountry() != 'US')
+        if ($shipment->getToAddress()->requiresUSCustoms())
         {
             $createEasyPostCustomsInfo  = $this->toEasyPostCustomsInfo($shipment);
             $createEasyPostShipment->setCustomsInfo($createEasyPostCustomsInfo);
