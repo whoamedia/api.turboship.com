@@ -3,6 +3,7 @@
 namespace App\Services\Shipments;
 
 
+use App\Exceptions\Address\InvalidStreet1Exception;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Shipments\Postage;
 use App\Models\Shipments\Rate;
@@ -10,9 +11,11 @@ use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\EasyPost\EasyPostService;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
 use App\Utilities\IntegrationUtility;
+use App\Utilities\ShipmentStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 use EntityManager;
@@ -24,6 +27,11 @@ class PostageService
      * @var IntegratedShippingApi
      */
     protected $integratedShippingApi;
+
+    /**
+     * @var ShipmentRepository
+     */
+    private $shipmentRepo;
 
     /**
      * @var OrderRepository
@@ -39,6 +47,7 @@ class PostageService
     public function __construct(IntegratedShippingApi $integratedShippingApi)
     {
         $this->integratedShippingApi    = $integratedShippingApi;
+        $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $this->orderItemRepo            = EntityManager::getRepository('App\Models\OMS\OrderItem');
     }
@@ -52,37 +61,28 @@ class PostageService
     {
         $shipment->canRate();
 
-        if ($clearRates == true)
-            $shipment->clearRates();
-
-        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
-            $this->rateEasyPost($shipment);
-        else
+        if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
             throw new UnsupportedException('Integration is unsupported');
+
+        try
+        {
+            if ($clearRates == true)
+                $shipment->clearRates();
+
+            $this->rateEasyPost($shipment);
+        }
+        catch (InvalidStreet1Exception $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_STREET_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
 
         foreach ($shipment->getRates() AS $rate)
         {
             $rate->setWeight($shipment->getWeight());
-        }
-
-        return $shipment;
-    }
-
-    /**
-     * @param   Shipment $shipment
-     * @return  Shipment
-     */
-    private function rateEasyPost (Shipment $shipment)
-    {
-        $easyPostService                = new EasyPostService($this->integratedShippingApi);
-        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
-        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
-        $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
-
-        foreach ($easyPostShipment->getRates() AS $easyPostRate)
-        {
-            $rate                       = $easyPostShipmentMappingService->toLocalRate($easyPostRate, $this->integratedShippingApi);
-            $shipment->addRate($rate);
         }
 
         return $shipment;
@@ -97,11 +97,21 @@ class PostageService
     {
         $shipment->canPurchasePostage($rate);
 
-        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
-            $shipment                   = $this->purchaseEasyPost($shipment, $rate);
-        else
+        if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
             throw new UnsupportedException('Integration is unsupported');
 
+        try
+        {
+            $shipment                   = $this->purchaseEasyPost($shipment, $rate);
+        }
+        catch (InvalidStreet1Exception $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_STREET_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
         $rate->setPurchased(true);
         $shipment->getPostage()->setRate($rate);
         $shipmentStatusValidation       = new ShipmentStatusValidation();
@@ -212,6 +222,26 @@ class PostageService
             $order->setShipmentStatus($shipmentStatus);
             $this->orderRepo->saveAndCommit($order);
         }
+    }
+
+    /**
+     * @param   Shipment $shipment
+     * @return  Shipment
+     */
+    private function rateEasyPost (Shipment $shipment)
+    {
+        $easyPostService                = new EasyPostService($this->integratedShippingApi);
+        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
+        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
+        $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
+
+        foreach ($easyPostShipment->getRates() AS $easyPostRate)
+        {
+            $rate                       = $easyPostShipmentMappingService->toLocalRate($easyPostRate, $this->integratedShippingApi);
+            $shipment->addRate($rate);
+        }
+
+        return $shipment;
     }
 
     /**
