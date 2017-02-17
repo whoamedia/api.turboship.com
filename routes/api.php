@@ -253,6 +253,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/variants/externalInventory/sync', 'VariantController@syncExternalInventory');
 
 
+    //  VariantInventory Operations
+    Route::get('/variantInventory', 'VariantInventoryController@index');
+
 });
 
 

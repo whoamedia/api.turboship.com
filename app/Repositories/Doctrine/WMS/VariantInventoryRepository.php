@@ -29,7 +29,7 @@ class VariantInventoryRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['variantInventory', 'organization', 'inventoryLocation']);
+        $qb->select(['variantInventory', 'variant', 'client', 'organization', 'inventoryLocation']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -47,6 +47,7 @@ class VariantInventoryRepository extends BaseRepository
     {
         $qb->from('App\Models\WMS\VariantInventory', 'variantInventory')
             ->join('variantInventory.variant', 'variant', Query\Expr\Join::ON)
+            ->join('variant.client', 'client', Query\Expr\Join::ON)
             ->join('variantInventory.organization', 'organization', Query\Expr\Join::ON)
             ->join('variantInventory.inventoryLocation', 'inventoryLocation', Query\Expr\Join::ON);
 
@@ -55,6 +56,9 @@ class VariantInventoryRepository extends BaseRepository
 
         if (!is_null(AU::get($query['variantIds'])))
             $qb->andWhere($qb->expr()->in('variant.id', $query['variantIds']));
+
+        if (!is_null(AU::get($query['clientIds'])))
+            $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
 
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
