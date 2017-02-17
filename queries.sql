@@ -46,8 +46,17 @@ FROM
   VariantInventory vi
   JOIN Inventory i ON i.id = vi.id
 WHERE
-  i.inventoryLocationId = 4257
+  i.inventoryLocationId = 1976
 GROUP BY
-  vi.variantId, i.inventoryLocationId
+  vi.variantId
 ORDER BY
   count(*) DESC;
+
+
+SELECT
+  *
+FROM
+  VariantInventory vi
+  JOIN Inventory i ON i.id = vi.id
+WHERE
+  i.inventoryLocationId = 1976;

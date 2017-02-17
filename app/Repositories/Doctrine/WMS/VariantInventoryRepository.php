@@ -30,21 +30,10 @@ class VariantInventoryRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select(['variantInventory', 'variant', 'product', 'client', 'organization', 'inventoryLocation']);
 
-        $selects                    =   ['variantInventory', 'variant', 'product', 'client', 'organization', 'inventoryLocation'];
-        if (!is_null(AU::get($query['groupVariants'])))
-        {
-            if (BooleanUtil::getBooleanValue($query['groupVariants']))
-            {
-                $selects                    =   ['count(DISTINCT variantInventory.id) AS total', 'variantInventory', 'variant', 'product', 'client', 'organization', 'inventoryLocation'];
-                $qb->addGroupBy('variant');
-            }
-        }
-
-        $qb->select($selects);
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->addOrderBy(AU::get($query['orderBy'], 'variantInventory.id'), AU::get($query['direction'], 'ASC'));
-
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
