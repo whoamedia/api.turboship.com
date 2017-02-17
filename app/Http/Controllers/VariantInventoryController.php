@@ -31,6 +31,19 @@ class VariantInventoryController extends BaseAuthController
 
         $query                          = $getVariantInventory->jsonSerialize();
         $results                        = $this->variantInventoryRepo->where($query, false);
+
+        if ($getVariantInventory->getGroupVariants())
+        {
+            $newResults                 = new \Illuminate\Support\Collection();
+            foreach ($results->getCollection()->toArray() AS $variantInventory)
+            {
+                $total                  = $variantInventory['total'];
+                $item                   = $variantInventory[0]->jsonSerialize();
+                $item['total']          = $total;
+                $newResults->push($item);
+            }
+            $results->setCollection($newResults);
+        }
         return response($results);
     }
 }

@@ -39,8 +39,15 @@ SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FO
 
 
 SELECT
-    table_name AS `Table`,
-    round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB`
-FROM information_schema.TABLES
-WHERE table_schema = "forge"
-    AND table_name = "ShopifyWebHookLog";
+  count(*) AS total,
+  vi.*,
+  i.*
+FROM
+  VariantInventory vi
+  JOIN Inventory i ON i.id = vi.id
+WHERE
+  i.inventoryLocationId = 4257
+GROUP BY
+  vi.variantId, i.inventoryLocationId
+ORDER BY
+  count(*) DESC;

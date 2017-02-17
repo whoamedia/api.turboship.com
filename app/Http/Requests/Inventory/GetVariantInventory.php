@@ -12,6 +12,11 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
 {
 
     /**
+     * @var bool
+     */
+    protected $groupVariants;
+
+    /**
      * @var string|null
      */
     protected $clientIds;
@@ -41,6 +46,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     {
         parent::__construct('variantInventory.id', $data);
 
+        $this->groupVariants            = AU::get($data['groupVariants'], false);
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->inventoryLocationIds     = AU::get($data['inventoryLocationIds']);
@@ -53,6 +59,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     {
         parent::validate();
 
+        $this->groupVariants            = parent::validateBoolean($this->groupVariants, 'groupVariants');
         $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->inventoryLocationIds     = parent::validateIds($this->inventoryLocationIds, 'inventoryLocationIds');
@@ -67,6 +74,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     {
         $object                         = parent::jsonSerialize();
 
+        $object['groupVariants']        = $this->groupVariants;
         $object['clientIds']            = $this->clientIds;
         $object['organizationIds']      = $this->organizationIds;
         $object['inventoryLocationIds'] = $this->inventoryLocationIds;
@@ -75,6 +83,23 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
 
         return $object;
     }
+
+    /**
+     * @return bool
+     */
+    public function getGroupVariants()
+    {
+        return $this->groupVariants;
+    }
+
+    /**
+     * @param bool $groupVariants
+     */
+    public function setGroupVariants($groupVariants)
+    {
+        $this->groupVariants = $groupVariants;
+    }
+
 
     /**
      * @return null|string
