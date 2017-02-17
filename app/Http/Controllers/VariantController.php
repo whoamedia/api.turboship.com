@@ -61,7 +61,7 @@ class VariantController extends BaseAuthController
 
         foreach ($variantResults AS $variant)
         {
-            $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $request->input('binId')))->onQueue('variantExternalInventorySync');
+            $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $request->input('portableBinId')))->onQueue('variantExternalInventorySync');
             $this->dispatch($job);
         }
     }

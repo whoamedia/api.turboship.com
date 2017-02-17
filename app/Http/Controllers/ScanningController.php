@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\Scanning\ShowScannedBin;
+use App\Http\Requests\Scanning\ShowScannedCart;
 use App\Http\Requests\Scanning\ShowScannedPortableBin;
 use App\Http\Requests\Scanning\ShowScannedTote;
+use App\Http\Requests\Scanning\ShowScannedStaff;
 use App\Http\Requests\Scanning\ShowScannedVariant;
+use App\Models\CMS\Validation\StaffValidation;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\WMS\Validation\BinValidation;
+use App\Models\WMS\Validation\CartValidation;
 use App\Models\WMS\Validation\PortableBinValidation;
 use App\Models\WMS\Validation\ToteValidation;
 use Illuminate\Http\Request;
@@ -49,6 +53,19 @@ class ScanningController extends BaseAuthController
         return response($bin);
     }
 
+    public function showCart (Request $request)
+    {
+        $showScannedCart                = new ShowScannedCart();
+        $showScannedCart->setBarCode($request->route('barCode'));
+        $showScannedCart->validate();
+        $showScannedCart->clean();
+
+        $barCode                        = $showScannedCart->getBarCode();
+        $cartValidation                 = new CartValidation();
+        $cart                           = $cartValidation->barCodeExists(parent::getAuthUserOrganization()->getId(), $barCode);
+        return response($cart);
+    }
+
     public function showTote (Request $request)
     {
         $showScannedTote                = new ShowScannedTote();
@@ -60,6 +77,19 @@ class ScanningController extends BaseAuthController
         $toteValidation                 = new ToteValidation();
         $tote                           = $toteValidation->barCodeExists(parent::getAuthUserOrganization()->getId(), $barCode);
         return response($tote);
+    }
+
+    public function showStaff (Request $request)
+    {
+        $showScannedUser                = new ShowScannedStaff();
+        $showScannedUser->setBarCode($request->route('barCode'));
+        $showScannedUser->validate();
+        $showScannedUser->clean();
+
+        $barCode                        = $showScannedUser->getBarCode();
+        $staffValidation                = new StaffValidation();
+        $staff                          = $staffValidation->barCodeExists(parent::getAuthUserOrganization()->getId(), $barCode);
+        return response($staff);
     }
 
     public function showPortableBin (Request $request)

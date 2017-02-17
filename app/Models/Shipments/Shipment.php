@@ -121,7 +121,7 @@ class Shipment implements \JsonSerializable
         if (is_null($this->status))
         {
             $shipmentStatusValidation   = new ShipmentStatusValidation();
-            $this->status               = $shipmentStatusValidation->getPending();
+            $this->status               = $shipmentStatusValidation->getPendingInventoryReservation();
         }
     }
 
@@ -282,6 +282,20 @@ class Shipment implements \JsonSerializable
     public function getItems ()
     {
         return $this->items->toArray();
+    }
+
+    /**
+     * Does the shipment have all of the inventory reserved that it needs ?
+     * @return bool
+     */
+    public function itemsHaveReservedInventory ()
+    {
+        foreach ($this->getItems() AS $shipmentItem)
+        {
+            if ( ($shipmentItem->getQuantity() - $shipmentItem->getQuantityReserved()) != 0)
+                return false;
+        }
+        return true;
     }
 
     /**

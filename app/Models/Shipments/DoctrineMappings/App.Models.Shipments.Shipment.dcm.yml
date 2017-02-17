@@ -133,5 +133,4 @@ App\Models\Shipments\Shipment:
 
   entityListeners:
     App\Listeners\ShipmentListener:
-      postPersist:  [postPersistHandler]
       postUpdate:   [postUpdateHandler]

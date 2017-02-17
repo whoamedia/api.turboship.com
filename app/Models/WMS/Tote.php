@@ -13,12 +13,18 @@ class Tote extends InventoryLocation implements \JsonSerializable
      */
     protected $weight;
 
+    /**
+     * @var Cart|null
+     */
+    protected $cart;
+
 
     public function __construct(array $data = [])
     {
         parent::__construct($data);
 
         $this->weight                   = AU::get($data['weight']);
+        $this->cart                     = AU::get($data['cart']);
     }
 
     /**
@@ -46,6 +52,22 @@ class Tote extends InventoryLocation implements \JsonSerializable
     public function setWeight($weight)
     {
         $this->weight = $weight;
+    }
+
+    /**
+     * @return Cart|null
+     */
+    public function getCart()
+    {
+        return $this->cart;
+    }
+
+    /**
+     * @param Cart|null $cart
+     */
+    public function setCart($cart)
+    {
+        $this->cart = $cart;
     }
 
 }

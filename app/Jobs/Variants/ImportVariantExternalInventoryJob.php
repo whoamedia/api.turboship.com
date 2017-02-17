@@ -6,7 +6,7 @@ namespace App\Jobs\Variants;
 use App\Jobs\Job;
 use App\Models\WMS\VariantInventory;
 use App\Repositories\Doctrine\OMS\VariantRepository;
-use App\Repositories\Doctrine\WMS\BinRepository;
+use App\Repositories\Doctrine\WMS\PortableBinRepository;
 use App\Services\InventoryService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -27,7 +27,7 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     /**
      * @var int|null
      */
-    private $binId;
+    private $portableBinId;
 
     /**
      * @var VariantRepository
@@ -35,45 +35,38 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     private $variantRepo;
 
     /**
-     * @var BinRepository
+     * @var PortableBinRepository
      */
-    private $binRepo;
+    private $portableBinRepo;
 
-    public function __construct($variantId, $binId = null)
+    public function __construct($variantId, $portableBinId = null)
     {
         parent::__construct();
 
         $this->variantId                = $variantId;
-        $this->binId                    = $binId;
+        $this->portableBinId            = $portableBinId;
     }
 
 
     public function handle()
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
-        $this->binRepo                  = EntityManager::getRepository('App\Models\WMS\Bin');
+        $this->portableBinRepo          = EntityManager::getRepository('App\Models\WMS\PortableBin');
 
         $variant                        = $this->variantRepo->getOneById($this->variantId);
 
         $binQuery       = [
             'organizationIds'           => $variant->getClient()->getOrganization()->getId(),
         ];
-        if (!is_null($this->binId))
-            $binQuery['ids']            = $this->binId;
+        if (!is_null($this->portableBinId))
+            $binQuery['ids']            = $this->portableBinId;
 
-        $binResults                     = $this->binRepo->where($binQuery);
+        $portableBinResults             = $this->portableBinRepo->where($binQuery);
         $inventoryService               = new InventoryService();
 
-        /**
-         * Need to delete all VariantInventory that has this Variant id
-         */
-
-        for ($i = 0; $i < $variant->getExternalInventoryQuantity(); $i++)
-        {
-            $index                      = rand(0, sizeof($binResults) - 1);
-            $bin                        = $binResults[$index];
-            $inventoryService->createVariantInventory($variant, $bin);
-        }
+        $index                          = rand(0, sizeof($portableBinResults) - 1);
+        $portableBin                    = $portableBinResults[$index];
+        $inventoryService->createVariantInventory($variant, $portableBin, $variant->getExternalInventoryQuantity());
 
         $this->variantRepo->saveAndCommit($variant);
     }

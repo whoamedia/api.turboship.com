@@ -55,6 +55,19 @@ class StaffRepository extends BaseRepository
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
+
+        if (!is_null(AU::get($query['barCodes'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $barCodes               = explode(',', $query['barCodes']);
+            foreach ($barCodes AS $barCode)
+            {
+                $orX->add($qb->expr()->eq('staff.barCode', $qb->expr()->literal($barCode)));
+            }
+            $qb->andWhere($orX);
+        }
+
+
         if (!is_null(AU::get($query['firstNames'])))
         {
             $orX                    = $qb->expr()->orX();

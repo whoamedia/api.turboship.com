@@ -26,6 +26,11 @@ class ShipmentStatusSeeder extends Seeder
              * LifeCycle
              */
             [
+                'id'    => ShipmentStatusUtility::PENDING_INVENTORY_RESERVATION,
+                'name'  => 'Pending inventory reservation',
+                'isError' => false
+            ],
+            [
                 'id'    => ShipmentStatusUtility::PENDING,
                 'name'  => 'Pending',
                 'isError' => false
@@ -83,6 +88,16 @@ class ShipmentStatusSeeder extends Seeder
             [
                 'id'    => ShipmentStatusUtility::INVALID_PHONE_NUMBER,
                 'name'  => 'Invalid phone number',
+                'isError' => true
+            ],
+
+            
+            /**
+             * Inventory Error Statuses
+             */
+            [
+                'id'    => ShipmentStatusUtility::INSUFFICIENT_INVENTORY,
+                'name'  => 'Insufficient inventory',
                 'isError' => true
             ],
 

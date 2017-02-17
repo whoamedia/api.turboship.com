@@ -1,0 +1,33 @@
+App\Models\WMS\Cart:
+  type:               entity
+  table:              Cart
+  repositoryClass:    App\Repositories\Doctrine\WMS\CartRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Cart id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    barCode:
+      column:         barCode
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Cart barCode"
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

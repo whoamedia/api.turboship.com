@@ -148,7 +148,9 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
 
     //  Scanning operations
     Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
+    Route::get('/scanning/carts/{barCode}', 'ScanningController@showCart');
     Route::get('/scanning/portableBins/{barCode}', 'ScanningController@showPortableBin');
+    Route::get('/scanning/staff/{barCode}', 'ScanningController@showStaff');
     Route::get('/scanning/totes/{barCode}', 'ScanningController@showTote');
     Route::get('/scanning/variants/{barCode}', 'ScanningController@showVariant');
 

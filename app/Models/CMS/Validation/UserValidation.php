@@ -16,7 +16,7 @@ class UserValidation
     /**
      * @var UserRepository
      */
-    private $userRepo;
+    protected $userRepo;
 
 
     /**

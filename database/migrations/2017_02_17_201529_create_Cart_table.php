@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateToteTable extends Migration
+class CreateCartTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,15 @@ class CreateToteTable extends Migration
      */
     public function up()
     {
-        Schema::create('Tote', function (Blueprint $table)
+        Schema::create('Cart', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-            $table->decimal('weight', 10, 2)->unsigned();
-            $table->integer('cartId')->unsigned()->index()->nullable()->default(null);
+            $table->string('barCode', 150)->index();
+
+            $table->integer('organizationId')->unsigned()->index();
+            $table->foreign('organizationId')->references('id')->on('Organization');
+
+            $table->unique(['barCode', 'organizationId']);
         });
     }
 
@@ -28,7 +32,6 @@ class CreateToteTable extends Migration
      */
     public function down()
     {
-        Schema::drop('Tote');
+        Schema::drop('Cart');
     }
-
 }
