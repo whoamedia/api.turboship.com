@@ -233,6 +233,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/users', 'UserController@index');
     Route::post('/users', 'UserController@store');
     Route::get('/users/me', 'UserController@me');
+    Route::get('/users/me/permissions', 'UserController@getMyPermissions');
     Route::get('/users/{id}', 'UserController@show');
     Route::put('/users/{id}', 'UserController@update');
     Route::post('/users/{id}/image', 'UserController@updateImage');

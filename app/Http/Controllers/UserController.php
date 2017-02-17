@@ -79,6 +79,11 @@ class UserController extends BaseAuthController
         return response($authUser);
     }
 
+    public function getMyPermissions ()
+    {
+        $authUser                       = parent::getAuthUser();
+        return response($authUser->getPermissions());
+    }
     /**
      * @param   Request $request
      * @return  User
