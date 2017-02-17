@@ -29,8 +29,9 @@ class VariantInventoryRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['variantInventory', 'variant', 'client', 'organization', 'inventoryLocation']);
+        $qb->select(['variantInventory', 'variant', 'product', 'client', 'organization', 'inventoryLocation']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'variantInventory.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -47,6 +48,7 @@ class VariantInventoryRepository extends BaseRepository
     {
         $qb->from('App\Models\WMS\VariantInventory', 'variantInventory')
             ->join('variantInventory.variant', 'variant', Query\Expr\Join::ON)
+            ->join('variant.product', 'product', Query\Expr\Join::ON)
             ->join('variant.client', 'client', Query\Expr\Join::ON)
             ->join('variantInventory.organization', 'organization', Query\Expr\Join::ON)
             ->join('variantInventory.inventoryLocation', 'inventoryLocation', Query\Expr\Join::ON);
@@ -57,6 +59,9 @@ class VariantInventoryRepository extends BaseRepository
         if (!is_null(AU::get($query['variantIds'])))
             $qb->andWhere($qb->expr()->in('variant.id', $query['variantIds']));
 
+        if (!is_null(AU::get($query['productIds'])))
+            $qb->andWhere($qb->expr()->in('product.id', $query['productIds']));
+
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
 
@@ -66,7 +71,6 @@ class VariantInventoryRepository extends BaseRepository
         if (!is_null(AU::get($query['inventoryLocationIds'])))
             $qb->andWhere($qb->expr()->in('inventoryLocation.id', $query['inventoryLocationIds']));
 
-        $qb->orderBy('variantInventory.id', 'ASC');
         return $qb;
     }
 

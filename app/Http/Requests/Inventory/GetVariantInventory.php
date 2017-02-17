@@ -31,6 +31,11 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
      */
     protected $variantIds;
 
+    /**
+     * @var string|null
+     */
+    protected $productIds;
+
 
     public function __construct($data = [])
     {
@@ -40,6 +45,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->inventoryLocationIds     = AU::get($data['inventoryLocationIds']);
         $this->variantIds               = AU::get($data['variantIds']);
+        $this->productIds               = AU::get($data['productIds']);
     }
 
 
@@ -51,6 +57,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->inventoryLocationIds     = parent::validateIds($this->inventoryLocationIds, 'inventoryLocationIds');
         $this->variantIds               = parent::validateIds($this->variantIds, 'variantIds');
+        $this->productIds               = parent::validateIds($this->productIds, 'productIds');
     }
 
     /**
@@ -64,6 +71,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $object['organizationIds']      = $this->organizationIds;
         $object['inventoryLocationIds'] = $this->inventoryLocationIds;
         $object['variantIds']           = $this->variantIds;
+        $object['productIds']           = $this->productIds;
 
         return $object;
     }
@@ -130,6 +138,22 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     public function setVariantIds($variantIds)
     {
         $this->variantIds = $variantIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getProductIds()
+    {
+        return $this->productIds;
+    }
+
+    /**
+     * @param null|string $productIds
+     */
+    public function setProductIds($productIds)
+    {
+        $this->productIds = $productIds;
     }
 
 }
