@@ -3,11 +3,14 @@
 namespace App\Services;
 
 
+use App\Models\CMS\Staff;
+use App\Models\Logs\VariantInventoryTransferLog;
 use App\Models\OMS\Variant;
 use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Models\WMS\PortableBin;
 use App\Models\WMS\VariantInventory;
+use App\Repositories\Doctrine\Logs\VariantInventoryTransferLogRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use EntityManager;
 
@@ -19,10 +22,15 @@ class InventoryService
      */
     private $variantRepo;
 
+    /**
+     * @var VariantInventoryTransferLogRepository
+     */
+    private $variantInventoryTransferLogRepo;
 
     public function __construct()
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
+        $this->variantInventoryTransferLogRepo = EntityManager::getRepository('App\Models\Logs\VariantInventoryTransferLog');
     }
 
 
@@ -30,13 +38,14 @@ class InventoryService
      * @param   Variant         $variant
      * @param   PortableBin     $portableBin
      * @param   int             $quantity
+     * @param   Staff           $staff
      * @return  Variant
      */
-    public function createVariantInventory (Variant $variant, PortableBin $portableBin, $quantity)
+    public function createVariantInventory (Variant $variant, PortableBin $portableBin, $quantity, Staff $staff)
     {
         for ($i = 0; $i < $quantity; $i++)
         {
-            $variantInventory               = new VariantInventory();
+            $variantInventory           = new VariantInventory();
             $variantInventory->setInventoryLocation($portableBin);
             $variantInventory->setVariant($variant);
             $variant->addInventory($variantInventory);
@@ -44,6 +53,14 @@ class InventoryService
 
         $variant->setTotalQuantity($variant->getTotalQuantity() + $quantity);
         $portableBin->setTotalQuantity($portableBin->getTotalQuantity() + $quantity);
+
+        $variantInventoryTransferLog    = new VariantInventoryTransferLog();
+        $variantInventoryTransferLog->setVariant($variant);
+        $variantInventoryTransferLog->setFromInventoryLocation(null);
+        $variantInventoryTransferLog->setToInventoryLocation($portableBin);
+        $variantInventoryTransferLog->setQuantity($quantity);
+        $variantInventoryTransferLog->setStaff($staff);
+        $this->variantInventoryTransferLogRepo->save($variantInventoryTransferLog);
 
         return $variant;
     }

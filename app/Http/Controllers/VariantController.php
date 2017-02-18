@@ -58,10 +58,10 @@ class VariantController extends BaseAuthController
         $query                          = $getVariants->jsonSerialize();
 
         $variantResults                 = $this->variantRepo->getSyncableVariants($query);
-
+        $staffId                        = parent::getAuthUser()->getId();
         foreach ($variantResults AS $variant)
         {
-            $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $request->input('portableBinId')))->onQueue('variantExternalInventorySync');
+            $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $staffId, $request->input('portableBinId')))->onQueue('variantExternalInventorySync');
             $this->dispatch($job);
         }
     }

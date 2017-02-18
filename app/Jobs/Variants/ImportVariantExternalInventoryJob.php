@@ -5,6 +5,7 @@ namespace App\Jobs\Variants;
 
 use App\Jobs\Job;
 use App\Models\WMS\VariantInventory;
+use App\Repositories\Doctrine\CMS\StaffRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Repositories\Doctrine\WMS\PortableBinRepository;
 use App\Services\InventoryService;
@@ -25,6 +26,11 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     private $variantId;
 
     /**
+     * @var int
+     */
+    private $staffId;
+
+    /**
      * @var int|null
      */
     private $portableBinId;
@@ -39,11 +45,18 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
      */
     private $portableBinRepo;
 
-    public function __construct($variantId, $portableBinId = null)
+    /**
+     * @var StaffRepository
+     */
+    private $staffRepo;
+
+
+    public function __construct($variantId, $staffId, $portableBinId = null)
     {
         parent::__construct();
 
         $this->variantId                = $variantId;
+        $this->staffId                  = $staffId;
         $this->portableBinId            = $portableBinId;
     }
 
@@ -52,8 +65,10 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
         $this->portableBinRepo          = EntityManager::getRepository('App\Models\WMS\PortableBin');
+        $this->staffRepo                = EntityManager::getRepository('App\Models\CMS\Staff');
 
         $variant                        = $this->variantRepo->getOneById($this->variantId);
+        $staff                          = $this->staffRepo->getOneById($this->staffId);
 
         $binQuery       = [
             'organizationIds'           => $variant->getClient()->getOrganization()->getId(),
@@ -66,7 +81,8 @@ class ImportVariantExternalInventoryJob extends Job implements ShouldQueue
 
         $index                          = rand(0, sizeof($portableBinResults) - 1);
         $portableBin                    = $portableBinResults[$index];
-        $inventoryService->createVariantInventory($variant, $portableBin, $variant->getExternalInventoryQuantity());
+
+        $inventoryService->createVariantInventory($variant, $portableBin, $variant->getExternalInventoryQuantity(), $staff);
 
         $this->variantRepo->saveAndCommit($variant);
     }
