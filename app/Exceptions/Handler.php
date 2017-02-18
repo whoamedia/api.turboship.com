@@ -6,6 +6,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use League\OAuth2\Server\Exception\UnsupportedGrantTypeException;
 
 class Handler extends ExceptionHandler
 {
@@ -18,6 +19,7 @@ class Handler extends ExceptionHandler
         \League\OAuth2\Server\Exception\AccessDeniedException::class,
         \League\OAuth2\Server\Exception\InvalidRequestException::class,
         \League\OAuth2\Server\Exception\InvalidCredentialsException::class,
+        \League\OAuth2\Server\Exception\UnsupportedGrantTypeException::class,
         \Illuminate\Auth\AuthenticationException::class,
         \Illuminate\Auth\Access\AuthorizationException::class,
         \Symfony\Component\HttpKernel\Exception\HttpException::class,

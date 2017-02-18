@@ -113,7 +113,7 @@ class WhoaMediaSeeder extends Seeder
         $imageService           = new \App\Services\ImageService();
         //  Edward
         $Edward                 = new Staff();
-        $Edward->generateBarCode();
+        $Edward->generateBarCode(50);
         $Edward->setFirstName('Edward');
         $Edward->setLastName('Upton');
         $Edward->setEmail('eupton@whoamedia.com');
@@ -126,7 +126,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  James
         $James                   = new Staff();
-        $James->generateBarCode();
+        $James->setBarCode('3Yn7qxRNaYc60Xeww6i4ZvXZlOVjPBlhuIiHIimUJp44BzQiN8');
         $James->setFirstName('James');
         $James->setLastName('Weston');
         $James->setEmail('james@turboship.com');
@@ -139,7 +139,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Miles
         $Miles                   = new Staff();
-        $Miles->generateBarCode();
+        $Miles->generateBarCode(50);
         $Miles->setFirstName('Miles');
         $Miles->setLastName('Maximini');
         $Miles->setEmail('miles@cheapundies.com');
@@ -152,7 +152,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Crystal
         $Crystal                   = new Staff();
-        $Crystal->generateBarCode();
+        $Crystal->generateBarCode(50);
         $Crystal->setFirstName('Crystal');
         $Crystal->setLastName('Buyalos');
         $Crystal->setEmail('crystal@cheapundies.com');
@@ -165,7 +165,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Ainsley
         $Ainsley                   = new Staff();
-        $Ainsley->generateBarCode();
+        $Ainsley->generateBarCode(50);
         $Ainsley->setFirstName('Ainsley');
         $Ainsley->setLastName('Dougherty');
         $Ainsley->setEmail('ainsley@cheapundies.com');
@@ -178,7 +178,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Cody
         $CodySmith                   = new Staff();
-        $CodySmith->generateBarCode();
+        $CodySmith->generateBarCode(50);
         $CodySmith->setFirstName('Cody');
         $CodySmith->setLastName('Smith');
         $CodySmith->setEmail('cody@cheapundies.com');
@@ -191,7 +191,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Corey
         $CoreyStallings                   = new Staff();
-        $CoreyStallings->generateBarCode();
+        $CoreyStallings->generateBarCode(50);
         $CoreyStallings->setFirstName('Corey');
         $CoreyStallings->setLastName('Stallings');
         $CoreyStallings->setEmail('corey@cheapundies.com');
@@ -204,7 +204,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Michael
         $MichaelFerrell                   = new Staff();
-        $MichaelFerrell->generateBarCode();
+        $MichaelFerrell->generateBarCode(50);
         $MichaelFerrell->setFirstName('Michael');
         $MichaelFerrell->setLastName('Ferrell');
         $MichaelFerrell->setEmail('michael@cheapundies.com');
@@ -217,7 +217,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Michael
         $MichaelWoolcott                   = new Staff();
-        $MichaelWoolcott->generateBarCode();
+        $MichaelWoolcott->generateBarCode(50);
         $MichaelWoolcott->setFirstName('Michael');
         $MichaelWoolcott->setLastName('Woolcott');
         $MichaelWoolcott->setEmail('michael.woolcott@cheapundies.com');
@@ -230,7 +230,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Thomas
         $ThomasWatson                   = new Staff();
-        $ThomasWatson->generateBarCode();
+        $ThomasWatson->generateBarCode(50);
         $ThomasWatson->setFirstName('Thomas');
         $ThomasWatson->setLastName('Watson');
         $ThomasWatson->setEmail('thomas@cheapundies.com');
@@ -243,7 +243,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Corey
         $CoreyWebb                   = new Staff();
-        $CoreyWebb->generateBarCode();
+        $CoreyWebb->generateBarCode(50);
         $CoreyWebb->setFirstName('Corey');
         $CoreyWebb->setLastName('Webb');
         $CoreyWebb->setEmail('thomas@whoamedia.com');
@@ -256,7 +256,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Shenouda
         $Shenouda                   = new Staff();
-        $Shenouda->generateBarCode();
+        $Shenouda->generateBarCode(50);
         $Shenouda->setFirstName('Shenouda');
         $Shenouda->setLastName('Guergues');
         $Shenouda->setEmail('shenouda@whoamedia.com');
@@ -269,7 +269,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Lane
         $Lane                   = new Staff();
-        $Lane->generateBarCode();
+        $Lane->generateBarCode(50);
         $Lane->setFirstName('Lane');
         $Lane->setLastName('Norman');
         $Lane->setEmail('lane@whoamedia.com');
@@ -282,7 +282,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Travis
         $TravisPence                   = new Staff();
-        $TravisPence->generateBarCode();
+        $TravisPence->generateBarCode(50);
         $TravisPence->setFirstName('Travis');
         $TravisPence->setLastName('Pence');
         $TravisPence->setEmail('travis@cheapundies.com');
