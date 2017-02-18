@@ -3,6 +3,7 @@
 namespace App\Jobs\Shipments;
 
 
+use App\Jobs\Inventory\ReserveShipmentInventoryJob;
 use App\Jobs\Job;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
@@ -75,6 +76,9 @@ class CreateShipmentsJob extends Job implements ShouldQueue
         foreach ($shipments AS $shipment)
         {
             $this->shipmentRepo->saveAndCommit($shipment);
+
+            $job                            = (new ReserveShipmentInventoryJob($shipment->getId()))->onQueue('shipmentInventoryReservation')->delay(config('turboship.variants.readyInventoryDelay'));
+            $this->dispatch($job);
         }
     }
 

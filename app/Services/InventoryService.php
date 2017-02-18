@@ -9,6 +9,7 @@ use App\Models\OMS\Variant;
 use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Models\WMS\Bin;
+use App\Models\WMS\InventoryLocation;
 use App\Models\WMS\PortableBin;
 use App\Models\WMS\VariantInventory;
 use App\Repositories\Doctrine\Logs\VariantInventoryTransferLogRepository;
@@ -74,26 +75,34 @@ class InventoryService
         return $variant;
     }
 
-    public function transferVariantInventoryToBin (PortableBin $portableBin, Bin $bin, Variant $variant, Staff $staff, $quantity)
+    /**
+     * @param   Variant             $variant
+     * @param   InventoryLocation   $fromInventoryLocation
+     * @param   InventoryLocation   $toInventoryLocation
+     * @param   int                 $quantity
+     * @param   Staff               $staff
+     * @return  Variant
+     */
+    public function transferVariantInventory (Variant $variant, InventoryLocation $fromInventoryLocation, InventoryLocation $toInventoryLocation, $quantity, Staff $staff)
     {
-        $variantInventoryResult     = $variant->getInventoryAtLocation($portableBin, $quantity);
+        $variantInventoryResult     = $variant->getInventoryAtLocation($fromInventoryLocation, $quantity);
 
         if ($quantity > sizeof($variantInventoryResult))
-            throw new BadRequestHttpException('The portable bin has ' . sizeof($variantInventoryResult) . ' quantity of ' . $variant->getTitle() . ' and ' . $quantity . ' was requested');
+            throw new BadRequestHttpException('The inventory location has ' . sizeof($variantInventoryResult) . ' quantity of ' . $variant->getTitle() . ' and ' . $quantity . ' was requested');
 
 
         foreach ($variantInventoryResult AS $variantInventory)
         {
-            $variantInventory->setInventoryLocation($bin);
-            $portableBin->setTotalQuantity($portableBin->getTotalQuantity() - 1);
-            $bin->setTotalQuantity($bin->getTotalQuantity() + 1);
+            $variantInventory->setInventoryLocation($toInventoryLocation);
+            $fromInventoryLocation->setTotalQuantity($fromInventoryLocation->getTotalQuantity() - 1);
+            $toInventoryLocation->setTotalQuantity($toInventoryLocation->getTotalQuantity() + 1);
             $variant->setReadyQuantity($variant->getReadyQuantity() + 1);
         }
 
         $variantInventoryTransferLog    = new VariantInventoryTransferLog();
         $variantInventoryTransferLog->setVariant($variant);
-        $variantInventoryTransferLog->setFromInventoryLocation($portableBin);
-        $variantInventoryTransferLog->setToInventoryLocation($bin);
+        $variantInventoryTransferLog->setFromInventoryLocation($fromInventoryLocation);
+        $variantInventoryTransferLog->setToInventoryLocation($toInventoryLocation);
         $variantInventoryTransferLog->setQuantity($quantity);
         $variantInventoryTransferLog->setStaff($staff);
         $this->variantInventoryTransferLogRepo->save($variantInventoryTransferLog);

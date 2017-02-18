@@ -39,6 +39,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
+    protected $variantIds;
+
+    /**
+     * @var string|null
+     */
     protected $clientIds;
 
     /**
@@ -108,6 +113,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->itemIds                  = AU::get($data['itemIds']);
         $this->orderIds                 = AU::get($data['orderIds']);
         $this->orderItemIds             = AU::get($data['orderItemIds']);
+        $this->variantIds               = AU::get($data['variantIds']);
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->serviceIds               = AU::get($data['serviceIds']);
@@ -130,6 +136,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $this->itemIds                  = parent::validateIds($this->itemIds, 'itemIds');
         $this->orderIds                 = parent::validateIds($this->orderIds, 'orderIds');
         $this->orderItemIds             = parent::validateIds($this->orderItemIds, 'orderItemIds');
+        $this->variantIds               = parent::validateIds($this->variantIds, 'variantIds');
         $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
@@ -157,6 +164,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
         $object['itemIds']              = $this->itemIds;
         $object['orderIds']             = $this->orderIds;
         $object['orderItemIds']         = $this->orderItemIds;
+        $object['variantIds']           = $this->variantIds;
         $object['clientIds']            = $this->clientIds;
         $object['organizationIds']      = $this->organizationIds;
         $object['serviceIds']           = $this->serviceIds;
@@ -252,6 +260,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setOrderItemIds($orderItemIds)
     {
         $this->orderItemIds = $orderItemIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getVariantIds()
+    {
+        return $this->variantIds;
+    }
+
+    /**
+     * @param null|string $variantIds
+     */
+    public function setVariantIds($variantIds)
+    {
+        $this->variantIds = $variantIds;
     }
 
     /**

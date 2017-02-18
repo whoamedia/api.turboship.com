@@ -118,6 +118,7 @@ class ShipmentRepository extends BaseRepository
             ->leftJoin('service.carrier', 'carrier', Query\Expr\Join::ON)
             ->leftJoin('shipment.items', 'items', Query\Expr\Join::ON)
             ->leftJoin('items.orderItem', 'orderItem', Query\Expr\Join::ON)
+            ->leftJoin('orderItem.variant', 'variant', Query\Expr\Join::ON)
             ->leftJoin('orderItem.order', 'orders', Query\Expr\Join::ON)
             ->leftJoin('orders.client', 'client', Query\Expr\Join::ON)
             ->leftJoin('client.organization', 'organization', Query\Expr\Join::ON)
@@ -147,6 +148,9 @@ class ShipmentRepository extends BaseRepository
 
         if (!is_null(AU::get($query['orderItemIds'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['orderItemIds']));
+
+        if (!is_null(AU::get($query['variantIds'])))
+            $qb->andWhere($qb->expr()->in('variant.id', $query['variantIds']));
 
         if (!is_null(AU::get($query['serviceIds'])))
             $qb->andWhere($qb->expr()->in('service.id', $query['serviceIds']));

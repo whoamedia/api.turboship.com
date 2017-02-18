@@ -60,3 +60,15 @@ FROM
   JOIN Inventory i ON i.id = vi.id
 WHERE
   i.inventoryLocationId = 1976;
+
+
+SELECT
+  si.id,
+  si.quantity,
+  si.quantityReserved,
+  oi.variantId
+FROM
+  ShipmentItem si
+  JOIN OrderItem oi ON si.orderItemId = oi.id
+WHERE
+  oi.variantId = 46;

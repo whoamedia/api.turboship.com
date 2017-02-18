@@ -12,7 +12,6 @@ use App\Models\Shipments\Shipper;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentAlgorithmRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
-use App\Services\InventoryService;
 use App\Utilities\OrderStatusUtility;
 use App\Utilities\ShipmentAlgorithmUtility;
 use EntityManager;
@@ -70,7 +69,6 @@ class CreateShipmentsService
             $orders                     = $this->getPendingFulfillmentOrders();
 
         $this->shipmentAlgorithm        = $this->shipmentAlgorithmRepo->getOneById(ShipmentAlgorithmUtility::ONE_SHIPMENT_PER_ORDER);
-        $inventoryService               = new InventoryService();
         $shipments                      = [];
         foreach ($orders AS $order)
         {
@@ -92,7 +90,6 @@ class CreateShipmentsService
                 $shipment->addItem($shipmentItem);
                 $shipments[]            = $shipment;
             }
-            $inventoryService->reserveShipmentInventory($shipment);
         }
 
 

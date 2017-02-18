@@ -4,16 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\PortableBins\CreatePortableBin;
-use App\Http\Requests\PortableBins\CreatePortableBinToBinTransfer;
 use App\Http\Requests\PortableBins\GetPortableBins;
 use App\Http\Requests\PortableBins\ShowPortableBin;
 use App\Http\Requests\PortableBins\UpdatePortableBin;
-use App\Jobs\Inventory\ReadyInventoryAddedJob;
-use App\Models\OMS\Validation\VariantValidation;
 use App\Models\WMS\PortableBin;
-use App\Models\WMS\Validation\BinValidation;
 use App\Repositories\Doctrine\OMS\VariantRepository;
-use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -114,34 +109,6 @@ class PortableBinController extends BaseAuthController
         ];
         $results                        = $this->portableBinRepo->where($query, false);
         return response($results);
-    }
-
-    public function transferToBin (Request $request)
-    {
-        $createPortableBinToBinTransfer = new CreatePortableBinToBinTransfer($request->input());
-        $createPortableBinToBinTransfer->setId($request->route('id'));
-        $createPortableBinToBinTransfer->setBinId($request->route('binId'));
-        $createPortableBinToBinTransfer->validate();
-        $createPortableBinToBinTransfer->clean();
-
-        $portableBin                    = $this->getPortableBinFromRoute($createPortableBinToBinTransfer->getId());
-
-        $binValidation                  = new BinValidation();
-        $bin                            = $binValidation->idExists($createPortableBinToBinTransfer->getBinId());
-
-        $variantValidation              = new VariantValidation();
-        $variant                        = $variantValidation->idExists($createPortableBinToBinTransfer->getVariantId());
-
-        $staff                          = parent::getAuthStaff();
-        $quantity                       = $createPortableBinToBinTransfer->getQuantity();
-        $inventoryService               = new InventoryService();
-        $inventoryService->transferVariantInventoryToBin($portableBin, $bin, $variant, $staff, $quantity);
-
-        $this->variantRepo->saveAndCommit($variant);
-
-        $job                            = (new ReadyInventoryAddedJob($variant->getId()))->onQueue('shipmentReadyInventory')->delay(config('turboship.variants.readyInventoryDelay'));
-        $this->dispatch($job);
-        return response($portableBin);
     }
 
     /**
