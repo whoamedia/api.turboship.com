@@ -63,6 +63,7 @@ WHERE
 
 
 SELECT
+  si.shipmentId,
   si.id,
   si.quantity,
   si.quantityReserved,
@@ -71,4 +72,4 @@ FROM
   ShipmentItem si
   JOIN OrderItem oi ON si.orderItemId = oi.id
 WHERE
-  oi.variantId = 46;
+  oi.variantId = 7;

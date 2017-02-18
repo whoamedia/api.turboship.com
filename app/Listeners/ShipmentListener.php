@@ -23,7 +23,7 @@ class ShipmentListener
     {
         if (isset($changeSet['status']))
         {
-            if ($changeSet['status'][1]->getId() == ShipmentStatusUtility::PENDING)
+            if ($shipment->getStatus()->getId() == ShipmentStatusUtility::PENDING)
                 $this->testShip($shipment);
         }
     }
