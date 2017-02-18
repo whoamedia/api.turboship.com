@@ -136,4 +136,12 @@ abstract class InventoryLocation implements \JsonSerializable
         $this->inventory->removeElement($inventory);
     }
 
+
+    //  abstract function getInventory ();
+
+    //  abstract function addInventory ($inventory);
+
+    //  abstract function hasInventory($inventory);
+
+    //  abstract function removeInventory ($inventory);
 }

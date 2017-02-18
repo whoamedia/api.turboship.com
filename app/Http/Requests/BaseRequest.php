@@ -70,6 +70,21 @@ class BaseRequest
         return InputUtil::getFloat($value);
     }
 
+    public function validateRequiredPositiveInteger ($value, $fieldName)
+    {
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' is required');
+
+        $value                          = $this->getInteger($value);
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' is expected to be integer');
+
+        if ($value <= 0)
+            throw new BadRequestHttpException($fieldName . ' must be positive');
+
+        return $value;
+    }
+
     /**
      * @param   string|null     $values
      * @param   string          $fieldName

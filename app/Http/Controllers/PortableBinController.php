@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\PortableBins\CreatePortableBin;
+use App\Http\Requests\PortableBins\CreatePortableBinToBinTransfer;
 use App\Http\Requests\PortableBins\GetPortableBins;
 use App\Http\Requests\PortableBins\ShowPortableBin;
 use App\Http\Requests\PortableBins\UpdatePortableBin;
+use App\Jobs\Inventory\ReadyInventoryAddedJob;
+use App\Models\OMS\Validation\VariantValidation;
 use App\Models\WMS\PortableBin;
+use App\Models\WMS\Validation\BinValidation;
+use App\Repositories\Doctrine\OMS\VariantRepository;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,12 +25,17 @@ class PortableBinController extends BaseAuthController
     /**
      * @var \App\Repositories\Doctrine\WMS\PortableBinRepository
      */
-    private $binRepo;
+    private $portableBinRepo;
 
+    /**
+     * @var VariantRepository
+     */
+    private $variantRepo;
 
     public function __construct ()
     {
-        $this->binRepo                  = EntityManager::getRepository('App\Models\WMS\PortableBin');
+        $this->portableBinRepo          = EntityManager::getRepository('App\Models\WMS\PortableBin');
+        $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
     }
 
 
@@ -34,7 +45,7 @@ class PortableBinController extends BaseAuthController
         $getPortableBins->setOrganizationIds(parent::getAuthUserOrganization()->getId());
         $query                          = $getPortableBins->jsonSerialize();
 
-        $results                        = $this->binRepo->where($query, false);
+        $results                        = $this->portableBinRepo->where($query, false);
         return response($results);
     }
 
@@ -48,7 +59,7 @@ class PortableBinController extends BaseAuthController
             'organizationIds'           => parent::getAuthUserOrganization()->getId(),
             'barCodes'                  => $createPortableBin->getBarCode(),
         ];
-        $binResults                     = $this->binRepo->where($binQuery);
+        $binResults                     = $this->portableBinRepo->where($binQuery);
         if (sizeof($binResults) != 0)
             throw new BadRequestHttpException('PortableBin barCode must be unique');
 
@@ -56,7 +67,7 @@ class PortableBinController extends BaseAuthController
         $bin                            = new PortableBin($json);
         $bin->setOrganization(parent::getAuthUserOrganization());
 
-        $this->binRepo->saveAndCommit($bin);
+        $this->portableBinRepo->saveAndCommit($bin);
         return response($bin, 201);
     }
 
@@ -81,21 +92,56 @@ class PortableBinController extends BaseAuthController
                 'organizationIds'       => parent::getAuthUserOrganization()->getId(),
                 'barCodes'              => $updatePortableBin->getBarCode(),
             ];
-            $binResults                 = $this->binRepo->where($binQuery);
+            $binResults                 = $this->portableBinRepo->where($binQuery);
             if (sizeof($binResults) != 0)
                 throw new BadRequestHttpException('PortableBin barCode must be unique');
 
             $bin->setBarCode($updatePortableBin->getBarCode());
         }
 
-        $this->binRepo->saveAndCommit($bin);
+        $this->portableBinRepo->saveAndCommit($bin);
         return response($bin);
     }
 
     public function getInventory (Request $request)
     {
         $portableBin                    = $this->getPortableBinFromRoute($request->route('id'));
-        return response($portableBin->getInventory());
+
+        $query      = [
+            'inventoryLocationIds'      => $portableBin->getId(),
+            'limit'                     => 20,
+            'page'                      => 1,
+        ];
+        $results                        = $this->portableBinRepo->where($query, false);
+        return response($results);
+    }
+
+    public function transferToBin (Request $request)
+    {
+        $createPortableBinToBinTransfer = new CreatePortableBinToBinTransfer($request->input());
+        $createPortableBinToBinTransfer->setId($request->route('id'));
+        $createPortableBinToBinTransfer->setBinId($request->route('binId'));
+        $createPortableBinToBinTransfer->validate();
+        $createPortableBinToBinTransfer->clean();
+
+        $portableBin                    = $this->getPortableBinFromRoute($createPortableBinToBinTransfer->getId());
+
+        $binValidation                  = new BinValidation();
+        $bin                            = $binValidation->idExists($createPortableBinToBinTransfer->getBinId());
+
+        $variantValidation              = new VariantValidation();
+        $variant                        = $variantValidation->idExists($createPortableBinToBinTransfer->getVariantId());
+
+        $staff                          = parent::getAuthStaff();
+        $quantity                       = $createPortableBinToBinTransfer->getQuantity();
+        $inventoryService               = new InventoryService();
+        $inventoryService->transferVariantInventoryToBin($portableBin, $bin, $variant, $staff, $quantity);
+
+        $this->variantRepo->saveAndCommit($variant);
+
+        $job                            = (new ReadyInventoryAddedJob($variant->getId()))->onQueue('shipmentReadyInventory')->delay(config('turboship.variants.readyInventoryDelay'));
+        $this->dispatch($job);
+        return response($portableBin);
     }
 
     /**
@@ -109,13 +155,13 @@ class PortableBinController extends BaseAuthController
         $showPortableBin->validate();
         $showPortableBin->clean();
 
-        $bin                            = $this->binRepo->getOneById($showPortableBin->getId());
-        if (is_null($bin))
+        $portableBin                        = $this->portableBinRepo->getOneById($showPortableBin->getId());
+        if (is_null($portableBin))
             throw new NotFoundHttpException('PortableBin not found');
-        if ($bin->getOrganization()->getId() != parent::getAuthUserOrganization()->getId())
+        if ($portableBin->getOrganization()->getId() != parent::getAuthUserOrganization()->getId())
             throw new NotFoundHttpException('PortableBin not found');
 
-        return $bin;
+        return $portableBin;
     }
 
 }

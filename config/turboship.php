@@ -7,4 +7,8 @@ return [
         'validationEnabled' => env('USPS_VALIDATION_ENABLED', false),
     ],
 
+    'variants'              => [
+        'readyInventoryDelay'   => env('VARIANT_READY_INVENTORY_DELAY', 60)
+    ]
+
 ];

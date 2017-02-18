@@ -8,11 +8,14 @@ use App\Models\Logs\VariantInventoryTransferLog;
 use App\Models\OMS\Variant;
 use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
+use App\Models\WMS\Bin;
 use App\Models\WMS\PortableBin;
 use App\Models\WMS\VariantInventory;
 use App\Repositories\Doctrine\Logs\VariantInventoryTransferLogRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use EntityManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class InventoryService
 {
@@ -23,6 +26,11 @@ class InventoryService
     private $variantRepo;
 
     /**
+     * @var VariantInventoryRepository
+     */
+    private $variantInventoryRepo;
+
+    /**
      * @var VariantInventoryTransferLogRepository
      */
     private $variantInventoryTransferLogRepo;
@@ -31,6 +39,7 @@ class InventoryService
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
         $this->variantInventoryTransferLogRepo = EntityManager::getRepository('App\Models\Logs\VariantInventoryTransferLog');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
     }
 
 
@@ -58,6 +67,33 @@ class InventoryService
         $variantInventoryTransferLog->setVariant($variant);
         $variantInventoryTransferLog->setFromInventoryLocation(null);
         $variantInventoryTransferLog->setToInventoryLocation($portableBin);
+        $variantInventoryTransferLog->setQuantity($quantity);
+        $variantInventoryTransferLog->setStaff($staff);
+        $this->variantInventoryTransferLogRepo->save($variantInventoryTransferLog);
+
+        return $variant;
+    }
+
+    public function transferVariantInventoryToBin (PortableBin $portableBin, Bin $bin, Variant $variant, Staff $staff, $quantity)
+    {
+        $variantInventoryResult     = $variant->getInventoryAtLocation($portableBin, $quantity);
+
+        if ($quantity > sizeof($variantInventoryResult))
+            throw new BadRequestHttpException('The portable bin has ' . sizeof($variantInventoryResult) . ' quantity of ' . $variant->getTitle() . ' and ' . $quantity . ' was requested');
+
+
+        foreach ($variantInventoryResult AS $variantInventory)
+        {
+            $variantInventory->setInventoryLocation($bin);
+            $portableBin->setTotalQuantity($portableBin->getTotalQuantity() - 1);
+            $bin->setTotalQuantity($bin->getTotalQuantity() + 1);
+            $variant->setReadyQuantity($variant->getReadyQuantity() + 1);
+        }
+
+        $variantInventoryTransferLog    = new VariantInventoryTransferLog();
+        $variantInventoryTransferLog->setVariant($variant);
+        $variantInventoryTransferLog->setFromInventoryLocation($portableBin);
+        $variantInventoryTransferLog->setToInventoryLocation($bin);
         $variantInventoryTransferLog->setQuantity($quantity);
         $variantInventoryTransferLog->setStaff($staff);
         $this->variantInventoryTransferLogRepo->save($variantInventoryTransferLog);

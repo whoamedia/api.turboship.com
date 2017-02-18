@@ -11,9 +11,11 @@ use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Support\Source;
 use App\Models\Support\Traits\HasBarcode;
 use App\Models\WMS\Bin;
+use App\Models\WMS\InventoryLocation;
 use App\Models\WMS\VariantInventory;
 use App\Utilities\CountryUtility;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
@@ -476,6 +478,21 @@ class Variant extends BaseModel implements \JsonSerializable
     public function getInventory ()
     {
         return $this->inventory->toArray();
+    }
+
+    /**
+     * @param   InventoryLocation   $inventoryLocation
+     * @param   int|null $limit
+     * @return  VariantInventory[]
+     */
+    public function getInventoryAtLocation ($inventoryLocation, $limit = null)
+    {
+        $criteria       = Criteria::create()
+                            ->where(Criteria::expr()->in('inventoryLocation', [$inventoryLocation]));
+        if (!is_null($limit))
+            $criteria->setMaxResults($limit);
+
+        return $this->inventory->matching($criteria)->toArray();
     }
 
     /**

@@ -77,6 +77,26 @@ class VariantInventoryRepository extends BaseRepository
     }
 
     /**
+     * @param   int     $variantId
+     * @param   int     $inventoryLocationId
+     * @return  int
+     */
+    public function getVariantQuantityAtLocation ($variantId, $inventoryLocationId)
+    {
+        $query              = [
+            'variantIds'                => $variantId,
+            'inventoryLocationIds'      => $inventoryLocationId
+        ];
+
+        $qb                             =   $this->_em->createQueryBuilder();
+        $qb                             =   $this->buildQueryConditions($qb, $query);
+        $qb->select('count(variantInventory) AS total');
+
+        $result                         = $qb->getQuery()->getResult();
+        return intval($result[0]['total']);
+    }
+
+    /**
      * @param   int         $id
      * @return  VariantInventory|null
      */
