@@ -96,7 +96,11 @@ class InventoryService
             $variantInventory->setInventoryLocation($toInventoryLocation);
             $fromInventoryLocation->setTotalQuantity($fromInventoryLocation->getTotalQuantity() - 1);
             $toInventoryLocation->setTotalQuantity($toInventoryLocation->getTotalQuantity() + 1);
-            $variant->setReadyQuantity($variant->getReadyQuantity() + 1);
+
+            if ($toInventoryLocation instanceof Bin)
+                $variant->setReadyQuantity($variant->getReadyQuantity() + 1);
+            else
+                $variant->setReadyQuantity($variant->getReadyQuantity() - 1);
         }
 
         $variantInventoryTransferLog    = new VariantInventoryTransferLog();
