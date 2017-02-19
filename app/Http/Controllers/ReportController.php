@@ -36,6 +36,15 @@ class ReportController extends BaseAuthController
         $pendingResults                 = $this->shipmentRepo->where($pendingQuery);
         $warehouseActivityReport->setPendingShipments(sizeof($pendingResults));
 
+        $rushedShipments                = 0;
+        foreach ($pendingResults AS $shipment)
+        {
+            if ($shipment->getRushed())
+                $rushedShipments++;
+        }
+
+        $warehouseActivityReport->setRushedShipments($rushedShipments);
+
         return response($warehouseActivityReport);
     }
 

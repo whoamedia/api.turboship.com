@@ -208,10 +208,7 @@ class Variant extends BaseModel implements \JsonSerializable
         $object['readyQuantity']        = $this->readyQuantity;
         $object['reservedQuantity']     = $this->reservedQuantity;
 
-        $object['product']              = [
-            'id'                        => $this->product->getId(),
-            'name'                      => $this->product->getName(),
-        ];
+        $object['product']              = $this->product->jsonSerialize();
 
         return $object;
     }
