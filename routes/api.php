@@ -260,6 +260,7 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/variants/externalInventory/sync', 'VariantController@syncExternalInventory');
     Route::get('/variants/{id}', 'VariantController@show');
     Route::get('/variants/{id}/inventory', 'VariantController@getInventory');
+    Route::get('/variants/{id}/inventory/locations', 'VariantController@getInventoryLocations');
     Route::post('/variants/{id}/inventory', 'VariantController@createInventory');
     Route::post('/variants/{id}/inventory/transfer', 'VariantController@transferInventory');
 

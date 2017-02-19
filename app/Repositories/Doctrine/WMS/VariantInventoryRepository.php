@@ -51,7 +51,22 @@ class VariantInventoryRepository extends BaseRepository
                 return $newResults;
             }
         }
+        else if (!is_null(AU::get($query['inventoryLocationReport'])))
+        {
+            if (BooleanUtil::isTrue($query['inventoryLocationReport']))
+            {
+                $qb->addSelect('count(variantInventory) AS total');
+                $qb->groupBy('inventoryLocation');
 
+                $results            = $qb->getQuery()->getResult();
+                $newResults         = [];
+                foreach ($results AS $item)
+                {
+                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => $item['total']]);
+                }
+                return $newResults;
+            }
+        }
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else

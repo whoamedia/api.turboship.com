@@ -41,6 +41,11 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
      */
     protected $groupedReport;
 
+    /**
+     * @var bool
+     */
+    protected $inventoryLocationReport;
+
 
     public function __construct($data = [])
     {
@@ -52,6 +57,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->variantIds               = AU::get($data['variantIds']);
         $this->productIds               = AU::get($data['productIds']);
         $this->groupedReport            = AU::get($data['groupedReport'], false);
+        $this->inventoryLocationReport  = AU::get($data['inventoryLocationReport'], false);
     }
 
 
@@ -65,6 +71,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->variantIds               = parent::validateIds($this->variantIds, 'variantIds');
         $this->productIds               = parent::validateIds($this->productIds, 'productIds');
         $this->groupedReport            = parent::validateBoolean($this->groupedReport, 'groupedReport');
+        $this->inventoryLocationReport  = parent::validateBoolean($this->inventoryLocationReport, 'inventoryLocationReport');
     }
 
     /**
@@ -80,6 +87,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $object['variantIds']           = $this->variantIds;
         $object['productIds']           = $this->productIds;
         $object['groupedReport']        = $this->groupedReport;
+        $object['inventoryLocationReport'] = $this->inventoryLocationReport;
 
         return $object;
     }
@@ -179,6 +187,22 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     public function setGroupedReport($groupedReport)
     {
         $this->groupedReport = $groupedReport;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInventoryLocationReport()
+    {
+        return $this->inventoryLocationReport;
+    }
+
+    /**
+     * @param bool $inventoryLocationReport
+     */
+    public function setInventoryLocationReport($inventoryLocationReport)
+    {
+        $this->inventoryLocationReport = $inventoryLocationReport;
     }
 
 }
