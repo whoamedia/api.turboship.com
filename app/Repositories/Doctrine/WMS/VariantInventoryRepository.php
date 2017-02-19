@@ -59,6 +59,7 @@ class VariantInventoryRepository extends BaseRepository
                 $qb->groupBy('inventoryLocation');
 
                 $results            = $qb->getQuery()->getResult();
+                dd($results);
                 $newResults         = [];
                 foreach ($results AS $item)
                 {
