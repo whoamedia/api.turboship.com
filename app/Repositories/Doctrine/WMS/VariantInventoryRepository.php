@@ -46,7 +46,7 @@ class VariantInventoryRepository extends BaseRepository
                 $newResults         = [];
                 foreach ($results AS $item)
                 {
-                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => $item['total']]);
+                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => intval($item['total'])]);
                 }
                 return $newResults;
             }
@@ -62,7 +62,7 @@ class VariantInventoryRepository extends BaseRepository
                 $newResults         = [];
                 foreach ($results AS $item)
                 {
-                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => $item['total']]);
+                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => intval($item['total'])]);
                 }
                 return $newResults;
             }
