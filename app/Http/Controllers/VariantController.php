@@ -88,10 +88,10 @@ class VariantController extends BaseAuthController
 
     public function getInventoryLocations (Request $request)
     {
-        //  $variant                        = $this->getVariantFromRoute($request->route('id'));
+        $variant                        = $this->getVariantFromRoute($request->route('id'));
 
         $getVariantInventory            = new GetVariantInventory($request->input());
-        $getVariantInventory->setVariantIds(1);
+        $getVariantInventory->setVariantIds($variant->getId());
         $getVariantInventory->setInventoryLocationReport(true);
 
         $query                          = $getVariantInventory->jsonSerialize();
