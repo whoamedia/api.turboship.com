@@ -113,7 +113,7 @@ class WhoaMediaSeeder extends Seeder
         $imageService           = new \App\Services\ImageService();
         //  Edward
         $Edward                 = new Staff();
-        $Edward->generateBarCode(50);
+        $Edward->setBarCode('0vyGeE');
         $Edward->setFirstName('Edward');
         $Edward->setLastName('Upton');
         $Edward->setEmail('eupton@whoamedia.com');
@@ -126,7 +126,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  James
         $James                   = new Staff();
-        $James->setBarCode('3Yn7qxRNaYc60Xeww6i4ZvXZlOVjPBlhuIiHIimUJp44BzQiN8');
+        $James->setBarCode('jf3Nf3');
         $James->setFirstName('James');
         $James->setLastName('Weston');
         $James->setEmail('james@turboship.com');
@@ -139,7 +139,7 @@ class WhoaMediaSeeder extends Seeder
 
         //  Miles
         $Miles                   = new Staff();
-        $Miles->generateBarCode(50);
+        $Miles->setBarCode('IDrUS9');
         $Miles->setFirstName('Miles');
         $Miles->setLastName('Maximini');
         $Miles->setEmail('miles@cheapundies.com');
