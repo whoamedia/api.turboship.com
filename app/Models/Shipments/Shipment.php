@@ -121,7 +121,7 @@ class Shipment implements \JsonSerializable
         $this->shippingContainer        = AU::get($data['shippingContainer']);
         $this->dimensions               = AU::get($data['dimensions']);
         $this->status                   = AU::get($data['status']);
-        $this->rushed                   = AU::get($data['rushed']);
+        $this->rushed                   = AU::get($data['rushed'], false);
         $this->shippedAt                = AU::get($data['shippedAt']);
 
         if (is_null($this->status))

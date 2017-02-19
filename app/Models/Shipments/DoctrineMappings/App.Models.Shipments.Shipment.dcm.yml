@@ -31,6 +31,7 @@ App\Models\Shipments\Shipment:
       nullable:       false
       options:
         comment:      "If the shipment should be rushed"
+        default:      false
     createdAt:
       column:         createdAt
       type:           datetime
