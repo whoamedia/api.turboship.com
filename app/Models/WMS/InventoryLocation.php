@@ -50,9 +50,15 @@ abstract class InventoryLocation implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['barCode']              = $this->barCode;
         $object['totalQuantity']        = $this->totalQuantity;
+        $object['object']               = $this->getObject();
 
         return $object;
     }
+
+    /**
+     * @return string
+     */
+    abstract function getObject ();
 
     /**
      * @return int

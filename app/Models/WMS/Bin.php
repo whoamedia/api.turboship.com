@@ -56,6 +56,14 @@ class Bin extends InventoryLocation implements \JsonSerializable
     /**
      * @return string
      */
+    public function getObject()
+    {
+        return 'Bin';
+    }
+
+    /**
+     * @return string
+     */
     public function getAisle()
     {
         return $this->aisle;

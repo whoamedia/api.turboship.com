@@ -39,6 +39,14 @@ class Tote extends InventoryLocation implements \JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getObject()
+    {
+        return 'Tote';
+    }
+
+    /**
      * @return float
      */
     public function getWeight()
