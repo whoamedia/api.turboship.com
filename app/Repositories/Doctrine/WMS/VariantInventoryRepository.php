@@ -37,7 +37,7 @@ class VariantInventoryRepository extends BaseRepository
 
         if (!is_null(AU::get($query['groupedReport'])))
         {
-            if (BooleanUtil::isTrue($query['groupedReport']))
+            if (!is_null(AU::get($query['groupedReport'])) && BooleanUtil::isTrue($query['groupedReport']))
             {
                 $qb->addSelect('count(variantInventory) AS total');
                 $qb->groupBy('variant');
@@ -51,7 +51,7 @@ class VariantInventoryRepository extends BaseRepository
                 return $newResults;
             }
         }
-        else if (!is_null(AU::get($query['inventoryLocationReport'])))
+        if (!is_null(AU::get($query['inventoryLocationReport'])))
         {
             if (BooleanUtil::isTrue($query['inventoryLocationReport']))
             {
