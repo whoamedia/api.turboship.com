@@ -89,6 +89,11 @@ class Shipment implements \JsonSerializable
     protected $status;
 
     /**
+     * @var bool
+     */
+    protected $rushed;
+
+    /**
      * @var \DateTime|null
      */
     protected $shippedAt;
@@ -116,6 +121,7 @@ class Shipment implements \JsonSerializable
         $this->shippingContainer        = AU::get($data['shippingContainer']);
         $this->dimensions               = AU::get($data['dimensions']);
         $this->status                   = AU::get($data['status']);
+        $this->rushed                   = AU::get($data['rushed']);
         $this->shippedAt                = AU::get($data['shippedAt']);
 
         if (is_null($this->status))
@@ -140,6 +146,7 @@ class Shipment implements \JsonSerializable
         $object['shippingContainer']    = is_null($this->shippingContainer) ? null : $this->shippingContainer->jsonSerialize();
         $object['dimensions']           = is_null($this->dimensions) ? null : $this->dimensions->jsonSerialize();
         $object['status']               = $this->status->jsonSerialize();
+        $object['rushed']               = $this->rushed;
         $object['createdAt']            = $this->createdAt;
         $object['shippedAt']            = $this->shippedAt;
 
@@ -352,6 +359,22 @@ class Shipment implements \JsonSerializable
     public function setDimensions($dimensions)
     {
         $this->dimensions = $dimensions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getRushed()
+    {
+        return $this->rushed;
+    }
+
+    /**
+     * @param bool $rushed
+     */
+    public function setRushed($rushed)
+    {
+        $this->rushed = $rushed;
     }
 
     /**

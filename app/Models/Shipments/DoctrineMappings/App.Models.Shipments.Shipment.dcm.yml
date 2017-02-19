@@ -25,6 +25,12 @@ App\Models\Shipments\Shipment:
       options:
         unsigned:     true
         fixed:        false
+    rushed:
+      column:         rushed
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the shipment should be rushed"
     createdAt:
       column:         createdAt
       type:           datetime
