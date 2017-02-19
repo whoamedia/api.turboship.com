@@ -35,6 +35,23 @@ class VariantInventoryRepository extends BaseRepository
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->addOrderBy(AU::get($query['orderBy'], 'variantInventory.id'), AU::get($query['direction'], 'ASC'));
 
+        if (!is_null(AU::get($query['groupedReport'])))
+        {
+            if (BooleanUtil::isTrue($query['groupedReport']))
+            {
+                $qb->addSelect('count(variantInventory) AS total');
+                $qb->groupBy('variant');
+
+                $results            = $qb->getQuery()->getResult();
+                $newResults         = [];
+                foreach ($results AS $item)
+                {
+                    $newResults[]   = array_merge($item[0]->jsonSerialize(), ['total' => $item['total']]);
+                }
+                return $newResults;
+            }
+        }
+
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
@@ -74,26 +91,6 @@ class VariantInventoryRepository extends BaseRepository
             $qb->andWhere($qb->expr()->in('inventoryLocation.id', $query['inventoryLocationIds']));
 
         return $qb;
-    }
-
-    /**
-     * @param   int     $variantId
-     * @param   int     $inventoryLocationId
-     * @return  int
-     */
-    public function getVariantQuantityAtLocation ($variantId, $inventoryLocationId)
-    {
-        $query              = [
-            'variantIds'                => $variantId,
-            'inventoryLocationIds'      => $inventoryLocationId
-        ];
-
-        $qb                             =   $this->_em->createQueryBuilder();
-        $qb                             =   $this->buildQueryConditions($qb, $query);
-        $qb->select('count(variantInventory) AS total');
-
-        $result                         = $qb->getQuery()->getResult();
-        return intval($result[0]['total']);
     }
 
     /**

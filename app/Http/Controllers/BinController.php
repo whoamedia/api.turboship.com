@@ -7,8 +7,10 @@ use App\Http\Requests\Bins\CreateBin;
 use App\Http\Requests\Bins\GetBins;
 use App\Http\Requests\Bins\ShowBin;
 use App\Http\Requests\Bins\UpdateBin;
+use App\Http\Requests\Inventory\GetVariantInventory;
 use App\Models\WMS\Bin;
 use App\Models\WMS\Validation\BinValidation;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,10 +28,15 @@ class BinController extends BaseAuthController
      */
     private $binValidation;
 
+    /**
+     * @var VariantInventoryRepository
+     */
+    private $variantInventoryRepo;
 
     public function __construct ()
     {
         $this->binRepo                  = EntityManager::getRepository('App\Models\WMS\Bin');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
         $this->binValidation            = new BinValidation();
     }
 
@@ -112,7 +119,15 @@ class BinController extends BaseAuthController
     public function getInventory (Request $request)
     {
         $bin                            = $this->getBinFromRoute($request->route('id'));
-        return response($bin->getInventory());
+
+        $getVariantInventory            = new GetVariantInventory($request->input());
+        $getVariantInventory->setInventoryLocationIds($bin->getId());
+        $getVariantInventory->setGroupedReport(true);
+
+        $query                          = $getVariantInventory->jsonSerialize();
+        $results                        = $this->variantInventoryRepo->where($query);
+
+        return response($results);
     }
 
     /**

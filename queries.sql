@@ -46,7 +46,7 @@ FROM
   VariantInventory vi
   JOIN Inventory i ON i.id = vi.id
 WHERE
-  i.inventoryLocationId = 1976
+  i.inventoryLocationId = 6201
 GROUP BY
   vi.variantId
 ORDER BY

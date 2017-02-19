@@ -36,6 +36,11 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
      */
     protected $productIds;
 
+    /**
+     * @var bool
+     */
+    protected $groupedReport;
+
 
     public function __construct($data = [])
     {
@@ -46,6 +51,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->inventoryLocationIds     = AU::get($data['inventoryLocationIds']);
         $this->variantIds               = AU::get($data['variantIds']);
         $this->productIds               = AU::get($data['productIds']);
+        $this->groupedReport            = AU::get($data['groupedReport'], false);
     }
 
 
@@ -58,6 +64,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $this->inventoryLocationIds     = parent::validateIds($this->inventoryLocationIds, 'inventoryLocationIds');
         $this->variantIds               = parent::validateIds($this->variantIds, 'variantIds');
         $this->productIds               = parent::validateIds($this->productIds, 'productIds');
+        $this->groupedReport            = parent::validateBoolean($this->groupedReport, 'groupedReport');
     }
 
     /**
@@ -72,6 +79,7 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
         $object['inventoryLocationIds'] = $this->inventoryLocationIds;
         $object['variantIds']           = $this->variantIds;
         $object['productIds']           = $this->productIds;
+        $object['groupedReport']        = $this->groupedReport;
 
         return $object;
     }
@@ -155,6 +163,22 @@ class GetVariantInventory extends BaseGet implements Cleanable, Validatable, \Js
     public function setProductIds($productIds)
     {
         $this->productIds = $productIds;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGroupedReport()
+    {
+        return $this->groupedReport;
+    }
+
+    /**
+     * @param bool $groupedReport
+     */
+    public function setGroupedReport($groupedReport)
+    {
+        $this->groupedReport = $groupedReport;
     }
 
 }

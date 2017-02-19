@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Inventory\GetVariantInventory;
 use App\Http\Requests\Totes\CreateTote;
 use App\Http\Requests\Totes\GetTotes;
 use App\Http\Requests\Totes\ShowTote;
 use App\Http\Requests\Totes\UpdateTote;
 use App\Models\WMS\Tote;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -21,10 +23,16 @@ class ToteController extends BaseAuthController
      */
     private $toteRepo;
 
+    /**
+     * @var VariantInventoryRepository
+     */
+    private $variantInventoryRepo;
+
 
     public function __construct ()
     {
-        $this->toteRepo                  = EntityManager::getRepository('App\Models\WMS\Tote');
+        $this->toteRepo                 = EntityManager::getRepository('App\Models\WMS\Tote');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
     }
 
 
@@ -98,7 +106,15 @@ class ToteController extends BaseAuthController
     public function getInventory (Request $request)
     {
         $tote                           = $this->getToteFromRoute($request->route('id'));
-        return response($tote->getInventory());
+
+        $getVariantInventory            = new GetVariantInventory($request->input());
+        $getVariantInventory->setInventoryLocationIds($tote->getId());
+        $getVariantInventory->setGroupedReport(true);
+
+        $query                          = $getVariantInventory->jsonSerialize();
+        $results                        = $this->variantInventoryRepo->where($query);
+
+        return response($results);
     }
 
     /**

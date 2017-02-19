@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Inventory\GetVariantInventory;
 use App\Http\Requests\PortableBins\CreatePortableBin;
 use App\Http\Requests\PortableBins\GetPortableBins;
 use App\Http\Requests\PortableBins\ShowPortableBin;
 use App\Http\Requests\PortableBins\UpdatePortableBin;
 use App\Models\WMS\PortableBin;
-use App\Repositories\Doctrine\OMS\VariantRepository;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -23,14 +24,14 @@ class PortableBinController extends BaseAuthController
     private $portableBinRepo;
 
     /**
-     * @var VariantRepository
+     * @var VariantInventoryRepository
      */
-    private $variantRepo;
+    private $variantInventoryRepo;
 
     public function __construct ()
     {
         $this->portableBinRepo          = EntityManager::getRepository('App\Models\WMS\PortableBin');
-        $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
     }
 
 
@@ -102,12 +103,13 @@ class PortableBinController extends BaseAuthController
     {
         $portableBin                    = $this->getPortableBinFromRoute($request->route('id'));
 
-        $query      = [
-            'inventoryLocationIds'      => $portableBin->getId(),
-            'limit'                     => 20,
-            'page'                      => 1,
-        ];
-        $results                        = $this->portableBinRepo->where($query, false);
+        $getVariantInventory            = new GetVariantInventory($request->input());
+        $getVariantInventory->setInventoryLocationIds($portableBin->getId());
+        $getVariantInventory->setGroupedReport(true);
+
+        $query                          = $getVariantInventory->jsonSerialize();
+        $results                        = $this->variantInventoryRepo->where($query);
+
         return response($results);
     }
 
