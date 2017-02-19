@@ -146,6 +146,10 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/products/{id}', 'ProductController@show');
 
 
+    //  Reports
+    Route::get('/reports/warehouse/activity', 'ReportController@getWarehouseActivityReport');
+
+
     //  Scanning operations
     Route::get('/scanning/bins/{barCode}', 'ScanningController@showBin');
     Route::get('/scanning/carts/{barCode}', 'ScanningController@showCart');
