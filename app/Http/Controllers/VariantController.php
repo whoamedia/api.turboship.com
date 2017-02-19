@@ -66,6 +66,11 @@ class VariantController extends BaseAuthController
         return response($results);
     }
 
+    public function show (Request $request)
+    {
+        $variant                        = $this->getVariantFromRoute($request->route('id'));
+        return response($variant);
+    }
     public function getInventory (Request $request)
     {
         $variant                        = $this->getVariantFromRoute($request->route('id'));
