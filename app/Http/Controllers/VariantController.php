@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Inventory\GetVariantInventory;
 use App\Http\Requests\Variants\CreateVariantInventory;
 use App\Http\Requests\Variants\GetVariants;
+use App\Http\Requests\Variants\ShowVariant;
 use App\Http\Requests\Variants\TransferVariantInventory;
 use App\Jobs\Inventory\ReadyInventoryAddedJob;
 use App\Jobs\Variants\ImportVariantExternalInventoryJob;
 use App\Models\OMS\Validation\VariantValidation;
+use App\Models\OMS\Variant;
 use App\Models\WMS\Bin;
 use App\Models\WMS\Validation\InventoryLocationValidation;
 use App\Models\WMS\Validation\PortableBinValidation;
 use App\Repositories\Doctrine\OMS\VariantRepository;
+use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use App\Services\InventoryService;
 use App\Utilities\ShipmentStatusUtility;
 use EntityManager;
@@ -26,10 +30,15 @@ class VariantController extends BaseAuthController
      */
     private $variantRepo;
 
+    /**
+     * @var VariantInventoryRepository
+     */
+    private $variantInventoryRepo;
 
     public function __construct ()
     {
         $this->variantRepo              = EntityManager::getRepository('App\Models\OMS\Variant');
+        $this->variantInventoryRepo     = EntityManager::getRepository('App\Models\WMS\VariantInventory');
     }
 
 
@@ -54,6 +63,20 @@ class VariantController extends BaseAuthController
 
         $query                          = $getVariants->jsonSerialize();
         $results                        = $this->variantRepo->getLexicon($query);
+        return response($results);
+    }
+
+    public function getInventory (Request $request)
+    {
+        $variant                        = $this->getVariantFromRoute($request->route('id'));
+
+        $getVariantInventory            = new GetVariantInventory($request->input());
+        $getVariantInventory->setVariantIds($variant->getId());
+        $getVariantInventory->setGroupedReport(true);
+
+        $query                          = $getVariantInventory->jsonSerialize();
+        $results                        = $this->variantInventoryRepo->where($query);
+
         return response($results);
     }
 
@@ -125,5 +148,21 @@ class VariantController extends BaseAuthController
             $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $staffId, $request->input('portableBinId')))->onQueue('variantExternalInventorySync');
             $this->dispatch($job);
         }
+    }
+
+    /**
+     * @param   int     $id
+     * @return  Variant
+     */
+    private function getVariantFromRoute ($id)
+    {
+        $showVariant                    = new ShowVariant();
+        $showVariant->setId($id);
+        $showVariant->validate();
+        $showVariant->clean();
+
+        $variantValidation              = new VariantValidation();
+        $variant                        = $variantValidation->idExists($showVariant->getId());
+        return $variant;
     }
 }
