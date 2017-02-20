@@ -91,7 +91,7 @@ class TransferPortableBinInventoryJob extends Job implements ShouldQueue
 
             foreach ($variantInventoryResults AS $variantInventory)
             {
-                $variantId              = $variantInventory['variant']['id'];
+                $variantId              = $variantInventory['variant']->getId();
                 $variant                = $this->variantRepo->getOneById($variantId);
                 $total                  = $variantInventory['total'];
                 $index                  = rand(0, sizeof($binResults) - 1);
