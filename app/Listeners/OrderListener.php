@@ -3,16 +3,24 @@
 namespace App\Listeners;
 
 
-use App\Jobs\Shipments\CreateShipmentsJob;
+use App\Jobs\Inventory\ReserveShipmentInventoryJob;
 use App\Models\OMS\Order;
+use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\Shipments\CreateShipmentsService;
 use App\Utilities\OrderStatusUtility;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use EntityManager;
 
 class OrderListener
 {
 
     use DispatchesJobs;
+
+    /**
+     * @var ShipmentRepository
+     */
+    private $shipmentRepo;
 
     /**
      * Called after the entity has been saved for the first time
@@ -45,8 +53,17 @@ class OrderListener
 
     private function handleOrderShipmentLogic (Order $order)
     {
-        $job                            = (new CreateShipmentsJob($order->getId(), $order->getClient()->getOptions()->getDefaultShipper()->getId()))->onQueue('orderShipments');
-        $this->dispatch($job);
+        $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
+        $shipmentService                = new CreateShipmentsService($order->getClient(), $order->getClient()->getOptions()->getDefaultShipper());
+        $shipments                      = $shipmentService->runOnePerOrder([$order]);
+
+        foreach ($shipments AS $shipment)
+        {
+            $this->shipmentRepo->saveAndCommit($shipment);
+
+            $job                        = (new ReserveShipmentInventoryJob($shipment->getId()))->onQueue('shipmentInventoryReservation')->delay(config('turboship.variants.readyInventoryDelay'));
+            $this->dispatch($job);
+        }
     }
 
 }
