@@ -245,7 +245,12 @@ class PostageService
         $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
         $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
 
-        \Bugsnag::leaveBreadcrumb('PostageService rateEasyPost CreateEasyPostShipment', null, $createEasyPostShipment->jsonSerialize());
+        \Bugsnag::leaveBreadcrumb(
+            'PostageService rateEasyPost CreateEasyPostShipment', null,
+            [
+                'json' => json_encode($createEasyPostShipment->jsonSerialize(), true)
+            ]
+        );
 
         $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
 
