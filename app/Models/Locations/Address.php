@@ -3,7 +3,9 @@
 namespace App\Models\Locations;
 
 
+use App\Utilities\CountryUtility;
 use App\Utilities\SubdivisionTypeUtility;
+use App\Utilities\SubdivisionUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -408,14 +410,17 @@ class Address implements \JsonSerializable
      */
     public function requiresUSCustoms ()
     {
-        if ($this->country->getIso2() != 'US')
-            return true;
-        else if (is_null($this->subdivision))
-            return false;
-        else if ($this->subdivision->getSubdivisionType()->getId() == SubdivisionTypeUtility::ARMED_FORCES)
-            return true;
+        if ($this->country->getId() == CountryUtility::UNITED_STATES)
+        {
+            if ($this->subdivision->getSubdivisionType()->getId() == SubdivisionTypeUtility::ARMED_FORCES)
+                return true;
+            else if ($this->subdivision->getId() == SubdivisionUtility::US_PUERTO_RICO)
+                return true;
+            else
+                return false;
+        }
         else
-            return false;
+            return true;
     }
 
 }
