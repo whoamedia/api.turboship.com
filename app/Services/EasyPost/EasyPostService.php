@@ -4,6 +4,7 @@ namespace App\Services\EasyPost;
 
 
 use App\Exceptions\Address\InvalidStreet1Exception;
+use App\Exceptions\Carriers\ServiceUnavailableForResidentialException;
 use App\Exceptions\Integrations\IntegrationInvalidCredentialsException;
 use App\Exceptions\Integrations\IntegrationNotRespondingException;
 use App\Exceptions\Integrations\IntegrationThrottledException;
@@ -13,6 +14,7 @@ use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidStreet1Exception;
+use jamesvweston\EasyPost\Exceptions\EasyPostServiceResidentialException;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUnableToVoidShippedOrderException;
 use jamesvweston\EasyPost\Exceptions\EasyPostUserThrottledException;
@@ -97,6 +99,10 @@ class EasyPostService
         catch (EasyPostInvalidStreet1Exception $exception)
         {
             throw new InvalidStreet1Exception();
+        }
+        catch (EasyPostServiceResidentialException $exception)
+        {
+            throw new ServiceUnavailableForResidentialException();
         }
     }
 
