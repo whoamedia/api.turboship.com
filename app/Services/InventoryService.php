@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Jobs\Inventory\ReadyInventoryAddedJob;
 use App\Models\CMS\Staff;
 use App\Models\Logs\VariantInventoryTransferLog;
 use App\Models\OMS\Variant;
@@ -16,10 +17,14 @@ use App\Repositories\Doctrine\Logs\VariantInventoryTransferLogRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use EntityManager;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class InventoryService
 {
+
+    use DispatchesJobs;
+
 
     /**
      * @var VariantRepository
@@ -110,6 +115,12 @@ class InventoryService
         $variantInventoryTransferLog->setQuantity($quantity);
         $variantInventoryTransferLog->setStaff($staff);
         $this->variantInventoryTransferLogRepo->save($variantInventoryTransferLog);
+
+        if ($toInventoryLocation instanceof Bin)
+        {
+            $job                            = (new ReadyInventoryAddedJob($variant->getId()))->onQueue('shipmentInventoryReservation')->delay(config('turboship.variants.readyInventoryDelay'));
+            $this->dispatch($job);
+        }
 
         return $variant;
     }
