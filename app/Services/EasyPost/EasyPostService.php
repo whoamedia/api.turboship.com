@@ -3,6 +3,7 @@
 namespace App\Services\EasyPost;
 
 
+use App\Exceptions\Address\AddressNotFoundException;
 use App\Exceptions\Address\InvalidStreet1Exception;
 use App\Exceptions\Carriers\ServiceUnavailableForResidentialException;
 use App\Exceptions\Integrations\IntegrationInvalidCredentialsException;
@@ -12,6 +13,7 @@ use jamesvweston\EasyPost\EasyPostConfiguration;
 use jamesvweston\EasyPost\EasyPostClient;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Services\CredentialService;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidAddressException;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
 use jamesvweston\EasyPost\Exceptions\EasyPostInvalidStreet1Exception;
 use jamesvweston\EasyPost\Exceptions\EasyPostServiceResidentialException;
@@ -103,6 +105,10 @@ class EasyPostService
         catch (EasyPostServiceResidentialException $exception)
         {
             throw new ServiceUnavailableForResidentialException();
+        }
+        catch (EasyPostInvalidAddressException $exception)
+        {
+            throw new AddressNotFoundException($exception->getMessage());
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Services\Shipments;
 
 
+use App\Exceptions\Address\AddressNotFoundException;
 use App\Exceptions\Address\InvalidStreet1Exception;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Shipments\Postage;
@@ -84,6 +85,14 @@ class PostageService
             $this->shipmentRepo->saveAndCommit($shipment);
             throw $exception;
         }
+        catch (AddressNotFoundException $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_ADDRESS_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
 
         foreach ($shipment->getRates() AS $rate)
         {
@@ -123,6 +132,15 @@ class PostageService
             $this->shipmentRepo->saveAndCommit($shipment);
             throw $exception;
         }
+        catch (AddressNotFoundException $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_ADDRESS_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
+
         $rate->setPurchased(true);
         $shipment->getPostage()->setRate($rate);
         $shipmentStatusValidation       = new ShipmentStatusValidation();
