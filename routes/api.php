@@ -227,6 +227,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/support/subdivisionTypes', 'SupportController@getSubdivisionTypes');
 
 
+    //  Testing operations
+    Route::get('/testing/variants/externalInventory', 'TestingController@syncVariantExternalInventory');
+    Route::get('/testing/variants/inventory/bins', 'TestingController@transferVariantInventoryToBins');
+
+
     //  Tote operations
     Route::get('/totes', 'ToteController@index');
     Route::post('/totes', 'ToteController@store');
@@ -257,7 +262,6 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Variant Operations
     Route::get('/variants', 'VariantController@index');
     Route::get('/variants/lexicon', 'VariantController@getLexicon');
-    Route::get('/variants/externalInventory/sync', 'VariantController@syncExternalInventory');
     Route::get('/variants/{id}', 'VariantController@show');
     Route::get('/variants/{id}/inventory', 'VariantController@getInventory');
     Route::get('/variants/{id}/inventory/locations', 'VariantController@getInventoryLocations');

@@ -80,18 +80,25 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
         $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
         for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
         {
-            set_time_limit(30);
-            $externalIds                = array_slice($externalIdsResponse, $i, $maxIds);
-            $externalIds                = implode(',', $externalIds);
-
-            $shopifyProductsResponse    = $this->shopifyService->getProductImportCandidates(1, 250, $externalIds);
-            $productArray               = json_decode($shopifyProductsResponse, true);
-            foreach ($productArray AS $shopifyProduct)
+            try
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
-                $this->dispatch($job);
+                set_time_limit(30);
+                $externalIds                = array_slice($externalIdsResponse, $i, $maxIds);
+                $externalIds                = implode(',', $externalIds);
+
+                $shopifyProductsResponse    = $this->shopifyService->getProductImportCandidates(1, 250, $externalIds);
+                $productArray               = json_decode($shopifyProductsResponse, true);
+                foreach ($productArray AS $shopifyProduct)
+                {
+                    $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
+                    $this->dispatch($job);
+                }
+                usleep(250000);
             }
-            usleep(250000);
+            catch (\Pheanstalk\Exception\ServerException $exception)
+            {
+                continue;
+            }
         }
     }
 
@@ -103,15 +110,22 @@ class DownloadShopifyProductsJob extends Job implements ShouldQueue
         $this->shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
         for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
         {
-            set_time_limit(60);
-            $shopifyProductsResponse    = $this->shopifyService->getProductImportCandidates($currentPage, 250);
-            $productArray               = json_decode($shopifyProductsResponse, true);
-            foreach ($productArray AS $shopifyProduct)
+            try
             {
-                $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
-                $this->dispatch($job);
+                set_time_limit(60);
+                $shopifyProductsResponse    = $this->shopifyService->getProductImportCandidates($currentPage, 250);
+                $productArray               = json_decode($shopifyProductsResponse, true);
+                foreach ($productArray AS $shopifyProduct)
+                {
+                    $job                    = (new ShopifyCreateProductJob(json_encode($shopifyProduct), $this->integratedShoppingCart->getId(), null))->onQueue('shopifyProducts');
+                    $this->dispatch($job);
+                }
+                usleep(250000);
             }
-            usleep(250000);
+            catch (\Pheanstalk\Exception\ServerException $exception)
+            {
+                continue;
+            }
         }
     }
 }

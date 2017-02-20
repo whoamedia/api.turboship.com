@@ -9,7 +9,6 @@ use App\Http\Requests\Variants\GetVariants;
 use App\Http\Requests\Variants\ShowVariant;
 use App\Http\Requests\Variants\TransferVariantInventory;
 use App\Jobs\Inventory\ReadyInventoryAddedJob;
-use App\Jobs\Variants\ImportVariantExternalInventoryJob;
 use App\Models\OMS\Validation\VariantValidation;
 use App\Models\OMS\Variant;
 use App\Models\WMS\Bin;
@@ -18,7 +17,6 @@ use App\Models\WMS\Validation\PortableBinValidation;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Repositories\Doctrine\WMS\VariantInventoryRepository;
 use App\Services\InventoryService;
-use App\Utilities\ShipmentStatusUtility;
 use EntityManager;
 use Illuminate\Http\Request;
 

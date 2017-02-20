@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Jobs\Variants;
+namespace App\Jobs\Testing;
 
 
 use App\Jobs\Job;
-use App\Models\WMS\VariantInventory;
 use App\Repositories\Doctrine\CMS\StaffRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Repositories\Doctrine\WMS\PortableBinRepository;
