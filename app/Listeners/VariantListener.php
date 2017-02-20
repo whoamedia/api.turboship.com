@@ -62,7 +62,7 @@ class VariantListener
         $result                         = $this->orderRepo->where($orderQuery);
         foreach ($result AS $order)
         {
-            $job                            = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
+            $job                            = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval')->delay(30);
             $this->dispatch($job);
         }
     }
