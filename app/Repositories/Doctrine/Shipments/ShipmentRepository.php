@@ -49,7 +49,7 @@ class ShipmentRepository extends BaseRepository
     {
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select([
-            'COUNT(orders.id) AS total',
+            'COUNT(DISTINCT shipment.id) AS total',
             'shippingContainer.id AS shippingContainer_id', 'shippingContainer.name AS shippingContainer_name',
             'carrier.id AS carrier_id', 'carrier.name AS carrier_name',
             'service.id AS service_id', 'service.name AS service_name',
