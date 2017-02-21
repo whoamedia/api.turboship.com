@@ -15,9 +15,11 @@ use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
 use App\Services\EasyPost\EasyPostService;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
+use App\Services\S3Service;
 use App\Utilities\IntegrationUtility;
 use App\Utilities\ShipmentStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
+use Illuminate\Support\Str;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 use EntityManager;
 
@@ -147,6 +149,10 @@ class PostageService
         $shipment->setStatus($shipmentStatusValidation->getFullyShipped());
         $shipment->setShippedAt(new \DateTime());
         $shipment->setService($rate->getShippingApiService()->getService());
+
+        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
+            $this->convertEasyPostLabel($shipment->getPostage());
+
         return $shipment;
     }
 
@@ -311,4 +317,25 @@ class PostageService
 
         return $shipment;
     }
+
+    /**
+     * @param   Postage $postage
+     * @return  Postage
+     */
+    private function convertEasyPostLabel (Postage $postage)
+    {
+        $easyPostService                = new EasyPostService($postage->getRate()->getIntegratedShippingApi());
+        $format                         = 'ZPL';
+        $easyPostShipment               = $easyPostService->updateLabelFormat($postage->getRate()->getExternalShipmentId(), $format);
+        $labelUrl                       = $easyPostShipment->getPostageLabel()->getLabelZplUrl();
+        $labelContents                  = file_get_contents($labelUrl);
+
+        $s3Key                          = 'postage/' . $postage->getId() . '_' . Str::random(50) . '.' . strtolower($format);
+        $s3Service                      = new S3Service();
+        $s3Url                          = $s3Service->store($s3Key, $labelContents);
+
+        $postage->setZplPath($s3Url);
+        return $postage;
+    }
+
 }

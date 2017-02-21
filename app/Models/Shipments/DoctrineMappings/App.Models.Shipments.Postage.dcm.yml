@@ -68,8 +68,3 @@ App\Models\Shipments\Postage:
       joinColumn:
         name:         rateId
         referencedColumnName: id
-
-
-  entityListeners:
-    App\Listeners\PostageListener:
-      postPersist:  [postPersistHandler]
