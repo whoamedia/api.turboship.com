@@ -126,8 +126,8 @@ class OrderStatusSeeder extends Seeder
                 'isError' => false
             ],
             [
-                'id'    => OrderStatusUtility::FULLY_SHIPPED_ID,
-                'name'  => 'Fully Shipped',
+                'id'    => OrderStatusUtility::COMPLETELY_SHIPPED_ID,
+                'name'  => 'Completely Shipped',
                 'isError' => false
             ],
 

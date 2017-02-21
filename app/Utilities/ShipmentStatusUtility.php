@@ -9,7 +9,7 @@ class ShipmentStatusUtility
     const PENDING_INVENTORY_RESERVATION = 1;
     const PENDING                       = 2;
     const PARTIALLY_SHIPPED             = 3;
-    const FULLY_SHIPPED                 = 4;
+    const COMPLETELY_SHIPPED                 = 4;
 
     //  Address Error Statuses
     const INVALID_CITY_ID               = 100;

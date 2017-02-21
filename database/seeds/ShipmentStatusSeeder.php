@@ -41,8 +41,8 @@ class ShipmentStatusSeeder extends Seeder
                 'isError' => false
             ],
             [
-                'id'    => ShipmentStatusUtility::FULLY_SHIPPED,
-                'name'  => 'Fully Shipped',
+                'id'    => ShipmentStatusUtility::COMPLETELY_SHIPPED,
+                'name'  => 'Completely Shipped',
                 'isError' => false
             ],
 
@@ -97,7 +97,7 @@ class ShipmentStatusSeeder extends Seeder
              */
             [
                 'id'    => ShipmentStatusUtility::INSUFFICIENT_INVENTORY,
-                'name'  => 'Insufficient inventory',
+                'name'  => 'Insufficient Inventory',
                 'isError' => true
             ],
 

@@ -67,7 +67,7 @@ class ShipmentStatusValidation
      */
     public function getFullyShipped ()
     {
-        return $this->idExists(ShipmentStatusUtility::FULLY_SHIPPED);
+        return $this->idExists(ShipmentStatusUtility::COMPLETELY_SHIPPED);
     }
 
     /**
