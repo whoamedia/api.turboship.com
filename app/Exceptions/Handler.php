@@ -18,6 +18,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         \League\OAuth2\Server\Exception\AccessDeniedException::class,
         \League\OAuth2\Server\Exception\InvalidRequestException::class,
+        \League\OAuth2\Server\Exception\InvalidClientException::class,
         \League\OAuth2\Server\Exception\InvalidCredentialsException::class,
         \League\OAuth2\Server\Exception\UnsupportedGrantTypeException::class,
         \Illuminate\Auth\AuthenticationException::class,
