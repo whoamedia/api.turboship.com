@@ -677,7 +677,7 @@ class WhoaMediaSeeder extends Seeder
         for( $i = 8000; $i < 8200; $i++ )
         {
             $portableBin        = new \App\Models\WMS\PortableBin();
-            $portableBin->generateBarCode($i);
+            $portableBin->setBarCode($i);
             $portableBin->setOrganization($this->organization);
             $this->portableBinRepo->save($portableBin);
         }
