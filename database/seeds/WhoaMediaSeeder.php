@@ -652,7 +652,7 @@ class WhoaMediaSeeder extends Seeder
                         $bin->setRow($row);
                         $bin->setCol($col);
                         $bin->setOrganization($this->organization);
-                        $bin->setBarCode(\Illuminate\Support\Str::random(20));
+                        $bin->setBarCode($aisle . $section . $row . $col);
                         $this->binRepo->save($bin);
                     }
                 }
