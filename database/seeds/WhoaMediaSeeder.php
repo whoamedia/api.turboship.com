@@ -674,10 +674,10 @@ class WhoaMediaSeeder extends Seeder
 
     private function portableBins ()
     {
-        for( $i = 0; $i < 20; $i++ )
+        for( $i = 8000; $i < 8200; $i++ )
         {
             $portableBin        = new \App\Models\WMS\PortableBin();
-            $portableBin->generateBarCode(20);
+            $portableBin->generateBarCode($i);
             $portableBin->setOrganization($this->organization);
             $this->portableBinRepo->save($portableBin);
         }
