@@ -20,11 +20,6 @@ class PickItem implements \JsonSerializable
     protected $pickLocation;
 
     /**
-     * @var Bin
-     */
-    protected $bin;
-
-    /**
      * @var Variant
      */
     protected $variant;
@@ -55,7 +50,6 @@ class PickItem implements \JsonSerializable
         $this->createdAt                = new \DateTime();
 
         $this->pickLocation             = AU::get($data['pickLocation']);
-        $this->bin                      = AU::get($data['bin']);
         $this->variant                  = AU::get($data['variant']);
         $this->quantity                 = AU::get($data['quantity']);
         $this->tote                     = AU::get($data['tote']);
@@ -108,22 +102,6 @@ class PickItem implements \JsonSerializable
     public function setPickLocation($pickLocation)
     {
         $this->pickLocation = $pickLocation;
-    }
-
-    /**
-     * @return Bin
-     */
-    public function getBin()
-    {
-        return $this->bin;
-    }
-
-    /**
-     * @param Bin $bin
-     */
-    public function setBin($bin)
-    {
-        $this->bin = $bin;
     }
 
     /**

@@ -1,0 +1,47 @@
+App\Models\WMS\PickInstruction:
+  type:               entity
+  table:              PickInstruction
+  repositoryClass:    App\Repositories\Doctrine\WMS\PickInstructionRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PickInstruction id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the PickInstruction was created"
+        default:      CURRENT_datetime
+    completedAt:
+      column:         completedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickInstruction was completed"
+        default:      null
+
+  manyToOne:
+    staff:
+      targetEntity:   App\Models\CMS\Staff
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         staffId
+        referencedColumnName: id
+
+  oneToMany:
+    locations:
+      targetEntity:   PickLocation
+      mappedBy:       pickInstruction
+      cascade:        ["persist", "remove"]
