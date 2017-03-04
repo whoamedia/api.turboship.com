@@ -640,7 +640,7 @@ class WhoaMediaSeeder extends Seeder
     {
         for( $aisle = 1; $aisle < 11; $aisle++ )
         {
-            for( $section = 'A'; $section < 'G'; $section++ )
+            for( $section = 'A'; $section <= 'G'; $section++ )
             {
                 for( $row = 1; $row < 11; $row++ )
                 {
