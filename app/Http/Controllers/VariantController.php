@@ -150,23 +150,6 @@ class VariantController extends BaseAuthController
         return response($variant);
     }
 
-    public function syncExternalInventory (Request $request)
-    {
-        $getVariants                    = new GetVariants($request->input());
-        $getVariants->setOrganizationIds(parent::getAuthUserOrganization()->getId());
-        $getVariants->validate();
-        $getVariants->clean();
-
-        $query                          = $getVariants->jsonSerialize();
-
-        $variantResults                 = $this->variantRepo->getSyncableVariants($query);
-        $staffId                        = parent::getAuthUser()->getId();
-        foreach ($variantResults AS $variant)
-        {
-            $job                        = (new ImportVariantExternalInventoryJob($variant['id'], $staffId, $request->input('portableBinId')))->onQueue('variantExternalInventorySync');
-            $this->dispatch($job);
-        }
-    }
 
     /**
      * @param   int     $id
