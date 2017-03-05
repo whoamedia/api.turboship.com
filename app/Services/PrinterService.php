@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Hardware\CUPSPrinter;
 use App\Models\Hardware\Printer;
+use App\Models\OMS\Variant;
 use App\Models\Shipments\Postage;
 use App\Services\IPP\IPPService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -32,6 +33,21 @@ class PrinterService
         if ($printer instanceof CUPSPrinter)
         {
             $this->ippService->printLabel($postage, $printer);
+        }
+        else
+            throw new BadRequestHttpException('Printer is not supported');
+    }
+
+    /**
+     * @param Variant       $variant
+     * @param Printer       $printer
+     */
+    public function printVariantBarCode (Variant $variant, $printer)
+    {
+
+        if ($printer instanceof CUPSPrinter)
+        {
+            $this->ippService->printVariantBarCode($variant, $printer);
         }
         else
             throw new BadRequestHttpException('Printer is not supported');

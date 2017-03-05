@@ -7,11 +7,13 @@ use App\Http\Requests\Printers\CreateCUPSPrinter;
 use App\Http\Requests\Printers\GetPrinters;
 use App\Http\Requests\Printers\PrintPostageLabel;
 use App\Http\Requests\Printers\PrintShipmentLabel;
+use App\Http\Requests\Printers\PrintVariantBarCode;
 use App\Http\Requests\Printers\ShowPrinter;
 use App\Http\Requests\Printers\UpdateCUPSPrinter;
 use App\Models\Hardware\CUPSPrinter;
 use App\Models\Hardware\PrinterType;
 use App\Models\Hardware\Validation\PrinterTypeValidation;
+use App\Models\OMS\Validation\VariantValidation;
 use App\Models\Shipments\Validation\PostageValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Repositories\Doctrine\Hardware\PrinterRepository;
@@ -156,6 +158,23 @@ class PrinterController extends BaseAuthController
         return response('', 200);
     }
 
+    public function printVariantBarCode (Request $request)
+    {
+        $printVariantBarCode            = new PrintVariantBarCode($request->input());
+        $printVariantBarCode->setId($request->route('id'));
+        $printVariantBarCode->setVariantId($request->route('variantid'));
+        $printVariantBarCode->validate();
+        $printVariantBarCode->clean();
+
+        $printer                        = $this->getPrinterFromRoute($printVariantBarCode->getId());
+
+        $variantValidation              = new VariantValidation();
+        $variant                        = $variantValidation->idExists($printVariantBarCode->getVariantId());
+
+        $printerService                 = new PrinterService();
+        $printerService->printVariantBarCode($variant, $printer);
+        return response('', 200);
+    }
 
 
     /**
