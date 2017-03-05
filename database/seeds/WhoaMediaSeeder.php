@@ -692,7 +692,7 @@ class WhoaMediaSeeder extends Seeder
 
     private function carts ()
     {
-        for( $i = 9000; $i < 9050; $i++ )
+        for( $i = 9000; $i < 9020; $i++ )
         {
             $cart               = new \App\Models\WMS\Cart();
             $cart->setBarCode($i);
