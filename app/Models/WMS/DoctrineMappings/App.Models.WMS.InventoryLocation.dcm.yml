@@ -10,6 +10,7 @@ App\Models\WMS\InventoryLocation:
       1:              App\Models\WMS\Bin
       2:              App\Models\WMS\Tote
       3:              App\Models\WMS\PortableBin
+      4:              App\Models\WMS\Cart
 
   id:
     id:

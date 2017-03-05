@@ -44,6 +44,11 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/carriers/{id}/services', 'CarrierController@getServices');
 
 
+    //  Cart operations
+    Route::get('/carts', 'CartController@index');
+    Route::get('/carts/{id}', 'CartController@show');
+
+
     //  Client Operations
     Route::get('/clients', 'ClientController@index');
     Route::post('/clients', 'ClientController@store');
