@@ -2,3 +2,9 @@ App\Models\WMS\Cart:
   type:               entity
   table:              Cart
   repositoryClass:    App\Repositories\Doctrine\WMS\CartRepository
+
+  oneToMany:
+    totes:
+      targetEntity:   Tote
+      mappedBy:       cart
+      cascade:        ["persist", "remove"]

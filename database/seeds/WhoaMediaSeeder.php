@@ -71,6 +71,11 @@ class WhoaMediaSeeder extends Seeder
      */
     private $portableBinRepo;
 
+    /**
+     * @var \App\Repositories\Doctrine\WMS\CartRepository
+     */
+    private $cartRepo;
+
     public function run()
     {
         $this->clientRepo       = EntityManager::getRepository('App\Models\CMS\Client');
@@ -82,6 +87,7 @@ class WhoaMediaSeeder extends Seeder
         $this->binRepo          = EntityManager::getRepository('App\Models\WMS\Bin');
         $this->toteRepo         = EntityManager::getRepository('App\Models\WMS\Tote');
         $this->portableBinRepo  = EntityManager::getRepository('App\Models\WMS\PortableBin');
+        $this->cartRepo         = EntityManager::getRepository('App\Models\WMS\Cart');
 
         $this->organization();
         $this->users();
@@ -94,6 +100,7 @@ class WhoaMediaSeeder extends Seeder
         $this->bins();
         $this->totes();
         $this->portableBins();
+        $this->carts();
     }
 
     private function organization ()
@@ -680,6 +687,17 @@ class WhoaMediaSeeder extends Seeder
             $portableBin->setBarCode($i);
             $portableBin->setOrganization($this->organization);
             $this->portableBinRepo->save($portableBin);
+        }
+    }
+
+    private function carts ()
+    {
+        for( $i = 9000; $i < 9050; $i++ )
+        {
+            $cart               = new \App\Models\WMS\Cart();
+            $cart->setBarCode($i);
+            $cart->setOrganization($this->organization);
+            $this->cartRepo->save($cart);
         }
     }
 }

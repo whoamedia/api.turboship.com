@@ -13,3 +13,13 @@ App\Models\WMS\Tote:
       options:
         unsigned:     true
         fixed:        false
+
+  manyToOne:
+    cart:
+      targetEntity:   Cart
+      nullable:       true
+      fetch:          EAGER
+      inversedBy:     totes
+      joinColumn:
+        name:         cartId
+        referencedColumnName: id
