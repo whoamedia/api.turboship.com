@@ -1,0 +1,13 @@
+App\Models\WMS\WavePick:
+  type:               entity
+  table:              WavePick
+  repositoryClass:    App\Repositories\Doctrine\WMS\WavePickRepository
+
+  manyToOne:
+    cart:
+      targetEntity:   Cart
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         cartId
+        referencedColumnName: id

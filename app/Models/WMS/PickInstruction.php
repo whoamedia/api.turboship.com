@@ -7,7 +7,7 @@ use App\Models\CMS\Staff;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class PickInstruction implements \JsonSerializable
+abstract class PickInstruction implements \JsonSerializable
 {
 
     /**
@@ -53,11 +53,17 @@ class PickInstruction implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['locations']            = $this->getLocations();
         $object['staff']                = $this->staff->jsonSerialize();
+        $object['object']               = $this->getObject();
         $object['createdAt']            = $this->createdAt;
         $object['completedAt']          = is_null($this->completedAt) ? null : $this->completedAt;
 
         return $object;
     }
+
+    /**
+     * @return string
+     */
+    abstract function getObject();
 
     /**
      * @return int

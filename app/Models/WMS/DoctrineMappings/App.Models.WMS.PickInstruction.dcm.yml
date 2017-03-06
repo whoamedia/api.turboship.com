@@ -2,6 +2,13 @@ App\Models\WMS\PickInstruction:
   type:               entity
   table:              PickInstruction
   repositoryClass:    App\Repositories\Doctrine\WMS\PickInstructionRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           pickInstructionTypeId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\WMS\TotePick
+      2:              App\Models\WMS\WavePick
 
   id:
     id:
