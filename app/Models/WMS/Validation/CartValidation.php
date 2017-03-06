@@ -56,4 +56,21 @@ class CartValidation
         return $results[0];
     }
 
+    /**
+     * @param   int     $organizationId
+     * @param   string  $barcode
+     */
+    public function barCodeDoesNotExist ($organizationId, $barcode)
+    {
+        $query          = [
+            'organizationIds'       => $organizationId,
+            'barCodes'              => $barcode,
+        ];
+
+        $results                        = $this->cartRepo->where($query);
+
+        if (sizeof($results) != 0)
+            throw new NotFoundHttpException('Cart barCode already exists');
+    }
+
 }

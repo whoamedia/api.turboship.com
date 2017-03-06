@@ -47,6 +47,8 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     //  Cart operations
     Route::get('/carts', 'CartController@index');
     Route::get('/carts/{id}', 'CartController@show');
+    Route::post('/carts', 'CartController@store');
+    Route::put('/carts/{id}', 'CartController@update');
 
 
     //  Client Operations
