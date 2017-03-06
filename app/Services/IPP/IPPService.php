@@ -53,10 +53,10 @@ class IPPService
                 ^PQ{!COPIES!}
                 ^XZ';
 
-        $data   = str_replace('YOUR PRODUCT NAME HERE', $variant->getProduct()->getName(), $data);
-        $data   = str_replace('VARIANT NAME', $variant->getTitle(), $data);
-        $data   = str_replace('BARCODE HERE', $variant->getBarCode(), $data);
-        $data   = str_replace('COPIES', $copies, $data);
+        $data   = str_replace('{!YOUR PRODUCT NAME HERE!}', $variant->getProduct()->getName(), $data);
+        $data   = str_replace('{!VARIANT NAME!}', $variant->getTitle(), $data);
+        $data   = str_replace('{!BARCODE DATA HERE!}', $variant->getBarCode(), $data);
+        $data   = str_replace('{!COPIES!}', $copies, $data);
 
         $print                          = new PrintIPP();
         $print->setPort($printer->getPort());
