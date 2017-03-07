@@ -19,6 +19,9 @@ class CreatePickInstructionTable extends Migration
 
             $table->integer('pickInstructionTypeId')->unsigned()->index();
 
+            $table->integer('organizationId')->unsigned()->index();
+            $table->foreign('organizationId')->references('id')->on('Organization');
+
             $table->integer('staffId')->unsigned()->index();
             $table->foreign('staffId')->references('id')->on('Staff');
 

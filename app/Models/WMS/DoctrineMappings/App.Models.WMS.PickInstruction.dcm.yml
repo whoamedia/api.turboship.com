@@ -39,6 +39,13 @@ App\Models\WMS\PickInstruction:
         default:      null
 
   manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
     staff:
       targetEntity:   App\Models\CMS\Staff
       nullable:       false

@@ -3,6 +3,7 @@
 namespace App\Models\WMS;
 
 
+use App\Models\CMS\Organization;
 use App\Models\CMS\Staff;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
@@ -14,6 +15,11 @@ abstract class PickInstruction implements \JsonSerializable
      * @var int
      */
     protected $id;
+
+    /**
+     * @var Organization
+     */
+    protected $organization;
 
     /**
      * @var Staff
@@ -52,6 +58,7 @@ abstract class PickInstruction implements \JsonSerializable
         $this->locations                = new ArrayCollection();
         $this->pickTotes                = new ArrayCollection();
 
+        $this->organization             = AU::get($data['organization']);
         $this->staff                    = AU::get($data['staff']);
         $this->createdBy                = AU::get($data['createdBy']);
         $this->completedAt              = AU::get($data['completedAt']);
@@ -92,6 +99,22 @@ abstract class PickInstruction implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization $organization
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
     }
 
     /**
