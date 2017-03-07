@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWavePickTable extends Migration
+class CreateCartPickTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateWavePickTable extends Migration
      */
     public function up()
     {
-        Schema::create('WavePick', function (Blueprint $table)
+        Schema::create('CartPick', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
 
@@ -29,6 +29,6 @@ class CreateWavePickTable extends Migration
      */
     public function down()
     {
-        Schema::drop('WavePick');
+        Schema::drop('CartPick');
     }
 }

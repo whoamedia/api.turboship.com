@@ -21,9 +21,19 @@ abstract class PickInstruction implements \JsonSerializable
     protected $staff;
 
     /**
+     * @var Staff
+     */
+    protected $createdBy;
+
+    /**
      * @var ArrayCollection
      */
     protected $locations;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $pickTotes;
 
     /**
      * @var \DateTime
@@ -40,8 +50,10 @@ abstract class PickInstruction implements \JsonSerializable
     {
         $this->createdAt                = new \DateTime();
         $this->locations                = new ArrayCollection();
+        $this->pickTotes                = new ArrayCollection();
 
         $this->staff                    = AU::get($data['staff']);
+        $this->createdBy                = AU::get($data['createdBy']);
         $this->completedAt              = AU::get($data['completedAt']);
     }
 
@@ -53,6 +65,7 @@ abstract class PickInstruction implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['locations']            = $this->getLocations();
         $object['staff']                = $this->staff->jsonSerialize();
+        $object['createdBy']            = $this->createdBy->jsonSerialize();
         $object['object']               = $this->getObject();
         $object['createdAt']            = $this->createdAt;
         $object['completedAt']          = is_null($this->completedAt) ? null : $this->completedAt;
@@ -99,6 +112,23 @@ abstract class PickInstruction implements \JsonSerializable
     }
 
     /**
+     * @return PickTote[]
+     */
+    public function getPickTotes ()
+    {
+        return $this->pickTotes->toArray();
+    }
+
+    /**
+     * @param PickTote $pickTote
+     */
+    public function addPickTote (PickTote $pickTote)
+    {
+        $pickTote->setPickInstruction($this);
+        $this->pickTotes->add($pickTote);
+    }
+
+    /**
      * @return Staff
      */
     public function getStaff()
@@ -112,6 +142,22 @@ abstract class PickInstruction implements \JsonSerializable
     public function setStaff($staff)
     {
         $this->staff = $staff;
+    }
+
+    /**
+     * @return Staff
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param Staff $createdBy
+     */
+    public function setCreatedBy($createdBy)
+    {
+        $this->createdBy = $createdBy;
     }
 
     /**

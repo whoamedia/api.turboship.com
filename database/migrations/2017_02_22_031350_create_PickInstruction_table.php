@@ -22,6 +22,9 @@ class CreatePickInstructionTable extends Migration
             $table->integer('staffId')->unsigned()->index();
             $table->foreign('staffId')->references('id')->on('Staff');
 
+            $table->integer('createdById')->unsigned()->index();
+            $table->foreign('createdById')->references('id')->on('Staff');
+
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
             $table->datetime('completedAt')->nullable()->default(NULL)->index();
         });

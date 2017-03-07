@@ -16,9 +16,6 @@ class CreateTotePickTable extends Migration
         Schema::create('TotePick', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
-
-            $table->integer('toteId')->unsigned()->index();
-            $table->foreign('toteId')->references('id')->on('Tote');
         });
     }
 

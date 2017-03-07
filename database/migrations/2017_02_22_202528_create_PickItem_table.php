@@ -23,10 +23,11 @@ class CreatePickItemTable extends Migration
             $table->integer('variantId')->unsigned()->index();
             $table->foreign('variantId')->references('id')->on('Variant');
 
-            $table->integer('quantity')->unsigned()->index();
-
             $table->integer('toteId')->unsigned()->index();
             $table->foreign('toteId')->references('id')->on('Tote');
+
+            $table->integer('quantityRequired')->unsigned()->index();
+            $table->integer('quantityPicked')->unsigned()->index();
 
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
             $table->datetime('completedAt')->nullable()->default(NULL)->index();

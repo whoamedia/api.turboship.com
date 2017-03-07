@@ -1,7 +1,7 @@
-App\Models\WMS\WavePick:
+App\Models\WMS\CartPick:
   type:               entity
-  table:              WavePick
-  repositoryClass:    App\Repositories\Doctrine\WMS\WavePickRepository
+  table:              CartPick
+  repositoryClass:    App\Repositories\Doctrine\WMS\CartPickRepository
 
   manyToOne:
     cart:

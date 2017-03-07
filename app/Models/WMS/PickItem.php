@@ -25,14 +25,19 @@ class PickItem implements \JsonSerializable
     protected $variant;
 
     /**
-     * @var int
-     */
-    protected $quantity;
-
-    /**
      * @var Tote
      */
     protected $tote;
+
+    /**
+     * @var int
+     */
+    protected $quantityRequired;
+
+    /**
+     * @var int
+     */
+    protected $quantityPicked;
 
     /**
      * @var \DateTime
@@ -51,8 +56,9 @@ class PickItem implements \JsonSerializable
 
         $this->pickLocation             = AU::get($data['pickLocation']);
         $this->variant                  = AU::get($data['variant']);
-        $this->quantity                 = AU::get($data['quantity']);
         $this->tote                     = AU::get($data['tote']);
+        $this->quantityRequired         = AU::get($data['quantityRequired']);
+        $this->quantityPicked           = AU::get($data['quantityPicked'], 0);
         $this->completedAt              = AU::get($data['completedAt']);
     }
 
@@ -62,10 +68,10 @@ class PickItem implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['bin']                  = $this->bin->jsonSerialize();
         $object['variant']              = $this->variant->jsonSerialize();
-        $object['quantity']             = $this->quantity;
         $object['tote']                 = $this->tote->jsonSerialize();
+        $object['quantityRequired']     = $this->quantityRequired;
+        $object['quantityPicked']       = $this->quantityPicked;
         $object['createdAt']            = $this->createdAt;
         $object['completedAt']          = is_null($this->completedAt) ? null : $this->completedAt;
 
@@ -123,17 +129,33 @@ class PickItem implements \JsonSerializable
     /**
      * @return int
      */
-    public function getQuantity()
+    public function getQuantityRequired()
     {
-        return $this->quantity;
+        return $this->quantityRequired;
     }
 
     /**
-     * @param int $quantity
+     * @param int $quantityRequired
      */
-    public function setQuantity($quantity)
+    public function setQuantityRequired($quantityRequired)
     {
-        $this->quantity = $quantity;
+        $this->quantityRequired = $quantityRequired;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantityPicked()
+    {
+        return $this->quantityPicked;
+    }
+
+    /**
+     * @param int $quantityPicked
+     */
+    public function setQuantityPicked($quantityPicked)
+    {
+        $this->quantityPicked = $quantityPicked;
     }
 
     /**

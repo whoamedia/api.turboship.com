@@ -1,0 +1,40 @@
+App\Models\WMS\PickTote:
+  type:               entity
+  table:              PickTote
+  repositoryClass:    App\Repositories\Doctrine\WMS\PickToteRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PickLocation id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  manyToOne:
+    pickInstruction:
+      targetEntity:   PickInstruction
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     pickTotes
+      joinColumn:
+        name:         pickInstructionId
+        referencedColumnName: id
+    tote:
+      targetEntity:   Tote
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         toteId
+        referencedColumnName: id
+    shipment:
+      targetEntity:   App\Models\Shipments\Shipment
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         shipmentId
+        referencedColumnName: id

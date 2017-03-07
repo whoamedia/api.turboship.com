@@ -5,7 +5,7 @@ namespace App\Models\WMS;
 
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
-class WavePick extends PickInstruction implements \JsonSerializable
+class CartPick extends PickInstruction implements \JsonSerializable
 {
 
     /**

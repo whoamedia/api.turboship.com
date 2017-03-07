@@ -2,12 +2,3 @@ App\Models\WMS\TotePick:
   type:               entity
   table:              TotePick
   repositoryClass:    App\Repositories\Doctrine\WMS\TotePickRepository
-
-  manyToOne:
-    tote:
-      targetEntity:   Tote
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         toteId
-        referencedColumnName: id

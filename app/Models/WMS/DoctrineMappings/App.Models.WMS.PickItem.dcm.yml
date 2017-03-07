@@ -16,12 +16,18 @@ App\Models\WMS\PickItem:
         strategy:     IDENTITY
 
   fields:
-    quantity:
-      column:         quantity
+    quantityRequired:
+      column:         quantityRequired
       type:           integer
       nullable:       false
       options:
         comment:      "quantity to pick"
+    quantityPicked:
+      column:         quantityPicked
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "quantity picked"
     createdAt:
       column:         createdAt
       type:           datetime
