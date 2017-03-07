@@ -121,6 +121,13 @@ Route::group(['middleware' => ['oauth', 'oAuthUser']], function ()
     Route::get('/orders/{id}/approve', 'OrderController@approveIndividualOrder');
 
 
+    //  PickInstruction Operations
+    Route::get('/pickInstructions', 'PickInstructionController@index');
+    Route::get('/pickInstructions/{id}', 'PickInstructionController@show');
+    Route::post('/pickInstructions', 'PickInstructionController@store');
+    Route::put('/pickInstructions/{id}', 'PickInstructionController@update');
+
+
     //  PortableBin operations
     Route::get('/portableBins', 'PortableBinController@index');
     Route::post('/portableBins', 'PortableBinController@store');
