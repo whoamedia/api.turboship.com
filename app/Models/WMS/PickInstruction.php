@@ -42,6 +42,11 @@ abstract class PickInstruction implements \JsonSerializable
     protected $pickTotes;
 
     /**
+     * @var bool
+     */
+    protected $isAssigned;
+
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -60,6 +65,7 @@ abstract class PickInstruction implements \JsonSerializable
 
         $this->organization             = AU::get($data['organization']);
         $this->staff                    = AU::get($data['staff']);
+        $this->isAssigned               = AU::get($data['isAssigned'], false);
         $this->createdBy                = AU::get($data['createdBy']);
         $this->completedAt              = AU::get($data['completedAt']);
     }
@@ -165,6 +171,22 @@ abstract class PickInstruction implements \JsonSerializable
     public function setStaff($staff)
     {
         $this->staff = $staff;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsAssigned()
+    {
+        return $this->isAssigned;
+    }
+
+    /**
+     * @param bool $isAssigned
+     */
+    public function setIsAssigned($isAssigned)
+    {
+        $this->isAssigned = $isAssigned;
     }
 
     /**

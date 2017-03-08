@@ -23,6 +23,13 @@ App\Models\WMS\PickInstruction:
         strategy:     IDENTITY
 
   fields:
+    isAssigned:
+      column:         isAssigned
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the pick instruction was created by another user and assigned to someone"
+        default:      false
     createdAt:
       column:         createdAt
       type:           datetime
