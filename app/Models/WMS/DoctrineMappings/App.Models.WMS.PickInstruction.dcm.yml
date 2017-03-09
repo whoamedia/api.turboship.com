@@ -37,6 +37,13 @@ App\Models\WMS\PickInstruction:
       options:
         comment:      "When the PickInstruction was created"
         default:      CURRENT_datetime
+    startedAt:
+      column:         startedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickInstruction was started"
+        default:      null
     completedAt:
       column:         completedAt
       type:           datetime

@@ -54,6 +54,11 @@ abstract class PickInstruction implements \JsonSerializable
     /**
      * @var \DateTime|null
      */
+    protected $startedAt;
+
+    /**
+     * @var \DateTime|null
+     */
     protected $completedAt;
 
 
@@ -67,6 +72,7 @@ abstract class PickInstruction implements \JsonSerializable
         $this->staff                    = AU::get($data['staff']);
         $this->isAssigned               = AU::get($data['isAssigned'], false);
         $this->createdBy                = AU::get($data['createdBy']);
+        $this->startedAt                = AU::get($data['startedAt']);
         $this->completedAt              = AU::get($data['completedAt']);
     }
 
@@ -81,6 +87,7 @@ abstract class PickInstruction implements \JsonSerializable
         $object['createdBy']            = $this->createdBy->jsonSerialize();
         $object['object']               = $this->getObject();
         $object['createdAt']            = $this->createdAt;
+        $object['startedAt']            = is_null($this->startedAt) ? null : $this->startedAt;
         $object['completedAt']          = is_null($this->completedAt) ? null : $this->completedAt;
 
         return $object;
@@ -219,6 +226,22 @@ abstract class PickInstruction implements \JsonSerializable
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getStartedAt()
+    {
+        return $this->startedAt;
+    }
+
+    /**
+     * @param \DateTime|null $startedAt
+     */
+    public function setStartedAt($startedAt)
+    {
+        $this->startedAt = $startedAt;
     }
 
     /**
