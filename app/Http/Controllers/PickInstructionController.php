@@ -95,7 +95,7 @@ class PickInstructionController extends BaseAuthController
 
         $createdBy                      = parent::getAuthStaff();
 
-        dd($createPickInstruction->jsonSerialize());
+        dd($shipments);
         $pickInstructionService         = new PickInstructionService();
         $pickInstruction                = $pickInstructionService->buildPickInstructionObject($cart, $totes, $shipments, $staff, $createdBy);
 
