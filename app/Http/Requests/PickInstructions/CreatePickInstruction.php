@@ -37,6 +37,7 @@ class CreatePickInstruction extends BaseRequest implements Cleanable, Validatabl
     {
         $this->toteIds                  = AU::get($data['toteIds']);
         $this->cartId                   = AU::get($data['cartId']);
+        $this->staffId                  = AU::get($data['staffId']);
         $this->shipmentIds              = AU::get($data['shipmentIds']);
     }
 
@@ -63,7 +64,7 @@ class CreatePickInstruction extends BaseRequest implements Cleanable, Validatabl
         if (!is_null($this->shipmentIds))
         {
             $this->shipmentIds          = parent::getCommaSeparatedIds($this->shipmentIds);
-            $this->shipmentIds          = parent::validateIds($this->shipmentIds, 'shipmentIds');
+            parent::validateIds($this->shipmentIds, 'shipmentIds');
         }
     }
 
@@ -71,7 +72,6 @@ class CreatePickInstruction extends BaseRequest implements Cleanable, Validatabl
     {
         $this->cartId                   = parent::getInteger($this->cartId);
         $this->staffId                  = parent::getInteger($this->staffId);
-
     }
 
     /**
