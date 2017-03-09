@@ -129,6 +129,11 @@ class PickInstructionService
             $pickInstruction->addPickTote($pickTote);
         }
 
+        $pickInstruction->setIsAssigned(false);
+        $pickInstruction->setOrganization($createdBy->getOrganization());
+        $pickInstruction->setStaff($staff);
+        $pickInstruction->setCreatedBy($createdBy);
+
         return $pickInstruction;
     }
 
