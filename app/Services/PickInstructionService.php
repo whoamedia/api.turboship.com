@@ -12,6 +12,7 @@ use App\Models\WMS\PickTote;
 use App\Models\WMS\Tote;
 use App\Models\WMS\TotePick;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Utilities\ShipmentStatusUtility;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -56,6 +57,7 @@ class PickInstructionService
             {
                 $pickInstruction        = new TotePick();
                 $pickTote               = new PickTote();
+                $this->canAddShipmentToPick($shipments[0]);
                 $pickTote->setShipment($shipments[0]);
                 $pickInstruction->addPickTote($pickTote);
             }
@@ -65,6 +67,7 @@ class PickInstructionService
                 foreach ($shipments AS $item)
                 {
                     $pickTote           = new PickTote();
+                    $this->canAddShipmentToPick($item);
                     $pickTote->setShipment($item);
                     $pickInstruction->addPickTote($pickTote);
                 }
@@ -119,6 +122,17 @@ class PickInstructionService
         return $pickInstruction;
     }
 
+    /**
+     * @param   Shipment    $shipment
+     * @return  bool
+     */
+    public function canAddShipmentToPick ($shipment)
+    {
+        if ($shipment->getId() != ShipmentStatusUtility::PENDING)
+            throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' cannot be added to a pick instruction because its status is not Pending');
+
+        return true;
+    }
     /**
      * @param   TotePick|CartPick     $pickInstruction
      */

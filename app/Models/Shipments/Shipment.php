@@ -612,4 +612,5 @@ class Shipment implements \JsonSerializable
         return $weight;
     }
 
+
 }
