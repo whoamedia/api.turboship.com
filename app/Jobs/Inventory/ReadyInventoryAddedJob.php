@@ -77,8 +77,8 @@ class ReadyInventoryAddedJob extends Job implements ShouldQueue
 
             if ($shipment->getStatus()->getId() == ShipmentStatusUtility::PENDING)
             {
-                $job                        = (new AutomatedShippingJob($shipment->getId()))->onQueue('automatedShipping')->delay(30);
-                $this->dispatch($job);
+                //  $job                        = (new AutomatedShippingJob($shipment->getId()))->onQueue('automatedShipping')->delay(30);
+                //  $this->dispatch($job);
             }
         }
 
