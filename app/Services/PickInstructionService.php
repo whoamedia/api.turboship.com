@@ -203,11 +203,10 @@ class PickInstructionService
         //  Cart picking. Use simple approach of getting oldest shipments first until we have time to improve logic
         $shipmentQuery['orderBy']   = 'shipment.id';
         $shipmentQuery['direction'] = 'ASC';
-        $shipmentQuery['limit']     = $requiredShipments;
+        $shipmentQuery['maxLimit']  = $requiredShipments;
 
         $shipmentResults            = $this->shipmentRepo->where($shipmentQuery);
 
-        dd($requiredShipments);
 
         if (sizeof($shipmentResults) == 0)
             throw new BadRequestHttpException('There are currently no shipments available to pick');
