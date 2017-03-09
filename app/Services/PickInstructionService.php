@@ -207,7 +207,7 @@ class PickInstructionService
 
         $shipmentResults            = $this->shipmentRepo->where($shipmentQuery);
 
-        dd(sizeof($shipmentResults));
+        dd($requiredShipments);
 
         if (sizeof($shipmentResults) == 0)
             throw new BadRequestHttpException('There are currently no shipments available to pick');
