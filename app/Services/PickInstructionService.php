@@ -48,7 +48,7 @@ class PickInstructionService
     public function buildPickInstructionObject ($cart, $totes, $shipments, $staff, $createdBy)
     {
         //  First identify points of failure. Why shouldn't we allow this pick instruction to be created?
-dd(sizeof($totes));
+
         /**
          * If cart is null and totes is empty someone is creating a pick for another user. The cart and/or totes will be populated at a later time.
          * In this case shipments must be provided
@@ -115,10 +115,16 @@ dd(sizeof($totes));
         {
             $pickInstruction            = new CartPick();
             $pickInstruction->setCart($cart);
+            /**
+             * TODO: Verify the cart is not active in another PickInstruction
+             */
         }
 
         for ($i = 0; $i < sizeof($totes); $i++)
         {
+            /**
+             * TODO: Verify the tote is not active in another PickInstruction
+             */
             $pickTote                   = new PickTote();
             $pickTote->setTote($totes[$i]);
 
@@ -162,7 +168,7 @@ dd(sizeof($totes));
             if (is_null($pickTote->getShipment()))
                 $requiredShipments++;
         }
-
+dd($requiredShipments);
         $shipmentQuery                  = [
             'organizationIds'           => $pickInstruction->getCreatedBy()->getOrganization()->getId(),
             'statusIds'                 => ShipmentStatusUtility::PENDING,
