@@ -168,7 +168,7 @@ class PickInstructionService
             if (is_null($pickTote->getShipment()))
                 $requiredShipments++;
         }
-dd($requiredShipments);
+
         $shipmentQuery                  = [
             'organizationIds'           => $pickInstruction->getCreatedBy()->getOrganization()->getId(),
             'statusIds'                 => ShipmentStatusUtility::PENDING,
@@ -218,9 +218,9 @@ dd($requiredShipments);
             {
                 if (is_null($pickTote->getShipment()))
                 {
-                    $pickTote->setShipment($shipment);
                     $shipment->setInPickInstruction(true);
                     $this->shipmentRepo->save($shipment);
+                    $pickTote->setShipment($shipment);
                 }
             }
         }
