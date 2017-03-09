@@ -1,0 +1,55 @@
+App\Models\WMS\PickLocation:
+  type:               entity
+  table:              PickLocation
+  repositoryClass:    App\Repositories\Doctrine\WMS\PickLocationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PickLocation id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the PickLocation was created"
+        default:      CURRENT_datetime
+    completedAt:
+      column:         completedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickLocation was completed"
+        default:      null
+
+  manyToOne:
+    bin:
+      targetEntity:   Bin
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         binId
+        referencedColumnName: id
+    pickInstruction:
+      targetEntity:   PickInstruction
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     locations
+      joinColumn:
+        name:         pickInstructionId
+        referencedColumnName: id
+
+  oneToMany:
+    items:
+      targetEntity:   PickItem
+      mappedBy:       pickLocation
+      cascade:        ["persist", "remove"]

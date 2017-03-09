@@ -29,7 +29,7 @@ class CredentialRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['credential']);
+        $qb->select(['credential', 'integrationCredential', 'integratedService']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

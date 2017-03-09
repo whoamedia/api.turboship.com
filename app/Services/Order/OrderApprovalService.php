@@ -8,6 +8,7 @@ use App\Exceptions\Address\InvalidCityException;
 use App\Exceptions\Address\InvalidSubdivisionException;
 use App\Exceptions\Address\MultipleAddressesFoundException;
 use App\Exceptions\Address\USPSApiErrorException;
+use App\Models\Locations\Address;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\Locations\CountryRepository;
 use App\Repositories\Doctrine\Locations\SubdivisionRepository;
@@ -15,6 +16,7 @@ use App\Repositories\Doctrine\OMS\OrderStatusRepository;
 use App\Repositories\Doctrine\OMS\VariantRepository;
 use App\Services\Address\USPSAddressService;
 use App\Services\Shopify\Mapping\ShopifyMappingExceptionService;
+use App\Utilities\CountryUtility;
 use App\Utilities\SourceUtility;
 use App\Utilities\OrderStatusUtility;
 use Respect\Validation\Validator as v;
@@ -68,6 +70,13 @@ class OrderApprovalService
         if (!$order->canRunApprovalProcess())
             return $order;
 
+        $this->mapAddresses($order->getProvidedAddress());
+        $this->mapAddresses($order->getShippingAddress());
+
+        if (!is_null($order->getBillingAddress()))
+            $this->mapAddresses($order->getBillingAddress());
+
+
         if (!$this->mapOrderItemSkus($order))
             return $order;
 
@@ -77,11 +86,47 @@ class OrderApprovalService
         if (!$this->validateShippingAddress($order))
             return $order;
 
-
         $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::PENDING_FULFILLMENT_ID);
         $order->addStatus($status);
 
         return $order;
+    }
+
+
+    public function mapAddresses (Address $address)
+    {
+        if (is_null($address->getCountry()))
+        {
+            $providedCountry                = $address->getCountryCode();
+            if (is_null($providedCountry) || empty(trim($providedCountry)))
+                return false;
+            else
+            {
+                $country                    = $this->countryRepo->getOneByWildCard($providedCountry);
+                if (is_null($country))
+                    return false;
+
+                $address->setCountry($country);
+            }
+        }
+
+        /**
+         * Validate the provided Subdivision is not empty and map it
+         * Only do this for US orders
+         */
+        if (is_null($address->getSubdivision()))
+        {
+            $providedSubdivision            = $address->getStateProvince();
+            if ( (is_null($providedSubdivision) || empty(trim($providedSubdivision))) && $address->getCountry()->getId() == CountryUtility::UNITED_STATES)
+                return false;
+
+            $subdivision                    = $this->subdivisionRepo->getOneByWildCard($providedSubdivision, $address->getCountry()->getId());
+            if (is_null($subdivision))
+                return false;
+
+            $address->setSubdivision($subdivision);
+        }
+        return true;
     }
 
     /**
@@ -100,56 +145,23 @@ class OrderApprovalService
         }
 
 
-        /**
-         * Validate that the provided country is not empty and map it
-         */
-        $providedCountry                = $address->getCountryCode();
-        if (is_null($providedCountry) || empty(trim($providedCountry)))
+        if (is_null($address->getCountry()))
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_COUNTRY_ID);
             $order->addStatus($status);
             return false;
         }
-        else
-        {
-            $country                    = $this->countryRepo->getOneByWildCard($providedCountry);
-            if (is_null($country))
-            {
-                $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_COUNTRY_ID);
-                $order->addStatus($status);
-                return false;
-            }
-        }
-        $address->setCountry($country);
 
         /**
          * Validate the provided Subdivision is not empty and map it
          * Only do this for US orders
          */
-        $providedSubdivision            = $address->getStateProvince();
-        if ( (is_null($providedSubdivision) || empty(trim($providedSubdivision))) && $address->getCountry()->getIso2() == 'US')
+        if ( is_null($address->getSubdivision()) && $address->getCountry()->getId() == CountryUtility::UNITED_STATES)
         {
             $status                     = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
             $order->addStatus($status);
             return false;
         }
-
-        $subdivision                = $this->subdivisionRepo->getOneByWildCard($providedSubdivision, $country->getId());
-
-        /**
-         * Not going to stop this from allowing the order to be approved. If the order is US address validation may fix the subdivision
-         */
-
-        /**
-        //  Only fail for US orders
-        if (is_null($subdivision)  && $address->getCountry()->getIso2() == 'US')
-        {
-        $status                 = $this->orderStatusRepo->getOneById(OrderStatusUtility::INVALID_STATE_ID);
-        $order->addStatus($status);
-        return false;
-        }
-         */
-        $address->setSubdivision($subdivision);
 
         //  Use ClientOptions for defaultShipToPhone
         if (is_null($address->getPhone()) || empty(trim($address->getPhone())))
@@ -183,7 +195,9 @@ class OrderApprovalService
     public function validateShippingAddress (Order $order)
     {
         //  Only run in production for US orders
-        if (config('turboship.address.uspsValidation') == false || $order->getShippingAddress()->getCountry()->getIso2() != 'US')
+        if (config('turboship.usps.validationEnabled') == false)
+            return true;
+        if ($order->getShippingAddress()->getCountry()->getId() != CountryUtility::UNITED_STATES)
             return true;
 
         $uspsAddressService             = new USPSAddressService();
@@ -191,7 +205,6 @@ class OrderApprovalService
         try
         {
             $uspsAddressService->validateAddress($order->getShippingAddress());
-
             return true;
         }
         catch (USPSApiErrorException $ex)

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\Models\CMS\User;
+use \App\Models\CMS\Staff;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 
 class NicheLogisticsSeeder extends Seeder
@@ -42,7 +42,8 @@ class NicheLogisticsSeeder extends Seeder
         $organization           = $this->organizationRepo->getOneById($nicheLogisticsId);
 
         //  Brian
-        $user                   = new User();
+        $user                   = new Staff();
+        $user->generateBarCode();
         $user->setFirstName('Brian');
         $user->setLastName('Harding');
         $user->setEmail('brian@nichelogistics.com');
@@ -52,7 +53,8 @@ class NicheLogisticsSeeder extends Seeder
 
 
         //  Dave
-        $user                   = new User();
+        $user                   = new Staff();
+        $user->generateBarCode();
         $user->setFirstName('Dave');
         $user->setLastName('Robertson');
         $user->setEmail('dave@nichelogistics.com');

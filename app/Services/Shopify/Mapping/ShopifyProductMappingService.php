@@ -3,9 +3,9 @@
 namespace App\Services\Shopify\Mapping;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
-use App\Integrations\Shopify\Models\Responses\ShopifyProductImage;
-use App\Integrations\Shopify\Models\Responses\ShopifyVariant;
+use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
+use jamesvweston\Shopify\Models\Responses\ShopifyProductImage;
+use jamesvweston\Shopify\Models\Responses\ShopifyVariant;
 use App\Models\CMS\Client;
 use App\Models\OMS\Product;
 use App\Models\OMS\ProductAlias;
@@ -73,6 +73,34 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
                 $product->addImage($image);
         }
 
+        /**
+         * If the product id is null we're creating it for the first time so don't do these checks
+         * See if there are any images that we need to delete locally
+         */
+        if (!is_null($product->getId()))
+        {
+            foreach ($product->getImages() AS $image)
+            {
+                $shopifyDeleted             = true;
+                foreach ($shopifyProduct->getImages() AS $shopifyProductImage)
+                {
+                    if (intval($image->getExternalId()) == intval($shopifyProductImage->getId()))
+                        $shopifyDeleted     = false;
+                }
+                if ($shopifyDeleted)
+                {
+                    $product->removeImage($image);
+                }
+            }
+        }
+
+        if (!is_null($shopifyProduct->getImage()))
+        {
+            //  At this point our images should be mapped
+            $image                          = $product->getImageByExternalId($shopifyProduct->getImage()->getId());
+            $product->setImage($image);
+        }
+
         return $product;
     }
 
@@ -88,7 +116,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
 
         $productAlias->setClient($this->client);
         $productAlias->setSource($this->shopifySource);
-        $productAlias->setExternalId($shopifyProduct->getId());
+        $productAlias->setExternalId(intval($shopifyProduct->getId()));
         $productAlias->setExternalCreatedAt($this->toDate($shopifyProduct->getCreatedAt()));
 
         return $productAlias;
@@ -128,8 +156,13 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
         $variant->setTitle($shopifyVariant->getTitle());
         $variant->setPrice($shopifyVariant->getPrice());
         $variant->setBarcode($shopifyVariant->getBarcode());
-        $variant->setExternalId($shopifyVariant->getId());
+        $variant->setExternalId(intval($shopifyVariant->getId()));
         $variant->setExternalCreatedAt($this->toDate($shopifyVariant->getCreatedAt()));
+
+        if ($shopifyVariant->getInventoryQuantity() != -1)
+            $variant->setExternalInventoryQuantity($shopifyVariant->getInventoryQuantity());
+        else
+            $variant->setExternalInventoryQuantity(0);
 
         //  Convert grams to ounces
         $grams                              = $shopifyVariant->getGrams();
@@ -158,7 +191,7 @@ class ShopifyProductMappingService extends BaseShopifyMappingService
             $image                          = new Image();
 
         $image->setSource($this->shopifySource);
-        $image->setExternalId($shopifyProductImage->getId());
+        $image->setExternalId(intval($shopifyProductImage->getId()));
         $image->setExternalCreatedAt($this->toDate($shopifyProductImage->getCreatedAt()));
         $image->setPath($shopifyProductImage->getSrc());
         return $image;

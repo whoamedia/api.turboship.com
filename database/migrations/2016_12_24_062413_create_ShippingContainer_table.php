@@ -17,6 +17,9 @@ class CreateShippingContainerTable extends Migration
         {
             $table->increments('id')->unsigned();
 
+            $table->integer('shippingContainerTypeId')->unsigned()->index();
+            $table->foreign('shippingContainerTypeId')->references('id')->on('ShippingContainerType');
+
             $table->integer('organizationId')->unsigned()->index();
             $table->foreign('organizationId')->references('id')->on('Organization');
 

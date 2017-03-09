@@ -1,0 +1,86 @@
+App\Models\WMS\PickInstruction:
+  type:               entity
+  table:              PickInstruction
+  repositoryClass:    App\Repositories\Doctrine\WMS\PickInstructionRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           pickInstructionTypeId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\WMS\TotePick
+      2:              App\Models\WMS\CartPick
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PickInstruction id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    isAssigned:
+      column:         isAssigned
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the pick instruction was created by another user and assigned to someone"
+        default:      false
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the PickInstruction was created"
+        default:      CURRENT_datetime
+    startedAt:
+      column:         startedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickInstruction was started"
+        default:      null
+    completedAt:
+      column:         completedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickInstruction was completed"
+        default:      null
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
+    staff:
+      targetEntity:   App\Models\CMS\Staff
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         staffId
+        referencedColumnName: id
+    createdBy:
+      targetEntity:   App\Models\CMS\Staff
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         createdById
+        referencedColumnName: id
+
+  oneToMany:
+    locations:
+      targetEntity:   PickLocation
+      mappedBy:       pickInstruction
+      cascade:        ["persist", "remove"]
+    pickTotes:
+      targetEntity:   PickTote
+      mappedBy:       pickInstruction
+      cascade:        ["persist", "remove"]

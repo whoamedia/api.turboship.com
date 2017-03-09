@@ -3,9 +3,8 @@
 namespace App\Jobs\Shopify\Products;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyProduct;
+use jamesvweston\Shopify\Models\Responses\ShopifyProduct;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use App\Services\Shopify\Mapping\ShopifyProductMappingService;
 use Illuminate\Bus\Queueable;
@@ -19,9 +18,9 @@ class ShopifyUpdateProductJob extends BaseShopifyJob implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var ShopifyProduct
+     * @var string
      */
-    private $shopifyProduct;
+    private $jsonShopifyProduct;
 
     /**
      * @var ProductRepository
@@ -30,14 +29,14 @@ class ShopifyUpdateProductJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyImportProductJob constructor.
-     * @param   ShopifyProduct  $shopifyProduct
+     * @param   string                      $jsonShopifyProduct
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyProduct, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($jsonShopifyProduct, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'products/update', $shopifyWebHookLog);
-        $this->shopifyProduct           = $shopifyProduct;
+        parent::__construct($integratedShoppingCartId, 'products/update', $shopifyWebHookLogId);
+        $this->jsonShopifyProduct       = $jsonShopifyProduct;
     }
 
     /**
@@ -47,11 +46,12 @@ class ShopifyUpdateProductJob extends BaseShopifyJob implements ShouldQueue
      */
     public function handle()
     {
-        parent::initialize($this->shopifyProduct->getId());
+        $shopifyProduct                 = new ShopifyProduct(json_decode($this->jsonShopifyProduct, true));
+        parent::initialize($shopifyProduct->getId());
         $this->productRepo              = EntityManager::getRepository('App\Models\OMS\Product');
         $shopifyProductMappingService   = new ShopifyProductMappingService($this->integratedShoppingCart->getClient());
 
-        $product                        = $shopifyProductMappingService->handleMapping($this->shopifyProduct);
+        $product                        = $shopifyProductMappingService->handleMapping($shopifyProduct);
         $entityCreated                  = is_null($product->getId()) ? true : false;
         $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 

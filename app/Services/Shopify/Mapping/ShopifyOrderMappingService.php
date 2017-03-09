@@ -3,9 +3,9 @@
 namespace App\Services\Shopify\Mapping;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyAddress;
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
-use App\Integrations\Shopify\Models\Responses\ShopifyOrderLineItem;
+use jamesvweston\Shopify\Models\Responses\ShopifyAddress;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrderLineItem;
 use App\Models\CMS\Client;
 use App\Models\Locations\Address;
 use App\Models\OMS\Order;
@@ -74,7 +74,8 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         $order->setSource($this->shopifySource);
         $order->setClient($this->client);
 
-        $order->setExternalId($shopifyOrder->getId());
+        $order->setName($shopifyOrder->getName());
+        $order->setExternalId(intval($shopifyOrder->getId()));
         $order->setExternalCreatedAt($this->toDate($shopifyOrder->getCreatedAt()));
 
         $weightGrams                        = $shopifyOrder->getTotalWeight();
@@ -118,9 +119,9 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
         if (is_null($orderItem))
             $orderItem                  = new OrderItem();
 
-        $orderItem->setExternalId($shopifyOrderLineItem->getId());
-        $orderItem->setExternalProductId($shopifyOrderLineItem->getProductId());
-        $orderItem->setExternalVariantId($shopifyOrderLineItem->getVariantId());
+        $orderItem->setExternalId(intval($shopifyOrderLineItem->getId()));
+        $orderItem->setExternalProductId(intval($shopifyOrderLineItem->getProductId()));
+        $orderItem->setExternalVariantId(intval($shopifyOrderLineItem->getVariantId()));
         $orderItem->setExternalVariantTitle($shopifyOrderLineItem->getVariantTitle());
         $orderItem->setSku($shopifyOrderLineItem->getSku());
         $orderItem->setQuantityPurchased($shopifyOrderLineItem->getQuantity());
@@ -205,16 +206,25 @@ class ShopifyOrderMappingService extends BaseShopifyMappingService
     }
 
     /**
-     * @param   ShopifyOrder $shopifyOrder
+     * @param   ShopifyOrder    $shopifyOrder
+     * @param   bool            $importShippedOrder
      * @return  bool
      */
-    public function shouldImportOrder (ShopifyOrder $shopifyOrder)
+    public function shouldImportOrder (ShopifyOrder $shopifyOrder, $importShippedOrder = false)
     {
-        if ($shopifyOrder->isTest())
+        if (is_null($shopifyOrder->getShippingAddress()))
+            return false;
+        else if ($shopifyOrder->isTest())
             return false;
         else if ($shopifyOrder->getFinancialStatus() != 'paid')
             return false;
-        else if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
+
+
+        if ($importShippedOrder)
+            return true;
+
+
+        if ($shopifyOrder->getFulfillmentStatus() == 'shipped')
             return false;
         else
             return true;

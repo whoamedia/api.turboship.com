@@ -54,6 +54,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     /**
      * @var string|null
      */
+    protected $names;
+
+    /**
+     * @var string|null
+     */
     protected $itemSkus;
 
     /**
@@ -71,6 +76,41 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
      */
     protected $isError;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
+    /**
+     * @var string|null
+     */
+    protected $createdFrom;
+
+    /**
+     * @var string|null
+     */
+    protected $createdTo;
+
+    /**
+     * @var string|null
+     */
+    protected $externalCreatedFrom;
+
+    /**
+     * @var string|null
+     */
+    protected $externalCreatedTo;
+
+    /**
+     * @var string
+     */
+    protected $orderBy;
+
+    /**
+     * @var string
+     */
+    protected $direction;
+
 
     public function __construct($data = [])
     {
@@ -82,10 +122,18 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->statusIds                = AU::get($data['statusIds']);
         $this->shipmentStatusId         = AU::get($data['shipmentStatusId']);
         $this->externalIds              = AU::get($data['externalIds']);
+        $this->names                    = AU::get($data['names']);
         $this->itemSkus                 = AU::get($data['itemSkus']);
         $this->isAddressError           = AU::get($data['isAddressError']);
         $this->isSkuError               = AU::get($data['isSkuError']);
         $this->isError                  = AU::get($data['isError']);
+        $this->limit                    = AU::get($data['limit'], 80);
+        $this->createdFrom              = AU::get($data['createdFrom']);
+        $this->createdTo                = AU::get($data['createdTo']);
+        $this->externalCreatedFrom      = AU::get($data['externalCreatedFrom']);
+        $this->externalCreatedTo        = AU::get($data['externalCreatedTo']);
+        $this->orderBy                  = AU::get($data['orderBy'], 'orders.id');
+        $this->direction                = AU::get($data['direction'], 'ASC');
     }
 
     public function validate()
@@ -99,6 +147,11 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $this->isAddressError           = parent::validateBoolean($this->isAddressError, 'isAddressError');
         $this->isSkuError               = parent::validateBoolean($this->isSkuError, 'isSkuError');
         $this->isError                  = parent::validateBoolean($this->isError, 'isError');
+        $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
+        $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
+        $this->externalCreatedFrom      = parent::validateDate($this->externalCreatedFrom, 'externalCreatedFrom');
+        $this->externalCreatedTo        = parent::validateDate($this->externalCreatedTo, 'externalCreatedTo');
+        $this->direction                = parent::validateOrderByDirection($this->direction);
     }
 
     public function clean ()
@@ -118,11 +171,19 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
         $object['sourceIds']            = $this->sourceIds;
         $object['statusIds']            = $this->statusIds;
         $object['shipmentStatusId']     = $this->shipmentStatusId;
+        $object['names']                = $this->names;
         $object['externalIds']          = $this->externalIds;
         $object['itemSkus']             = $this->itemSkus;
         $object['isAddressError']       = $this->isAddressError;
         $object['isSkuError']           = $this->isSkuError;
         $object['isError']              = $this->isError;
+        $object['limit']                = $this->limit;
+        $object['createdFrom']          = $this->createdFrom;
+        $object['createdTo']            = $this->createdTo;
+        $object['externalCreatedFrom']  = $this->externalCreatedFrom;
+        $object['externalCreatedTo']    = $this->externalCreatedTo;
+        $object['orderBy']              = $this->orderBy;
+        $object['direction']            = $this->direction;
 
         return $object;
     }
@@ -256,6 +317,22 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     }
 
     /**
+     * @return null|string
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * @param null|string $names
+     */
+    public function setNames($names)
+    {
+        $this->names = $names;
+    }
+
+    /**
      * @return null
      */
     public function getItemSkus()
@@ -317,6 +394,118 @@ class GetOrders extends BaseRequest implements Cleanable, Validatable, \JsonSeri
     public function setIsError($isError)
     {
         $this->isError = $isError;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreatedFrom()
+    {
+        return $this->createdFrom;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCreatedTo()
+    {
+        return $this->createdTo;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReceivedTo()
+    {
+        return $this->createdTo;
+    }
+
+    /**
+     * @param null|string $createdTo
+     */
+    public function setReceivedTo($createdTo)
+    {
+        $this->createdTo = $createdTo;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalCreatedFrom()
+    {
+        return $this->externalCreatedFrom;
+    }
+
+    /**
+     * @param null|string $externalCreatedFrom
+     */
+    public function setExternalCreatedFrom($externalCreatedFrom)
+    {
+        $this->externalCreatedFrom = $externalCreatedFrom;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getExternalCreatedTo()
+    {
+        return $this->externalCreatedTo;
+    }
+
+    /**
+     * @param null|string $externalCreatedTo
+     */
+    public function setExternalCreatedTo($externalCreatedTo)
+    {
+        $this->externalCreatedTo = $externalCreatedTo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
+    /**
+     * @param string $orderBy
+     */
+    public function setOrderBy($orderBy)
+    {
+        $this->orderBy = $orderBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirection()
+    {
+        return $this->direction;
+    }
+
+    /**
+     * @param string $direction
+     */
+    public function setDirection($direction)
+    {
+        $this->direction = $direction;
     }
 
 }

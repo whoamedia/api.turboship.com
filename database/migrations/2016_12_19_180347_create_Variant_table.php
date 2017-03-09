@@ -30,15 +30,22 @@ class CreateVariantTable extends Migration
             $table->foreign('countryOfOriginId')->references('id')->on('Country');
 
             $table->string('title');
-            $table->string('barcode')->index();
+            $table->string('barCode')->index();
             $table->string('originalSku')->nullable()->default(null);
             $table->string('sku')->index();
             $table->decimal('price', 10, 2)->unsigned();
             $table->decimal('weight', 10, 2)->unsigned();
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
             $table->string('externalId')->index();
+            $table->integer('externalInventoryQuantity')->unsigned()->index()->default(0);
+            $table->integer('totalQuantity')->unsigned()->index()->default(0);
+            $table->integer('readyQuantity')->unsigned()->index()->default(0);
+            $table->integer('reservedQuantity')->unsigned()->index()->default(0);
             $table->datetime('externalCreatedAt')->index();
+
+
             $table->unique(['clientId', 'sku']);
+            $table->unique(['clientId', 'barCode']);
         });
     }
 

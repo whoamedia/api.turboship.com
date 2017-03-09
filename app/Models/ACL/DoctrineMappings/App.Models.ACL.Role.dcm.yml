@@ -1,0 +1,47 @@
+App\Models\ACL\Role:
+  type:               entity
+  table:              Role
+  repositoryClass:    App\Repositories\Doctrine\ACL\RoleRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Role id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Role name"
+    description:
+      column:         description
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "Role description"
+
+  manyToMany:
+    permissions:
+      fetch:          LAZY
+      targetEntity:   App\Models\ACL\Permission
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         RolePermission
+        joinColumns:
+          roleId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          permissionId:
+            referencedColumnName: id

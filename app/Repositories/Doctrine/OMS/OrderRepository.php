@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelDoctrine\ORM\Pagination\Paginatable;
+
 use LaravelDoctrine\ORM\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\BooleanUtil AS BU;
 
@@ -30,10 +31,10 @@ class OrderRepository extends BaseRepository
         $pagination                 =   parent::buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['orders']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+        $qb->select(['orders', 'source', 'client', 'status', 'shipmentStatus']);
 
-        $qb->orderBy('orders.id', 'ASC');
+        $qb->addOrderBy(AU::get($query['orderBy'], 'orders.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
@@ -49,10 +50,9 @@ class OrderRepository extends BaseRepository
     {
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select([
-            'COUNT(orders.id) AS total',
+            'COUNT(DISTINCT orders.id) AS total',
             'source.id AS source_id', 'source.name AS source_name',
             'client.id AS client_id', 'client.name AS client_name',
-            'organization.id AS organization_id', 'organization.name AS organization_name',
             'status.id AS status_id', 'status.name AS status_name',
             'shipmentStatus.id AS shipmentStatus_id', 'shipmentStatus.name AS shipmentStatus_name',
         ]);
@@ -60,18 +60,36 @@ class OrderRepository extends BaseRepository
 
         $qb->addGroupBy('source');
         $qb->addGroupBy('client');
-        $qb->addGroupBy('organization');
         $qb->addGroupBy('status');
         $qb->addGroupBy('shipmentStatus');
 
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'source'            =>  [],
-            'client'            =>  [],
-            'organization'      =>  [],
-            'status'            =>  [],
-            'shipmentStatus'    =>  [],
+            'client'            =>  [
+                'displayField'  => 'Clients',
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'status'            =>  [
+                'displayField'  => 'Statuses',
+                'searchField'   => 'statusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'shipmentStatus'    =>  [
+                'displayField'  => 'Shipment Statuses',
+                'searchField'   => 'shipmentStatusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'source'            =>  [
+                'displayField'  => 'Sources',
+                'searchField'   => 'sourceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);
@@ -86,27 +104,21 @@ class OrderRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\OMS\Order', 'orders')
-            ->leftJoin('orders.items', 'items', Query\Expr\Join::ON)
-            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.client', 'client', Query\Expr\Join::ON)
-            ->join('client.organization', 'organization', Query\Expr\Join::ON)
+            ->join('orders.source', 'source', Query\Expr\Join::ON)
             ->join('orders.status', 'status', Query\Expr\Join::ON)
             ->join('orders.shipmentStatus', 'shipmentStatus', Query\Expr\Join::ON);
 
+        $itemsJoined = $variantsJoined = $productJoined = $organizationJoined = false;
+
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('orders.id', $query['ids']));
-
-        if (!is_null(AU::get($query['itemIds'])))
-            $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
 
         if (!is_null(AU::get($query['sourceIds'])))
             $qb->andWhere($qb->expr()->in('source.id', $query['sourceIds']));
 
         if (!is_null(AU::get($query['clientIds'])))
             $qb->andWhere($qb->expr()->in('client.id', $query['clientIds']));
-
-        if (!is_null(AU::get($query['organizationIds'])))
-            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
         if (!is_null(AU::get($query['statusIds'])))
             $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
@@ -116,6 +128,25 @@ class OrderRepository extends BaseRepository
 
         if (!is_null(AU::get($query['isError'])))
             $qb->andWhere($qb->expr()->eq('status.isError', BU::toString($query['isError'])));
+
+        if (!is_null(AU::get($query['organizationIds'])))
+        {
+            if (!$organizationJoined)
+                $qb->join('client.organization', 'organization', Query\Expr\Join::ON);
+
+            $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
+        }
+
+        if (!is_null(AU::get($query['names'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $names                  = explode(',', $query['names']);
+            foreach ($names AS $name)
+            {
+                $orX->add($qb->expr()->eq('orders.name', $qb->expr()->literal($name)));
+            }
+            $qb->andWhere($orX);
+        }
 
         if (!is_null(AU::get($query['externalIds'])))
         {
@@ -128,8 +159,19 @@ class OrderRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
+        if (!is_null(AU::get($query['itemIds'])))
+        {
+            if (!$itemsJoined)
+                $qb->leftJoin('items.variant', 'variant', Query\Expr\Join::ON);
+
+            $qb->andWhere($qb->expr()->in('items.id', $query['itemIds']));
+        }
+
         if (!is_null(AU::get($query['itemSkus'])))
         {
+            if (!$itemsJoined)
+                $qb->leftJoin('orders.items', 'items', Query\Expr\Join::ON);
+
             $orX                    = $qb->expr()->orX();
             $itemSkus               = explode(',', $query['itemSkus']);
             foreach ($itemSkus AS $sku)
@@ -139,9 +181,29 @@ class OrderRepository extends BaseRepository
             $qb->andWhere($orX);
         }
 
+        if (!is_null(AU::get($query['createdFrom'])))
+        {
+            $qb->andWhere($qb->expr()->gte('orders.createdAt', ':createdFrom'));
+            $qb->setParameter('createdFrom', $query['createdFrom'] . ' 00:00:00');
+        }
+
+        if (!is_null(AU::get($query['createdTo'])))
+        {
+            $qb->andWhere($qb->expr()->lte('orders.createdAt', ':createdTo'));
+            $qb->setParameter('createdTo', $query['createdTo'] . ' 23:59:59');
+        }
 
         if (!is_null(AU::get($query['externalCreatedFrom'])))
-            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', $query['externalCreatedFrom']));
+        {
+            $qb->andWhere($qb->expr()->gte('orders.externalCreatedAt', ':externalCreatedFrom'));
+            $qb->setParameter('externalCreatedFrom', $query['externalCreatedFrom'] . ' 00:00:00');
+        }
+
+        if (!is_null(AU::get($query['externalCreatedTo'])))
+        {
+            $qb->andWhere($qb->expr()->lte('orders.externalCreatedAt', ':externalCreatedTo'));
+            $qb->setParameter('externalCreatedTo', $query['externalCreatedTo'] . ' 23:59:59');
+        }
 
         return $qb;
     }

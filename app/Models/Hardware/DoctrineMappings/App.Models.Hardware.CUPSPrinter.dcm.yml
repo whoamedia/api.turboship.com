@@ -1,0 +1,24 @@
+App\Models\Hardware\CUPSPrinter:
+  type:               entity
+  table:              CUPSPrinter
+  repositoryClass:    App\Repositories\Doctrine\Hardware\CUPSPrinterRepository
+
+  fields:
+    address:
+      column:         address
+      type:           string
+      nullable:       false
+      options:
+        comment:      "CUPSPrinter address"
+    port:
+      column:         port
+      type:           string
+      nullable:       true
+      options:
+        comment:      "CUPSPrinter port"
+    format:
+      column:         format
+      type:           string
+      nullable:       false
+      options:
+        comment:      "CUPSPrinter format"

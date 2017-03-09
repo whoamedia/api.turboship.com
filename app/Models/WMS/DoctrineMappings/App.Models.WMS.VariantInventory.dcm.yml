@@ -1,0 +1,14 @@
+App\Models\WMS\VariantInventory:
+  type:               entity
+  table:              VariantInventory
+  repositoryClass:    App\Repositories\Doctrine\WMS\VariantInventoryRepository
+
+  manyToOne:
+    variant:
+      targetEntity:   App\Models\OMS\Variant
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     inventory
+      joinColumn:
+        name:         variantId
+        referencedColumnName: id

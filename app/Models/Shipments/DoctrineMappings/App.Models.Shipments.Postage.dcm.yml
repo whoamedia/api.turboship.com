@@ -19,62 +19,21 @@ App\Models\Shipments\Postage:
     trackingNumber:
       column:         trackingNumber
       type:           string
-      nullable:       true
+      nullable:       false
       options:
         comment:      "Postage trackingNumber"
     labelPath:
       column:         labelPath
       type:           string
-      nullable:       true
+      nullable:       false
       options:
         comment:      "Path to the label image"
-    weight:
-      column:         weight
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
+    zplPath:
+      column:         zplPath
+      type:           string
+      nullable:       true
       options:
-        unsigned:     true
-        fixed:        false
-    totalPrice:
-      column:         totalPrice
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-    basePrice:
-      column:         basePrice
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-    totalTaxes:
-      column:         totalTaxes
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-        default:      0.00
-    fuelSurcharge:
-      column:         fuelSurcharge
-      type:           decimal
-      nullable:       false
-      precision:      10
-      scale:          2
-      options:
-        unsigned:     true
-        fixed:        false
-        default:      0.00
+        comment:      "Path to the ZPL label"
     createdAt:
       column:         createdAt
       type:           datetime
@@ -93,22 +52,6 @@ App\Models\Shipments\Postage:
       nullable:       true
       options:
         comment:      "Postage externalId"
-    externalShipmentId:
-      column:         externalShipmentId
-      type:           string
-      nullable:       true
-      length:         100
-      options:
-        fixed:        false
-        comment:      "Rate externalShipmentId"
-    externalRateId:
-      column:         externalRateId
-      type:           string
-      nullable:       true
-      length:         100
-      options:
-        fixed:        false
-        comment:      "Rate externalRateId"
 
   manyToOne:
     shipment:
@@ -118,17 +61,10 @@ App\Models\Shipments\Postage:
       joinColumn:
         name:         shipmentId
         referencedColumnName: id
-    integratedShippingApi:
-      targetEntity:   App\Models\Integrations\IntegratedShippingApi
+    rate:
+      targetEntity:   Rate
       nullable:       false
       fetch:          EAGER
       joinColumn:
-        name:         integratedShippingApiId
-        referencedColumnName: id
-    shippingApiService:
-      targetEntity:   App\Models\Integrations\ShippingApiService
-      nullable:       false
-      fetch:          EAGER
-      joinColumn:
-        name:         shippingApiServiceId
+        name:         rateId
         referencedColumnName: id

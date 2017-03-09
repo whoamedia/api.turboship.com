@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Rates\GetRates;
 use App\Http\Requests\Shipments\GetPostage;
 use App\Http\Requests\Shipments\PurchasePostage;
 use App\Http\Requests\Shipments\RateShipment;
@@ -12,13 +13,17 @@ use App\Http\Requests\Shipments\VoidPostage;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipment;
 use App\Models\Shipments\Validation\RateValidation;
+use App\Models\Shipments\Validation\ServiceValidation;
 use App\Models\Shipments\Validation\ShipmentValidation;
 use App\Models\Shipments\Validation\ShipperValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
-use App\Models\Support\Validation\ShipmentStatusValidation;
+use App\Models\Support\Validation\ImageValidation;
+use App\Models\Support\Validation\SourceValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
-use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Repositories\Doctrine\Shipments\RateRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\ImageService;
+use App\Services\S3Service;
 use App\Services\Shipments\PostageService;
 use Illuminate\Http\Request;
 use EntityManager;
@@ -49,10 +54,15 @@ class ShipmentController extends BaseAuthController
      */
     private $integratedShippingApiRepo;
 
+    /**
+     * @var RateRepository
+     */
+    private $rateRepo;
+
 
     public function __construct()
     {
-        $this->clientValidation         = new ClientValidation(EntityManager::getRepository('App\Models\CMS\Client'));
+        $this->clientValidation         = new ClientValidation();
         $this->shipperValidation        = new ShipperValidation();
         $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
         $this->integratedShippingApiRepo= EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
@@ -68,6 +78,18 @@ class ShipmentController extends BaseAuthController
 
         $query                          = $getShipments->jsonSerialize();
         $shipments                      = $this->shipmentRepo->where($query, false);
+        return response($shipments);
+    }
+
+    public function getLexicon (Request $request)
+    {
+        $getShipments                   = new GetShipments($request->input());
+        $getShipments->setOrganizationIds($this->getAuthUserOrganization()->getId());
+        $getShipments->validate();
+        $getShipments->clean();
+
+        $query                          = $getShipments->jsonSerialize();
+        $shipments                      = $this->shipmentRepo->getLexicon($query);
         return response($shipments);
     }
 
@@ -99,6 +121,13 @@ class ShipmentController extends BaseAuthController
             $shipment->setWeight($weight);
         }
 
+        if (!is_null($updateShipment->getServiceId()))
+        {
+            $serviceValidation          = new ServiceValidation();
+            $service                    = $serviceValidation->idExists($updateShipment->getServiceId());
+            $shipment->setService($service);
+        }
+
         $this->shipmentRepo->saveAndCommit($shipment);
         return response($shipment);
     }
@@ -107,24 +136,42 @@ class ShipmentController extends BaseAuthController
     public function getRates (Request $request)
     {
         $shipment                       = $this->getShipment($request->route('id'));
-        return response ($shipment->getRates());
+
+        $getRates                       = new GetRates($request->input());
+        $getRates->setShipmentIds($shipment->getId());
+        $getRates->setOrganizationIds(parent::getAuthUserOrganization()->getId());
+        $getRates->validate();
+        $getRates->clean();
+
+        $query                          = $getRates->jsonSerialize();
+        $this->rateRepo                 = EntityManager::getRepository('App\Models\Shipments\Rate');
+
+        $ratesResponse                  = $this->rateRepo->where($query, false);
+        return response ($ratesResponse);
     }
 
     public function createRates (Request $request)
     {
-        $rateShipment                  = new RateShipment($request->input());
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $rateShipment                   = new RateShipment($request->input());
         $rateShipment->setId($request->route('id'));
+
+        if (is_null($rateShipment->getIntegratedShippingApiId()))
+        {
+            if (!is_null($shipment->getClient()->getOptions()->getDefaultIntegratedShippingApi()))
+                $rateShipment->setIntegratedShippingApiId($shipment->getClient()->getOptions()->getDefaultIntegratedShippingApi()->getId());
+        }
+
         $rateShipment->validate();
         $rateShipment->clean();
 
-        $shipment                       = $this->getShipment($rateShipment->getId());
         $integratedShippingApi          = $this->integratedShippingApiRepo->getOneById($rateShipment->getIntegratedShippingApiId());
 
         $postageService                 = new PostageService($integratedShippingApi);
         $postageService->rate($shipment);
 
         $this->shipmentRepo->saveAndCommit($shipment);
-
 
         return response($shipment->getRates(), 201);
     }
@@ -163,7 +210,7 @@ class ShipmentController extends BaseAuthController
 
         $postageService->handleOrderShippedLogic($shipment);
 
-        return response ($shipment->getPostage(), 201);
+        return response ($shipment, 201);
     }
 
     public function voidPostage (Request $request)
@@ -176,7 +223,7 @@ class ShipmentController extends BaseAuthController
         $shipment                       = $this->getShipment($voidPostage->getId());
         $shipment->canVoidPostage();
 
-        $postageService                 = new PostageService($shipment->getPostage()->getIntegratedShippingApi());
+        $postageService                 = new PostageService($shipment->getPostage()->getRate()->getIntegratedShippingApi());
         $postageService->void($shipment);
         $this->shipmentRepo->saveAndCommit($shipment);
 
@@ -190,6 +237,59 @@ class ShipmentController extends BaseAuthController
     {
         $shipment                       = $this->getShipment($request->route('id'));
         return response($shipment->getImages());
+    }
+
+    public function storeImages (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $file                           = $request->file('image');
+
+
+        if (is_null($file))
+            throw new BadRequestHttpException('image is required');
+
+        if (!$file->isValid())
+            throw new BadRequestHttpException('files is invalid');
+
+        if (!preg_match('#^image#', $file->getMimeType()))
+            throw new BadRequestHttpException('Invalid mime type');
+
+        $sourceValidation               = new SourceValidation();
+        $internalSource                 = $sourceValidation->getInternal();
+        $imageService                   = new ImageService();
+
+        $filePath                   = $file->path();
+        $fileName                   = $file->getClientOriginalName();
+
+        $image                      = $imageService->handleImage($filePath, $fileName);
+        $image->setSource($internalSource);
+        $shipment->addImage($image);
+
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response($shipment->getImages(), 201);
+    }
+
+    public function deleteImage (Request $request)
+    {
+        $shipment                       = $this->getShipment($request->route('id'));
+
+        $imageId                        = $request->route('imageId');
+        if (is_null($imageId))
+            throw new BadRequestHttpException('imageId is required');
+
+        $imageValidation                = new ImageValidation();
+        $image                          = $imageValidation->idExists($imageId);
+
+        if (!$shipment->hasImage($image))
+            throw new NotFoundHttpException('Shipment does not have provided image');
+
+        $s3Service                      = new S3Service();
+        $s3Service->delete($image->getPath());
+
+        $shipment->removeImage($image);
+        $this->shipmentRepo->saveAndCommit($shipment);
+        return response('', 204);
     }
 
     /**

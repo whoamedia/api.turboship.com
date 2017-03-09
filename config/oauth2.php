@@ -37,6 +37,11 @@ return [
             'class'             => '\League\OAuth2\Server\Grant\ClientCredentialsGrant',
             'access_token_ttl'  => 604800
         ],
+        'barCode' => [
+            'class'             => '\App\Services\OAuth\StaffBarCodeGrant',
+            'access_token_ttl'  => 604800,
+            'callback'          => '\App\Services\OAuth\StaffBarCodeGrant@verify'
+        ],
     ],
 
     /*

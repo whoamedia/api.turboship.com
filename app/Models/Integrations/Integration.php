@@ -88,6 +88,20 @@ abstract class Integration implements \JsonSerializable
     }
 
     /**
+     * @param   int     $id
+     * @return IntegrationCredential|null
+     */
+    public function getIntegrationCredentialById ($id)
+    {
+        foreach ($this->getIntegrationCredentials() AS $item)
+        {
+            if ($item->getId() == $id)
+                return $item;
+        }
+        return null;
+    }
+
+    /**
      * @param   IntegrationCredential $integrationCredential
      */
     public function addIntegrationCredential (IntegrationCredential $integrationCredential)

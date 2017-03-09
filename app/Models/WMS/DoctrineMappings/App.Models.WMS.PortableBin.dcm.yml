@@ -1,0 +1,4 @@
+App\Models\WMS\PortableBin:
+  type:               entity
+  table:              PortableBin
+  repositoryClass:    App\Repositories\Doctrine\WMS\PortableBinRepository

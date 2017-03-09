@@ -15,12 +15,16 @@ class CreateUserTable extends Migration
         Schema::create('User', function (Blueprint $table)
         {
             $table->increments('id')->unsigned();
+            $table->integer('userTypeId')->unsigned()->index();
             $table->string('firstName', 100)->index();
             $table->string('lastName', 100)->index();
             $table->string('email', 100)->unique();
             $table->string('password', 500);
+
+            $table->integer('clientId')->unsigned()->index()->nullable()->default(NULL);
             $table->integer('organizationId')->unsigned()->index();
-            
+
+            $table->integer('imageId')->unsigned()->index()->nullable()->default(NULL);
 
             //  Boilerplate
             $table->integer('statusId')->unsigned()->index()->default(1);
@@ -29,6 +33,7 @@ class CreateUserTable extends Migration
 
         Schema::table('User', function (Blueprint $table)
         {
+            $table->foreign('clientId')->references('id')->on('Client');
             $table->foreign('organizationId')->references('id')->on('Organization');
         });
     }

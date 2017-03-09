@@ -3,7 +3,11 @@
 namespace App\Models\Locations;
 
 
+use App\Utilities\CountryUtility;
+use App\Utilities\SubdivisionTypeUtility;
+use App\Utilities\SubdivisionUtility;
 use jamesvweston\Utilities\ArrayUtil AS AU;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @SWG\Definition(@SWG\Xml())
@@ -125,6 +129,9 @@ class Address implements \JsonSerializable
             $this->email                = AU::get($data['email']);
             $this->country              = AU::get($data['country']);
             $this->subdivision          = AU::get($data['subdivision']);
+
+            if (!is_null($this->phone))
+                $this->setPhone($this->phone);
         }
     }
 
@@ -141,12 +148,36 @@ class Address implements \JsonSerializable
         $object['street2']              = $this->getStreet2();
         $object['city']                 = $this->getCity();
         $object['postalCode']           = $this->getPostalCode();
-        $object['countryCode']          = is_null($this->country) ? $this->countryCode : $this->country->getIso2();
-        $object['subdivisionCode']      = is_null($this->subdivision) ? $this->stateProvince : $this->subdivision->getLocalSymbol();
+        $object['countryCode']          = $this->countryCode;
+        $object['country']              = is_null($this->country) ? null : $this->country->jsonSerialize();
+        $object['stateProvince']        = $this->stateProvince;
+        $object['subdivision']          = is_null($this->subdivision) ? null : $this->subdivision->jsonSerialize();
         $object['phone']                = $this->getPhone();
         $object['email']                = $this->getEmail();
 
         return $object;
+    }
+
+    /**
+     * @return Address
+     */
+    public function duplicate ()
+    {
+        $address                        = new Address($this->jsonSerialize());
+        $address->setCountry($this->country);
+        $address->setSubdivision($this->subdivision);
+
+        return $address;
+    }
+
+
+    public function validate ()
+    {
+        if (!is_null($this->subdivision) && !is_null($this->country))
+        {
+            if ($this->subdivision->getCountry()->getId() != $this->country->getId())
+                throw new BadRequestHttpException('Subdivision does not belong to country');
+        }
     }
 
     /**
@@ -314,7 +345,7 @@ class Address implements \JsonSerializable
      */
     public function setPhone($phone)
     {
-        $this->phone = $phone;
+        $this->phone = substr($phone, 0, 19);
     }
 
     /**
@@ -371,6 +402,25 @@ class Address implements \JsonSerializable
     public function setSubdivision($subdivision)
     {
         $this->subdivision = $subdivision;
+    }
+
+    /**
+     * Does this address require customs if it is shipping from a US location ?
+     * @return bool
+     */
+    public function requiresUSCustoms ()
+    {
+        if ($this->country->getId() == CountryUtility::UNITED_STATES)
+        {
+            if ($this->subdivision->getSubdivisionType()->getId() == SubdivisionTypeUtility::ARMED_FORCES)
+                return true;
+            else if ($this->subdivision->getId() == SubdivisionUtility::US_PUERTO_RICO)
+                return true;
+            else
+                return false;
+        }
+        else
+            return true;
     }
 
 }

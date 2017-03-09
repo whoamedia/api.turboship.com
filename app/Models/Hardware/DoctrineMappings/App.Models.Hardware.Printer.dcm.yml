@@ -1,0 +1,46 @@
+App\Models\Hardware\Printer:
+  type:               entity
+  table:              Printer
+  repositoryClass:    App\Repositories\Doctrine\Hardware\PrinterRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           printerTypeId
+      type:           integer
+  discriminatorMap:
+      1:              CUPSPrinter
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Printer id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Printer name"
+    description:
+      column:         description
+      type:           string
+      nullable:       true
+      options:
+        comment:      "Printer description"
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     printers
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

@@ -1,0 +1,13 @@
+App\Models\WMS\CartPick:
+  type:               entity
+  table:              CartPick
+  repositoryClass:    App\Repositories\Doctrine\WMS\CartPickRepository
+
+  manyToOne:
+    cart:
+      targetEntity:   Cart
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         cartId
+        referencedColumnName: id

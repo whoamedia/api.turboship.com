@@ -3,7 +3,7 @@
 namespace App\Services\EasyPost\Mapping;
 
 
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostAddress;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostAddress;
 use App\Models\Locations\Address;
 
 class EasyPostAddressMappingService extends BaseEasyPostMappingService

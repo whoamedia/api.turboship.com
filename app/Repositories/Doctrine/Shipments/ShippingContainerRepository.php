@@ -29,13 +29,44 @@ class ShippingContainerRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shippingContainer']);
+        $qb->select(['shippingContainer', 'organization', 'shippingContainerType']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addOrderBy(AU::get($query['orderBy'], 'shippingContainer.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
+    }
+
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT shippingContainer.id) AS total',
+            'shippingContainerType.id AS shippingContainerType_id', 'shippingContainerType.name AS shippingContainerType_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('shippingContainerType');
+
+        $result                     =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'shippingContainerType' =>  [
+                'displayField'  => 'Shipping Container Types',
+                'searchField'   => 'shippingContainerTypeIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
     }
 
     /**
@@ -46,7 +77,8 @@ class ShippingContainerRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\ShippingContainer', 'shippingContainer')
-            ->join('shippingContainer.organization', 'organization', Query\Expr\Join::ON);
+            ->join('shippingContainer.organization', 'organization', Query\Expr\Join::ON)
+            ->join('shippingContainer.shippingContainerType', 'shippingContainerType', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shippingContainer.id', $query['ids']));
@@ -54,8 +86,9 @@ class ShippingContainerRepository extends BaseRepository
         if (!is_null(AU::get($query['organizationIds'])))
             $qb->andWhere($qb->expr()->in('organization.id', $query['organizationIds']));
 
+        if (!is_null(AU::get($query['shippingContainerTypeIds'])))
+            $qb->andWhere($qb->expr()->in('shippingContainerType.id', $query['shippingContainerTypeIds']));
 
-        $qb->orderBy('shippingContainer.id', 'ASC');
         return $qb;
     }
 

@@ -30,7 +30,7 @@ class IntegrationWebHookRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['integrationWebHook']);
+        $qb->select(['integrationWebHook', 'integration']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

@@ -29,6 +29,11 @@ class BaseShopifyJob extends Job
     protected $shopifyWebHookLog;
 
     /**
+     * @var int|null
+     */
+    private $shopifyWebHookLogId;
+
+    /**
      * @var IntegratedShoppingCartRepository
      */
     protected $integratedShoppingCartRepo;
@@ -48,14 +53,14 @@ class BaseShopifyJob extends Job
      * BaseShopifyJob constructor.
      * @param   int                         $integratedShoppingCartId
      * @param   string                      $topic
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($integratedShoppingCartId, $topic, $shopifyWebHookLog = null)
+    public function __construct($integratedShoppingCartId, $topic, $shopifyWebHookLogId = null)
     {
         parent::__construct();
         $this->integratedShoppingCartId = $integratedShoppingCartId;
         $this->topic                    = $topic;
-        $this->shopifyWebHookLog        = $shopifyWebHookLog;
+        $this->shopifyWebHookLogId      = $shopifyWebHookLogId;
     }
 
 
@@ -70,6 +75,9 @@ class BaseShopifyJob extends Job
 
     private function createShopifyWebHookLog ($externalId)
     {
+        if (!is_null($this->shopifyWebHookLogId))
+            $this->shopifyWebHookLog        = $this->shopifyWebHookLogRepo->getOneById($this->shopifyWebHookLogId);
+
         if (is_null($this->shopifyWebHookLog))
         {
             $this->shopifyWebHookLog        = new ShopifyWebHookLog();

@@ -15,7 +15,7 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     /**
      * @var int
      */
-    protected $id;
+    protected $integrationId;
 
     /**
      * @var string
@@ -27,10 +27,15 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
      */
     protected $credentials;
 
+    /**
+     * @var CreateWebHook[]
+     */
+    protected $webHooks;
+
 
     public function __construct($data = [])
     {
-        $this->id                       = AU::get($data['id']);
+        $this->integrationId            = AU::get($data['integrationId']);
         $this->name                     = AU::get($data['name']);
 
         $this->credentials              = [];
@@ -43,12 +48,19 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
                 $this->credentials[]    = new CreateCredential($item);
             }
         }
+
+        $this->webHooks                 = [];
+        $webHooks                       = AU::get($data['webHooks'], []);
+        foreach ($webHooks AS $item)
+        {
+            $this->webHooks[]           = new CreateWebHook($item);
+        }
     }
 
     public function validate()
     {
-        if (is_null($this->id))
-            throw new BadRequestHttpException('id is required');
+        if (is_null($this->integrationId))
+            throw new BadRequestHttpException('integrationId is required');
 
         if (is_null($this->name))
             throw new BadRequestHttpException('name is required');
@@ -57,8 +69,8 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
             throw new BadRequestHttpException('credentials is required');
 
 
-        if (is_null(InputUtil::getInt($this->id)))
-            throw new BadRequestHttpException('id must be integer');
+        if (is_null(InputUtil::getInt($this->integrationId)))
+            throw new BadRequestHttpException('integrationId must be integer');
 
         if (empty(trim($this->name)))
             throw new BadRequestHttpException('name must be string');
@@ -67,13 +79,20 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
 
         foreach ($this->credentials AS $credential)
             $credential->validate();
+
+        foreach ($this->webHooks AS $webHook)
+            $webHook->validate();
     }
 
     public function clean ()
     {
-        $this->id                       = InputUtil::getInt($this->id);
+        $this->integrationId            = InputUtil::getInt($this->integrationId);
+
         foreach ($this->credentials AS $credential)
             $credential->clean();
+
+        foreach ($this->webHooks AS $webHook)
+            $webHook->clean();
     }
 
     /**
@@ -81,11 +100,16 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
      */
     public function jsonSerialize ()
     {
-        $object['id']                   = $this->id;
-        $object['name']               = $this->name;
+        $object['integrationId']        = $this->integrationId;
+        $object['name']                 = $this->name;
+
         $object['credentials']          = [];
         foreach ($this->credentials AS $credential)
             $object['credentials']      = $credential->jsonSerialize();
+
+        $object['webHooks']             = [];
+        foreach ($this->webHooks AS $webHook)
+            $object['webHooks'][]       = $webHook->jsonSerialize();
 
         return $object;
     }
@@ -93,17 +117,17 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     /**
      * @return int
      */
-    public function getId()
+    public function getIntegrationId()
     {
-        return $this->id;
+        return $this->integrationId;
     }
 
     /**
-     * @param int $id
+     * @param int $integrationId
      */
-    public function setId($id)
+    public function setIntegrationId($integrationId)
     {
-        $this->id = $id;
+        $this->integrationId = $integrationId;
     }
 
     /**
@@ -136,6 +160,22 @@ abstract class CreateIntegratedService implements Cleanable, Validatable, \JsonS
     public function setCredentials($credentials)
     {
         $this->credentials = $credentials;
+    }
+
+    /**
+     * @return CreateWebHook[]
+     */
+    public function getWebHooks()
+    {
+        return $this->webHooks;
+    }
+
+    /**
+     * @param CreateWebHook[] $webHooks
+     */
+    public function setWebHooks($webHooks)
+    {
+        $this->webHooks = $webHooks;
     }
 
 }

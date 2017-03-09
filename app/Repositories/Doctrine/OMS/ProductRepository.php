@@ -29,13 +29,52 @@ class ProductRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['product']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->select(['product', 'client', 'organization', 'variants', 'aliases']);
+        $qb->addOrderBy(AU::get($query['orderBy'], 'product.id'), AU::get($query['direction'], 'ASC'));
 
         if ($ignorePagination)
             return $qb->getQuery()->getResult();
         else
             return $this->paginate($qb->getQuery(), $pagination['limit']);
+    }
+
+    /**
+     * @param       array                   $query
+     * @return      array
+     */
+    public function getLexicon ($query)
+    {
+        $qb                         =   $this->_em->createQueryBuilder();
+        $qb->select([
+            'COUNT(DISTINCT product.id) AS total',
+            'source.id AS source_id', 'source.name AS source_name',
+            'client.id AS client_id', 'client.name AS client_name',
+        ]);
+        $qb                         =   $this->buildQueryConditions($qb, $query);
+
+        $qb->addGroupBy('client');
+        $qb->addGroupBy('source');
+
+        $result                                 =       $qb->getQuery()->getResult();
+
+        $lexicon = [
+            'source'            =>  [
+                'displayField'  => 'Sources',
+                'searchField'   => 'sourceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'client'            =>  [
+                'displayField'  => 'Clients',
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+        ];
+
+        return $this->buildLexicon($lexicon, $result);
     }
 
     /**
@@ -48,8 +87,9 @@ class ProductRepository extends BaseRepository
         $qb->from('App\Models\OMS\Product', 'product')
             ->join('product.client', 'client', Query\Expr\Join::ON)
             ->join('client.organization', 'organization', Query\Expr\Join::ON)
-            ->join('product.variants', 'variants', Query\Expr\Join::ON)
-            ->join('product.aliases', 'aliases', Query\Expr\Join::ON);
+            ->leftJoin('product.variants', 'variants', Query\Expr\Join::ON)
+            ->leftJoin('product.aliases', 'aliases', Query\Expr\Join::ON)
+            ->join('aliases.source', 'source', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('product.id', $query['ids']));
@@ -89,8 +129,6 @@ class ProductRepository extends BaseRepository
             }
             $qb->andWhere($orX);
         }
-
-        $qb->orderBy('product.id', 'ASC');
 
         return $qb;
     }

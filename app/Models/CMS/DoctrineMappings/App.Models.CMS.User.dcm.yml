@@ -2,6 +2,13 @@ App\Models\CMS\User:
   type:               entity
   table:              User
   repositoryClass:    App\Repositories\Doctrine\CMS\UserRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           userTypeId
+      type:           integer
+  discriminatorMap:
+      1:              User
+      2:              Staff
 
   id:
     id:
@@ -62,9 +69,44 @@ App\Models\CMS\User:
         name:         organizationId
         referencedColumnName: id
     client:
-      targetEntity:   Organization
+      targetEntity:   Client
       nullable:       true
       fetch:          EAGER
       joinColumn:
         name:         clientId
         referencedColumnName: id
+    image:
+      targetEntity:   App\Models\Support\Image
+      nullable:       true
+      fetch:          EAGER
+      mappedBy:       user
+      cascade:        ["persist", "remove"]
+      joinColumn:
+        name:         imageId
+        referencedColumnName: id
+
+  manyToMany:
+    permissions:
+      fetch:          LAZY
+      targetEntity:   App\Models\ACL\Permission
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         UserPermission
+        joinColumns:
+          userId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          permissionId:
+            referencedColumnName: id
+    roles:
+      fetch:          LAZY
+      targetEntity:   App\Models\ACL\Role
+      cascade:        ["persist", "remove"]
+      joinTable:
+        name:         UserRole
+        joinColumns:
+          userId:
+            referencedColumnName: id
+        inverseJoinColumns:
+          roleId:
+            referencedColumnName: id

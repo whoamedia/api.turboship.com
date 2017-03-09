@@ -8,7 +8,7 @@ return [
     'region'        => env('AWS_REGION'),
     'version'       => 'latest',
 
-    'bucket'        => env('AWS_S3_BUCKET_' . strtoupper(config('app.env'))),
+    'bucket'        => env('AWS_S3_BUCKET_' . strtoupper(env('APP_ENV'))),
 
     // You can override settings for specific services
     'Ses' => [

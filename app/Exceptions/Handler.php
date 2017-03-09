@@ -2,10 +2,11 @@
 
 namespace App\Exceptions;
 
-use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
+
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use League\OAuth2\Server\Exception\UnsupportedGrantTypeException;
 
 class Handler extends ExceptionHandler
 {
@@ -16,12 +17,19 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         \League\OAuth2\Server\Exception\AccessDeniedException::class,
+        \League\OAuth2\Server\Exception\InvalidRequestException::class,
+        \League\OAuth2\Server\Exception\InvalidClientException::class,
+        \League\OAuth2\Server\Exception\InvalidCredentialsException::class,
+        \League\OAuth2\Server\Exception\UnsupportedGrantTypeException::class,
         \Illuminate\Auth\AuthenticationException::class,
         \Illuminate\Auth\Access\AuthorizationException::class,
         \Symfony\Component\HttpKernel\Exception\HttpException::class,
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
         \Illuminate\Validation\ValidationException::class,
+        \App\Exceptions\Integrations\IntegrationNotRespondingException::class,
+        \App\Exceptions\Integrations\IntegrationThrottledException::class,
+        \App\Exceptions\Integrations\IntegrationInvalidCredentialsException::class,
     ];
 
     /**

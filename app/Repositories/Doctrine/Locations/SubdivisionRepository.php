@@ -30,7 +30,7 @@ class SubdivisionRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['subdivision']);
+        $qb->select(['subdivision', 'country', 'subdivisionType']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)
@@ -88,6 +88,28 @@ class SubdivisionRepository extends BaseRepository
             foreach ($localSymbols AS $localSymbol)
             {
                 $orX->add($qb->expr()->eq('subdivision.localSymbol', $qb->expr()->literal($localSymbol)));
+            }
+            $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['symbolsLike'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $symbolsLike                = explode(',', $query['symbolsLike']);
+            foreach ($symbolsLike AS $symbol)
+            {
+                $orX->add($qb->expr()->like('subdivision.symbol', $qb->expr()->literal('%' . $symbol . '%')));
+            }
+            $qb->andWhere($orX);
+        }
+
+        if (!is_null(AU::get($query['namesLike'])))
+        {
+            $orX                    = $qb->expr()->orX();
+            $namesLike                  = explode(',', $query['namesLike']);
+            foreach ($namesLike AS $name)
+            {
+                $orX->add($qb->expr()->like('subdivision.name', $qb->expr()->literal('%' . $name . '%')));
             }
             $qb->andWhere($orX);
         }

@@ -27,6 +27,12 @@ class Order implements \JsonSerializable
     protected $externalId;
 
     /**
+     * Shopify name
+     * @var string|null
+     */
+    protected $name;
+
+    /**
      * Shopify subtotal_price
      * @var float
      */
@@ -132,6 +138,7 @@ class Order implements \JsonSerializable
         $this->statusHistory            = new ArrayCollection();
 
         $this->externalId               = AU::get($data['externalId']);
+        $this->name                     = AU::get($data['name']);
         $this->externalWeight           = AU::get($data['externalWeight']);
         $this->basePrice                = AU::get($data['basePrice'], 0.00);
         $this->totalDiscount            = AU::get($data['totalDiscount'], 0.00);
@@ -154,7 +161,7 @@ class Order implements \JsonSerializable
         if (is_null($this->status))
         {
             $orderStatusUtility         = new OrderStatusUtility();
-            $this->status               = $orderStatusUtility->getCreated();
+            $this->addStatus($orderStatusUtility->getCreated());
         }
 
         if (is_null($this->shipmentStatus))
@@ -182,9 +189,11 @@ class Order implements \JsonSerializable
         $object['status']               = $this->status->jsonSerialize();
         $object['shipmentStatus']       = $this->shipmentStatus->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
+        $object['name']                 = $this->name;
         $object['externalId']           = $this->externalId;
         $object['externalWeight']       = $this->externalWeight;
         $object['externalCreatedAt']    = $this->externalCreatedAt;
+        $object['canRunApprovalProcess']= $this->canRunApprovalProcess();
 
         $object['items']                = [];
         foreach ($this->getItems() AS $item)
@@ -217,6 +226,22 @@ class Order implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param null|string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -441,6 +466,12 @@ class Order implements \JsonSerializable
      */
     public function addStatus ($status)
     {
+        //  Perform check to make sure we're not accumulating a huge status history
+        if (!is_null($this->status))
+        {
+            if ($this->status->getId() == $status->getId())
+                return;
+        }
         $this->status                   = $status;
 
         $orderStatusHistory             = new OrderStatusHistory();

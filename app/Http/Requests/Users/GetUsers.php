@@ -5,16 +5,12 @@ namespace App\Http\Requests\Users;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
+use App\Http\Requests\BaseGet;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 use jamesvweston\Utilities\InputUtil;
 
-class GetUsers implements Cleanable, Validatable, \JsonSerializable
+class GetUsers extends BaseGet implements Cleanable, Validatable, \JsonSerializable
 {
-
-    /**
-     * @var string|null
-     */
-    protected $ids;
 
     /**
      * @var string|null
@@ -39,7 +35,8 @@ class GetUsers implements Cleanable, Validatable, \JsonSerializable
 
     public function __construct($data = [])
     {
-        $this->ids                      = AU::get($data['ids']);
+        parent::__construct('user.id', $data);
+
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->firstNames               = AU::get($data['firstNames']);
         $this->lastNames                = AU::get($data['lastNames']);
@@ -48,12 +45,14 @@ class GetUsers implements Cleanable, Validatable, \JsonSerializable
 
     public function validate()
     {
+        parent::validate();
 
+        $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
     }
 
     public function clean ()
     {
-        $this->ids                      = InputUtil::getIdsString($this->ids);
+        parent::clean();
         $this->organizationIds          = InputUtil::getIdsString($this->organizationIds);
     }
 
@@ -62,29 +61,13 @@ class GetUsers implements Cleanable, Validatable, \JsonSerializable
      */
     public function jsonSerialize ()
     {
-        $object['ids']                  = $this->ids;
+        $object                         = parent::jsonSerialize();
         $object['organizationIds']      = $this->organizationIds;
         $object['firstNames']           = $this->firstNames;
         $object['lastNames']            = $this->lastNames;
         $object['emails']               = $this->emails;
 
         return $object;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getIds()
-    {
-        return $this->ids;
-    }
-
-    /**
-     * @param null|string $ids
-     */
-    public function setIds($ids)
-    {
-        $this->ids = $ids;
     }
 
     /**

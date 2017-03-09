@@ -1,0 +1,30 @@
+App\Models\WMS\Bin:
+  type:               entity
+  table:              Bin
+  repositoryClass:    App\Repositories\Doctrine\WMS\BinRepository
+
+  fields:
+    aisle:
+      column:         aisle
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Bin aisle"
+    section:
+      column:         section
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Bin section"
+    row:
+      column:         row
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Bin row"
+    col:
+      col:         col
+      type:           string
+      nullable:       false
+      options:
+        comment:      "Bin column"

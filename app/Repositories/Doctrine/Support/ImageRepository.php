@@ -29,7 +29,7 @@ class ImageRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['image']);
+        $qb->select(['image', 'source']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

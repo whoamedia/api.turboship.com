@@ -3,13 +3,24 @@
 namespace App\Console\Commands;
 
 
+use App\Jobs\Shipments\AutomatedShippingJob;
+use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
+use App\Models\Hardware\Validation\PrinterValidation;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
+use App\Repositories\Doctrine\Integrations\IntegratedShoppingCartRepository;
+use App\Repositories\Doctrine\Shipments\PostageRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\IPP\IPPService;
+use App\Services\PrinterService;
 use App\Services\Shipments\PostageService;
+use App\Services\Shopify\ShopifyService;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use EntityManager;
+
+use App\Services\IPP\Support\PrintIPP;
+use Storage;
 
 class TestJunkCommand extends Command
 {
@@ -32,12 +43,23 @@ class TestJunkCommand extends Command
      */
     private $integratedShippingApiRepo;
 
+    /**
+     * @var PostageRepository
+     */
+    private $postageRepo;
+
+    /**
+     * @var IntegratedShoppingCartRepository
+     */
+    private $integratedShoppingCartRepo;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->shipmentRepo                 = EntityManager::getRepository('App\Models\Shipments\Shipment');
-        $this->integratedShippingApiRepo    = EntityManager::getRepository('App\Models\Integrations\IntegratedShippingApi');
+        $this->postageRepo                  = EntityManager::getRepository('App\Models\Shipments\Postage');
+        $this->integratedShoppingCartRepo   = EntityManager::getRepository('App\Models\Integrations\IntegratedShoppingCart');
     }
 
     /**
@@ -47,20 +69,35 @@ class TestJunkCommand extends Command
      */
     public function handle()
     {
-        $integratedShippingApi              = $this->integratedShippingApiRepo->getOneById(2);
-        $postageService                     = new PostageService($integratedShippingApi);
-        $shippingContainerValidation        = new ShippingContainerValidation();
+        $shoppingCartIntegration            = $this->integratedShoppingCartRepo->getOneById(1);
+        $shopifyService                     = new ShopifyService($shoppingCartIntegration);
+        $total                              = $shopifyService->getOrdersShippedCount();
 
-        $shipmentsResponse                  = $this->shipmentRepo->where([], true);
-        foreach ($shipmentsResponse AS $shipment)
+        $this->info('Found ' . $total . ' results');
+        $totalPages                         = (int)ceil($total / 250);
+
+
+        $shopifyService->shopifyClient->getConfig()->setJsonOnly(true);
+        for ($page = 1; $page <= $totalPages; $page++)
         {
-            $this->info('On shipment id ' . $shipment->getId());
-            $shipment->setWeight(rand(20, 100) . '.' . rand(1, 99));
-            $shippingContainer              = $shippingContainerValidation->idExists(rand(1, 13));
-            $shipment->setShippingContainer($shippingContainer);
+            $this->info('On page ' . $page . ' of ' . $totalPages);
+            set_time_limit(60);
+            $shopifyOrdersResponse          = $shopifyService->getOrdersShipped($page, 250);
+            $orderArray                     = json_decode($shopifyOrdersResponse, true);
+            foreach ($orderArray AS $shopifyOrder)
+            {
+                try
+                {
+                    $job                        = (new ShopifyCreateOrderJob(json_encode($shopifyOrder), $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
+                    $this->dispatch($job);
+                }
+                catch (\Pheanstalk\Exception $exception)
+                {
+                    continue;
+                }
 
-            $postageService->rate($shipment);
-            $this->shipmentRepo->saveAndCommit($shipment);
+            }
+            usleep(250000);
         }
     }
 

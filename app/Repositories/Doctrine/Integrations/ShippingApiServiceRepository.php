@@ -29,7 +29,7 @@ class ShippingApiServiceRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shippingApiService']);
+        $qb->select(['shippingApiService', 'service', 'shippingApiCarrier', 'shippingApiIntegration', 'carrier']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

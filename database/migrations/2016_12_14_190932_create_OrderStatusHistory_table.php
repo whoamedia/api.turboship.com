@@ -25,6 +25,9 @@ class CreateOrderStatusHistoryTable extends Migration
             $table->integer('statusId')->unsigned()->index();
             $table->foreign('statusId')->references('id')->on('OrderStatus');
 
+            $table->integer('createdById')->unsigned()->index()->nullable()->default(NULL);
+            $table->foreign('createdById')->references('id')->on('User');
+
             $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 

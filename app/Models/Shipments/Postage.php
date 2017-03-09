@@ -3,8 +3,6 @@
 namespace App\Models\Shipments;
 
 
-use App\Models\Integrations\IntegratedShippingApi;
-use App\Models\Integrations\ShippingApiService;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
 class Postage implements \JsonSerializable
@@ -14,6 +12,11 @@ class Postage implements \JsonSerializable
      * @var int
      */
     protected $id;
+
+    /**
+     * @var Rate
+     */
+    protected $rate;
 
     /**
      * @var string
@@ -26,39 +29,9 @@ class Postage implements \JsonSerializable
     protected $labelPath;
 
     /**
-     * @var float
+     * @var string|null
      */
-    protected $weight;
-
-    /**
-     * @var float
-     */
-    protected $totalPrice;
-
-    /**
-     * @var float
-     */
-    protected $basePrice;
-
-    /**
-     * @var float
-     */
-    protected $totalTaxes;
-
-    /**
-     * @var float
-     */
-    protected $fuelSurcharge;
-
-    /**
-     * @var IntegratedShippingApi
-     */
-    protected $integratedShippingApi;
-
-    /**
-     * @var ShippingApiService
-     */
-    protected $shippingApiService;
+    protected $zplPath;
 
     /**
      * @var \DateTime
@@ -80,33 +53,16 @@ class Postage implements \JsonSerializable
      */
     protected $externalId;
 
-    /**
-     * @var string|null
-     */
-    protected $externalShipmentId;
-
-    /**
-     * @var string|null
-     */
-    protected $externalRateId;
-
     public function __construct($data = [])
     {
         $this->createdAt                = new \DateTime();
 
+        $this->rate                     = AU::get($data['rate']);
         $this->trackingNumber           = AU::get($data['trackingNumber']);
         $this->labelPath                = AU::get($data['labelPath']);
-        $this->weight                   = AU::get($data['weight']);
-        $this->totalPrice               = AU::get($data['totalPrice']);
-        $this->basePrice                = AU::get($data['basePrice']);
-        $this->totalTaxes               = AU::get($data['totalTaxes'], 0.00);
-        $this->fuelSurcharge            = AU::get($data['fuelSurcharge'], 0.00);
+        $this->zplPath                  = AU::get($data['zplPath']);
         $this->shipment                 = AU::get($data['shipment']);
-        $this->shippingApiService       = AU::get($data['shippingApiService']);
-        $this->integratedShippingApi    = AU::get($data['integratedShippingApi']);
         $this->externalId               = AU::get($data['externalId']);
-        $this->externalShipmentId       = AU::get($data['externalShipmentId']);
-        $this->externalRateId           = AU::get($data['externalRateId']);
     }
 
     /**
@@ -115,18 +71,10 @@ class Postage implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
+        $object['rate']                 = $this->rate->jsonSerialize();
         $object['trackingNumber']       = $this->trackingNumber;
         $object['labelPath']            = $this->labelPath;
-        $object['weight']               = $this->weight;
-        $object['totalPrice']           = $this->totalPrice;
-        $object['basePrice']            = $this->basePrice;
-        $object['totalTaxes']           = $this->totalTaxes;
-        $object['fuelSurcharge']        = $this->fuelSurcharge;
         $object['externalId']           = $this->externalId;
-        $object['externalShipmentId']   = $this->externalShipmentId;
-        $object['externalRateId']       = $this->externalRateId;
-        $object['shippingApiService']   = $this->shippingApiService->jsonSerialize();
-        $object['integratedShippingApi']= $this->integratedShippingApi->jsonSerialize();
         $object['createdAt']            = $this->createdAt;
         $object['voidedAt']             = $this->voidedAt;
 
@@ -147,6 +95,22 @@ class Postage implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return Rate
+     */
+    public function getRate()
+    {
+        return $this->rate;
+    }
+
+    /**
+     * @param Rate $rate
+     */
+    public function setRate($rate)
+    {
+        $this->rate = $rate;
     }
 
     /**
@@ -182,115 +146,19 @@ class Postage implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return null|string
      */
-    public function getWeight()
+    public function getZplPath()
     {
-        return $this->weight;
+        return $this->zplPath;
     }
 
     /**
-     * @param float $weight
+     * @param null|string $zplPath
      */
-    public function setWeight($weight)
+    public function setZplPath($zplPath)
     {
-        $this->weight = $weight;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalPrice()
-    {
-        return $this->totalPrice;
-    }
-
-    /**
-     * @param float $totalPrice
-     */
-    public function setTotalPrice($totalPrice)
-    {
-        $this->totalPrice = $totalPrice;
-    }
-
-    /**
-     * @return float
-     */
-    public function getBasePrice()
-    {
-        return $this->basePrice;
-    }
-
-    /**
-     * @param float $basePrice
-     */
-    public function setBasePrice($basePrice)
-    {
-        $this->basePrice = $basePrice;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalTaxes()
-    {
-        return $this->totalTaxes;
-    }
-
-    /**
-     * @param float $totalTaxes
-     */
-    public function setTotalTaxes($totalTaxes)
-    {
-        $this->totalTaxes = $totalTaxes;
-    }
-
-    /**
-     * @return float
-     */
-    public function getFuelSurcharge()
-    {
-        return $this->fuelSurcharge;
-    }
-
-    /**
-     * @param float $fuelSurcharge
-     */
-    public function setFuelSurcharge($fuelSurcharge)
-    {
-        $this->fuelSurcharge = $fuelSurcharge;
-    }
-
-    /**
-     * @return IntegratedShippingApi
-     */
-    public function getIntegratedShippingApi()
-    {
-        return $this->integratedShippingApi;
-    }
-
-    /**
-     * @param IntegratedShippingApi $integratedShippingApi
-     */
-    public function setIntegratedShippingApi($integratedShippingApi)
-    {
-        $this->integratedShippingApi = $integratedShippingApi;
-    }
-
-    /**
-     * @return ShippingApiService
-     */
-    public function getShippingApiService()
-    {
-        return $this->shippingApiService;
-    }
-
-    /**
-     * @param ShippingApiService $shippingApiService
-     */
-    public function setShippingApiService($shippingApiService)
-    {
-        $this->shippingApiService = $shippingApiService;
+        $this->zplPath = $zplPath;
     }
 
     /**
@@ -355,38 +223,6 @@ class Postage implements \JsonSerializable
     public function setExternalId($externalId)
     {
         $this->externalId = $externalId;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getExternalShipmentId()
-    {
-        return $this->externalShipmentId;
-    }
-
-    /**
-     * @param null|string $externalShipmentId
-     */
-    public function setExternalShipmentId($externalShipmentId)
-    {
-        $this->externalShipmentId = $externalShipmentId;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getExternalRateId()
-    {
-        return $this->externalRateId;
-    }
-
-    /**
-     * @param null|string $externalRateId
-     */
-    public function setExternalRateId($externalRateId)
-    {
-        $this->externalRateId = $externalRateId;
     }
 
 }

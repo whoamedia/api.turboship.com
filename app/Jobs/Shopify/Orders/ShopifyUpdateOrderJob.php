@@ -3,10 +3,10 @@
 namespace App\Jobs\Shopify\Orders;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Services\Order\OrderApprovalService;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Bus\Queueable;
@@ -22,9 +22,9 @@ class ShopifyUpdateOrderJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
@@ -34,31 +34,32 @@ class ShopifyUpdateOrderJob extends BaseShopifyJob implements ShouldQueue
 
     /**
      * ShopifyImportOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/update', $shopifyWebHookLog);
-        $this->shopifyOrder             = $shopifyOrder;
+        parent::__construct($integratedShoppingCartId, 'orders/update', $shopifyWebHookLogId);
+        $this->jsonShopifyOrder         = $jsonShopifyOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        if (!$shopifyOrderMappingService->shouldImportOrder($this->shopifyOrder))
+        if (!$shopifyOrderMappingService->shouldImportOrder($shopifyOrder))
         {
             $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
             $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
             return;
         }
 
-        $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+        $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
         $entityCreated                  = is_null($order->getId()) ? true : false;
         $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 
@@ -69,12 +70,12 @@ class ShopifyUpdateOrderJob extends BaseShopifyJob implements ShouldQueue
             return;
         }
 
+        $orderApprovalService           = new OrderApprovalService();
+        $orderApprovalService->processOrder($order);
+
         $this->orderRepo->saveAndCommit($order);
         $this->shopifyWebHookLog->setEntityId($order->getId());
         $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
-
-        $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
-        $this->dispatch($job);
     }
 
 }

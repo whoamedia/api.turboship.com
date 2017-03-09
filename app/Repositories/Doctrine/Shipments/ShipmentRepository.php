@@ -30,7 +30,7 @@ class ShipmentRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['shipment']);
+        $qb->select(['shipment', 'status', 'shipper', 'shippingContainer', 'postage', 'service', 'carrier', 'items', 'orderItem', 'orders', 'client', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         $qb->orderBy(AU::get($query['orderBy'], 'shipment.id'), AU::get($query['direction'], 'ASC'));
@@ -49,12 +49,12 @@ class ShipmentRepository extends BaseRepository
     {
         $qb                         =   $this->_em->createQueryBuilder();
         $qb->select([
-            'COUNT(orders.id) AS total',
+            'COUNT(DISTINCT shipment.id) AS total',
             'shippingContainer.id AS shippingContainer_id', 'shippingContainer.name AS shippingContainer_name',
             'carrier.id AS carrier_id', 'carrier.name AS carrier_name',
             'service.id AS service_id', 'service.name AS service_name',
             'client.id AS client_id', 'client.name AS client_name',
-            'organization.id AS organization_id', 'organization.name AS organization_name',
+            'status.id AS status_id', 'status.name AS status_name',
         ]);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
@@ -62,16 +62,41 @@ class ShipmentRepository extends BaseRepository
         $qb->addGroupBy('carrier');
         $qb->addGroupBy('service');
         $qb->addGroupBy('client');
-        $qb->addGroupBy('organization');
+        $qb->addGroupBy('status');
 
         $result                                 =       $qb->getQuery()->getResult();
 
         $lexicon = [
-            'shippingContainer' =>  [],
-            'carrier'           =>  [],
-            'service'           =>  [],
-            'client'            =>  [],
-            'organization'      =>  [],
+            'shippingContainer' =>  [
+                'displayField'  => 'Shipping Containers',
+                'searchField'   => 'shippingContainerIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'carrier'           =>  [
+                'displayField'  => 'Carriers',
+                'searchField'   => 'carrierIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'service'           =>  [
+                'displayField'  => 'Services',
+                'searchField'   => 'serviceIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'client'            =>  [
+                'displayField'  => 'Clients',
+                'searchField'   => 'clientIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
+            'status'            =>  [
+                'displayField'  => 'Statuses',
+                'searchField'   => 'statusIds',
+                'type'          => 'integer',
+                'values'        => [],
+            ],
         ];
 
         return $this->buildLexicon($lexicon, $result);
@@ -85,18 +110,26 @@ class ShipmentRepository extends BaseRepository
     private function buildQueryConditions(QueryBuilder $qb, $query)
     {
         $qb->from('App\Models\Shipments\Shipment', 'shipment')
+            ->join('shipment.status', 'status', Query\Expr\Join::ON)
+            ->join('shipment.shipper', 'shipper', Query\Expr\Join::ON)
             ->leftJoin('shipment.shippingContainer', 'shippingContainer', Query\Expr\Join::ON)
             ->leftJoin('shipment.postage', 'postage', Query\Expr\Join::ON)
             ->leftJoin('shipment.service', 'service', Query\Expr\Join::ON)
             ->leftJoin('service.carrier', 'carrier', Query\Expr\Join::ON)
             ->leftJoin('shipment.items', 'items', Query\Expr\Join::ON)
             ->leftJoin('items.orderItem', 'orderItem', Query\Expr\Join::ON)
+            ->leftJoin('orderItem.variant', 'variant', Query\Expr\Join::ON)
             ->leftJoin('orderItem.order', 'orders', Query\Expr\Join::ON)
             ->leftJoin('orders.client', 'client', Query\Expr\Join::ON)
-            ->leftJoin('client.organization', 'organization', Query\Expr\Join::ON);
+            ->leftJoin('client.organization', 'organization', Query\Expr\Join::ON)
+            ->leftJoin('shipment.toAddress', 'toAddress', Query\Expr\Join::ON)
+            ->leftJoin('toAddress.country', 'toCountry', Query\Expr\Join::ON);
 
         if (!is_null(AU::get($query['ids'])))
             $qb->andWhere($qb->expr()->in('shipment.id', $query['ids']));
+
+        if (!is_null(AU::get($query['shipperIds'])))
+            $qb->andWhere($qb->expr()->in('shipper.id', $query['shipperIds']));
 
         if (!is_null(AU::get($query['shippingContainerIds'])))
             $qb->andWhere($qb->expr()->in('shippingContainer.id', $query['shippingContainerIds']));
@@ -116,13 +149,17 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['orderItemIds'])))
             $qb->andWhere($qb->expr()->in('orderItem.id', $query['orderItemIds']));
 
-        if (!is_null(AU::get($query['shipmentStatus'])))
-        {
-            if ($query['shipmentStatus'] == 'shipped')
-                $qb->andWhere($qb->expr()->isNotNull('shipment.postage'));
-            else
-                $qb->andWhere($qb->expr()->isNull('shipment.postage'));
-        }
+        if (!is_null(AU::get($query['variantIds'])))
+            $qb->andWhere($qb->expr()->in('variant.id', $query['variantIds']));
+
+        if (!is_null(AU::get($query['serviceIds'])))
+            $qb->andWhere($qb->expr()->in('service.id', $query['serviceIds']));
+
+        if (!is_null(AU::get($query['carrierIds'])))
+            $qb->andWhere($qb->expr()->in('carrier.id', $query['carrierIds']));
+
+        if (!is_null(AU::get($query['statusIds'])))
+            $qb->andWhere($qb->expr()->in('status.id', $query['statusIds']));
 
         if (!is_null(AU::get($query['trackingNumbers'])))
         {
@@ -136,17 +173,24 @@ class ShipmentRepository extends BaseRepository
         }
 
         if (!is_null(AU::get($query['toAddressCountryIds'])))
+            $qb->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
+
+        if (!is_null(AU::get($query['inPickInstruction'])))
         {
-            $qb->leftJoin('shipment.toAddress', 'toAddress', Query\Expr\Join::ON)
-                ->leftJoin('toAddress.country', 'toCountry', Query\Expr\Join::ON)
-                ->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
+            $qb->andWhere($qb->expr()->eq('shipment.inPickInstruction', BU::toString($query['inPickInstruction'])));
         }
 
         if (!is_null(AU::get($query['createdFrom'])))
-            $qb->andWhere($qb->expr()->gte('shipment.createdAt', $query['createdFrom']));
+        {
+            $qb->andWhere($qb->expr()->gte('shipment.createdAt', ':createdFrom'));
+            $qb->setParameter('createdFrom', $query['createdFrom'] . ' 00:00:00');
+        }
 
         if (!is_null(AU::get($query['createdTo'])))
-            $qb->andWhere($qb->expr()->lte('shipment.createdAt', $query['createdTo']));
+        {
+            $qb->andWhere($qb->expr()->lte('shipment.createdAt', ':createdTo'));
+            $qb->setParameter('createdTo', $query['createdTo'] . ' 23:59:59');
+        }
 
 
         return $qb;

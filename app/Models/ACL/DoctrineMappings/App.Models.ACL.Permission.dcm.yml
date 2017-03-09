@@ -1,0 +1,40 @@
+App\Models\ACL\Permission:
+  type:               entity
+  table:              Permission
+  repositoryClass:    App\Repositories\Doctrine\ACL\PermissionRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Permission id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    entity:
+      column:         entity
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "Permission entity"
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+      length:         100
+      options:
+        fixed:        false
+        comment:      "Permission name"
+    description:
+      column:         description
+      type:           string
+      nullable:       false
+      options:
+        fixed:        false
+        comment:      "Permission description"

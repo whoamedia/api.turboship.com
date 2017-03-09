@@ -99,8 +99,3 @@ App\Models\Locations\Country:
       mappedBy:       country
       fetch:          LAZY
       cascade:        ["persist", "remove"]
-    postalDistricts:
-      targetEntity:   PostalDistrict
-      mappedBy:       country
-      fetch:          LAZY
-      cascade:        ["persist", "remove"]

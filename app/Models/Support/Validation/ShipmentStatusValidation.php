@@ -41,6 +41,14 @@ class ShipmentStatusValidation
     /**
      * @return  ShipmentStatus
      */
+    public function getPendingInventoryReservation ()
+    {
+        return $this->idExists(ShipmentStatusUtility::PENDING_INVENTORY_RESERVATION);
+    }
+
+    /**
+     * @return  ShipmentStatus
+     */
     public function getPending ()
     {
         return $this->idExists(ShipmentStatusUtility::PENDING);
@@ -59,7 +67,15 @@ class ShipmentStatusValidation
      */
     public function getFullyShipped ()
     {
-        return $this->idExists(ShipmentStatusUtility::FULLY_SHIPPED);
+        return $this->idExists(ShipmentStatusUtility::COMPLETELY_SHIPPED);
+    }
+
+    /**
+     * @return ShipmentStatus
+     */
+    public function getInsufficientInventory ()
+    {
+        return $this->idExists(ShipmentStatusUtility::INSUFFICIENT_INVENTORY);
     }
 
 }

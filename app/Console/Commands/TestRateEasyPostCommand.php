@@ -3,13 +3,13 @@
 namespace App\Console\Commands;
 
 
-use App\Integrations\EasyPost\Exceptions\EasyPostApiException;
-use App\Integrations\EasyPost\Exceptions\EasyPostCustomsInfoException;
-use App\Integrations\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
-use App\Integrations\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
-use App\Integrations\EasyPost\Exceptions\EasyPostReferenceRequiredException;
-use App\Integrations\EasyPost\Exceptions\EasyPostServiceUnavailableException;
-use App\Integrations\EasyPost\Exceptions\EasyPostUserThrottledException;
+use jamesvweston\EasyPost\Exceptions\EasyPostApiException;
+use jamesvweston\EasyPost\Exceptions\EasyPostCustomsInfoException;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use jamesvweston\EasyPost\Exceptions\EasyPostPhoneNumberRequiredException;
+use jamesvweston\EasyPost\Exceptions\EasyPostReferenceRequiredException;
+use jamesvweston\EasyPost\Exceptions\EasyPostServiceUnavailableException;
+use jamesvweston\EasyPost\Exceptions\EasyPostUserThrottledException;
 use App\Models\Shipments\Validation\ShippingContainerValidation;
 use App\Repositories\Doctrine\Integrations\IntegratedShippingApiRepository;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;

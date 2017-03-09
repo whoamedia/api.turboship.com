@@ -3,6 +3,8 @@
 namespace App\Services\Shipments;
 
 
+use App\Exceptions\Address\AddressNotFoundException;
+use App\Exceptions\Address\InvalidStreet1Exception;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Shipments\Postage;
 use App\Models\Shipments\Rate;
@@ -10,10 +12,14 @@ use App\Models\Shipments\Shipment;
 use App\Models\Support\Validation\ShipmentStatusValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
-use App\Repositories\EasyPost\EasyPostShipmentRepository;
+use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Services\EasyPost\EasyPostService;
 use App\Services\EasyPost\Mapping\EasyPostShipmentMappingService;
+use App\Services\S3Service;
 use App\Utilities\IntegrationUtility;
+use App\Utilities\ShipmentStatusUtility;
 use Doctrine\Common\Collections\ArrayCollection;
+use Illuminate\Support\Str;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 use EntityManager;
 
@@ -24,6 +30,11 @@ class PostageService
      * @var IntegratedShippingApi
      */
     protected $integratedShippingApi;
+
+    /**
+     * @var ShipmentRepository
+     */
+    private $shipmentRepo;
 
     /**
      * @var OrderRepository
@@ -39,6 +50,7 @@ class PostageService
     public function __construct(IntegratedShippingApi $integratedShippingApi)
     {
         $this->integratedShippingApi    = $integratedShippingApi;
+        $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $this->orderItemRepo            = EntityManager::getRepository('App\Models\OMS\OrderItem');
     }
@@ -50,32 +62,43 @@ class PostageService
      */
     public function rate (Shipment $shipment, $clearRates = true)
     {
+        \Bugsnag::leaveBreadcrumb('PostageService rate', null,
+            [
+                'shipmentId'    => $shipment->getId(),
+            ]);
+
         $shipment->canRate();
 
-        if ($clearRates == true)
-            $shipment->clearRates();
-
-        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
-            return $this->rateEasyPost($shipment);
-        else
+        if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
             throw new UnsupportedException('Integration is unsupported');
-    }
 
-    /**
-     * @param   Shipment $shipment
-     * @return  Shipment
-     */
-    private function rateEasyPost (Shipment $shipment)
-    {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
-        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
-        $easyPostShipment               = $easyPostShipmentRepo->rate($createEasyPostShipment);
-
-        foreach ($easyPostShipment->getRates() AS $easyPostRate)
+        try
         {
-            $rate                       = $easyPostShipmentMappingService->toLocalRate($easyPostRate, $this->integratedShippingApi);
-            $shipment->addRate($rate);
+            if ($clearRates == true)
+                $shipment->clearRates();
+
+            $this->rateEasyPost($shipment);
+        }
+        catch (InvalidStreet1Exception $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_STREET_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
+        catch (AddressNotFoundException $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_ADDRESS_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
+
+        foreach ($shipment->getRates() AS $rate)
+        {
+            $rate->setWeight($shipment->getWeight());
         }
 
         return $shipment;
@@ -88,17 +111,48 @@ class PostageService
      */
     public function purchase (Shipment $shipment, Rate $rate)
     {
+        \Bugsnag::leaveBreadcrumb('PostageService purchase', null,
+            [
+                'shipmentId'    => $shipment->getId(),
+                'rateId'        => $rate->getId(),
+            ]);
+
         $shipment->canPurchasePostage($rate);
 
-        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
-            $shipment                   = $this->purchaseEasyPost($shipment, $rate);
-        else
+        if ($this->integratedShippingApi->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
             throw new UnsupportedException('Integration is unsupported');
 
+        try
+        {
+            $shipment                   = $this->purchaseEasyPost($shipment, $rate);
+        }
+        catch (InvalidStreet1Exception $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_STREET_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
+        catch (AddressNotFoundException $exception)
+        {
+            $shipmentStatusValidation   = new ShipmentStatusValidation();
+            $status                     = $shipmentStatusValidation->idExists(ShipmentStatusUtility::INVALID_ADDRESS_ID);
+            $shipment->setStatus($status);
+            $this->shipmentRepo->saveAndCommit($shipment);
+            throw $exception;
+        }
+
+        $rate->setPurchased(true);
+        $shipment->getPostage()->setRate($rate);
         $shipmentStatusValidation       = new ShipmentStatusValidation();
         $shipment->setStatus($shipmentStatusValidation->getFullyShipped());
         $shipment->setShippedAt(new \DateTime());
         $shipment->setService($rate->getShippingApiService()->getService());
+
+        if ($this->integratedShippingApi->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
+            $this->convertEasyPostLabel($shipment->getPostage());
+
         return $shipment;
     }
 
@@ -127,8 +181,8 @@ class PostageService
 
     public function handleOrderShippedLogic (Shipment $shipment)
     {
-        $shipmentStatusValidation   = new ShipmentStatusValidation();
-        $orderCollection            = new ArrayCollection();
+        $shipmentStatusValidation       = new ShipmentStatusValidation();
+        $orderCollection                = new ArrayCollection();
 
         foreach ($shipment->getItems() AS $shipmentItem)
         {
@@ -152,11 +206,11 @@ class PostageService
         $orders                         = $orderCollection->toArray();
         foreach ($orders AS $order)
         {
-            $shipmentStatus         = $shipmentStatusValidation->getFullyShipped();
+            $shipmentStatus             = $shipmentStatusValidation->getFullyShipped();
             foreach ($order->getItems() AS $orderItem)
             {
                 if ($orderItem->getQuantityToFulfill() != $orderItem->getQuantityShipped())
-                    $shipmentStatus         = $shipmentStatusValidation->getPartiallyShipped();
+                    $shipmentStatus     = $shipmentStatusValidation->getPartiallyShipped();
 
                 $orderItem->setShipmentStatus($shipmentStatus);
             }
@@ -168,8 +222,8 @@ class PostageService
 
     public function handleOrderVoidedLogic (Shipment $shipment)
     {
-        $shipmentStatusValidation   = new ShipmentStatusValidation();
-        $orderCollection            = new ArrayCollection();
+        $shipmentStatusValidation       = new ShipmentStatusValidation();
+        $orderCollection                = new ArrayCollection();
 
         foreach ($shipment->getItems() AS $shipmentItem)
         {
@@ -191,7 +245,7 @@ class PostageService
         $orders                         = $orderCollection->toArray();
         foreach ($orders AS $order)
         {
-            $shipmentStatus         = $shipmentStatusValidation->getPending();
+            $shipmentStatus             = $shipmentStatusValidation->getPending();
             foreach ($order->getItems() AS $orderItem)
             {
                 if ($orderItem->getQuantityShipped() > 0)
@@ -206,26 +260,47 @@ class PostageService
     }
 
     /**
+     * @param   Shipment $shipment
+     * @return  Shipment
+     */
+    private function rateEasyPost (Shipment $shipment)
+    {
+        $easyPostService                = new EasyPostService($this->integratedShippingApi);
+        $easyPostShipmentMappingService = new EasyPostShipmentMappingService();
+        $createEasyPostShipment         = $easyPostShipmentMappingService->handleMapping($shipment);
+
+        \Bugsnag::leaveBreadcrumb(
+            'PostageService rateEasyPost CreateEasyPostShipment', null,
+            [
+                'json' => json_encode($createEasyPostShipment->jsonSerialize(), true)
+            ]
+        );
+
+        $easyPostShipment               = $easyPostService->rateShipment($createEasyPostShipment);
+
+        foreach ($easyPostShipment->getRates() AS $easyPostRate)
+        {
+            $rate                       = $easyPostShipmentMappingService->toLocalRate($easyPostRate, $this->integratedShippingApi);
+            $shipment->addRate($rate);
+        }
+
+        return $shipment;
+    }
+
+    /**
      * @param   Shipment    $shipment
      * @param   Rate        $rate
      * @return  Shipment
      */
     private function purchaseEasyPost (Shipment $shipment, Rate $rate)
     {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->buy($rate->getExternalShipmentId(), $rate->getExternalId());
+        $easyPostService                = new EasyPostService($this->integratedShippingApi);
+        $easyPostShipment               = $easyPostService->purchasePostage($rate->getExternalShipmentId(), $rate->getExternalId());
         $postage                        = new Postage();
         $postage->setShipment($shipment);
-        $postage->setIntegratedShippingApi($this->integratedShippingApi);
-        $postage->setShippingApiService($rate->getShippingApiService());
         $postage->setLabelPath($easyPostShipment->getPostageLabel()->getLabelUrl());
-        $postage->setBasePrice($rate->getRate());
-        $postage->setTotalPrice($rate->getRate());
-        $postage->setWeight($shipment->getWeight());
         $postage->setTrackingNumber($easyPostShipment->getTrackingCode());
         $postage->setExternalId($easyPostShipment->getPostageLabel()->getId());
-        $postage->setExternalShipmentId($rate->getExternalShipmentId());
-        $postage->setExternalRateId($rate->getExternalId());
         $shipment->setPostage($postage);
 
         return $shipment;
@@ -237,9 +312,30 @@ class PostageService
      */
     private function voidEasyPost (Shipment $shipment)
     {
-        $easyPostShipmentRepo           = new EasyPostShipmentRepository($this->integratedShippingApi);
-        $easyPostShipment               = $easyPostShipmentRepo->void($shipment->getPostage()->getExternalShipmentId());
+        $easyPostService           = new EasyPostService($this->integratedShippingApi);
+        $easyPostService->voidPostage($shipment->getPostage()->getRate()->getExternalShipmentId());
 
         return $shipment;
     }
+
+    /**
+     * @param   Postage $postage
+     * @return  Postage
+     */
+    private function convertEasyPostLabel (Postage $postage)
+    {
+        $easyPostService                = new EasyPostService($postage->getRate()->getIntegratedShippingApi());
+        $format                         = 'ZPL';
+        $easyPostShipment               = $easyPostService->updateLabelFormat($postage->getRate()->getExternalShipmentId(), $format);
+        $labelUrl                       = $easyPostShipment->getPostageLabel()->getLabelZplUrl();
+        $labelContents                  = file_get_contents($labelUrl);
+
+        $s3Key                          = 'postage/' . $postage->getId() . '_' . Str::random(50) . '.' . strtolower($format);
+        $s3Service                      = new S3Service();
+        $s3Url                          = $s3Service->store($s3Key, $labelContents);
+
+        $postage->setZplPath($s3Url);
+        return $postage;
+    }
+
 }

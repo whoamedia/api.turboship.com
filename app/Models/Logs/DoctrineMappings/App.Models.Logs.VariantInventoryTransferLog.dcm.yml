@@ -1,0 +1,57 @@
+App\Models\Logs\VariantInventoryTransferLog:
+  type:               entity
+  table:              VariantInventoryTransferLog
+  repositoryClass:    App\Repositories\Doctrine\Logs\VariantInventoryTransferLogRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'VariantInventoryTransferLog id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    quantity:
+      column:         quantity
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the Client was created"
+        default:      CURRENT_datetime
+
+  manyToOne:
+    variant:
+      targetEntity:   App\Models\OMS\Variant
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         variantId
+    fromInventoryLocation:
+      targetEntity:   App\Models\WMS\InventoryLocation
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         fromInventoryLocationId
+    toInventoryLocation:
+      targetEntity:   App\Models\WMS\InventoryLocation
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         toInventoryLocationId
+    staff:
+      targetEntity:   App\Models\CMS\Staff
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         staffId

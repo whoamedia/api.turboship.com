@@ -4,9 +4,7 @@ namespace App\Console\Commands;
 
 
 use App\Repositories\Doctrine\Integrations\IntegratedWebHookRepository;
-use App\Repositories\Shopify\ShopifyWebHookRepository;
 use Illuminate\Console\Command;
-use EntityManager;
 
 class RebootApplicationCommand extends Command
 {
@@ -33,9 +31,8 @@ class RebootApplicationCommand extends Command
      */
     public function handle()
     {
-        $this->deleteExternalWebHooks();
-
-        try {
+        try
+        {
             $this->call('migrate:refresh', [
                 '--seed' => 1
             ]);
@@ -53,24 +50,4 @@ class RebootApplicationCommand extends Command
         ]);
     }
 
-
-    private function deleteExternalWebHooks ()
-    {
-        try
-        {
-            $this->integratedWebHookRepo        = EntityManager::getRepository('App\Models\Integrations\IntegratedWebHook');
-            $results                            = $this->integratedWebHookRepo->where([]);
-
-            foreach ($results AS $integratedWebHook)
-            {
-                $shopifyWebHookRepository       = new ShopifyWebHookRepository($integratedWebHook->getIntegratedService());
-                $this->info('Deleting integratedWebHook id ' . $integratedWebHook->getId());
-                $shopifyWebHookRepository->deleteWebHook($integratedWebHook->getExternalId());
-            }
-        }
-        catch (\Exception $ex)
-        {
-            // do nothing
-        }
-    }
 }

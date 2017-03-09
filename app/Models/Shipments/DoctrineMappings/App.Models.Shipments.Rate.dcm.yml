@@ -32,8 +32,55 @@ App\Models\Shipments\Rate:
       options:
         fixed:        false
         comment:      "Rate externalId"
-    rate:
-      column:         rate
+    weight:
+      column:         weight
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    total:
+      column:         total
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    base:
+      column:         base
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    tax:
+      column:         tax
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        default:      0.00
+        unsigned:     true
+        fixed:        false
+    fuelSurcharge:
+      column:         fuelSurcharge
+      type:           decimal
+      nullable:       false
+      precision:      10
+      scale:          2
+      options:
+        default:      0.00
+        unsigned:     true
+        fixed:        false
+    retailRate:
+      column:         retailRate
       type:           decimal
       nullable:       true
       precision:      10
@@ -41,6 +88,42 @@ App\Models\Shipments\Rate:
       options:
         unsigned:     true
         fixed:        false
+    listRate:
+      column:         listRate
+      type:           decimal
+      nullable:       true
+      precision:      10
+      scale:          2
+      options:
+        unsigned:     true
+        fixed:        false
+    deliveryDays:
+      column:         deliveryDays
+      type:           integer
+      nullable:       true
+      options:
+        unsigned:     true
+        comment:      "Image deliveryDays"
+    deliveryDate:
+      column:         deliveryDate
+      type:           datetime
+      nullable:       true
+    deliveryDateGuaranteed:
+      column:         deliveryDateGuaranteed
+      type:           boolean
+      nullable:       true
+    purchased:
+      column:         purchased
+      type:           boolean
+      nullable:       false
+      options:
+        default:      false
+    deletedAt:
+      column:         deletedAt
+      type:           datetime
+      nullable:       true
+      options:
+        default:      null
     createdAt:
       column:         createdAt
       type:           datetime

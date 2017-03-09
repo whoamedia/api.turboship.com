@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IntegratedShoppingCarts\ShowIntegratedShoppingCart;
 use App\Http\Requests\Shopify\DownloadShopifyProducts;
-use App\Jobs\Shopify\Orders\ShopifyCreateOrderJob;
-use App\Jobs\Shopify\Products\ShopifyCreateProductJob;
+use App\Jobs\Shopify\Orders\DownloadShopifyOrdersJob;
+use App\Jobs\Shopify\Products\DownloadShopifyProductsJob;
 use App\Models\Integrations\IntegratedShoppingCart;
 use App\Models\Integrations\Validation\IntegratedShoppingCartValidation;
 use App\Repositories\Doctrine\OMS\OrderItemRepository;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Repositories\Doctrine\OMS\ProductRepository;
-use App\Repositories\Shopify\ShopifyOrderRepository;
-use App\Repositories\Shopify\ShopifyProductRepository;
 use App\Services\Order\OrderApprovalService;
+use App\Services\Shopify\ShopifyService;
 use App\Utilities\SourceUtility;
 use Illuminate\Http\Request;
 use EntityManager;
+use jamesvweston\Utilities\BooleanUtil;
 
 class ShopifyController extends BaseAuthController
 {
@@ -42,79 +42,67 @@ class ShopifyController extends BaseAuthController
      */
     private $productRepo;
 
+    /**
+     * @var IntegratedShoppingCart
+     */
+    private $integratedShoppingCart;
 
-    public function __construct()
+    /**
+     * @var ShopifyService
+     */
+    private $shopifyService;
+
+
+    public function __construct(Request $request)
     {
         $this->orderRepo                    = EntityManager::getRepository('App\Models\OMS\Order');
         $this->orderItemRepo                = EntityManager::getRepository('App\Models\OMS\OrderItem');
         $this->orderApprovalService         = new OrderApprovalService();
         $this->productRepo                  = EntityManager::getRepository('App\Models\OMS\Product');
+        $this->integratedShoppingCart      = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
+        $this->shopifyService               = new ShopifyService($this->integratedShoppingCart);
     }
 
     public function downloadOrders (Request $request)
     {
-        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        $shopifyOrderRepository         = new ShopifyOrderRepository($shoppingCartIntegration);
+        $shipped                            = BooleanUtil::getBooleanValue($request->input('shipped'));
 
-        $total                          = $shopifyOrderRepository->getImportCandidatesCount();
-        $totalPages                     = (int)ceil($total / 250);
+        if ($shipped)
+            $total                          = $this->shopifyService->getOrdersShippedCount();
+        else
+            $total                          = $this->shopifyService->getOrderImportCandidatesCount();
 
-        for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
-        {
-            set_time_limit(60);
-            $shopifyOrdersResponse          = $shopifyOrderRepository->getImportCandidates($currentPage, 250);
-            foreach ($shopifyOrdersResponse AS $shopifyOrder)
-            {
-                $job                        = (new ShopifyCreateOrderJob($shopifyOrder, $shoppingCartIntegration->getId()))->onQueue('shopifyOrders');
-                $this->dispatch($job);
-            }
-            usleep(250000);
-        }
+        $job                                = (new DownloadShopifyOrdersJob($this->integratedShoppingCart->getId(), $shipped))->onQueue('shopifyBulkImports');
+        $this->dispatch($job);
+
+        $response   = [
+            'total'                         => $total,
+        ];
+        return response($response);
     }
 
 
     public function downloadProducts (Request $request)
     {
-        $shoppingCartIntegration        = $this->getIntegratedShoppingCartFromRoute($request->route('id'));
-        $shopifyProductRepo             = new ShopifyProductRepository($shoppingCartIntegration);
-        $downloadShopifyProducts        = new DownloadShopifyProducts($request->input());
+        $downloadShopifyProducts            = new DownloadShopifyProducts($request->input());
+        $downloadShopifyProducts->validate();
+        $downloadShopifyProducts->clean();
 
         if ($downloadShopifyProducts->getPendingSku() == true)
         {
-            $externalIdsResponse        = $this->orderItemRepo->getPendingExternalProductIds($shoppingCartIntegration->getClient()->getId(), SourceUtility::SHOPIFY_ID);
-            $maxIds                     = 20;
-            for ($i = 0; $i < sizeof($externalIdsResponse); $i+=$maxIds)
-            {
-                set_time_limit(30);
-                $externalIds            = array_slice($externalIdsResponse, $i, $maxIds);
-                $externalIds            = implode(',', $externalIds);
-
-                $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates(1, 250, $externalIds);
-                foreach ($shopifyProductsResponse AS $shopifyProduct)
-                {
-                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
-                    $this->dispatch($job);
-                }
-                usleep(250000);
-            }
+            $externalIdsResponse            = $this->orderItemRepo->getPendingExternalProductIds($this->integratedShoppingCart->getClient()->getId(), SourceUtility::SHOPIFY_ID);
+            $total                          = sizeof($externalIdsResponse);
         }
         else
-        {
-            $total                      = $shopifyProductRepo->getImportCandidatesCount();
-            $totalPages                 = (int)ceil($total / 250);
+            $total                          = $this->shopifyService->getProductImportCandidatesCount();
 
-            for ($currentPage = 1; $currentPage <= $totalPages; $currentPage++)
-            {
-                set_time_limit(60);
-                $shopifyProductsResponse    = $shopifyProductRepo->getImportCandidates($currentPage, 250);
-                foreach ($shopifyProductsResponse AS $shopifyProduct)
-                {
-                    $job                        = (new ShopifyCreateProductJob($shopifyProduct, $shoppingCartIntegration->getId()))->onQueue('shopifyProducts');
-                    $this->dispatch($job);
-                }
-                usleep(250000);
-            }
-        }
+        $job                                = (new DownloadShopifyProductsJob($this->integratedShoppingCart->getId(), $downloadShopifyProducts->getPendingSku()))->onQueue('shopifyBulkImports');
+        $this->dispatch($job);
+
+        $response   = [
+            'total'                         => $total,
+        ];
+        return response($response);
     }
 
     /**

@@ -1,0 +1,4 @@
+App\Models\WMS\TotePick:
+  type:               entity
+  table:              TotePick
+  repositoryClass:    App\Repositories\Doctrine\WMS\TotePickRepository

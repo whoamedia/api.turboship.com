@@ -13,7 +13,7 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
 {
 
     /**
-     * @var bool|null
+     * @var bool
      */
     protected $pendingSku;
 
@@ -30,6 +30,8 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
     public function clean()
     {
         $this->pendingSku               = BU::getBooleanValue($this->pendingSku);
+        $this->pendingSku               = is_null($this->pendingSku) ? false : $this->pendingSku;
+
     }
 
     public function jsonSerialize()
@@ -40,7 +42,7 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
     }
 
     /**
-     * @return bool|null
+     * @return bool
      */
     public function getPendingSku()
     {
@@ -48,7 +50,7 @@ class DownloadShopifyProducts extends BaseRequest implements Cleanable, Validata
     }
 
     /**
-     * @param bool|null $pendingSku
+     * @param bool $pendingSku
      */
     public function setPendingSku($pendingSku)
     {

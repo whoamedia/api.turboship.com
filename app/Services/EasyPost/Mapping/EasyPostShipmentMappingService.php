@@ -3,10 +3,10 @@
 namespace App\Services\EasyPost\Mapping;
 
 
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsInfo;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
-use App\Integrations\EasyPost\Models\Requests\CreateEasyPostShipment;
-use App\Integrations\EasyPost\Models\Responses\EasyPostRate;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostCustomsInfo;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostCustomsItem;
+use jamesvweston\EasyPost\Models\Requests\CreateEasyPostShipment;
+use jamesvweston\EasyPost\Models\Responses\EasyPostRate;
 use App\Models\Integrations\IntegratedShippingApi;
 use App\Models\Shipments\Rate;
 use App\Models\Shipments\Shipment;
@@ -48,7 +48,7 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
     public function handleMapping (Shipment $shipment)
     {
         $createEasyPostShipment         = $this->toEasyPostShipment($shipment);
-        if ($createEasyPostShipment->getToAddress()->getCountry() != 'US')
+        if ($shipment->getToAddress()->requiresUSCustoms())
         {
             $createEasyPostCustomsInfo  = $this->toEasyPostCustomsInfo($shipment);
             $createEasyPostShipment->setCustomsInfo($createEasyPostCustomsInfo);
@@ -125,8 +125,13 @@ class EasyPostShipmentMappingService extends BaseEasyPostMappingService
         $rate->setExternalId($easyPostRate->getId());
         $rate->setExternalShipmentId($easyPostRate->getShipmentId());
         $rate->setIntegratedShippingApi($integratedShippingApi);
-        $rate->setRate($easyPostRate->getRate());
-
+        $rate->setTotal($easyPostRate->getRate());
+        $rate->setBase($easyPostRate->getRate());
+        $rate->setRetailRate($easyPostRate->getRetailRate());
+        $rate->setListRate($easyPostRate->getListRate());
+        $rate->setDeliveryDays($easyPostRate->getDeliveryDays());
+        $rate->setDeliveryDate($this->toDate($easyPostRate->getDeliveryDate()));
+        $rate->setDeliveryDateGuaranteed($easyPostRate->isDeliveryDateGuaranteed());
         $shippingApiService             = $this->getShippingApiService($easyPostRate->getCarrier(), $easyPostRate->getService());
         $rate->setShippingApiService($shippingApiService);
 

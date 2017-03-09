@@ -8,8 +8,14 @@ use App\Http\Requests\Users\ShowUser;
 use App\Http\Requests\Users\GetUsers;
 use App\Http\Requests\Users\UpdatePassword;
 use App\Http\Requests\Users\UpdateUser;
+use App\Models\ACL\Validation\PermissionValidation;
+use App\Models\ACL\Validation\RoleValidation;
 use App\Models\CMS\User;
+use App\Models\CMS\Validation\ClientValidation;
 use App\Models\CMS\Validation\UserValidation;
+use App\Models\Support\Validation\SourceValidation;
+use App\Repositories\Doctrine\CMS\ClientRepository;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -19,6 +25,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends BaseAuthController
 {
+
+    /**
+     * @var ClientRepository
+     */
+    private $clientRepo;
 
     /**
      * @var \App\Repositories\Doctrine\CMS\UserRepository
@@ -36,6 +47,7 @@ class UserController extends BaseAuthController
      */
     public function __construct (Request $request)
     {
+        $this->clientRepo               = EntityManager::getRepository('App\Models\CMS\Client');
         $this->userRepo                 = EntityManager::getRepository('App\Models\CMS\User');
         $this->userValidation           = new UserValidation($this->userRepo);
     }
@@ -67,6 +79,11 @@ class UserController extends BaseAuthController
         return response($authUser);
     }
 
+    public function getMyPermissions ()
+    {
+        $authUser                       = parent::getAuthUser();
+        return response($authUser->getPermissions());
+    }
     /**
      * @param   Request $request
      * @return  User
@@ -124,7 +141,25 @@ class UserController extends BaseAuthController
         $createUser->validate();
 
         $user                           = new User($createUser->jsonSerialize());
-        $user->setOrganization(\Auth::getUser()->getOrganization());
+
+        if (parent::authUserIsClient())
+        {
+            $user->setClient(parent::getAuthUser()->getClient());
+        }
+        else
+        {
+            if (!is_null($createUser->getClientId()))
+            {
+                $clientValidation       = new ClientValidation($this->clientRepo);
+                $client                 = $clientValidation->idExists($createUser->getClientId());
+                if (!parent::getAuthUser()->getOrganization()->hasClient($client))
+                    throw new BadRequestHttpException('Client not found');
+
+                $user->setClient($client);
+            }
+        }
+
+        $user->setOrganization(parent::getAuthUserOrganization());
 
         $user->validate();
 
@@ -159,7 +194,162 @@ class UserController extends BaseAuthController
         return response($user);
     }
 
+    public function updateImage (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $file                           = $request->file('image');
 
+
+        if (is_null($file))
+            throw new BadRequestHttpException('image is required');
+
+        if (!$file->isValid())
+            throw new BadRequestHttpException('files is invalid');
+
+        if (!preg_match('#^image#', $file->getMimeType()))
+            throw new BadRequestHttpException('Invalid mime type');
+
+        $sourceValidation               = new SourceValidation();
+        $internalSource                 = $sourceValidation->getInternal();
+        $imageService                   = new ImageService();
+
+        $image                          = $imageService->handleImage($file->getPath() . '/' . $file->getBasename(), $file->getClientOriginalName());
+        $image->setSource($internalSource);
+
+        $user->setImage($image);
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getImage(), 201);
+    }
+
+    public function getPermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        return response($user->getPermissions());
+    }
+
+    public function createPermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionIds                  = $request->input('permissionIds');
+        if (is_null($permissionIds))
+            throw new BadRequestHttpException('permissionIds is required');
+
+        $permissionValidation           = new PermissionValidation();
+        $permissionIds                  = str_replace(' ', '', $permissionIds);
+        foreach (explode(',', $permissionIds) AS $id)
+        {
+            $permission                 = $permissionValidation->idExists($id);
+            if ($user->hasPermission($permission))
+                throw new BadRequestHttpException('User already has permission ' . $permission->getName());
+            $user->addPermission($permission);
+        }
+
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getPermissions(), 201);
+    }
+
+    public function updatePermissions (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionIds                  = $request->input('permissionIds');
+        if (is_null($permissionIds))
+            throw new BadRequestHttpException('permissionIds is required');
+
+        $user->emptyPermissions();
+        $permissionValidation           = new PermissionValidation();
+        $permissionIds                  = str_replace(' ', '', $permissionIds);
+        foreach (explode(',', $permissionIds) AS $id)
+        {
+            $permission                 = $permissionValidation->idExists($id);
+            $user->addPermission($permission);
+        }
+
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getPermissions(), 201);
+    }
+
+    public function deletePermission (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+
+        $permissionId                   = $request->route('permissionId');
+        if (is_null($permissionId))
+            throw new BadRequestHttpException('permissionId is required');
+
+        $permissionValidation           = new PermissionValidation();
+        $permission                     = $permissionValidation->idExists($permissionId);
+
+        if (!$user->hasPermission($permission))
+            throw new BadRequestHttpException('User does not have permission ' . $permission->getName());
+
+        $user->removePermission($permission);
+        $this->userRepo->saveAndCommit($user);
+        return response('', 204);
+    }
+
+    public function getRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        return response($user->getRoles());
+    }
+
+    public function createRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleIds                        = $request->input('roleIds');
+        if (is_null($roleIds))
+            throw new BadRequestHttpException('roleIds is required');
+
+        $roleValidation                 = new RoleValidation();
+        foreach (explode(',', $roleIds) AS $roleId)
+        {
+            $role                       = $roleValidation->idExists($roleId);
+            if ($user->hasRole($role))
+                throw new BadRequestHttpException('User already has role ' . $role->getName());
+
+            $user->addRole($role);
+        }
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getRoles(), 201);
+    }
+
+    public function updateRoles (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleIds                        = $request->input('roleIds');
+        if (is_null($roleIds))
+            throw new BadRequestHttpException('roleIds is required');
+
+        $user->emptyRoles();
+        $roleValidation                 = new RoleValidation();
+        foreach (explode(',', $roleIds) AS $roleId)
+        {
+            $role                       = $roleValidation->idExists($roleId);
+            $user->addRole($role);
+        }
+        $this->userRepo->saveAndCommit($user);
+        return response($user->getRoles(), 201);
+    }
+
+    public function deleteRole (Request $request)
+    {
+        $user                           = $this->getUserFromRoute($request->route('id'));
+        $roleId                         = $request->route('roleId');
+        if (is_null($roleId))
+            throw new BadRequestHttpException('roleId is required');
+
+        $roleValidation                 = new RoleValidation();
+        $role                           = $roleValidation->idExists($roleId);
+
+        if (!$user->hasRole($role))
+            throw new NotFoundHttpException('User does not have role ' . $role->getName());
+
+        $user->removeRole($role);
+        $this->userRepo->saveAndCommit($user);
+        return response('', 204);
+    }
     /**
      * @param   int     $id
      * @return  User

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Integrations\GetIntegrations;
 use App\Http\Requests\Integrations\GetShippingApiIntegrations;
 use App\Http\Requests\Integrations\GetShoppingCartIntegrations;
 use App\Http\Requests\Integrations\ShowIntegration;
@@ -49,6 +50,17 @@ class IntegrationController extends BaseAuthController
         $this->integrationValidation    = new IntegrationValidation();
     }
 
+    public function index (Request $request)
+    {
+        $getIntegrations                = new GetIntegrations($request->input());
+        $getIntegrations->validate();
+        $getIntegrations->clean();
+
+        $query                          = $getIntegrations->jsonSerialize();
+        $results                        = $this->integrationRepo->where($query, false);
+        return response($results);
+    }
+
     public function getShippingApis (Request $request)
     {
         $getShippingApiIntegrations     = new GetShippingApiIntegrations($request->input());
@@ -56,7 +68,7 @@ class IntegrationController extends BaseAuthController
         $getShippingApiIntegrations->clean();
 
         $query                          = $getShippingApiIntegrations->jsonSerialize();
-        $results                        = $this->shippingApiIntegrationRepo->where($query);
+        $results                        = $this->shippingApiIntegrationRepo->where($query, false);
         return response($results);
     }
 
@@ -67,7 +79,7 @@ class IntegrationController extends BaseAuthController
         $getShoppingCartIntegrations->clean();
 
         $query                          = $getShoppingCartIntegrations->jsonSerialize();
-        $results                        = $this->shoppingCartIntegrationRepo->where($query);
+        $results                        = $this->shoppingCartIntegrationRepo->where($query, false);
         return response($results);
     }
 

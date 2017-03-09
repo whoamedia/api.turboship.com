@@ -2,10 +2,10 @@
 
 namespace App\Jobs\Shopify\Orders;
 
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use App\Services\Order\OrderApprovalService;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
 use Illuminate\Bus\Queueable;
@@ -21,50 +21,66 @@ class ShopifyCreateOrderJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
      */
     private $orderRepo;
 
+    /**
+     * @var bool
+     */
+    private $importShippedOrder;
+
 
     /**
      * ShopifyCreateOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   bool                        $importShippedOrder
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null, $importShippedOrder = false)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/create', $shopifyWebHookLog);
-        $this->shopifyOrder             = $shopifyOrder;
+        parent::__construct($integratedShoppingCartId, 'orders/create', $shopifyWebHookLogId);
+
+        $this->jsonShopifyOrder         = $jsonShopifyOrder;
+        $this->importShippedOrder       = $importShippedOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        if (!$shopifyOrderMappingService->shouldImportOrder($this->shopifyOrder))
-        {
+        $shouldImportOrder              = $shopifyOrderMappingService->shouldImportOrder($shopifyOrder);
+        $importOverride                 = $shopifyOrderMappingService->shouldImportOrder($shopifyOrder, $this->importShippedOrder);
+
+        if (!$shouldImportOrder && !$importOverride)
             $this->shopifyWebHookLog->addNote('shouldImportOrder was false');
-        }
         else
         {
-            $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+            if ($this->importShippedOrder && $importOverride)
+            {
+                $this->shopifyWebHookLog->addNote('Import shipped order override was successful');
+            }
+
+            $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
             $entityCreated                  = is_null($order->getId()) ? true : false;
             $this->shopifyWebHookLog->setEntityCreated($entityCreated);
 
-            $this->orderRepo->saveAndCommit($order);
-            $this->shopifyWebHookLog->setEntityId($order->getId());
 
-            $job                        = (new OrderApprovalJob($order->getId()))->onQueue('orderApproval');
-            $this->dispatch($job);
+            $orderApprovalService           = new OrderApprovalService();
+            $orderApprovalService->processOrder($order);
+            $this->orderRepo->saveAndCommit($order);
+
+            $this->shopifyWebHookLog->setEntityId($order->getId());
         }
         $this->shopifyWebHookLogRepo->saveAndCommit($this->shopifyWebHookLog);
     }

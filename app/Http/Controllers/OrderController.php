@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Addresses\UpdateAddress;
 use App\Http\Requests\Orders\GetOrders;
 use App\Http\Requests\Orders\ShowOrder;
 use App\Jobs\Orders\OrderApprovalJob;
 use App\Models\OMS\Order;
 use App\Repositories\Doctrine\OMS\OrderRepository;
+use App\Services\Address\AddressService;
 use App\Services\Order\OrderApprovalService;
 use App\Utilities\OrderStatusUtility;
 use Illuminate\Http\Request;
@@ -73,6 +75,40 @@ class OrderController extends BaseAuthController
         return response($order);
     }
 
+    public function getProvidedShippingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        return response($order->getProvidedAddress());
+    }
+
+    public function getBillingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        return response($order->getBillingAddress());
+    }
+
+    public function updateShippingAddress (Request $request)
+    {
+        $order                          = $this->getOrderFromRoute($request->route('id'));
+        $updateAddress                  = new UpdateAddress($request->input());
+        $updateAddress->setId($order->getShippingAddress()->getId());
+        $updateAddress->validate();
+        $updateAddress->clean();
+
+        $addressService                 = new AddressService();
+        $address                        = $addressService->updateAddress($order->getShippingAddress(), $updateAddress);
+        $address->validate();
+
+        $order->setShippingAddress($address);
+
+        $orderApprovalService           = new OrderApprovalService();
+        $order                          = $orderApprovalService->processOrder($order);
+
+
+        $this->orderRepo->saveAndCommit($order);
+        return response($order);
+    }
+
     public function getStatusHistory (Request $request)
     {
         $order                          = $this->getOrderFromRoute($request->route('id'));
@@ -108,8 +144,8 @@ class OrderController extends BaseAuthController
         if ($getOrders->getIsAddressError() == true)
             $getOrders->setStatusIds(implode(',', OrderStatusUtility::getAddressErrors()));
 
+        $getOrders->setLimit(null);
         $query                          = $getOrders->jsonSerialize();
-
         $results                        = $this->orderRepo->where($query);
 
         foreach ($results AS $order)

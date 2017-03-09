@@ -29,7 +29,9 @@ return [
                 'App'
             ],
             'paths'         => [
+                base_path('app/Models/ACL/DoctrineMappings'),
                 base_path('app/Models/CMS/DoctrineMappings'),
+                base_path('app/Models/Hardware/DoctrineMappings'),
                 base_path('app/Models/Locations/DoctrineMappings'),
                 base_path('app/Models/Logs/DoctrineMappings'),
                 base_path('app/Models/Integrations/DoctrineMappings'),
@@ -163,7 +165,7 @@ return [
     |
     */
     'cache'                      => [
-        'default'      => env('DOCTRINE_CACHE', 'array'),
+        'default'      => 'array', //   strtoupper(config('app.env')) === 'LOCAL' ? 'array' : env('CACHE_DRIVER', 'file'),
         'namespace'    => null,
         'second_level' => false,
     ],

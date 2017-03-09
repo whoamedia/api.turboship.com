@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
 class BaseAuthController extends Controller
 {
 
@@ -12,6 +14,19 @@ class BaseAuthController extends Controller
     public function getAuthUser ()
     {
         return \Auth::getUser();
+    }
+
+    /**
+     * @return \App\Models\CMS\Staff
+     */
+    public function getAuthStaff ()
+    {
+        $user                       = $this->getAuthUser();
+
+        if ( !($user instanceof \App\Models\CMS\Staff) )
+            throw new AccessDeniedHttpException('Insufficient access');
+
+        return $user;
     }
 
     /**

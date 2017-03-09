@@ -24,6 +24,7 @@ class CreateShipmentItemTable extends Migration
             $table->foreign('orderItemId')->references('id')->on('OrderItem');
 
             $table->integer('quantity')->unsigned()->index();
+            $table->integer('quantityReserved')->unsigned()->index()->default(0);
 
         });
 

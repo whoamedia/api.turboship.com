@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Products\GetProducts;
 use App\Http\Requests\Products\ShowProduct;
+use App\Http\Requests\Products\ShowProductVariant;
 use App\Models\OMS\Product;
 use App\Repositories\Doctrine\OMS\ProductRepository;
 use Illuminate\Http\Request;
@@ -39,6 +40,19 @@ class ProductController extends Controller
         return response($results);
     }
 
+    public function getLexicon (Request $request)
+    {
+        $getProducts                    = new GetProducts($request->input());
+        $getProducts->setOrganizationIds(\Auth::getUser()->getOrganization()->getId());
+        $getProducts->validate();
+        $getProducts->clean();
+
+        $query                          = $getProducts->jsonSerialize();
+        $results                        = $this->productRepo->getLexicon($query);
+
+        return response($results);
+    }
+
     public function show (Request $request)
     {
         $product                        = $this->getProductFromRoute($request->route('id'));
@@ -63,6 +77,22 @@ class ProductController extends Controller
         return response($product->getVariants());
     }
 
+    public function showVariant (Request $request)
+    {
+        $showProductVariant             = new ShowProductVariant($request->input());
+        $showProductVariant->setId($request->route('id'));
+        $showProductVariant->setVariantId($request->route('variantId'));
+        $showProductVariant->validate();
+        $showProductVariant->clean();
+
+        $product                        = $this->getProductFromRoute($showProductVariant->getId());
+
+        $variant                        = $product->getVariantById($showProductVariant->getVariantId());
+        if (is_null($variant))
+            throw new NotFoundHttpException('Variant not found');
+
+        return response($variant);
+    }
 
     /**
      * @param   int     $id

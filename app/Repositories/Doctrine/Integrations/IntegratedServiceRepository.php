@@ -29,7 +29,7 @@ class IntegratedServiceRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['integratedService']);
+        $qb->select(['integratedService', 'integration']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

@@ -6,7 +6,7 @@ namespace App\Models\CMS;
 use App\Models\BaseModel;
 use App\Models\Shipments\Shipper;
 use App\Models\Shipments\ShippingContainer;
-use App\Models\WMS\Printer;
+use App\Models\Hardware\Printer;
 use Doctrine\Common\Collections\ArrayCollection;
 use jamesvweston\Utilities\ArrayUtil AS AU;
 
@@ -57,7 +57,7 @@ class Organization extends BaseModel implements \JsonSerializable
      * @var \DateTime
      */
     protected $createdAt;
-    
+
     
     /**
      * Organization constructor.
@@ -158,6 +158,20 @@ class Organization extends BaseModel implements \JsonSerializable
     public function getClients ()
     {
         return $this->clients->toArray();
+    }
+
+    /**
+     * @param   Client $client
+     * @return  bool
+     */
+    public function hasClient (Client $client)
+    {
+        foreach ($this->getClients() AS $item)
+        {
+            if ($client->getId() == $item->getId())
+                return true;
+        }
+        return false;
     }
 
     /**

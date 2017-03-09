@@ -7,7 +7,6 @@
     "require": {
         "php": ">=5.6.4",
         "laravel/framework": "5.3.*",
-        "guzzlehttp/guzzle": "^6.2",
         "aws/aws-sdk-php-laravel": "^3.1",
         "barryvdh/laravel-ide-helper": "^2.2",
         "barryvdh/laravel-cors": "^0.8.2",
@@ -19,7 +18,11 @@
         "soapbox/laravel-formatter": "^2.0",
         "lucadegasperi/oauth2-server-laravel": "^5.2",
         "respect/validation": "^1.1",
-        "pda/pheanstalk": "^3.1"
+        "pda/pheanstalk": "^3.1",
+        "maxbrokman/safe-queue": "^0.2.4",
+        "jamesvweston/shopify-php": "dev-master",
+        "intervention/image": "^2.3",
+        "jamesvweston/easypost-php": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

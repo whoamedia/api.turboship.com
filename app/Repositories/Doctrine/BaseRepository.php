@@ -51,7 +51,7 @@ class BaseRepository extends EntityRepository implements RepositoryInterface
      */
     protected function buildPagination($data = null, $maxLimit = 5000, $maxPage = 100)
     {
-        $data   =   is_array($data) ? $data : [];
+        $data                           =   is_array($data) ? $data : [];
 
         if (is_array($data))
         {
@@ -78,6 +78,7 @@ class BaseRepository extends EntityRepository implements RepositoryInterface
         return $data;
     }
 
+
     /**
      * @param   array   $lexicon
      * @param   array
@@ -90,24 +91,31 @@ class BaseRepository extends EntityRepository implements RepositoryInterface
         {
             foreach ($lexiconKeySet AS $lexiconKey)
             {
-                $key                    = array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id'));
+                $id                     = $resultItem[$lexiconKey.'_'.'id'];
+                $key                    = array_search($id, array_column($lexicon[$lexiconKey]['values'], 'id'));
                 if ($key !== false)
-                    $lexicon[$lexiconKey][$key]['total'] += $resultItem['total'];
+                    $lexicon[$lexiconKey]['values'][$key]['total'] += $resultItem['total'];
                 else
                 {
-                //  echo array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id')) . PHP_EOL;
-                array_push($lexicon[$lexiconKey],
-                [
-                    'id' => $resultItem[$lexiconKey.'_'.'id'],
-                    'name' => $resultItem[$lexiconKey.'_'.'name'],
-                    'total' => $resultItem['total']
-                ]);
+                    //  echo array_search($resultItem[$lexiconKey.'_'.'id'], array_column($lexicon[$lexiconKey], 'id')) . PHP_EOL;
+                    array_push($lexicon[$lexiconKey]['values'],
+                        [
+                            'id' => $resultItem[$lexiconKey.'_'.'id'],
+                            'name' => $resultItem[$lexiconKey.'_'.'name'],
+                            'total' => $resultItem['total']
+                        ]);
                 }
             }
         }
 
-        return $lexicon;
-    }
+        $formattedLexicon               = [];
+        $lexiconKeySet                  = array_keys($lexicon);
+        foreach ($lexiconKeySet AS $lexiconKey)
+        {
+            $formattedLexicon[]         = $lexicon[$lexiconKey];
+        }
 
+        return $formattedLexicon;
+    }
 
 }

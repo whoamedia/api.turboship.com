@@ -19,6 +19,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
+    protected $shipperIds;
+
+    /**
+     * @var string|null
+     */
     protected $itemIds;
 
     /**
@@ -30,6 +35,11 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
      * @var string|null
      */
     protected $orderItemIds;
+
+    /**
+     * @var string|null
+     */
+    protected $variantIds;
 
     /**
      * @var string|null
@@ -64,7 +74,7 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @var string|null
      */
-    protected $shipmentStatus;
+    protected $statusIds;
 
     /**
      * @var string|null
@@ -91,39 +101,49 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
      */
     protected $direction;
 
+    /**
+     * @var int
+     */
+    protected $limit;
+
     public function __construct($data = [])
     {
         $this->ids                      = AU::get($data['ids']);
+        $this->shipperIds               = AU::get($data['shipperIds']);
         $this->itemIds                  = AU::get($data['itemIds']);
         $this->orderIds                 = AU::get($data['orderIds']);
         $this->orderItemIds             = AU::get($data['orderItemIds']);
+        $this->variantIds               = AU::get($data['variantIds']);
         $this->clientIds                = AU::get($data['clientIds']);
         $this->organizationIds          = AU::get($data['organizationIds']);
         $this->serviceIds               = AU::get($data['serviceIds']);
         $this->carrierIds               = AU::get($data['carrierIds']);
         $this->shippingContainerIds     = AU::get($data['shippingContainerIds']);
         $this->toAddressCountryIds      = AU::get($data['toAddressCountryIds']);
-        $this->shipmentStatus           = AU::get($data['shipmentStatus']);
+        $this->statusIds                = AU::get($data['statusIds']);
         $this->trackingNumbers          = AU::get($data['trackingNumbers']);
         $this->createdFrom              = AU::get($data['createdFrom']);
         $this->createdTo                = AU::get($data['createdTo']);
         $this->orderBy                  = AU::get($data['orderBy'], 'shipment.id');
         $this->direction                = AU::get($data['direction'], 'ASC');
+        $this->limit                    = AU::get($data['limit'], 80);
     }
 
     public function validate()
     {
         $this->ids                      = parent::validateIds($this->ids, 'ids');
+        $this->shipperIds               = parent::validateIds($this->ids, 'shipperIds');
         $this->itemIds                  = parent::validateIds($this->itemIds, 'itemIds');
         $this->orderIds                 = parent::validateIds($this->orderIds, 'orderIds');
         $this->orderItemIds             = parent::validateIds($this->orderItemIds, 'orderItemIds');
+        $this->variantIds               = parent::validateIds($this->variantIds, 'variantIds');
         $this->clientIds                = parent::validateIds($this->clientIds, 'clientIds');
         $this->organizationIds          = parent::validateIds($this->organizationIds, 'organizationIds');
         $this->serviceIds               = parent::validateIds($this->serviceIds, 'serviceIds');
         $this->carrierIds               = parent::validateIds($this->carrierIds, 'carrierIds');
         $this->shippingContainerIds     = parent::validateIds($this->shippingContainerIds, 'shippingContainerIds');
         $this->toAddressCountryIds      = parent::validateIds($this->toAddressCountryIds, 'toAddressCountryIds');
-        $this->shipmentStatus           = parent::validateShipmentStatus($this->shipmentStatus, 'shipmentStatus');
+        $this->statusIds                = parent::validateIds($this->statusIds, 'statusIds');
         $this->createdFrom              = parent::validateDate($this->createdFrom, 'createdFrom');
         $this->createdTo                = parent::validateDate($this->createdTo, 'createdTo');
         $this->direction                = parent::validateOrderByDirection($this->direction);
@@ -140,21 +160,24 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function jsonSerialize ()
     {
         $object['ids']                  = $this->ids;
+        $object['shipperIds']           = $this->shipperIds;
         $object['itemIds']              = $this->itemIds;
         $object['orderIds']             = $this->orderIds;
         $object['orderItemIds']         = $this->orderItemIds;
+        $object['variantIds']           = $this->variantIds;
         $object['clientIds']            = $this->clientIds;
         $object['organizationIds']      = $this->organizationIds;
         $object['serviceIds']           = $this->serviceIds;
         $object['carrierIds']           = $this->carrierIds;
         $object['shippingContainerIds'] = $this->shippingContainerIds;
         $object['toAddressCountryIds']  = $this->toAddressCountryIds;
-        $object['shipmentStatus']       = $this->shipmentStatus;
+        $object['statusIds']            = $this->statusIds;
         $object['trackingNumbers']      = $this->trackingNumbers;
         $object['createdFrom']          = $this->createdFrom;
         $object['createdTo']            = $this->createdTo;
         $object['orderBy']              = $this->orderBy;
         $object['direction']            = $this->direction;
+        $object['limit']                = $this->limit;
 
         return $object;
     }
@@ -173,6 +196,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setIds($ids)
     {
         $this->ids = $ids;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getShipperIds()
+    {
+        return $this->shipperIds;
+    }
+
+    /**
+     * @param null|string $shipperIds
+     */
+    public function setShipperIds($shipperIds)
+    {
+        $this->shipperIds = $shipperIds;
     }
 
     /**
@@ -221,6 +260,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setOrderItemIds($orderItemIds)
     {
         $this->orderItemIds = $orderItemIds;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getVariantIds()
+    {
+        return $this->variantIds;
+    }
+
+    /**
+     * @param null|string $variantIds
+     */
+    public function setVariantIds($variantIds)
+    {
+        $this->variantIds = $variantIds;
     }
 
     /**
@@ -322,17 +377,17 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     /**
      * @return null|string
      */
-    public function getShipmentStatus()
+    public function getStatusIds()
     {
-        return $this->shipmentStatus;
+        return $this->statusIds;
     }
 
     /**
-     * @param null|string $shipmentStatus
+     * @param null|string $statusIds
      */
-    public function setShipmentStatus($shipmentStatus)
+    public function setStatusIds($statusIds)
     {
-        $this->shipmentStatus = $shipmentStatus;
+        $this->statusIds = $statusIds;
     }
 
     /**
@@ -413,6 +468,22 @@ class GetShipments extends BaseRequest implements Cleanable, Validatable, \JsonS
     public function setDirection($direction)
     {
         $this->direction = $direction;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
     }
 
 }

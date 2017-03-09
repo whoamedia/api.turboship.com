@@ -70,6 +70,21 @@ class BaseRequest
         return InputUtil::getFloat($value);
     }
 
+    public function validateRequiredPositiveInteger ($value, $fieldName)
+    {
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' is required');
+
+        $value                          = $this->getInteger($value);
+        if (is_null($value))
+            throw new BadRequestHttpException($fieldName . ' is expected to be integer');
+
+        if ($value <= 0)
+            throw new BadRequestHttpException($fieldName . ' must be positive');
+
+        return $value;
+    }
+
     /**
      * @param   string|null     $values
      * @param   string          $fieldName
@@ -179,6 +194,30 @@ class BaseRequest
             throw new BadRequestHttpException('direction must be either ASC or DESC');
 
         return $value;
+    }
+
+    /**
+     * @param   string$ipAddress
+     * @return  bool
+     */
+    public function validateIpAddress ($ipAddress)
+    {
+        try
+        {
+            $host                       = gethostbyaddr($ipAddress);
+        }
+        catch (\ErrorException $exception)
+        {
+            if (preg_match("/Address is not a valid IPv4 or IPv6 address/", $exception->getMessage()))
+            {
+                throw new BadRequestHttpException('Address is not a valid IPv4 or IPv6 address');
+            }
+            else
+                throw new BadRequestHttpException($exception->getMessage());
+
+        }
+
+        return true;
     }
 
 }

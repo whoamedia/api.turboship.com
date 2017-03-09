@@ -3,9 +3,8 @@
 namespace App\Jobs\Shopify\Orders;
 
 
-use App\Integrations\Shopify\Models\Responses\ShopifyOrder;
+use jamesvweston\Shopify\Models\Responses\ShopifyOrder;
 use App\Jobs\Shopify\BaseShopifyJob;
-use App\Models\Logs\ShopifyWebHookLog;
 use App\Repositories\Doctrine\OMS\OrderRepository;
 use App\Services\Order\OrderStatusService;
 use App\Services\Shopify\Mapping\ShopifyOrderMappingService;
@@ -23,36 +22,36 @@ class ShopifyCancelOrderJob extends BaseShopifyJob implements ShouldQueue
 
 
     /**
-     * @var ShopifyOrder
+     * @var string
      */
-    private $shopifyOrder;
+    private $jsonShopifyOrder;
 
     /**
      * @var OrderRepository
      */
     private $orderRepo;
 
-
     /**
      * ShopifyCancelOrderJob constructor.
-     * @param   ShopifyOrder                $shopifyOrder
+     * @param   string                      $jsonShopifyOrder
      * @param   int                         $integratedShoppingCartId
-     * @param   ShopifyWebHookLog|null      $shopifyWebHookLog
+     * @param   int|null                    $shopifyWebHookLogId
      */
-    public function __construct($shopifyOrder, $integratedShoppingCartId, $shopifyWebHookLog = null)
+    public function __construct($jsonShopifyOrder, $integratedShoppingCartId, $shopifyWebHookLogId = null)
     {
-        parent::__construct($integratedShoppingCartId, 'orders/cancel', $shopifyWebHookLog);
-        $this->shopifyOrder             = $shopifyOrder;
+        parent::__construct($integratedShoppingCartId, 'orders/cancel', $shopifyWebHookLogId);
+        $this->jsonShopifyOrder          = $jsonShopifyOrder;
     }
 
 
     public function handle()
     {
-        parent::initialize($this->shopifyOrder->getId());
+        $shopifyOrder                   = new ShopifyOrder(json_decode($this->jsonShopifyOrder, true));
+        parent::initialize($shopifyOrder->getId());
         $this->orderRepo                = EntityManager::getRepository('App\Models\OMS\Order');
         $shopifyOrderMappingService     = new ShopifyOrderMappingService($this->integratedShoppingCart->getClient());
 
-        $order                          = $shopifyOrderMappingService->handleMapping($this->shopifyOrder);
+        $order                          = $shopifyOrderMappingService->handleMapping($shopifyOrder);
         if (is_null($order->getId()))
         {
             //  The order was cancelled in Shopify but does not exist in our system. We shouldn't import it

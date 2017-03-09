@@ -22,8 +22,8 @@ App\Models\OMS\Variant:
       nullable:       false
       options:
         comment:      "Variant title"
-    barcode:
-      column:         barcode
+    barCode:
+      column:         barCode
       type:           string
       nullable:       false
       options:
@@ -79,6 +79,34 @@ App\Models\OMS\Variant:
       options:
         comment:      "When the Variant was created on an integrated system"
         default:      CURRENT_datetime
+    externalInventoryQuantity:
+      column:         externalInventoryQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "Variant externalInventoryQuantity"
+        default:      0
+    totalQuantity:
+      column:         totalQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "Variant totalQuantity"
+        default:      0
+    readyQuantity:
+      column:         readyQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "Variant readyQuantity"
+        default:      0
+    reservedQuantity:
+      column:         reservedQuantity
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "Variant reservedQuantity"
+        default:      0
 
   manyToOne:
     product:
@@ -110,6 +138,12 @@ App\Models\OMS\Variant:
       joinColumn:
         name:         sourceId
         referencedColumnName: id
+
+  oneToMany:
+    inventory:
+      targetEntity:   App\Models\WMS\VariantInventory
+      mappedBy:       variant
+      cascade:        ["persist", "remove"]
 
   entityListeners:
     App\Listeners\VariantListener:

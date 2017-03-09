@@ -29,7 +29,7 @@ class OrderItemRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['orderItem']);
+        $qb->select(['orderItem', 'variant', 'orders', 'source', 'client', 'status', 'shipmentStatus']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
         $qb->orderBy('orderItem.id', 'ASC');
 

@@ -1,0 +1,39 @@
+App\Models\WMS\Inventory:
+  type:               entity
+  table:              Inventory
+  repositoryClass:    App\Repositories\Doctrine\WMS\InventoryRepository
+  inheritanceType:    JOINED
+  discriminatorColumn:
+      name:           inventoryTypeId
+      type:           integer
+  discriminatorMap:
+      1:              App\Models\WMS\VariantInventory
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'Inventory id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  manyToOne:
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id
+    inventoryLocation:
+      targetEntity:   InventoryLocation
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     inventory
+      joinColumn:
+        name:         inventoryLocationId
+        referencedColumnName: id

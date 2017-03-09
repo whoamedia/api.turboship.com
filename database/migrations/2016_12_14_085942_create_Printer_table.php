@@ -17,13 +17,11 @@ class CreatePrinterTable extends Migration
         {
             $table->increments('id')->unsigned();
             $table->string('name')->index();
+            $table->string('description')->nullable()->default(null);
 
+            $table->integer('printerTypeId')->unsigned()->index();
             $table->integer('organizationId')->unsigned()->index();
 
-
-            //  Boilerplate
-            $table->integer('statusId')->unsigned()->index()->default(1);
-            $table->datetime('createdAt')->default(DB::raw('CURRENT_TIMESTAMP'))->index();
         });
 
         Schema::table('Printer', function (Blueprint $table)

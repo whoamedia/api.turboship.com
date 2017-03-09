@@ -29,12 +29,18 @@ class ShipmentItem implements \JsonSerializable
      */
     protected $quantity;
 
+    /**
+     * @var int
+     */
+    protected $quantityReserved;
+
 
     public function __construct($data = [])
     {
         $this->shipment                 = AU::get($data['shipment']);
         $this->orderItem                = AU::get($data['orderItem']);
         $this->quantity                 = AU::get($data['quantity']);
+        $this->quantityReserved         = AU::get($data['quantityReserved'], 0);
     }
 
     /**
@@ -45,6 +51,7 @@ class ShipmentItem implements \JsonSerializable
         $object['id']                   = $this->id;
         $object['orderItem']            = $this->orderItem->jsonSerialize();
         $object['quantity']             = $this->quantity;
+        $object['quantityReserved']     = $this->quantityReserved;
 
         return $object;
     }
@@ -111,6 +118,22 @@ class ShipmentItem implements \JsonSerializable
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantityReserved()
+    {
+        return $this->quantityReserved;
+    }
+
+    /**
+     * @param int $quantityReserved
+     */
+    public function setQuantityReserved($quantityReserved)
+    {
+        $this->quantityReserved = $quantityReserved;
     }
 
 }

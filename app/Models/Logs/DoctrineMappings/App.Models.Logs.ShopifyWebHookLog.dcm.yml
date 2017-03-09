@@ -25,7 +25,7 @@ App\Models\Logs\ShopifyWebHookLog:
         comment:      "ShopifyWebHookLog topic"
     incomingMessage:
       column:         incomingMessage
-      type:           string
+      type:           text
       nullable:       true
       options:
         fixed:        false

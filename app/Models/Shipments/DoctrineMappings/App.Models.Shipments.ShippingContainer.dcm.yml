@@ -60,7 +60,15 @@ App\Models\Shipments\ShippingContainer:
       options:
         unsigned:     true
         fixed:        false
+
   manyToOne:
+    shippingContainerType:
+      targetEntity:   App\Models\Support\ShippingContainerType
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         shippingContainerTypeId
+        referencedColumnName: id
     organization:
       targetEntity:   App\Models\CMS\Organization
       nullable:       false

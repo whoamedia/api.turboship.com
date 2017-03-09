@@ -1,0 +1,68 @@
+App\Models\WMS\PickItem:
+  type:               entity
+  table:              PickItem
+  repositoryClass:    App\Repositories\Doctrine\WMS\PickItemRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'PickItem id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    quantityRequired:
+      column:         quantityRequired
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "quantity to pick"
+    quantityPicked:
+      column:         quantityPicked
+      type:           integer
+      nullable:       false
+      options:
+        comment:      "quantity picked"
+    createdAt:
+      column:         createdAt
+      type:           datetime
+      nullable:       false
+      options:
+        comment:      "When the PickItem was created"
+        default:      CURRENT_datetime
+    completedAt:
+      column:         completedAt
+      type:           datetime
+      nullable:       true
+      options:
+        comment:      "When the PickItem was completed"
+        default:      null
+
+  manyToOne:
+    variant:
+      targetEntity:   App\Models\OMS\Variant
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         variantId
+        referencedColumnName: id
+    tote:
+      targetEntity:   Tote
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         toteId
+        referencedColumnName: id
+    pickLocation:
+      targetEntity:   PickLocation
+      nullable:       false
+      fetch:          EAGER
+      inversedBy:     items
+      joinColumn:
+        name:         pickLocationId
+        referencedColumnName: id

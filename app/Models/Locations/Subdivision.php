@@ -47,11 +47,6 @@ class Subdivision implements \JsonSerializable
      */
     protected $subdivisionType;
 
-    /**
-     * @var ArrayCollection
-     */
-    protected $altNames;
-
 
     /**
      * @return array
@@ -116,11 +111,4 @@ class Subdivision implements \JsonSerializable
         return $this->subdivisionType;
     }
 
-    /**
-     * @return SubdivisionAltName[]
-     */
-    public function getAltNames()
-    {
-        return $this->altNames->toArray();
-    }
 }

@@ -29,7 +29,7 @@ class IntegratedShippingApiRepository extends BaseRepository
         $pagination                 =   $this->buildPagination($query, $maxLimit, $maxPage);
 
         $qb                         =   $this->_em->createQueryBuilder();
-        $qb->select(['integratedShippingApi']);
+        $qb->select(['integratedShippingApi', 'integration', 'shipper', 'organization']);
         $qb                         =   $this->buildQueryConditions($qb, $query);
 
         if ($ignorePagination)

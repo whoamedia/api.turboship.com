@@ -23,6 +23,13 @@ App\Models\OMS\Order:
       options:
         fixed:        false
         comment:      "Order externalId"
+    name:
+      column:         name
+      type:           string
+      nullable:       true
+      options:
+        fixed:        false
+        comment:      "Order name"
     externalCreatedAt:
       column:         externalCreatedAt
       type:           datetime

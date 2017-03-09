@@ -211,19 +211,19 @@ class ServiceSeeder extends Seeder
             [
                 'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_EXPEDITED_MAIL_INNOVATIONS,
                 'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
-                'name'          => 'Mail Innovations Expedited',
+                'name'          => 'MI Expedited',
                 'isDomestic'    => true,
             ],
             [
                 'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_PRIORITY_MAIL_INNOVATIONS,
                 'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
-                'name'          => 'Mail Innovations Priority',
+                'name'          => 'MI Priority',
                 'isDomestic'    => true,
             ],
             [
                 'id'            => ServiceUtility::UPS_MAIL_INNOVATIONS_ECONOMY_MAIL_INNOVATIONS,
                 'carrierId'     => CarrierUtility::UPS_MAIL_INNOVATIONS,
-                'name'          => 'Mail Innovations Economy',
+                'name'          => 'MI Economy',
                 'isDomestic'    => true,
             ],
         ];

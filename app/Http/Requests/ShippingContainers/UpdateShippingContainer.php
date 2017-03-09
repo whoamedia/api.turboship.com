@@ -19,6 +19,11 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
     protected $id;
 
     /**
+     * @var int
+     */
+    protected $shippingContainerTypeId;
+
+    /**
      * @var string|null
      */
     protected $name;
@@ -47,6 +52,7 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
+        $this->shippingContainerTypeId  = AU::get($data['shippingContainerTypeId']);
         $this->name                     = AU::get($data['name']);
         $this->length                   = AU::get($data['length']);
         $this->width                    = AU::get($data['width']);
@@ -61,6 +67,12 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
 
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
+
+        if (!is_null($this->shippingContainerTypeId))
+        {
+            if (is_null(InputUtil::getInt($this->shippingContainerTypeId)))
+                throw new BadRequestHttpException('shippingContainerTypeId must be integer');
+        }
 
         if (!is_null($this->length))
             $this->length               = parent::validateFloat($this->length, 'length');
@@ -78,6 +90,7 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function clean ()
     {
         $this->id                       = InputUtil::getInt($this->id);
+        $this->shippingContainerTypeId  = InputUtil::getInt($this->shippingContainerTypeId);
     }
 
     /**
@@ -86,6 +99,7 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function jsonSerialize ()
     {
         $object['id']                   = $this->id;
+        $object['shippingContainerTypeId'] = $this->shippingContainerTypeId;
         $object['length']               = $this->length;
         $object['width']                = $this->width;
         $object['height']               = $this->height;
@@ -108,6 +122,22 @@ class UpdateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShippingContainerTypeId()
+    {
+        return $this->shippingContainerTypeId;
+    }
+
+    /**
+     * @param int $shippingContainerTypeId
+     */
+    public function setShippingContainerTypeId($shippingContainerTypeId)
+    {
+        $this->shippingContainerTypeId = $shippingContainerTypeId;
     }
 
     /**

@@ -22,11 +22,27 @@ class UpdateClient implements Cleanable, Validatable, \JsonSerializable
      */
     protected $name;
 
+    /**
+     * @var UpdateClientOptions|null
+     */
+    protected $options;
+
 
     public function __construct($data = [])
     {
         $this->id                       = AU::get($data['id']);
+        if (!is_null($this->id))
+            $this->setId($this->id);
+
         $this->name                     = AU::get($data['name']);
+
+        $this->options                  = AU::get($data['options']);
+        if (!is_null($this->options))
+        {
+            $this->options              = new UpdateClientOptions($this->options);
+            $this->setId($this->id);
+        }
+
     }
 
     public function validate()
@@ -36,11 +52,17 @@ class UpdateClient implements Cleanable, Validatable, \JsonSerializable
 
         if (is_null(InputUtil::getInt($this->id)))
             throw new BadRequestHttpException('id must be integer');
+
+        if (!is_null($this->options))
+            $this->options->validate();
     }
 
     public function clean ()
     {
         $this->id                       = InputUtil::getInt($this->id);
+
+        if (!is_null($this->options))
+            $this->options->clean();
     }
 
     /**
@@ -50,6 +72,7 @@ class UpdateClient implements Cleanable, Validatable, \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['name']                 = $this->name;
+        $object['options']              = is_null($this->options) ? null : $this->options->jsonSerialize();
 
         return $object;
     }
@@ -68,6 +91,8 @@ class UpdateClient implements Cleanable, Validatable, \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+        if (!is_null($this->options))
+            $this->options->setId($this->id);
     }
 
     /**
@@ -84,6 +109,22 @@ class UpdateClient implements Cleanable, Validatable, \JsonSerializable
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return UpdateClientOptions|null
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param UpdateClientOptions|null $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
     }
 
 }

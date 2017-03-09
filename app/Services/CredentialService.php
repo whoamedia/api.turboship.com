@@ -3,11 +3,18 @@
 namespace App\Services;
 
 
+use jamesvweston\EasyPost\EasyPostConfiguration;
+use jamesvweston\EasyPost\EasyPostClient;
+use jamesvweston\EasyPost\Exceptions\EasyPostInvalidCredentialsException;
+use jamesvweston\Shopify\ShopifyConfiguration;
+use jamesvweston\Shopify\ShopifyClient;
 use App\Models\Integrations\Credential;
 use App\Models\Integrations\IntegratedService;
 use App\Repositories\Doctrine\Integrations\CredentialRepository;
 use App\Utilities\IntegrationCredentialUtility;
+use App\Utilities\IntegrationUtility;
 use EntityManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CredentialService
 {
@@ -33,14 +40,7 @@ class CredentialService
      */
     public function getShopifyApiKey ()
     {
-        $query      = [
-            'integratedServiceIds'      => $this->integratedService->getId(),
-            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_API_KEY_ID
-        ];
-
-        $result                         = $this->clientCredentialRepo->where($query);
-
-        return $result[0];
+        return $this->integratedService->getCredentialByIntegrationCredentialId(IntegrationCredentialUtility::SHOPIFY_API_KEY_ID);
     }
 
     /**
@@ -48,14 +48,7 @@ class CredentialService
      */
     public function getShopifyPassword ()
     {
-        $query      = [
-            'integratedServiceIds'      => $this->integratedService->getId(),
-            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID
-        ];
-
-        $result                         = $this->clientCredentialRepo->where($query);
-
-        return $result[0];
+        return $this->integratedService->getCredentialByIntegrationCredentialId(IntegrationCredentialUtility::SHOPIFY_PASSWORD_ID);
     }
 
     /**
@@ -63,14 +56,7 @@ class CredentialService
      */
     public function getShopifyHostName ()
     {
-        $query      = [
-            'integratedServiceIds'      => $this->integratedService->getId(),
-            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID
-        ];
-
-        $result                         = $this->clientCredentialRepo->where($query);
-
-        return $result[0];
+        return $this->integratedService->getCredentialByIntegrationCredentialId(IntegrationCredentialUtility::SHOPIFY_HOSTNAME_ID);
     }
 
     /**
@@ -78,14 +64,7 @@ class CredentialService
      */
     public function getShopifySharedSecret ()
     {
-        $query      = [
-            'integratedServiceIds'      => $this->integratedService->getId(),
-            'integrationCredentialIds'  => IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID
-        ];
-
-        $result                         = $this->clientCredentialRepo->where($query);
-
-        return $result[0];
+        return $this->integratedService->getCredentialByIntegrationCredentialId(IntegrationCredentialUtility::SHOPIFY_SHARED_SECRET_ID);
     }
 
 
@@ -94,14 +73,79 @@ class CredentialService
      */
     public function getEasyPostApiKey ()
     {
-        $query      = [
-            'integratedServiceIds'      => $this->integratedService->getId(),
-            'integrationCredentialIds'  => IntegrationCredentialUtility::EASYPOST_API_KEY_ID
-        ];
+        return $this->integratedService->getCredentialByIntegrationCredentialId(IntegrationCredentialUtility::EASYPOST_API_KEY_ID);
+    }
 
-        $result                         = $this->clientCredentialRepo->where($query);
+    /**
+     * @return bool
+     */
+    public function validateCredentials ()
+    {
+        if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::SHOPIFY_ID)
+        {
+            $service                    = $this->getShopifyClient();
+            try
+            {
+                $service->webHookApi->get();
+            }
+            catch (\Exception $exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        else if ($this->integratedService->getIntegration()->getId() == IntegrationUtility::EASYPOST_ID)
+        {
+            $service                    = $this->getEasyPostClient();
+            try
+            {
+                $service->shipmentApi->get();
+                return true;
+            }
+            catch (EasyPostInvalidCredentialsException $exception)
+            {
+                return false;
+            }
+        }
+        else
+            throw new BadRequestHttpException('Integration not supported in CredentialService');
+    }
 
-        return $result[0];
+    /**
+     * @return ShopifyClient
+     * @throws BadRequestHttpException
+     */
+    public function getShopifyClient ()
+    {
+        if ($this->integratedService->getIntegration()->getId() != IntegrationUtility::SHOPIFY_ID)
+            throw new BadRequestHttpException('Integration not supported');
+
+        $apiKey                     = $this->getShopifyApiKey()->getValue();
+        $password                   = $this->getShopifyPassword()->getValue();
+        $hostName                   = $this->getShopifyHostName()->getValue();
+
+        $shopifyConfiguration       = new ShopifyConfiguration();
+        $shopifyConfiguration->setApiKey($apiKey);
+        $shopifyConfiguration->setPassword($password);
+        $shopifyConfiguration->setHostName($hostName);
+
+        return new ShopifyClient($shopifyConfiguration);
+    }
+
+    /**
+     * @return EasyPostClient
+     * @throws BadRequestHttpException
+     */
+    public function getEasyPostClient ()
+    {
+        if ($this->integratedService->getIntegration()->getId() != IntegrationUtility::EASYPOST_ID)
+            throw new BadRequestHttpException('Integration not supported');
+
+        $apiKey                     = $this->getEasyPostApiKey()->getValue();
+
+        $easyPostConfiguration      = new EasyPostConfiguration();
+        $easyPostConfiguration->setApiKey($apiKey);
+        return new EasyPostClient($easyPostConfiguration);
     }
 
 }

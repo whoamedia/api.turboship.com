@@ -57,6 +57,11 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
     /**
      * @var int|null
      */
+    protected $countryId;
+
+    /**
+     * @var int|null
+     */
     protected $subdivisionId;
 
     /**
@@ -80,6 +85,7 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
         $this->street2                  = AU::get($data['street2']);
         $this->city                     = AU::get($data['city']);
         $this->postalCode               = AU::get($data['postalCode']);
+        $this->countryId                = AU::get($data['countryId']);
         $this->subdivisionId            = AU::get($data['subdivisionId']);
         $this->phone                    = AU::get($data['phone']);
         $this->email                    = AU::get($data['email']);
@@ -87,10 +93,11 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
 
     public function validate()
     {
-        if (is_null($this->id))
-            throw new MissingMandatoryParametersException('id is required');
 
-        if (is_null(InputUtil::getInt($this->id)))
+        if (is_null($this->id))
+            throw new BadRequestHttpException('id is required');
+
+        if (is_null(parent::getInteger($this->id)))
             throw new BadRequestHttpException('id must be integer');
     }
 
@@ -112,6 +119,7 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
         $object['street2']              = $this->street2;
         $object['city']                 = $this->city;
         $object['postalCode']           = $this->postalCode;
+        $object['countryId']            = $this->countryId;
         $object['subdivisionId']        = $this->subdivisionId;
         $object['phone']                = $this->phone;
         $object['email']                = $this->email;
@@ -181,6 +189,22 @@ class UpdateAddress extends BaseRequest implements Cleanable, Validatable, \Json
     public function setCompany($company)
     {
         $this->company = $company;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCountryId()
+    {
+        return $this->countryId;
+    }
+
+    /**
+     * @param int|null $countryId
+     */
+    public function setCountryId($countryId)
+    {
+        $this->countryId = $countryId;
     }
 
     /**

@@ -19,6 +19,11 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     protected $organizationId;
 
     /**
+     * @var int
+     */
+    protected $shippingContainerTypeId;
+
+    /**
      * @var string
      */
     protected $name;
@@ -47,6 +52,7 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function __construct($data = [])
     {
         $this->organizationId           = AU::get($data['organizationId']);
+        $this->shippingContainerTypeId  = AU::get($data['shippingContainerTypeId']);
         $this->name                     = AU::get($data['name']);
         $this->length                   = AU::get($data['length']);
         $this->width                    = AU::get($data['width']);
@@ -58,6 +64,9 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     {
         if (is_null($this->organizationId))
             throw new BadRequestHttpException('organizationId is required');
+
+        if (is_null($this->shippingContainerTypeId))
+            throw new BadRequestHttpException('shippingContainerTypeId is required');
 
         if (is_null($this->name))
             throw new BadRequestHttpException('name is required');
@@ -74,8 +83,12 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
         if (is_null($this->weight))
             throw new BadRequestHttpException('weight is required');
 
+
         if (is_null(InputUtil::getInt($this->organizationId)))
             throw new BadRequestHttpException('organizationId must be integer');
+
+        if (is_null(InputUtil::getInt($this->shippingContainerTypeId)))
+            throw new BadRequestHttpException('shippingContainerTypeId must be integer');
 
         $this->length                   = parent::validateFloat($this->length, 'length');
         $this->width                    = parent::validateFloat($this->width, 'width');
@@ -86,6 +99,7 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function clean ()
     {
         $this->organizationId           = InputUtil::getInt($this->organizationId);
+        $this->shippingContainerTypeId  = InputUtil::getInt($this->shippingContainerTypeId);
     }
 
     /**
@@ -94,6 +108,7 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function jsonSerialize ()
     {
         $object['organizationId']       = $this->organizationId;
+        $object['shippingContainerTypeId'] = $this->shippingContainerTypeId;
         $object['name']                 = $this->name;
         $object['length']               = $this->length;
         $object['width']                = $this->width;
@@ -117,6 +132,22 @@ class CreateShippingContainer extends BaseRequest implements Cleanable, Validata
     public function setOrganizationId($organizationId)
     {
         $this->organizationId = $organizationId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShippingContainerTypeId()
+    {
+        return $this->shippingContainerTypeId;
+    }
+
+    /**
+     * @param int $shippingContainerTypeId
+     */
+    public function setShippingContainerTypeId($shippingContainerTypeId)
+    {
+        $this->shippingContainerTypeId = $shippingContainerTypeId;
     }
 
     /**

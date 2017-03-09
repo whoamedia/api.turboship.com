@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\Addresses\UpdateAddress;
 use App\Http\Requests\Shippers\AddClientToShipper;
 use App\Http\Requests\Shippers\GetShippers;
 use App\Http\Requests\Shippers\ShowShipper;
@@ -10,6 +11,8 @@ use App\Http\Requests\Shippers\UpdateShipper;
 use App\Models\CMS\Validation\ClientValidation;
 use App\Models\Shipments\Shipper;
 use App\Models\Shipments\Validation\ShipperValidation;
+use App\Services\Address\AddressService;
+use App\Services\Address\USPSAddressService;
 use Illuminate\Http\Request;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -45,7 +48,7 @@ class ShipperController extends BaseAuthController
 
         $query                          = $getShippers->jsonSerialize();
 
-        $results                        = $this->shipperRepo->where($query);
+        $results                        = $this->shipperRepo->where($query, false);
         return response($results);
     }
 
@@ -76,6 +79,46 @@ class ShipperController extends BaseAuthController
     {
         $shipper                        = $this->getShipperFromRoute($request->route('id'));
         return response($shipper->getAddress());
+    }
+
+    public function updateAddress (Request $request)
+    {
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
+        $updateAddress                  = new UpdateAddress($request->input());
+        $updateAddress->setId($shipper->getAddress()->getId());
+        $updateAddress->validate();
+        $updateAddress->clean();
+
+        $addressService                 = new AddressService();
+        $address                        = $addressService->updateAddress($shipper->getAddress(), $updateAddress);
+
+        $newAddress                     = $address->duplicate();
+
+        $uspsAddressService             = new USPSAddressService();
+        $newAddress                     = $uspsAddressService->validateAddress($newAddress);
+        $shipper->setAddress($newAddress);
+        $this->shipperRepo->saveAndCommit($shipper);
+        return response($shipper->getAddress());
+    }
+
+    public function updateReturnAddress (Request $request)
+    {
+        $shipper                        = $this->getShipperFromRoute($request->route('id'));
+        $updateAddress                  = new UpdateAddress($request->input());
+        $updateAddress->setId($shipper->getReturnAddress()->getId());
+        $updateAddress->validate();
+        $updateAddress->clean();
+
+        $addressService                 = new AddressService();
+        $address                        = $addressService->updateAddress($shipper->getReturnAddress(), $updateAddress);
+
+        $newAddress                     = $address->duplicate();
+
+        $uspsAddressService             = new USPSAddressService();
+        $newAddress                     = $uspsAddressService->validateAddress($newAddress);
+        $shipper->setReturnAddress($newAddress);
+        $this->shipperRepo->saveAndCommit($shipper);
+        return response($shipper->getReturnAddress());
     }
 
     public function showReturnAddress (Request $request)

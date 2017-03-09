@@ -5,11 +5,11 @@ namespace App\Http\Requests\Shippers;
 
 use App\Http\Requests\_Contracts\Cleanable;
 use App\Http\Requests\_Contracts\Validatable;
+use App\Http\Requests\BaseRequest;
 use jamesvweston\Utilities\ArrayUtil AS AU;
-use jamesvweston\Utilities\InputUtil;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ShowShipper implements Cleanable, Validatable, \JsonSerializable
+class ShowShipper extends BaseRequest implements Cleanable, Validatable, \JsonSerializable
 {
 
     /**
@@ -28,13 +28,13 @@ class ShowShipper implements Cleanable, Validatable, \JsonSerializable
         if (is_null($this->id))
             throw new BadRequestHttpException('id is required');
 
-        if (is_null(InputUtil::getInt($this->id)))
+        if (is_null(parent::getInteger($this->id)))
             throw new BadRequestHttpException('id must be integer');
     }
 
     public function clean ()
     {
-        $this->id                       = InputUtil::getInt($this->id);
+        $this->id                       = parent::getInteger($this->id);
     }
 
     /**

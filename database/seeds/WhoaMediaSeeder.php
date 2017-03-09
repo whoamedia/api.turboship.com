@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use \App\Models\CMS\User;
+use \App\Models\CMS\Staff;
 use \LaravelDoctrine\ORM\Facades\EntityManager;
 use App\Utilities\IntegrationCredentialUtility;
 use App\Models\Integrations\IntegratedShoppingCart;
@@ -56,6 +56,25 @@ class WhoaMediaSeeder extends Seeder
      */
     private $shipper;
 
+    /**
+     * @var \App\Repositories\Doctrine\WMS\BinRepository
+     */
+    private $binRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\WMS\ToteRepository
+     */
+    private $toteRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\WMS\PortableBinRepository
+     */
+    private $portableBinRepo;
+
+    /**
+     * @var \App\Repositories\Doctrine\WMS\CartRepository
+     */
+    private $cartRepo;
 
     public function run()
     {
@@ -65,6 +84,10 @@ class WhoaMediaSeeder extends Seeder
         $this->userRepo         = EntityManager::getRepository('App\Models\CMS\User');
         $this->organizationRepo = EntityManager::getRepository('App\Models\CMS\Organization');
         $this->shippingIntegrationRepo  = EntityManager::getRepository('App\Models\Integrations\ShippingApiIntegration');
+        $this->binRepo          = EntityManager::getRepository('App\Models\WMS\Bin');
+        $this->toteRepo         = EntityManager::getRepository('App\Models\WMS\Tote');
+        $this->portableBinRepo  = EntityManager::getRepository('App\Models\WMS\PortableBin');
+        $this->cartRepo         = EntityManager::getRepository('App\Models\WMS\Cart');
 
         $this->organization();
         $this->users();
@@ -72,7 +95,12 @@ class WhoaMediaSeeder extends Seeder
         $this->shopify();
         $this->shippingContainers();
         $this->shippers();
+        $this->printers();
         $this->easyPost();
+        $this->bins();
+        $this->totes();
+        $this->portableBins();
+        $this->carts();
     }
 
     private function organization ()
@@ -87,23 +115,190 @@ class WhoaMediaSeeder extends Seeder
 
     private function users()
     {
+        $sourceValidation       = new \App\Models\Support\Validation\SourceValidation();
+        $internalSource         = $sourceValidation->getInternal();
+        $imageService           = new \App\Services\ImageService();
         //  Edward
-        $user                   = new User();
-        $user->setFirstName('Edward');
-        $user->setLastName('Upton');
-        $user->setEmail('eupton@whoamedia.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $this->organizationRepo->saveAndCommit($user);
+        $Edward                 = new Staff();
+        $Edward->setBarCode('0vyGeE');
+        $Edward->setFirstName('Edward');
+        $Edward->setLastName('Upton');
+        $Edward->setEmail('eupton@whoamedia.com');
+        $Edward->setPassword('password');
+        $Edward->setOrganization($this->organization);
+        $EdwardImage            = $imageService->handleImage('https://flow.turboship.com/images/users/3.jpg');
+        $EdwardImage->setSource($internalSource);
+        $Edward->setImage($EdwardImage);
+        $this->userRepo->saveAndCommit($Edward);
 
         //  James
-        $user                   = new User();
-        $user->setFirstName('James');
-        $user->setLastName('Weston');
-        $user->setEmail('james@turboship.com');
-        $user->setPassword('password');
-        $user->setOrganization($this->organization);
-        $this->organizationRepo->saveAndCommit($user);
+        $James                   = new Staff();
+        $James->setBarCode('jf3Nf3');
+        $James->setFirstName('James');
+        $James->setLastName('Weston');
+        $James->setEmail('james@turboship.com');
+        $James->setPassword('password');
+        $James->setOrganization($this->organization);
+        $JamesImage             = $imageService->handleImage('https://flow.turboship.com/images/users/15.jpg');
+        $JamesImage->setSource($internalSource);
+        $James->setImage($JamesImage);
+        $this->userRepo->saveAndCommit($James);
+
+        //  Miles
+        $Miles                   = new Staff();
+        $Miles->setBarCode('IDrUS9');
+        $Miles->setFirstName('Miles');
+        $Miles->setLastName('Maximini');
+        $Miles->setEmail('miles@cheapundies.com');
+        $Miles->setPassword('password');
+        $Miles->setOrganization($this->organization);
+        $MilesImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/4.jpg');
+        $MilesImage->setSource($internalSource);
+        $Miles->setImage($MilesImage);
+        $this->userRepo->saveAndCommit($Miles);
+
+        //  Crystal
+        $Crystal                   = new Staff();
+        $Crystal->generateBarCode(50);
+        $Crystal->setFirstName('Crystal');
+        $Crystal->setLastName('Buyalos');
+        $Crystal->setEmail('crystal@cheapundies.com');
+        $Crystal->setPassword('password');
+        $Crystal->setOrganization($this->organization);
+        $CrystalImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/5.jpg');
+        $CrystalImage->setSource($internalSource);
+        $Crystal->setImage($CrystalImage);
+        $this->userRepo->saveAndCommit($Crystal);
+
+        //  Ainsley
+        $Ainsley                   = new Staff();
+        $Ainsley->generateBarCode(50);
+        $Ainsley->setFirstName('Ainsley');
+        $Ainsley->setLastName('Dougherty');
+        $Ainsley->setEmail('ainsley@cheapundies.com');
+        $Ainsley->setPassword('password');
+        $Ainsley->setOrganization($this->organization);
+        $AinsleyImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/6.jpg');
+        $AinsleyImage->setSource($internalSource);
+        $Ainsley->setImage($AinsleyImage);
+        $this->userRepo->saveAndCommit($Ainsley);
+
+        //  Cody
+        $CodySmith                   = new Staff();
+        $CodySmith->generateBarCode(50);
+        $CodySmith->setFirstName('Cody');
+        $CodySmith->setLastName('Smith');
+        $CodySmith->setEmail('cody@cheapundies.com');
+        $CodySmith->setPassword('password');
+        $CodySmith->setOrganization($this->organization);
+        $CodySmithImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/7.jpg');
+        $CodySmithImage->setSource($internalSource);
+        $CodySmith->setImage($CodySmithImage);
+        $this->userRepo->saveAndCommit($CodySmith);
+
+        //  Corey
+        $CoreyStallings                   = new Staff();
+        $CoreyStallings->generateBarCode(50);
+        $CoreyStallings->setFirstName('Corey');
+        $CoreyStallings->setLastName('Stallings');
+        $CoreyStallings->setEmail('corey@cheapundies.com');
+        $CoreyStallings->setPassword('password');
+        $CoreyStallings->setOrganization($this->organization);
+        $CoreyStallingsImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/8.jpg');
+        $CoreyStallingsImage->setSource($internalSource);
+        $CoreyStallings->setImage($CoreyStallingsImage);
+        $this->userRepo->saveAndCommit($CoreyStallings);
+
+        //  Michael
+        $MichaelFerrell                   = new Staff();
+        $MichaelFerrell->generateBarCode(50);
+        $MichaelFerrell->setFirstName('Michael');
+        $MichaelFerrell->setLastName('Ferrell');
+        $MichaelFerrell->setEmail('michael@cheapundies.com');
+        $MichaelFerrell->setPassword('password');
+        $MichaelFerrell->setOrganization($this->organization);
+        $MichaelFerrellImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/9.jpg');
+        $MichaelFerrellImage->setSource($internalSource);
+        $MichaelFerrell->setImage($MichaelFerrellImage);
+        $this->userRepo->saveAndCommit($MichaelFerrell);
+
+        //  Michael
+        $MichaelWoolcott                   = new Staff();
+        $MichaelWoolcott->generateBarCode(50);
+        $MichaelWoolcott->setFirstName('Michael');
+        $MichaelWoolcott->setLastName('Woolcott');
+        $MichaelWoolcott->setEmail('michael.woolcott@cheapundies.com');
+        $MichaelWoolcott->setPassword('password');
+        $MichaelWoolcott->setOrganization($this->organization);
+        $MichaelWoolcottImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/11.jpg');
+        $MichaelWoolcottImage->setSource($internalSource);
+        $MichaelWoolcott->setImage($MichaelWoolcottImage);
+        $this->userRepo->saveAndCommit($MichaelWoolcott);
+
+        //  Thomas
+        $ThomasWatson                   = new Staff();
+        $ThomasWatson->generateBarCode(50);
+        $ThomasWatson->setFirstName('Thomas');
+        $ThomasWatson->setLastName('Watson');
+        $ThomasWatson->setEmail('thomas@cheapundies.com');
+        $ThomasWatson->setPassword('password');
+        $ThomasWatson->setOrganization($this->organization);
+        $ThomasWatsonImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/12.jpg');
+        $ThomasWatsonImage->setSource($internalSource);
+        $ThomasWatson->setImage($ThomasWatsonImage);
+        $this->userRepo->saveAndCommit($ThomasWatson);
+
+        //  Corey
+        $CoreyWebb                   = new Staff();
+        $CoreyWebb->generateBarCode(50);
+        $CoreyWebb->setFirstName('Corey');
+        $CoreyWebb->setLastName('Webb');
+        $CoreyWebb->setEmail('thomas@whoamedia.com');
+        $CoreyWebb->setPassword('password');
+        $CoreyWebb->setOrganization($this->organization);
+        $CoreyWebbImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/13.jpg');
+        $CoreyWebbImage->setSource($internalSource);
+        $CoreyWebb->setImage($CoreyWebbImage);
+        $this->userRepo->saveAndCommit($CoreyWebb);
+
+        //  Shenouda
+        $Shenouda                   = new Staff();
+        $Shenouda->generateBarCode(50);
+        $Shenouda->setFirstName('Shenouda');
+        $Shenouda->setLastName('Guergues');
+        $Shenouda->setEmail('shenouda@whoamedia.com');
+        $Shenouda->setPassword('password');
+        $Shenouda->setOrganization($this->organization);
+        $ShenoudaImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/14.jpg');
+        $ShenoudaImage->setSource($internalSource);
+        $Shenouda->setImage($ShenoudaImage);
+        $this->userRepo->saveAndCommit($Shenouda);
+
+        //  Lane
+        $Lane                   = new Staff();
+        $Lane->generateBarCode(50);
+        $Lane->setFirstName('Lane');
+        $Lane->setLastName('Norman');
+        $Lane->setEmail('lane@whoamedia.com');
+        $Lane->setPassword('password');
+        $Lane->setOrganization($this->organization);
+        $LaneImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/16.jpg');
+        $LaneImage->setSource($internalSource);
+        $Lane->setImage($LaneImage);
+        $this->userRepo->saveAndCommit($Lane);
+
+        //  Travis
+        $TravisPence                   = new Staff();
+        $TravisPence->generateBarCode(50);
+        $TravisPence->setFirstName('Travis');
+        $TravisPence->setLastName('Pence');
+        $TravisPence->setEmail('travis@cheapundies.com');
+        $TravisPence->setPassword('password');
+        $TravisPence->setOrganization($this->organization);
+        $TravisPenceImage                  = $imageService->handleImage('https://flow.turboship.com/images/users/17.jpg');
+        $TravisPenceImage->setSource($internalSource);
+        $TravisPence->setImage($TravisPenceImage);
+        $this->userRepo->saveAndCommit($TravisPence);
     }
 
     private function clients ()
@@ -165,12 +360,14 @@ class WhoaMediaSeeder extends Seeder
 
     private function shippingContainers ()
     {
+        $shippingContainerTypeValidation    = new \App\Models\Support\Validation\ShippingContainerTypeValidation();
         $c4                     = new ShippingContainer();
         $c4->setName('Box C4');
         $c4->setLength(11.50);
         $c4->setWidth(13.13);
         $c4->setHeight(2.38);
         $c4->setWeight(0.00);
+        $c4->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($c4);
 
         $A1                     = new ShippingContainer();
@@ -179,6 +376,7 @@ class WhoaMediaSeeder extends Seeder
         $A1->setWidth(16.00);
         $A1->setHeight(1.00);
         $A1->setWeight(0.00);
+        $A1->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($A1);
 
         $A2                     = new ShippingContainer();
@@ -187,6 +385,7 @@ class WhoaMediaSeeder extends Seeder
         $A2->setWidth(20.00);
         $A2->setHeight(1.00);
         $A2->setWeight(0.00);
+        $A2->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($A2);
 
         $C3                     = new ShippingContainer();
@@ -195,6 +394,7 @@ class WhoaMediaSeeder extends Seeder
         $C3->setWidth(7.00);
         $C3->setHeight(6.00);
         $C3->setWeight(0.00);
+        $C3->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($C3);
 
         $C5                     = new ShippingContainer();
@@ -203,6 +403,7 @@ class WhoaMediaSeeder extends Seeder
         $C5->setWidth(12.00);
         $C5->setHeight(8.00);
         $C5->setWeight(0.00);
+        $C5->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($C5);
 
         $C2                     = new ShippingContainer();
@@ -211,6 +412,7 @@ class WhoaMediaSeeder extends Seeder
         $C2->setWidth(15.13);
         $C2->setHeight(1.00);
         $C2->setWeight(0.00);
+        $C2->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($C2);
 
         $C1                     = new ShippingContainer();
@@ -219,6 +421,7 @@ class WhoaMediaSeeder extends Seeder
         $C1->setWidth(12.50);
         $C1->setHeight(1.00);
         $C1->setWeight(0.00);
+        $C1->setShippingContainerType($shippingContainerTypeValidation->getAutoBagger());
         $this->organization->addShippingContainer($C1);
 
         $B1                     = new ShippingContainer();
@@ -227,6 +430,7 @@ class WhoaMediaSeeder extends Seeder
         $B1->setWidth(9.00);
         $B1->setHeight(4.00);
         $B1->setWeight(0.00);
+        $B1->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B1);
 
         $B2                     = new ShippingContainer();
@@ -235,6 +439,7 @@ class WhoaMediaSeeder extends Seeder
         $B2->setWidth(10.00);
         $B2->setHeight(4.00);
         $B2->setWeight(0.00);
+        $B2->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B2);
 
         $B3                     = new ShippingContainer();
@@ -243,6 +448,7 @@ class WhoaMediaSeeder extends Seeder
         $B3->setWidth(12.00);
         $B3->setHeight(4.00);
         $B3->setWeight(0.00);
+        $B3->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B3);
 
         $B4                     = new ShippingContainer();
@@ -251,6 +457,7 @@ class WhoaMediaSeeder extends Seeder
         $B4->setWidth(12.00);
         $B4->setHeight(4.00);
         $B4->setWeight(0.00);
+        $B4->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B4);
 
         $B5                     = new ShippingContainer();
@@ -259,6 +466,7 @@ class WhoaMediaSeeder extends Seeder
         $B5->setWidth(12.00);
         $B5->setHeight(6.00);
         $B5->setWeight(0.00);
+        $B5->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B5);
 
         $B6                     = new ShippingContainer();
@@ -267,6 +475,7 @@ class WhoaMediaSeeder extends Seeder
         $B6->setWidth(4.00);
         $B6->setHeight(6.00);
         $B6->setWeight(0.00);
+        $B6->setShippingContainerType($shippingContainerTypeValidation->getRigidBox());
         $this->organization->addShippingContainer($B6);
 
         $this->organizationRepo->saveAndCommit($this->organization);
@@ -322,6 +531,94 @@ class WhoaMediaSeeder extends Seeder
         $this->clientRepo->saveAndCommit($this->client);
     }
 
+    private function printers ()
+    {
+        $printerTypeValidation  = new \App\Models\Hardware\Validation\PrinterTypeValidation();
+        $cupsPrinterType        = $printerTypeValidation->getCUPSServer();
+
+        $ZM400                  = new \App\Models\Hardware\CUPSPrinter();
+        $ZM400->setName('ZM400');
+        $ZM400->setDescription('Barcode Printer');
+        $ZM400->setAddress('208.73.141.38');
+        $ZM400->setPort('631');
+        $ZM400->setFormat('ZPL');
+        $this->organization->addPrinter($ZM400);
+
+        $PeelerPrinter          = new \App\Models\Hardware\CUPSPrinter();
+        $PeelerPrinter->setName('PeelerPrinter');
+        $PeelerPrinter->setDescription('Thermal Label');
+        $PeelerPrinter->setAddress('208.73.141.38');
+        $PeelerPrinter->setPort('631');
+        $PeelerPrinter->setFormat('ZPL');
+        $this->organization->addPrinter($PeelerPrinter);
+
+        $ManualInvoice          = new \App\Models\Hardware\CUPSPrinter();
+        $ManualInvoice->setName('ManualInvoice');
+        $ManualInvoice->setDescription('Invoice beside shipping station');
+        $ManualInvoice->setAddress('208.73.141.38');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
+        $this->organization->addPrinter($ManualInvoice);
+
+        $Invoice                = new \App\Models\Hardware\CUPSPrinter();
+        $Invoice->setName('Invoice');
+        $Invoice->setDescription('Conveyor Invoice');
+        $Invoice->setAddress('208.73.141.38');
+        $Invoice->setPort('631');
+        $Invoice->setFormat('ZPL');
+        $this->organization->addPrinter($Invoice);
+
+        $Datamax1               = new \App\Models\Hardware\CUPSPrinter();
+        $Datamax1->setName('Datamax1');
+        $Datamax1->setDescription('Bagger');
+        $Datamax1->setAddress('208.73.141.38');
+        $Datamax1->setPort('631');
+        $Datamax1->setFormat('ZPL');
+        $this->organization->addPrinter($Datamax1);
+
+        $PlainPaper             = new \App\Models\Hardware\CUPSPrinter();
+        $PlainPaper->setName('PlainPaper');
+        $PlainPaper->setDescription('Printer on grey table');
+        $PlainPaper->setAddress('208.73.141.38');
+        $PlainPaper->setPort('631');
+        $PlainPaper->setFormat('ZPL');
+        $this->organization->addPrinter($PlainPaper);
+
+        $PeelerPrinter2         = new \App\Models\Hardware\CUPSPrinter();
+        $PeelerPrinter2->setName('PeelerPrinter2');
+        $PeelerPrinter2->setDescription('Second thermal label');
+        $PeelerPrinter2->setAddress('208.73.141.38');
+        $PeelerPrinter2->setPort('631');
+        $PeelerPrinter2->setFormat('ZPL');
+        $this->organization->addPrinter($PeelerPrinter2);
+
+        $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
+        $ManualInvoice->setName('ManualInvoice');
+        $ManualInvoice->setDescription('Report printer');
+        $ManualInvoice->setAddress('208.73.141.38');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
+        $this->organization->addPrinter($ManualInvoice);
+
+        $ManualInvoice         = new \App\Models\Hardware\CUPSPrinter();
+        $ManualInvoice->setName('ManualInvoice');
+        $ManualInvoice->setDescription('Invoice at shipping station');
+        $ManualInvoice->setAddress('208.73.141.38');
+        $ManualInvoice->setPort('631');
+        $ManualInvoice->setFormat('ZPL');
+        $this->organization->addPrinter($ManualInvoice);
+
+        $ThermalLabel         = new \App\Models\Hardware\CUPSPrinter();
+        $ThermalLabel->setName('ThermalLabel');
+        $ThermalLabel->setDescription('Front Office Thermal Label');
+        $ThermalLabel->setAddress('208.73.141.38');
+        $ThermalLabel->setPort('631');
+        $ThermalLabel->setFormat('ZPL');
+        $this->organization->addPrinter($ThermalLabel);
+
+        $this->organizationRepo->saveAndCommit($this->organization);
+    }
+
     private function easyPost ()
     {
         $integratedShipping     = new \App\Models\Integrations\IntegratedShippingApi();
@@ -346,4 +643,61 @@ class WhoaMediaSeeder extends Seeder
         $this->clientRepo->saveAndCommit($this->client);
     }
 
+    private function bins ()
+    {
+        for( $aisle = 1; $aisle < 11; $aisle++ )
+        {
+            for( $section = 'A'; $section <= 'G'; $section++ )
+            {
+                for( $row = 1; $row < 11; $row++ )
+                {
+                    for( $col = 1; $col < 11; $col++ )
+                    {
+                        $bin    = new \App\Models\WMS\Bin();
+                        $bin->setAisle($aisle);
+                        $bin->setSection($section);
+                        $bin->setRow($row);
+                        $bin->setCol($col);
+                        $bin->setOrganization($this->organization);
+                        $bin->setBarCode($aisle . $section . $row . $col);
+                        $this->binRepo->save($bin);
+                    }
+                }
+            }
+        }
+    }
+
+    private function totes ()
+    {
+        for( $i = 7000; $i < 7200; $i++ )
+        {
+            $tote               = new \App\Models\WMS\Tote();
+            $tote->setBarCode($i);
+            $tote->setWeight(4.5);
+            $tote->setOrganization($this->organization);
+            $this->toteRepo->save($tote);
+        }
+    }
+
+    private function portableBins ()
+    {
+        for( $i = 8000; $i < 8200; $i++ )
+        {
+            $portableBin        = new \App\Models\WMS\PortableBin();
+            $portableBin->setBarCode($i);
+            $portableBin->setOrganization($this->organization);
+            $this->portableBinRepo->save($portableBin);
+        }
+    }
+
+    private function carts ()
+    {
+        for( $i = 9000; $i < 9020; $i++ )
+        {
+            $cart               = new \App\Models\WMS\Cart();
+            $cart->setBarCode($i);
+            $cart->setOrganization($this->organization);
+            $this->cartRepo->save($cart);
+        }
+    }
 }

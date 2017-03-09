@@ -1,0 +1,38 @@
+App\Models\Hardware\ShippingStation:
+  type:               entity
+  table:              ShippingStation
+  repositoryClass:    App\Repositories\Doctrine\Hardware\ShippingStationRepository
+
+  id:
+    id:
+      column:         id
+      type:           integer
+      nullable:       false
+      options:
+        unsigned:     true
+        comment:      'ShippingStation id'
+      id:             true
+      generator:
+        strategy:     IDENTITY
+
+  fields:
+    name:
+      column:         name
+      type:           string
+      nullable:       false
+
+  manyToOne:
+    printer:
+      targetEntity:   Printer
+      nullable:       true
+      fetch:          EAGER
+      joinColumn:
+        name:         printerId
+        referencedColumnName: id
+    organization:
+      targetEntity:   App\Models\CMS\Organization
+      nullable:       false
+      fetch:          EAGER
+      joinColumn:
+        name:         organizationId
+        referencedColumnName: id

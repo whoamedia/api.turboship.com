@@ -36,7 +36,7 @@ class OrderStatusUtility
 
     //  Shipping Operations
     const PARTIALLY_SHIPPED_ID          = 300;
-    const FULLY_SHIPPED_ID              = 301;
+    const COMPLETELY_SHIPPED_ID              = 301;
 
     /**
      * @return array
@@ -110,7 +110,7 @@ class OrderStatusUtility
      */
     public function getFullyShipped ()
     {
-        return $this->orderStatusValidation->idExists(self::FULLY_SHIPPED_ID);
+        return $this->orderStatusValidation->idExists(self::COMPLETELY_SHIPPED_ID);
     }
 
 }

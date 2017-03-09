@@ -40,3 +40,10 @@ App\Models\OMS\OrderStatusHistory:
       joinColumn:
         name:         statusId
         referencedColumnName: id
+    createdBy:
+      targetEntity:   App\Models\CMS\User
+      nullable:       true
+      fetch:          LAZY
+      joinColumn:
+        name:         createdById
+        referencedColumnName: id

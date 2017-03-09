@@ -186,9 +186,11 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
         LaravelDoctrine\ORM\DoctrineServiceProvider::class,
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
+        MaxBrokman\SafeQueue\DoctrineQueueProvider::class,
 
     ],
 
@@ -246,6 +248,7 @@ return [
         'AWS'                   => Aws\Laravel\AwsFacade::class,
         'Bugsnag'               => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'EntityManager'         => LaravelDoctrine\ORM\Facades\EntityManager::class,
+        'Image'                 => Intervention\Image\Facades\Image::class,
         'PDF'                   => Barryvdh\DomPDF\Facade::class,
     ],
 
