@@ -12,6 +12,7 @@ use App\Models\WMS\PickTote;
 use App\Models\WMS\Tote;
 use App\Models\WMS\TotePick;
 use App\Repositories\Doctrine\Shipments\ShipmentRepository;
+use App\Repositories\Doctrine\WMS\PickToteRepository;
 use App\Utilities\ShipmentStatusUtility;
 use EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,6 +20,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class PickInstructionService
 {
 
+    /**
+     * @var PickToteRepository
+     */
+    private $pickToteRepo;
 
     /**
      * @var ShipmentRepository
@@ -28,7 +33,8 @@ class PickInstructionService
 
     public function __construct()
     {
-        $this->shipmentRepo      = EntityManager::getRepository('App\Models\Shipments\Shipment');
+        $this->pickToteRepo             = EntityManager::getRepository('App\Models\WMS\PickTote');
+        $this->shipmentRepo             = EntityManager::getRepository('App\Models\Shipments\Shipment');
     }
 
 
@@ -130,6 +136,14 @@ class PickInstructionService
     {
         if ($shipment->getId() != ShipmentStatusUtility::PENDING)
             throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' cannot be added to a pick instruction because its status is not Pending');
+
+        $pickToteQuery                  = [
+            'shipmentIds'               => $shipment->getId(),
+        ];
+
+        $pickTotes                      = $this->pickToteRepo->where($pickToteQuery);
+        if (sizeof($pickTotes) != 0)
+            throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' is already in another pick instruction');
 
         return true;
     }
