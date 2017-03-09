@@ -7,7 +7,6 @@ use App\Models\CMS\Staff;
 use App\Models\Shipments\Shipment;
 use App\Models\WMS\Cart;
 use App\Models\WMS\CartPick;
-use App\Models\WMS\PickInstruction;
 use App\Models\WMS\PickTote;
 use App\Models\WMS\Tote;
 use App\Models\WMS\TotePick;
@@ -49,7 +48,7 @@ class PickInstructionService
     public function buildPickInstructionObject ($cart, $totes, $shipments, $staff, $createdBy)
     {
         //  First identify points of failure. Why shouldn't we allow this pick instruction to be created?
-
+dd(sizeof($totes));
         /**
          * If cart is null and totes is empty someone is creating a pick for another user. The cart and/or totes will be populated at a later time.
          * In this case shipments must be provided
