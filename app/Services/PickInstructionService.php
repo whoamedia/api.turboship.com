@@ -47,32 +47,11 @@ class PickInstructionService
          * If cart is null and totes is empty someone is creating a pick for another user. The cart and/or totes will be populated at a later time.
          * In this case shipments must be provided
          */
-        if (is_null($cart) && empty($totes) && empty($shipments))
-            throw new BadRequestHttpException('shipments must be provided when creating pick instructions for other users');
-        /**
-         * If a cart is provided totes cannot be empty
-         */
-        else if (!is_null($cart) && empty($totes))
-            throw new BadRequestHttpException('If cart picking totes must be supplied');
-        /**
-         * If a cart is not provided the number of totes must be equal to 1
-         */
-        else if (is_null($cart) && sizeof($totes) != 1)
-            throw new BadRequestHttpException('If tote picking one and only one tote can be supplied');
-        /**
-         * The user is requesting a pick instruction to be created for them and specifying which shipments they want to pick
-         */
-        else if (!empty($totes) && !empty($shipments))
-        {
-            if (sizeof($totes) != sizeof($shipments))
-                throw new BadRequestHttpException('The number of totes must be equal to the number of shipments');
-        }
-
-        /**
-         * If cart is null and totes is empty this is a future pick that is being assigned to another user
-         */
         if (is_null($cart) && empty($totes))
         {
+            if (empty($shipments))
+                throw new BadRequestHttpException('shipments must be provided when creating pick instructions for other users');
+
             if (sizeof($shipments) == 1)
             {
                 $pickInstruction        = new TotePick();
@@ -95,6 +74,24 @@ class PickInstructionService
             $pickInstruction->setStaff($staff);
             $pickInstruction->setCreatedBy($createdBy);
             return $pickInstruction;
+        }
+        /**
+         * If a cart is provided totes cannot be empty
+         */
+        else if (!is_null($cart) && empty($totes))
+            throw new BadRequestHttpException('If cart picking totes must be supplied');
+        /**
+         * If a cart is not provided the number of totes must be equal to 1
+         */
+        else if (is_null($cart) && sizeof($totes) != 1)
+            throw new BadRequestHttpException('If tote picking one and only one tote can be supplied');
+        /**
+         * The user is requesting a pick instruction to be created for them and specifying which shipments they want to pick
+         */
+        else if (!empty($totes) && !empty($shipments))
+        {
+            if (sizeof($totes) != sizeof($shipments))
+                throw new BadRequestHttpException('The number of totes must be equal to the number of shipments');
         }
 
         /**
