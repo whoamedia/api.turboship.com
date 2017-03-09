@@ -83,14 +83,13 @@ class PickInstructionController extends BaseAuthController
 
         $shipments                      = [];
         $shipmentIds                    = $createPickInstruction->getShipmentIds();
-        dd($shipmentIds);
         if (!is_null($shipmentIds))
         {
             $shipmentIds                = explode(',', $shipmentIds);
             $shipmentValidation         = new ShipmentValidation();
             foreach ($shipmentIds AS $id)
             {
-                $shipmentIds[]          = $shipmentValidation->idExists($id);
+                $shipments[]            = $shipmentValidation->idExists($id);
             }
         }
 
