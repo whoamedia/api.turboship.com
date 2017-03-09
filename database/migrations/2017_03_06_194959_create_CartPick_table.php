@@ -17,7 +17,7 @@ class CreateCartPickTable extends Migration
         {
             $table->increments('id')->unsigned();
 
-            $table->integer('cartId')->unsigned()->index();
+            $table->integer('cartId')->unsigned()->index()->nullable()->default(null);
             $table->foreign('cartId')->references('id')->on('Cart');
         });
     }

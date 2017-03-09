@@ -9,7 +9,7 @@ class CartPick extends PickInstruction implements \JsonSerializable
 {
 
     /**
-     * @var Cart
+     * @var Cart|null
      */
     protected $cart;
 
@@ -26,7 +26,7 @@ class CartPick extends PickInstruction implements \JsonSerializable
     public function jsonSerialize()
     {
         $object                         = parent::jsonSerialize();
-        $object['cart']                 = $this->cart->jsonSerialize();
+        $object['cart']                 = is_null($this->cart) ? null : $this->cart->jsonSerialize();
 
         return $object;
     }
@@ -40,7 +40,7 @@ class CartPick extends PickInstruction implements \JsonSerializable
     }
 
     /**
-     * @return Cart
+     * @return Cart|null
      */
     public function getCart()
     {
@@ -48,7 +48,7 @@ class CartPick extends PickInstruction implements \JsonSerializable
     }
 
     /**
-     * @param Cart $cart
+     * @param Cart|null $cart
      */
     public function setCart($cart)
     {

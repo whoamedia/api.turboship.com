@@ -6,7 +6,7 @@ App\Models\WMS\CartPick:
   manyToOne:
     cart:
       targetEntity:   Cart
-      nullable:       false
+      nullable:       true
       fetch:          EAGER
       joinColumn:
         name:         cartId
