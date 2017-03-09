@@ -20,10 +20,10 @@ class CreatePickToteTable extends Migration
             $table->integer('pickInstructionId')->unsigned()->index();
             $table->foreign('pickInstructionId')->references('id')->on('PickInstruction');
 
-            $table->integer('toteId')->unsigned()->index();
+            $table->integer('toteId')->unsigned()->index()->nullable()->default(null);
             $table->foreign('toteId')->references('id')->on('Tote');
 
-            $table->integer('shipmentId')->unsigned()->index();
+            $table->integer('shipmentId')->unsigned()->index()->nullable()->default(null);
             $table->foreign('shipmentId')->references('id')->on('Shipment');
         });
     }

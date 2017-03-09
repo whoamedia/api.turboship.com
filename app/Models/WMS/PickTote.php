@@ -20,12 +20,12 @@ class PickTote implements \JsonSerializable
     protected $pickInstruction;
 
     /**
-     * @var Tote
+     * @var Tote|null
      */
     protected $tote;
 
     /**
-     * @var Shipment
+     * @var Shipment|null
      */
     protected $shipment;
 
@@ -43,8 +43,8 @@ class PickTote implements \JsonSerializable
     public function jsonSerialize()
     {
         $object['id']                   = $this->id;
-        $object['tote']                 = $this->tote->jsonSerialize();
-        $object['shipment']             = $this->shipment->jsonSerialize();
+        $object['tote']                 = is_null($this->tote) ? null : $this->tote->jsonSerialize();
+        $object['shipment']             = is_null($this->shipment) ? null : $this->shipment->jsonSerialize();
 
         return $object;
     }
@@ -82,7 +82,7 @@ class PickTote implements \JsonSerializable
     }
 
     /**
-     * @return Tote
+     * @return Tote|null
      */
     public function getTote()
     {
@@ -90,7 +90,7 @@ class PickTote implements \JsonSerializable
     }
 
     /**
-     * @param Tote $tote
+     * @param Tote|null $tote
      */
     public function setTote($tote)
     {
@@ -98,7 +98,7 @@ class PickTote implements \JsonSerializable
     }
 
     /**
-     * @return Shipment
+     * @return Shipment|null
      */
     public function getShipment()
     {
@@ -106,7 +106,7 @@ class PickTote implements \JsonSerializable
     }
 
     /**
-     * @param Shipment $shipment
+     * @param Shipment|null $shipment
      */
     public function setShipment($shipment)
     {

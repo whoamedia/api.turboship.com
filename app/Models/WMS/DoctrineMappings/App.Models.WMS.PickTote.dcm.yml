@@ -26,14 +26,14 @@ App\Models\WMS\PickTote:
         referencedColumnName: id
     tote:
       targetEntity:   Tote
-      nullable:       false
+      nullable:       true
       fetch:          EAGER
       joinColumn:
         name:         toteId
         referencedColumnName: id
     shipment:
       targetEntity:   App\Models\Shipments\Shipment
-      nullable:       false
+      nullable:       true
       fetch:          EAGER
       joinColumn:
         name:         shipmentId
