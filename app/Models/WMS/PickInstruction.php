@@ -83,6 +83,7 @@ abstract class PickInstruction implements \JsonSerializable
     {
         $object['id']                   = $this->id;
         $object['locations']            = $this->getLocations();
+        $object['pickTotes']            = $this->getPickTotes();
         $object['staff']                = $this->staff->jsonSerialize();
         $object['createdBy']            = $this->createdBy->jsonSerialize();
         $object['object']               = $this->getObject();
