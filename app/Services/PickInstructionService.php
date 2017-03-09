@@ -44,7 +44,7 @@ class PickInstructionService
      * @param   Shipment[]      $shipments
      * @param   Staff           $staff
      * @param   Staff           $createdBy
-     * @return  PickInstruction
+     * @return  TotePick|CartPick
      */
     public function buildPickInstructionObject ($cart, $totes, $shipments, $staff, $createdBy)
     {
@@ -65,6 +65,8 @@ class PickInstructionService
                 $pickTote               = new PickTote();
                 $this->canAddShipmentToPick($shipments[0]);
                 $pickTote->setShipment($shipments[0]);
+                $shipments[0]->setInPickInstruction(true);
+                $this->shipmentRepo->save($shipments[0]);
                 $pickInstruction->addPickTote($pickTote);
             }
             else
@@ -75,6 +77,8 @@ class PickInstructionService
                     $pickTote           = new PickTote();
                     $this->canAddShipmentToPick($item);
                     $pickTote->setShipment($item);
+                    $item->setInPickInstruction(true);
+                    $this->shipmentRepo->save($item);
                     $pickInstruction->addPickTote($pickTote);
                 }
             }
@@ -137,18 +141,14 @@ class PickInstructionService
         if ($shipment->getStatus()->getId() != ShipmentStatusUtility::PENDING)
             throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' cannot be added to a pick instruction because its status is not Pending');
 
-        $pickToteQuery                  = [
-            'shipmentIds'               => $shipment->getId(),
-        ];
-
-        $pickTotes                      = $this->pickToteRepo->where($pickToteQuery);
-        if (sizeof($pickTotes) != 0)
+        if ($shipment->getInPickInstruction())
             throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' is already in another pick instruction');
 
         return true;
     }
     /**
      * @param   TotePick|CartPick     $pickInstruction
+     * @return  TotePick|CartPick
      */
     public function assignShipments ($pickInstruction)
     {
@@ -162,11 +162,58 @@ class PickInstructionService
         $shipmentQuery                  = [
             'organizationIds'           => $pickInstruction->getCreatedBy()->getOrganization()->getId(),
             'statusIds'                 => ShipmentStatusUtility::PENDING,
+            'inPickInstruction'         => false,
         ];
         //  Get the oldest shipment that hasn't been picked and hasn't been assigned to a user yet
         if ($requiredShipments == 1)
         {
+            $shipmentQuery['orderBy']   = 'shipment.id';
+            $shipmentQuery['direction'] = 'ASC';
+            $shipmentQuery['limit']     = 1;
 
+            $shipmentResults            = $this->shipmentRepo->where($shipmentQuery);
+            if (sizeof($shipmentResults) == 0)
+                throw new BadRequestHttpException('There are currently no shipments available to pick');
+
+            $shipment                   = $shipmentResults[0];
+            $shipment->setInPickInstruction(true);
+            $this->shipmentRepo->save($shipment);
+            foreach ($pickInstruction->getPickTotes() AS $pickTote)
+            {
+                if (is_null($pickTote->getShipment()))
+                {
+                    $pickTote->setShipment($shipment);
+                    break;
+                }
+            }
+            return $pickInstruction;
         }
+
+
+        //  Cart picking. Use simple approach of getting oldest shipments first until we have time to improve logic
+        $shipmentQuery['orderBy']   = 'shipment.id';
+        $shipmentQuery['direction'] = 'ASC';
+        $shipmentQuery['limit']     = $requiredShipments;
+
+        $shipmentResults            = $this->shipmentRepo->where($shipmentQuery);
+        if (sizeof($shipmentResults) != $requiredShipments)
+            throw new BadRequestHttpException('There are only ' . sizeof($shipmentResults) . ' available to pick');
+
+        foreach ($shipmentResults AS $shipment)
+        {
+            foreach ($pickInstruction->getPickTotes() AS $pickTote)
+            {
+                if (is_null($pickTote->getShipment()))
+                {
+                    $pickTote->setShipment($shipment);
+                    $shipment->setInPickInstruction(true);
+                    $this->shipmentRepo->save($shipment);
+                }
+            }
+        }
+
+        return $pickInstruction;
     }
+
+
 }

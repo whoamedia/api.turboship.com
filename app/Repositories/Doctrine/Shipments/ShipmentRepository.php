@@ -175,6 +175,11 @@ class ShipmentRepository extends BaseRepository
         if (!is_null(AU::get($query['toAddressCountryIds'])))
             $qb->andWhere($qb->expr()->in('toCountry.id', $query['toAddressCountryIds']));
 
+        if (!is_null(AU::get($query['inPickInstruction'])))
+        {
+            $qb->andWhere($qb->expr()->eq('shipment.inPickInstruction', BU::toString($query['inPickInstruction'])));
+        }
+
         if (!is_null(AU::get($query['createdFrom'])))
         {
             $qb->andWhere($qb->expr()->gte('shipment.createdAt', ':createdFrom'));

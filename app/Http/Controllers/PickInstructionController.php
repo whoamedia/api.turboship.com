@@ -104,6 +104,11 @@ class PickInstructionController extends BaseAuthController
             return response($pickInstruction, 201);
         }
 
+        $pickInstructionService->assignShipments($pickInstruction);
+
+        //  Need to assign walking instructions
+        $this->pickInstructionRepo->saveAndCommit($pickInstruction);
+        return response($pickInstruction, 201);
     }
 
     public function update (Request $request)
