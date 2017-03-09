@@ -134,7 +134,7 @@ class PickInstructionService
      */
     public function canAddShipmentToPick ($shipment)
     {
-        if ($shipment->getId() != ShipmentStatusUtility::PENDING)
+        if ($shipment->getStatus()->getId() != ShipmentStatusUtility::PENDING)
             throw new BadRequestHttpException('Shipment id ' . $shipment->getId() . ' cannot be added to a pick instruction because its status is not Pending');
 
         $pickToteQuery                  = [
