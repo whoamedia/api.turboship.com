@@ -83,6 +83,7 @@ class PickInstructionController extends BaseAuthController
 
         $shipments                      = [];
         $shipmentIds                    = $createPickInstruction->getShipmentIds();
+        dd($shipmentIds);
         if (!is_null($shipmentIds))
         {
             $shipmentIds                = explode(',', $shipmentIds);
@@ -95,7 +96,6 @@ class PickInstructionController extends BaseAuthController
 
         $createdBy                      = parent::getAuthStaff();
 
-        dd($shipments);
         $pickInstructionService         = new PickInstructionService();
         $pickInstruction                = $pickInstructionService->buildPickInstructionObject($cart, $totes, $shipments, $staff, $createdBy);
 
