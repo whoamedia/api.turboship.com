@@ -32,6 +32,13 @@ App\Models\Shipments\Shipment:
       options:
         comment:      "If the shipment should be rushed"
         default:      false
+    inPickInstruction:
+      column:         inPickInstruction
+      type:           boolean
+      nullable:       false
+      options:
+        comment:      "If the shipment has been added to a PickInstruction"
+        default:      false
     createdAt:
       column:         createdAt
       type:           datetime

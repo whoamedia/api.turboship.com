@@ -152,10 +152,19 @@ class PickInstructionService
      */
     public function assignShipments ($pickInstruction)
     {
-        $totalShipments                 = sizeof($pickInstruction->getPickTotes());
+        $requiredShipments              = 0;
+        foreach ($pickInstruction->getPickTotes() AS $pickTote)
+        {
+            if (is_null($pickTote->getShipment()))
+                $requiredShipments++;
+        }
 
+        $shipmentQuery                  = [
+            'organizationIds'           => $pickInstruction->getCreatedBy()->getOrganization()->getId(),
+            'statusIds'                 => ShipmentStatusUtility::PENDING,
+        ];
         //  Get the oldest shipment that hasn't been picked and hasn't been assigned to a user yet
-        if ($totalShipments == 1)
+        if ($requiredShipments == 1)
         {
 
         }

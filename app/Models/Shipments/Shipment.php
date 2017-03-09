@@ -94,6 +94,11 @@ class Shipment implements \JsonSerializable
     protected $rushed;
 
     /**
+     * @var bool
+     */
+    protected $inPickInstruction;
+
+    /**
      * @var \DateTime|null
      */
     protected $shippedAt;
@@ -122,6 +127,7 @@ class Shipment implements \JsonSerializable
         $this->dimensions               = AU::get($data['dimensions']);
         $this->status                   = AU::get($data['status']);
         $this->rushed                   = AU::get($data['rushed'], false);
+        $this->inPickInstruction        = AU::get($data['inPickInstruction'], false);
         $this->shippedAt                = AU::get($data['shippedAt']);
 
         if (is_null($this->status))
@@ -375,6 +381,22 @@ class Shipment implements \JsonSerializable
     public function setRushed($rushed)
     {
         $this->rushed = $rushed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInPickInstruction()
+    {
+        return $this->inPickInstruction;
+    }
+
+    /**
+     * @param bool $inPickInstruction
+     */
+    public function setInPickInstruction($inPickInstruction)
+    {
+        $this->inPickInstruction = $inPickInstruction;
     }
 
     /**
