@@ -201,8 +201,11 @@ class PickInstructionService
         $shipmentQuery['limit']     = $requiredShipments;
 
         $shipmentResults            = $this->shipmentRepo->where($shipmentQuery);
-        if (sizeof($shipmentResults) != $requiredShipments)
-            throw new BadRequestHttpException('There are only ' . sizeof($shipmentResults) . ' available to pick');
+
+        if (sizeof($shipmentResults) == 0)
+            throw new BadRequestHttpException('There are currently no shipments available to pick');
+        else if (sizeof($shipmentResults) < $requiredShipments)
+            throw new BadRequestHttpException('There are only ' . sizeof($shipmentResults) . ' available to pick. Reduce your number of totes');
 
         foreach ($shipmentResults AS $shipment)
         {
