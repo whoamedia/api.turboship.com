@@ -212,17 +212,13 @@ class PickInstructionService
         else if (sizeof($shipmentResults) < $requiredShipments)
             throw new BadRequestHttpException('There are only ' . sizeof($shipmentResults) . ' available to pick. Reduce your number of totes');
 
-        foreach ($shipmentResults AS $shipment)
+
+        $pickTotes                  = $pickInstruction->getPickTotes();
+        for ($i = 0; $i < sizeof($shipmentResults); $i++)
         {
-            foreach ($pickInstruction->getPickTotes() AS $pickTote)
-            {
-                if (is_null($pickTote->getShipment()))
-                {
-                    $shipment->setInPickInstruction(true);
-                    $this->shipmentRepo->save($shipment);
-                    $pickTote->setShipment($shipment);
-                }
-            }
+            $shipmentResults[$i]->setInPickInstruction(true);
+            $this->shipmentRepo->save($shipmentResults[$i]);
+            $pickTotes[$i]->setShipment($shipmentResults[$i]);
         }
 
         return $pickInstruction;
